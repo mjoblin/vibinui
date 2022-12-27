@@ -25,12 +25,12 @@ function Albums(props) {
             <table>
                 <tbody>
                 {
-                    albums.sort((a, b) => a.artist.localeCompare(b.artist)).map(album => (
+                    albums.sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various")).map(album => (
                         <tr key={album.id}>
                             <td
                                 className={album.id === lastPlayedId ? "current-album" : undefined}
                             >
-                                {album.creator}
+                                {album.creator && album.creator !== " " ? album.creator : "Various"}
                             </td>
                             <td
                                 className={album.id === lastPlayedId ? "current-album" : undefined}

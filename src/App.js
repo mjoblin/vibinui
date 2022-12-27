@@ -9,6 +9,8 @@ import TransportControls from "./components/TransportControls";
 
 import "./App.css";
 
+let HOSTNAME = "192.168.1.30";
+
 function App() {
     const [stateVars, setStateVars] = React.useState({});
     const [currentPlaylist, setCurrentPlaylist] = React.useState([]);
@@ -16,7 +18,7 @@ function App() {
     const ws = React.useRef(null);
 
     React.useEffect(() => {
-        ws.current = new WebSocket("ws://10.0.0.3:7669/ws");
+        ws.current = new WebSocket(`ws://${HOSTNAME}:7669/ws`);
         ws.current.onopen = () => console.log("ws opened");
         ws.current.onclose = () => console.log("ws closed");
 
