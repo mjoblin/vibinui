@@ -1,5 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 // import { isMessage } from "./schemaValidators";
+import {
+    setAudioSources,
+    setPlayStatus,
+} from "../features/playback/playbackSlice";
 
 export interface Message {
     // id: number;
@@ -22,7 +27,12 @@ export const vibinWebsocket = createApi({
             queryFn: () => ({ data: [] }),
             async onCacheEntryAdded(
                 arg,
-                { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+                {
+                    updateCachedData,
+                    cacheDataLoaded,
+                    cacheEntryRemoved,
+                    dispatch,
+                }
             ) {
                 // create a websocket connection when the cache subscription starts
                 const ws = new WebSocket(`ws://${HOSTNAME}:7669/ws`);
@@ -30,16 +40,39 @@ export const vibinWebsocket = createApi({
                     // wait for the initial query to resolve before proceeding
                     await cacheDataLoaded;
 
-                    // when data is received from the socket connection to the server,
-                    // if it is a message and for the appropriate channel,
-                    // update our query result with the received message
+                    /**
+                     * Handle incoming Websocket messages from the Vibin server.
+                     */
                     const listener = (event: MessageEvent) => {
                         const data = JSON.parse(event.data);
                         // if (!isMessage(data) || data.channel !== arg) return;
 
+                        // Update query result with the received message.
                         updateCachedData((draft) => {
                             draft.push(data);
                         });
+
+                        // Update the play status.
+                        const streamerName = data.streamer_name;
+                        if (streamerName) {
+                            dispatch({
+                                type: setPlayStatus.type,
+                                payload:
+                                    data.vibin[streamerName]
+                                        ?.current_playback_details?.state ||
+                                    undefined,
+                            });
+                        }
+
+                        // Update the audio sources.
+                        if (streamerName) {
+                            dispatch({
+                                type: setAudioSources.type,
+                                payload:
+                                    data.vibin[streamerName]?.audio_sources ||
+                                    {},
+                            });
+                        }
                     };
 
                     ws.addEventListener("message", listener);

@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
 import albumsReducer from "../features/albums/albumsSlice";
+import playbackReducer from "../features/playback/playbackSlice";
 import { vibinApi } from "../services/vibin";
 import { vibinWebsocket } from "../services/vibinWebsocket";
 
 export const store = configureStore({
     reducer: {
         albums: albumsReducer,
+        playback: playbackReducer,
         [vibinApi.reducerPath]: vibinApi.reducer,
         [vibinWebsocket.reducerPath]: vibinWebsocket.reducer,
     },

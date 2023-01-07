@@ -10,7 +10,7 @@ export function WebsocketRaw() {
             <p />
             <div>
                 {data?.map((message) => (
-                    <div key={message.id}>{JSON.stringify(message)}</div>
+                    <div key={message.id} style={{paddingBottom: "15px"}}>{JSON.stringify(message)}</div>
                 ))}
             </div>
         </div>
