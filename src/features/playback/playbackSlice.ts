@@ -1,27 +1,25 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { Draft } from "immer";
+
+import { Format, Track } from "../../app/types";
+
+/**
+ * The Playback slice is intended to contain information about the current playback status of the
+ * streamer. e.g. Whether it's playing or not; what the current track is; etc.
+ */
 
 export type PlayStatus = "Stopped" | "Playing" | "Paused" | "Connecting";
 
-type ComparableObject = Draft<{[key: number | string] : string}> | Map<any, any>;
-
-const quickObjectMatch = (o1: ComparableObject, o2: ComparableObject): boolean =>
-    JSON.stringify(o1) === JSON.stringify(o2);
+export type AudioSource = string;
 
 export interface PlaybackState {
     play_status: PlayStatus | undefined;
     audio_sources: {
-        [key: number]: string;
+        [key: number]: AudioSource;
     };
-    current_audio_source: string | undefined;
-    current_track: {
-        title: string;
-        artist: string;
-        album: string;
-        album_art_url: string;
-        duration: string;
-    } | undefined;
+    current_audio_source: AudioSource | undefined;
+    current_track: Track | undefined;
+    current_format: Format | undefined;
 }
 
 const initialState: PlaybackState = {
@@ -29,20 +27,24 @@ const initialState: PlaybackState = {
     audio_sources: {},
     current_audio_source: undefined,
     current_track: undefined,
+    current_format: undefined,
 };
 
 export const playbackSlice = createSlice({
     name: "playback",
     initialState,
     reducers: {
-        setAudioSources: (state, action: PayloadAction<{[key: number]: string}>) => {
-            // TODO: Check if there's a preferred approach to not updating a
-            //  chunk of state to what is effectively the same value. We'll
-            //  encounter same-value data chunks a lot, as messages from the
-            //  vibin backend will often include unchanged data.
-            if (!quickObjectMatch(state.audio_sources, action.payload)) {
-                state.audio_sources = action.payload;
-            }
+        setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource }>) => {
+            state.audio_sources = action.payload;
+        },
+        setCurrentAudioSource: (state, action: PayloadAction<AudioSource | undefined>) => {
+            state.current_audio_source = action.payload;
+        },
+        setCurrentFormat: (state, action: PayloadAction<Format | undefined>) => {
+            state.current_format = action.payload;
+        },
+        setCurrentTrack: (state, action: PayloadAction<Track | undefined>) => {
+            state.current_track = action.payload;
         },
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {
             state.play_status = action.payload;
@@ -51,6 +53,12 @@ export const playbackSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setAudioSources, setPlayStatus } = playbackSlice.actions;
+export const {
+    setAudioSources,
+    setCurrentAudioSource,
+    setCurrentFormat,
+    setCurrentTrack,
+    setPlayStatus,
+} = playbackSlice.actions;
 
 export default playbackSlice.reducer;

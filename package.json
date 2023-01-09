@@ -52,6 +52,7 @@
         "prettier": "^2.8.1"
     },
     "prettier": {
-        "tabWidth": 4
+        "tabWidth": 4,
+        "printWidth": 100
     }
 }
