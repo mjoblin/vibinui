@@ -41,8 +41,8 @@ type PlayStatePayload = {
     queue_index?: number;
     queue_length?: number;
     queue_id?: number;
-    mode_repeat?: string;
-    mode_shuffle?: string;
+    mode_repeat?: string;   // TODO: Determine valid values for repeat
+    mode_shuffle?: string;   // TODO: Determine valid values for shuffle
     metadata?: {
         class?: string;
         source?: string;
