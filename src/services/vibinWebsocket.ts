@@ -32,7 +32,7 @@ type StateVarsPayload = {
     vibin: SimpleObject;
 }
 
-type PlayerState = "buffering" | "play" | "pause" | "ready" | "no_signal";
+type PlayerState = "buffering" | "ready" | "play" | "pause" | "stop" | "no_signal";
 
 // TODO: Figure out if any of these are not optional. Making them all optional makes usage a little
 //  awkward (having to always allow for their optionality on reference).
