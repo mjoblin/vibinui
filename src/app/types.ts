@@ -3,6 +3,7 @@
 //  returned by the backend. Changing the types should perhaps be a backend change, after which
 //  these UI types could be updated to match.
 
+// Album details.
 export type Album = {
     id: string;
     title: string;
@@ -10,22 +11,52 @@ export type Album = {
     date: string;
     artist: string;
     genre: string;
-    album_art_uri: string;
+    album_art_uri: string; // TODO: This vs. art_url (be consistent; will need to rename somewhere)
 };
 
+// Music track details.
 export type Track = {
-    title: string;
-    artist: string;
+    track_number: number;
+    duration: number;
     album: string;
-    album_art_url?: string;
-    duration: string;
+    artist: string;
+    title: string;
+    art_url: string;
     genre?: string;
 }
 
+// File encoding details.
 export type Format = {
-    codec?: string;
-    sample_rate?: string;
-    vbr?: string;
-    bit_rate?: string;
-    bit_depth?: string;
+    sample_format: string;
+    mqa: string;
+    codec: string;
+    lossless: boolean;
+    sample_rate: number;
+    bit_depth: number;
+    encoding: string;
+}
+
+// A file being streamed for playback.
+export type Stream = {
+    type: string;
+    source_name: string;
+    url: string;
+}
+
+// A collection of tracks defining track playback sequence.
+export type Playlist = {
+    entries: PlaylistEntry[];
+}
+
+export type PlaylistEntry = {
+    album: string;
+    albumArtURI: string;
+    artist: string;
+    duration: string;
+    genre: string;
+    id: number;
+    index: number;
+    originalTrackNumber: string;
+    title: string;
+    uri: string;
 }

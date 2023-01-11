@@ -7,22 +7,73 @@ import {
     setAudioSources,
     setCurrentAudioSource,
     setCurrentFormat,
+    setCurrentStream,
     setCurrentTrack,
     setPlayStatus,
+    setPlayheadPosition,
+    setRepeat,
+    setShuffle,
 } from "../features/playback/playbackSlice";
+import { setEntries } from "../features/playlist/playlistSlice";
 import { RootState } from "../app/store";
+
+const MAX_MESSAGE_COUNT = 10;
 
 // TODO: Consider how to more clearly handle vaguely-defined incoming message payloads. These
 //  payloads can contain nested objects with arbitrary key/value pairs.
 type SimpleObject = { [key: string | number]: any };
 
-// TODO: Fully define the vibin backend message format.
-export interface VibinMessage {
-    id: string;
-    streamer_name: string;
+type MessageType = "StateVars" | "PlayState" | "Position";
+
+type StateVarsPayload = {
+    streamer_name: string;  // TODO: Should streamer_name and media_source_name be on VibinMessage?
     media_source_name: string;
     streamer: SimpleObject;
     vibin: SimpleObject;
+}
+
+// TODO: Figure out if any of these are not optional. Making them all optional makes usage a little
+//  awkward (having to always allow for their optionality on reference).
+type PlayStatePayload = {
+    state?: string; // Seen: buffering, play, pause, ready
+    position?: number;
+    presettable?: boolean;
+    queue_index?: number;
+    queue_length?: number;
+    queue_id?: number;
+    mode_repeat?: string;
+    mode_shuffle?: string;
+    metadata?: {
+        class?: string;
+        source?: string;
+        name?: string;
+        playback_source?: string;
+        track_number?: number;
+        duration?: number;
+        album?: string;
+        artist?: string;
+        title?: string;
+        art_url?: string;
+        sample_format?: string;
+        mqa?: string;
+        codec?: string;
+        lossless?: boolean;
+        sample_rate?: number;
+        bit_depth?: number;
+        encoding?: string;
+    };
+};
+
+type PositionPayload = {
+    position: number;
+}
+
+// TODO: More clearly define the vibin backend message format.
+export type VibinMessage = {
+    id: string;
+    time: number;
+    type: MessageType;
+    payload: StateVarsPayload | PlayStatePayload | PositionPayload;
 }
 
 type ComparableMessageChunk = Draft<{ [key: number | string]: string }> | Map<any, any>;
@@ -73,17 +124,37 @@ const purifyData = (
  * @param getState
  * @param dispatch
  *
- *  * Add the message to the message stream.
- *  * Extract the following information (if present in the message) and, if the data has changed
- *    from the current application state then dispatch redux actions to update the state:
- *      * Playback state (paused, playing, etc.)
- *      * List of audio sources.
- *      * Current audio source.
+ *  1. Add the message to the message stream.
+ *  2. Extract the following information (if present in the message) and, if the data has changed
+ *     from the current application state, then dispatch redux actions to update the state:
+ *      * Playback status
+ *          * Playback state (paused, playing, etc.)
+ *          * List of audio sources.
+ *          * Current audio source.
+ *          * Current track information (artist, title, etc).
+ *          * Current format information (code, bitrate, etc).
+ *      * Current playlist
  *
  * TODO: updateCachedData is coming from the QueryArg type, defined somewhere in Redux Toolkit. It
  *  would be nice to figure out how to access the proper type and not fall back on "any".
  *  messageHandler() might also benefit at some point from having the entire QueryArg object rather
  *  than just updateCachedData.
+ *
+ * TODO: The backend currently supports two message types (state var updates, and play state
+ *  updates). Should these even be treated differently? (Their backend realities are different --
+ *  UPNP vs. Websocket updates from the streamer -- but that distinction could be abstracted away).
+ *  If continued to treat differently, then maybe the Client/UI could decide whether they want to
+ *  receive one or both types -- perhaps by connecting to a Websocket channel per type; or sending
+ *  a connect message where they say which type(s) they want to receive.
+ *
+ * TODO: Handle defining the current playhead position. Store it as normalized 0-1 in application
+ *  state. Auto-update at regular interval (say 250ms). Heuristics:
+ *      * When current track has changed, set playhead to 0.
+ *      * Auto-update playhead position at regular interval.
+ *      * Actions to consider (will interrupt regular-interval updates):
+ *          * Track paused (pause updates; allow for pause happening mid-interval).
+ *          * Track stopped (cancel playhead?).
+ *          * Track seek (reset position).
  */
 function messageHandler(
     updateCachedData: any,
@@ -96,16 +167,13 @@ function messageHandler(
 
         // TODO: Consider adding message validation before attempting to process it.
 
-        // Update query result with the received message.
+        // Update the query result with the received message. We prevent the array of messages from
+        // exceeding MAX_MESSAGE_COUNT to minimize the likelihood of memory issues and/or Redux
+        // warning us about state size.
         updateCachedData((draft: VibinMessage[]) => {
+            (draft.length >= MAX_MESSAGE_COUNT) && draft.shift();
             draft.push(data);
         });
-
-        const streamerName = data.streamer_name;
-
-        if (!streamerName) {
-            return;
-        }
 
         const appState = getState();
 
@@ -135,30 +203,107 @@ function messageHandler(
             }
         };
 
-        // Update the various pieces of the playback details application state if this message
-        // contains new/updated playback information.
+        if (data.type === "StateVars") {
+            const stateVars = data.payload as StateVarsPayload;
+            const streamerName = stateVars.streamer_name;
 
-        updateAppStateIfChanged(
-            setPlayStatus.type,
-            data.vibin[streamerName]?.current_playback_details?.state
-        );
+            if (!streamerName) {
+                return;
+            }
 
-        updateAppStateIfChanged(setAudioSources.type, data.vibin[streamerName]?.audio_sources, {});
+            // Set list of audio sources, and currently-set audio source.
+            updateAppStateIfChanged(setAudioSources.type, stateVars.vibin[streamerName]?.audio_sources, {});
 
-        updateAppStateIfChanged(
-            setCurrentAudioSource.type,
-            data.vibin[streamerName]?.current_audio_source
-        );
+            updateAppStateIfChanged(
+                setCurrentAudioSource.type,
+                stateVars.vibin[streamerName]?.current_audio_source
+            );
 
-        updateAppStateIfChanged(
-            setCurrentTrack.type,
-            data.vibin[streamerName]?.current_playback_details?.playlist_entry
-        );
+            // Set stream information.
+            const streamInfo = stateVars.vibin[streamerName]?.current_playback_details?.stream;
 
-        updateAppStateIfChanged(
-            setCurrentFormat.type,
-            data.vibin[streamerName]?.current_playback_details?.format
-        );
+            updateAppStateIfChanged(
+                setCurrentStream.type,
+                {
+                    type: streamInfo.type,
+                    source_name: streamInfo.source_name,
+                    url: streamInfo.url,
+                }
+            );
+
+            // Extract track genre, checking to ensure that the message's track matches the track
+            // in application state.
+            //
+            // NOTE: This assumes we'll be getting a StateVars message for the track *after* we've
+            //  seen a PlayState message defining the new track.
+            const stateVarsTrack =
+                stateVars.vibin[streamerName]?.current_playback_details?.playlist_entry;
+            const appStateTrack = appState[setCurrentTrack.type];
+            
+            if (
+                stateVarsTrack &&
+                appStateTrack &&
+                stateVarsTrack.genre &&
+                appStateTrack.title === stateVarsTrack.title &&
+                appStateTrack.album === stateVarsTrack.album &&
+                appStateTrack.artist === stateVarsTrack.artist
+            ) {
+                updateAppStateIfChanged(setCurrentTrack.type, {
+                    ...appState[setCurrentTrack.type],
+                    genre: stateVarsTrack.genre,
+                });
+            }
+
+            updateAppStateIfChanged(setEntries.type, stateVars.vibin[streamerName]?.current_playlist);
+        }
+        else if (data.type === "Position") {
+            dispatch({
+                type: setPlayheadPosition.type,
+                payload: (data.payload as PositionPayload).position,
+            });
+        }
+        else if (data.type === "PlayState") {
+            const metadata = (data.payload as PlayStatePayload).metadata;
+
+            // Set current play status ("play", "pause", etc).
+            updateAppStateIfChanged(setPlayStatus.type, (data.payload as PlayStatePayload).state);
+
+            // Set track information.
+            // NOTE: genre comes later from a StateVars message.
+            updateAppStateIfChanged(
+                setCurrentTrack.type,
+                {
+                    track_number: metadata?.track_number,
+                    duration: metadata?.duration,
+                    album: metadata?.album,
+                    artist: metadata?.artist,
+                    title: metadata?.title,
+                    art_url: metadata?.art_url,
+                }
+            );
+
+            // Set format information.
+            updateAppStateIfChanged(
+                setCurrentFormat.type,
+                {
+                    sample_format: metadata?.sample_format,
+                    mqa: metadata?.mqa,
+                    codec: metadata?.codec,
+                    lossless: metadata?.lossless,
+                    sample_rate: metadata?.sample_rate,
+                    bit_depth: metadata?.bit_depth,
+                    encoding: metadata?.encoding,
+                }
+            );
+
+            // Set repeat and shuffle.
+            updateAppStateIfChanged(setRepeat.type, (data.payload as PlayStatePayload).mode_repeat);
+
+            updateAppStateIfChanged(
+                setShuffle.type,
+                (data.payload as PlayStatePayload).mode_shuffle
+            );
+        }
     };
 }
 
