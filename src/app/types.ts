@@ -3,9 +3,11 @@
 //  returned by the backend. Changing the types should perhaps be a backend change, after which
 //  these UI types could be updated to match.
 
+export type MediaId = string;
+
 // Album details.
 export type Album = {
-    id: string;
+    id: MediaId;
     title: string;
     creator: string;
     date: string;

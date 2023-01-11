@@ -164,8 +164,10 @@ function messageHandler(
     dispatch: ThunkDispatch<any, any, any>
 ): (event: MessageEvent) => void {
     return (event: MessageEvent) => {
+        // TODO: Can message payload munging/purification be done by implementing transformResponse
+        //  in the createApi definition?
+        //  https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#customizing-query-responses-with-transformresponse
         const data = purifyData(JSON.parse(event.data)) as VibinMessage;
-        // if (!isMessage(data) || data.channel !== arg) return;
 
         // TODO: Consider adding message validation before attempting to process it.
 

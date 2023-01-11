@@ -1,11 +1,10 @@
 import * as React from "react";
-import { useGetAlbumsQuery } from "../../services/vibin";
+import { useGetAlbumsQuery } from "../../services/vibinBase";
+import { usePlayMutation } from "../../services/vibinTransport";
 
 export function Albums() {
-    // Using a query hook automatically fetches data and returns query values
-    const { data, error, isLoading } = useGetAlbumsQuery("FOO");
-    // Individual hooks are also accessible under the generated endpoints:
-    // const { data, error, isLoading } = pokemonApi.endpoints.getPokemonByName.useQuery('bulbasaur')
+    const { data, error, isLoading } = useGetAlbumsQuery();
+    const [ play ] = usePlayMutation();
 
     return (
         <div className="Albums">
@@ -15,7 +14,12 @@ export function Albums() {
                 <>Loading...</>
             ) : data ? (
                 <>
-                    {data.map(album => <div key={album.id}>{album.title}</div>)}
+                    {data.map((album) => (
+                        <div key={album.id}>
+                            <button onClick={() => play(album.id)}>Play</button>
+                            {album.title}
+                        </div>
+                    ))}
                 </>
             ) : null}
         </div>
