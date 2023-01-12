@@ -46,9 +46,7 @@ export type Stream = {
 }
 
 // A collection of tracks defining track playback sequence.
-export type Playlist = {
-    entries: PlaylistEntry[];
-}
+export type Playlist = PlaylistEntry[]
 
 export type PlaylistEntry = {
     album: string;

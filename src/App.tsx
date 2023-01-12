@@ -6,6 +6,7 @@ import { WebsocketManager } from "./features/app/WebsocketManager";
 import { Format } from "./features/format/Format";
 import { Playback } from "./features/playback/Playback";
 import { PlaybackStatus } from "./features/playbackStatus/PlaybackStatus";
+import { Playlist } from "./features/playlist/Playlist";
 import { Stream } from "./features/stream/Stream";
 import { Track } from "./features/track/Track";
 
@@ -20,6 +21,7 @@ export default function App() {
 
                 <Playback />
                 <Albums />
+                <Playlist />
                 <div style={{display: "flex", gap: "10px", flexDirection: "column"}}>
                     <Track />
                     <Format />

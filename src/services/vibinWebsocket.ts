@@ -14,7 +14,7 @@ import {
     setRepeat,
     setShuffle,
 } from "../features/playback/playbackSlice";
-import { setEntries } from "../features/playlist/playlistSlice";
+import { setCurrentTrackIndex, setEntries } from "../features/playlist/playlistSlice";
 import { RootState } from "../app/store";
 
 const MAX_MESSAGE_COUNT = 10;
@@ -103,20 +103,25 @@ const quickObjectMatch = (o1: ComparableMessageChunk, o2: ComparableMessageChunk
  * @param input
  */
 const purifyData = (
-    input: SimpleObject | string | number | undefined | null
-): SimpleObject | string | number | undefined | null => {
-    if (typeof input !== "object" || input === null) {
+    input: SimpleObject | any[] | string | number | undefined | null
+): SimpleObject | any[] | string | number | undefined | null => {
+    if ((typeof input !== "object") || input === null) {
         return input;
     }
 
-    const purified: SimpleObject = {};
+    if (input instanceof Array) {
+        const purified: any[] = input.map(value => purifyData(value));
+        return purified;
+    } else {
+        const purified: SimpleObject = {};
 
-    Object.keys(input).forEach((key) => {
-        const purifiedKey = key.replaceAll("-", "_").replaceAll("@", "");
-        purified[purifiedKey] = purifyData(input[key]);
-    });
+        Object.keys(input).forEach((key) => {
+            const purifiedKey = key.replaceAll("-", "_").replaceAll("@", "");
+            purified[purifiedKey] = purifyData(input[key]);
+        });
 
-    return purified;
+        return purified;
+    }
 };
 
 /**
@@ -258,7 +263,15 @@ function messageHandler(
                 });
             }
 
-            updateAppStateIfChanged(setEntries.type, stateVars.vibin[streamerName]?.current_playlist);
+            // Set current playlist track index and entries.
+            updateAppStateIfChanged(
+                setCurrentTrackIndex.type,
+                stateVars.vibin[streamerName]?.current_playlist_track_index
+            );
+            updateAppStateIfChanged(
+                setEntries.type,
+                stateVars.vibin[streamerName]?.current_playlist
+            );
         }
         else if (data.type === "Position") {
             dispatch({
