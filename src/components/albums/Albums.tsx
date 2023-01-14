@@ -1,9 +1,12 @@
-import * as React from "react";
-import { useGetAlbumsQuery } from "../../services/vibinBase";
-import { usePlayMutation } from "../../services/vibinTransport";
+import React, { FC } from "react";
 
-export function Albums() {
+import { useGetAlbumsQuery, useLazyGetTracksQuery } from "../../app/services/vibinBase";
+import { usePlayMutation } from "../../app/services/vibinTransport";
+import { Track } from "../../app/types";
+
+const Albums: FC = () => {
     const { data, error, isLoading } = useGetAlbumsQuery();
+    const [ getTracks, getTracksResult ] = useLazyGetTracksQuery();
     const [ play ] = usePlayMutation();
 
     return (
@@ -17,11 +20,18 @@ export function Albums() {
                     {data.map((album) => (
                         <div key={album.id}>
                             <button onClick={() => play(album.id)}>Play</button>
+                            <button onClick={() => getTracks(album.id)}>Tracks</button>
                             {album.title}
                         </div>
                     ))}
+
+                    {
+                        getTracksResult.data?.map((track: Track) => <>{track.title}</>)
+                    }
                 </>
             ) : null}
         </div>
     );
 }
+
+export default Albums;

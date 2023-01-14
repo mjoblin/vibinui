@@ -8,7 +8,7 @@ interface FieldValueListProps {
     };
 }
 
-export const FieldValueList: FC<FieldValueListProps> = ({ fieldValues }) => {
+const FieldValueList: FC<FieldValueListProps> = ({ fieldValues }) => {
     return (
         <div className="FieldValueListContainer">
             <table>
@@ -26,3 +26,5 @@ export const FieldValueList: FC<FieldValueListProps> = ({ fieldValues }) => {
         </div>
     );
 };
+
+export default FieldValueList;

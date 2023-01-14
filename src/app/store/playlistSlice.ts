@@ -1,9 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Playlist } from "../../app/types";
+import { Playlist } from "../types";
 
 /**
+ * TODO: Determine whether both store/playlistSlice and services/vibinPlaylist should coexists.
+ *  Perhaps everything should be managed in services/vibinPlaylist.
  */
 
 export interface PlaylistState {

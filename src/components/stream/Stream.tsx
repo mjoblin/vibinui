@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 
-import type { RootState } from "../../app/store";
+import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
-import { FieldValueList } from "../../components/FieldValueList";
+import FieldValueList from "../fieldValueList/FieldValueList";
 
-export const Stream: FC = () => {
+const Stream: FC = () => {
     const currentStream = useAppSelector((state: RootState) => state.playback.current_stream);
 
     return (
@@ -13,3 +13,5 @@ export const Stream: FC = () => {
         </div>
     );
 };
+
+export default Stream;

@@ -1,8 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
-import playbackReducer from "../features/playback/playbackSlice";
-import playlistReducer from "../features/playlist/playlistSlice";
+import playbackReducer from "./playbackSlice";
+import playlistReducer from "./playlistSlice";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinTransportApi } from "../services/vibinTransport";
 import { vibinWebsocket } from "../services/vibinWebsocket";

@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-import type { MediaId } from "../app/types";
+import type { MediaId } from "../types";
 
 export const vibinTransportApi = createApi({
     reducerPath: "vibinTransportApi",

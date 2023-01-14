@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Format, Stream, Track } from "../../app/types";
+import { Format, Stream, Track } from "../types";
 
 /**
  * The Playback slice is intended to contain information about the current playback status of the

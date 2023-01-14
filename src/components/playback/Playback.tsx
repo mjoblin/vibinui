@@ -1,9 +1,9 @@
-import React from "react";
+import React, { FC } from "react";
 
-import type { RootState } from "../../app/store";
+import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 
-export function Playback() {
+const Playback: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const audioSources = useAppSelector((state: RootState) => state.playback.audio_sources);
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
@@ -28,3 +28,5 @@ export function Playback() {
         </div>
     );
 }
+
+export default Playback;

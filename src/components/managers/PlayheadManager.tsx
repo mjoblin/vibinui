@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import type { RootState } from "../../app/store";
+import type { RootState } from "../../app/store/store";
 import { useAppSelector, useInterval } from "../../app/hooks";
-import { setPlayheadPositionNormalized } from "../playback/playbackSlice";
+import { setPlayheadPositionNormalized } from "../../app/store/playbackSlice";
 
 const PLAYHEAD_UPDATE_INTERVAL = 250;
 
@@ -32,7 +32,7 @@ export const normalizePosition = (currentPosition: number, trackDuration: number
  *
  * @constructor
  */
-export function PlayheadManager() {
+const PlayheadManager: FC = () => {
     const dispatch = useDispatch();
 
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
@@ -66,3 +66,5 @@ export function PlayheadManager() {
 
     return <></>;
 }
+
+export default PlayheadManager;

@@ -1,8 +1,8 @@
-import * as React from "react";
+import React, { FC } from "react";
 
 import { PlaylistEntry } from "../../app/types";
 import { useAppSelector } from "../../app/hooks";
-import { RootState } from "../../app/store";
+import { RootState } from "../../app/store/store";
 
 /**
  * Play Now (Inserts Track or Album after current Track in Playlist, and plays)
@@ -14,7 +14,7 @@ import { RootState } from "../../app/store";
  * @constructor
  */
 
-export function Playlist() {
+const Playlist:FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
 
     return (
@@ -39,3 +39,5 @@ export function Playlist() {
         </div>
     );
 }
+
+export default Playlist;

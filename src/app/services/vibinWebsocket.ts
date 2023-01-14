@@ -13,9 +13,9 @@ import {
     setPlayheadPosition,
     setRepeat,
     setShuffle,
-} from "../features/playback/playbackSlice";
-import { setCurrentTrackIndex, setEntries } from "../features/playlist/playlistSlice";
-import { RootState } from "../app/store";
+} from "../store/playbackSlice";
+import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
+import { RootState } from "../store/store";
 
 const MAX_MESSAGE_COUNT = 10;
 
@@ -231,7 +231,7 @@ function messageHandler(
             // Set stream information.
             const streamInfo = stateVars.vibin[streamerName]?.current_playback_details?.stream;
 
-            updateAppStateIfChanged(
+            streamInfo && updateAppStateIfChanged(
                 setCurrentStream.type,
                 {
                     type: streamInfo.type,

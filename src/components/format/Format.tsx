@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 
-import type { RootState } from "../../app/store";
+import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
-import { FieldValueList } from "../../components/FieldValueList";
+import FieldValueList from "../fieldValueList/FieldValueList";
 
-export const Format: FC = () => {
+const Format: FC = () => {
     const currentFormat = useAppSelector((state: RootState) => state.playback.current_format);
 
     return (
@@ -13,3 +13,5 @@ export const Format: FC = () => {
         </div>
     );
 };
+
+export default Format;

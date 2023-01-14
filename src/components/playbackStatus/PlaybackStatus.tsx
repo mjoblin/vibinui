@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 
-import type { RootState } from "../../app/store";
+import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
-import { FieldValueList } from "../../components/FieldValueList";
+import FieldValueList from "../fieldValueList/FieldValueList";
 
-export const PlaybackStatus: FC = () => {
+const PlaybackStatus: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const repeat = useAppSelector((state: RootState) => state.playback.repeat);
     const shuffle = useAppSelector((state: RootState) => state.playback.shuffle);
@@ -21,3 +21,5 @@ export const PlaybackStatus: FC = () => {
 
     return <div>{<FieldValueList fieldValues={data} />}</div>;
 };
+
+export default PlaybackStatus;

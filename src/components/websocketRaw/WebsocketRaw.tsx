@@ -1,8 +1,8 @@
-import * as React from "react";
+import React, { FC } from "react";
 
-import { useGetMessagesQuery } from "../services/vibinWebsocket";
+import { useGetMessagesQuery } from "../../app/services/vibinWebsocket";
 
-export function WebsocketRaw() {
+const WebsocketRaw: FC = () => {
     const { data, error, isLoading } = useGetMessagesQuery();
 
     return (
@@ -17,3 +17,5 @@ export function WebsocketRaw() {
         </div>
     );
 }
+
+export default WebsocketRaw;

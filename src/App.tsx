@@ -1,34 +1,27 @@
-import { MantineProvider } from "@mantine/core";
+import React, { useState } from "react";
+import { Provider } from "react-redux";
+import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 
-import { Albums } from "./features/albums/Albums";
-import { PlayheadManager } from "./features/app/PlayheadManager";
-import { WebsocketManager } from "./features/app/WebsocketManager";
-import { Format } from "./features/format/Format";
-import { Playback } from "./features/playback/Playback";
-import { PlaybackStatus } from "./features/playbackStatus/PlaybackStatus";
-import { Playlist } from "./features/playlist/Playlist";
-import { Stream } from "./features/stream/Stream";
-import { Track } from "./features/track/Track";
-
-import "./App.css";
+import { store } from "./app/store/store";
+import RootLayout from "./components/layout/RootLayout";
 
 export default function App() {
-    return (
-        <MantineProvider withGlobalStyles withNormalizeCSS>
-            <div className="App">
-                <PlayheadManager />
-                <WebsocketManager />
+    const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
 
-                <Playback />
-                <Albums />
-                <Playlist />
-                <div style={{display: "flex", gap: "10px", flexDirection: "column"}}>
-                    <Track />
-                    <Format />
-                    <Stream />
-                    <PlaybackStatus />
-                </div>
-            </div>
-        </MantineProvider>
+    const toggleColorScheme = (value?: ColorScheme) =>
+        setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+
+    return (
+        <Provider store={store}>
+            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+                <MantineProvider
+                    theme={{ colorScheme, loader: "dots" }}
+                    withGlobalStyles
+                    withNormalizeCSS
+                >
+                    <RootLayout />
+                </MantineProvider>
+            </ColorSchemeProvider>
+        </Provider>
     );
 }
