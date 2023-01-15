@@ -4,6 +4,8 @@ import { Box, createStyles, Group, Header } from "@mantine/core";
 
 import VibinLogo from "./VibinLogo";
 
+const NAV_HEIGHT = 60;
+
 const useStyles = createStyles((theme) => ({
     link: {
         display: "flex",
@@ -30,8 +32,7 @@ const useStyles = createStyles((theme) => ({
     },
 
     active: {
-        backgroundColor:
-                theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
     },
 }));
 
@@ -39,7 +40,7 @@ type NavItemProps = {
     title: string;
     target: string;
     active?: boolean;
-}
+};
 
 const NavItem: FC<NavItemProps> = ({ title, target }) => {
     const { pathname } = useLocation();
@@ -58,8 +59,13 @@ const NavItem: FC<NavItemProps> = ({ title, target }) => {
 
 const NavigationBar: FC = () => {
     return (
-        <Box pb={115} sx={{ zIndex: 999 }}>
-            <Header fixed={true} height={60} px="md" sx={{ borderBottom: "1px solid #101010" }}>
+        <Box pb={NAV_HEIGHT} sx={{ zIndex: 999 }}>
+            <Header
+                fixed={true}
+                height={NAV_HEIGHT}
+                px="md"
+                sx={{ borderBottom: "1px solid #101010" }}
+            >
                 <Group position="apart" sx={{ height: "100%" }}>
                     <VibinLogo />
 
