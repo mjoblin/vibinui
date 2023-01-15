@@ -1,0 +1,79 @@
+import React, { FC } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Box, createStyles, Group, Header } from "@mantine/core";
+
+import VibinLogo from "./VibinLogo";
+
+const useStyles = createStyles((theme) => ({
+    link: {
+        display: "flex",
+        alignItems: "center",
+        height: "100%",
+        paddingLeft: theme.spacing.md,
+        paddingRight: theme.spacing.md,
+        textDecoration: "none",
+        color: theme.colorScheme === "dark" ? theme.white : theme.black,
+        fontWeight: 500,
+        fontSize: theme.fontSizes.sm,
+
+        [theme.fn.smallerThan("sm")]: {
+            height: 42,
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+        },
+
+        ...theme.fn.hover({
+            backgroundColor:
+                theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+        }),
+    },
+
+    active: {
+        backgroundColor:
+                theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[0],
+    },
+}));
+
+type NavItemProps = {
+    title: string;
+    target: string;
+    active?: boolean;
+}
+
+const NavItem: FC<NavItemProps> = ({ title, target }) => {
+    const { pathname } = useLocation();
+    const { classes } = useStyles();
+
+    return (
+        <Box
+            component={Link}
+            to={`/${target}`}
+            className={`${classes.link} ${pathname === `/${target}` ? classes.active : ""}`}
+        >
+            {title}
+        </Box>
+    );
+};
+
+const NavigationBar: FC = () => {
+    return (
+        <Box pb={115} sx={{ zIndex: 999 }}>
+            <Header fixed={true} height={60} px="md" sx={{ borderBottom: "1px solid #101010" }}>
+                <Group position="apart" sx={{ height: "100%" }}>
+                    <VibinLogo />
+
+                    <Group sx={{ height: "100%" }} spacing={0}>
+                        <NavItem title="Browse" target="browse" />
+                        <NavItem title="Playlist" target="playlist" />
+                        <NavItem title="Currently Playing" target="current" />
+                    </Group>
+
+                    <Group>Controls</Group>
+                </Group>
+            </Header>
+        </Box>
+    );
+};
+
+export default NavigationBar;
