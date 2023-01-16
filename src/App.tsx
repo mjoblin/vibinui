@@ -30,7 +30,7 @@ export default function App() {
                         withNormalizeCSS
                     >
                         <WebsocketManager />
-                        <PlayheadManager />
+                        <PlayheadManager />  {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
 
                         <Routes>
                             <Route path="/" element={<RootLayout />}>

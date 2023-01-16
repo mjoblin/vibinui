@@ -12,6 +12,8 @@ export type PlayStatus = "buffering" | "play" | "pause" | "ready";
 
 export type AudioSource = string;
 
+// TODO: Rename top-level state fields from snake_case to camelCase.
+
 export interface PlaybackState {
     play_status: PlayStatus | undefined;
     audio_sources: {    // TODO: Audio Sources doesn't belong in current playback slice

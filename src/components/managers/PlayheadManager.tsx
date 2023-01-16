@@ -34,11 +34,8 @@ export const normalizePosition = (currentPosition: number, trackDuration: number
  */
 const PlayheadManager: FC = () => {
     const dispatch = useDispatch();
-
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
-
-    // const [trackStartTime, setTrackStartTime] = useState<number | undefined>(undefined);
     const [lastBackendSyncTime, setLastBackendSyncTime] = useState<number>(Date.now());
 
     // Resync to updates coming in from the backend.
