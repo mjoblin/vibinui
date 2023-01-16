@@ -1,11 +1,11 @@
 import React, { FC } from "react";
 
-import Albums from "../albums/Albums";
+import AlbumWall from "../albums/AlbumWall";
 
 const BrowseScreen: FC = () => {
     return (
         <>
-            <Albums />
+            <AlbumWall />
         </>
     );
 };
