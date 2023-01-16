@@ -1,8 +1,21 @@
 import React, { FC } from "react";
-import { Text } from "@mantine/core";
+import { Flex, Text, ThemeIcon } from "@mantine/core";
+import { IconPlant2 } from "@tabler/icons";
+
+import CustomFonts from "../customFonts/CustomFonts";
 
 const VibinLogo: FC = () => {
-    return <Text size="md" weight={600} color="olive">Vibin</Text>
-}
+    return (
+        <Flex align="center" gap={8}>
+            <CustomFonts />
+            <ThemeIcon size="lg" radius="xl" color="green">
+                <IconPlant2 size="20" />
+            </ThemeIcon>
+            <Text size="lg" weight={600} sx={{ fontFamily: "Kanit" }}>
+                vibin
+            </Text>
+        </Flex>
+    );
+};
 
 export default VibinLogo;
