@@ -50,6 +50,10 @@ export const playbackSlice = createSlice({
     name: "playback",
     initialState,
     reducers: {
+        restartPlayhead: (state) => {
+            state.playhead.position = 0;
+            state.playhead.position_normalized = 0;
+        },
         setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource }>) => {
             state.audio_sources = action.payload;
         },
@@ -68,10 +72,6 @@ export const playbackSlice = createSlice({
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {
             state.play_status = action.payload;
         },
-        restartPlayhead: (state) => {
-            state.playhead.position = 0;
-            state.playhead.position_normalized = 0;
-        },
         setPlayheadPosition: (state, action: PayloadAction<number>) => {
             state.playhead.position = action.payload;
         },
@@ -89,13 +89,13 @@ export const playbackSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+    restartPlayhead,
     setAudioSources,
     setCurrentAudioSource,
     setCurrentFormat,
     setCurrentStream,
     setCurrentTrack,
     setPlayStatus,
-    restartPlayhead,
     setPlayheadPosition,
     setPlayheadPositionNormalized,
     setRepeat,

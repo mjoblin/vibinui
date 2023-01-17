@@ -9,6 +9,7 @@ const CurrentlyPlaying: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentFormat = useAppSelector((state: RootState) => state.playback.current_format);
 
+    // TODO: Probably want to make this nicer overall.
     if (!currentTrack) {
         return <Text>No Track</Text>;
     }
@@ -20,30 +21,28 @@ const CurrentlyPlaying: FC = () => {
 
                 {/* TODO: Change hardcoded rgb value to an app-defined theme color */}
                 <Text size="xs" color="#717171" sx={{ lineHeight: 1.25, fontSize: 10 }}>
-                    {currentFormat?.encoding || "unknown encoding"}
+                    {currentFormat?.encoding || "unknown codec"}
                 </Text>
             </Flex>
 
-            {/*<Paper radius="sm" sx={{ padding: 5, backgroundColor: "#25262b" }} withBorder>*/}
-            {/*<Paper radius="sm" sx={{ padding: 5 }} withBorder>*/}
-                <Flex direction="row" align="center" gap={10}>
-                    <Image
-                        src={currentTrack.art_url}
-                        radius="sm"
-                        width={35}
-                        height={35}
-                        fit="scale-down"
-                    />
-                    <Flex direction="column" align="start">
-                        <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
-                            {currentTrack.title}
-                        </Text>
-                        <Text size="xs" sx={{ lineHeight: 1.25 }}>
-                            {currentTrack.artist} - {currentTrack.album}
-                        </Text>
-                    </Flex>
+            <Flex direction="row" align="center" gap={10}>
+                {/* Make this look nicer when there's no image to display */}
+                <Image
+                    src={currentTrack.art_url}
+                    radius="sm"
+                    width={35}
+                    height={35}
+                    fit="scale-down"
+                />
+                <Flex direction="column" align="start">
+                    <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {currentTrack.title}
+                    </Text>
+                    <Text size="xs" sx={{ lineHeight: 1.25 }}>
+                        {currentTrack.artist} - {currentTrack.album}
+                    </Text>
                 </Flex>
-            {/*</Paper>*/}
+            </Flex>
         </Flex>
     );
 };

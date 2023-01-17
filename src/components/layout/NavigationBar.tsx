@@ -4,6 +4,7 @@ import { Box, createStyles, Group, Header } from "@mantine/core";
 
 import VibinLogo from "./VibinLogo";
 import CurrentlyPlaying from "../currentlyPlaying/CurrentlyPlaying";
+import TransportControls from "../currentlyPlaying/TransportControls";
 
 const NAV_HEIGHT = 60;
 
@@ -67,19 +68,24 @@ const NavigationBar: FC = () => {
                 px="md"
                 sx={{
                     borderBottom: "1px solid #282828",
-                    boxShadow: "0px 5px 10px 0px rgb(0 0 0 / 20%)",  // TODO: Make this look better
+                    boxShadow: "0px 5px 10px 0px rgb(0 0 0 / 20%)", // TODO: Make this look better
                 }}
             >
                 <Group position="apart" sx={{ height: "100%" }}>
                     <VibinLogo />
 
-                    <Group sx={{ height: "100%" }} spacing={0}>
-                        <NavItem title="Browse" target="browse" />
-                        <NavItem title="Playlist" target="playlist" />
-                        <NavItem title="Currently Playing" target="current" />
-                    </Group>
+                    <Group sx={{ height: "100%", flexGrow: 1, gap: 75, paddingLeft: 50, paddingRight: 50 }}>
+                        <Group sx={{ height: "100%" }} spacing={0}>
+                            <NavItem title="Browse" target="browse" />
+                            <NavItem title="Playlist" target="playlist" />
+                            <NavItem title="Currently Playing" target="current" />
+                        </Group>
 
-                    <CurrentlyPlaying />
+                        <Group spacing="lg" sx={{ flexGrow: 1 }}>
+                            <TransportControls />
+                            <CurrentlyPlaying />
+                        </Group>
+                    </Group>
 
                     <Group>Controls</Group>
                 </Group>
