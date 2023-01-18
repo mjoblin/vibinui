@@ -36,10 +36,9 @@ export const vibinPlaylistApi = createApi({
             //  (at the expense of then having both an "add..." and an "insert..." way to add
             //  media to the playlist, which might feel odd as a user).
             query: ({ mediaId, action = "REPLACE", insertIndex }) => ({
-                url:
-                    `modify/${mediaId}?action=${action}` + action === "INSERT"
-                        ? `insert_index=${insertIndex}`
-                        : "",
+                url: `modify/${mediaId}?action=${action}${
+                    action === "INSERT" ? `insert_index=${insertIndex}` : ""
+                }`,
                 method: "POST",
             }),
         }),
