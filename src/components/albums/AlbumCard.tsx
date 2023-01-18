@@ -1,6 +1,5 @@
 import React, { FC, useState } from "react";
 import { Box, Card, Center, createStyles, Flex, Image, Menu, Stack, Text } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
 import { IconDotsVertical, IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
@@ -46,17 +45,18 @@ const useMenuStyles = createStyles((theme) => ({
 
 type AlbumProps = {
     album: Album;
-    showDetails?: boolean;
 };
 
 // TODO: Image fit is "cover", which will effectively zoom in on non-square album art. Could add
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-const AlbumCard: FC<AlbumProps> = ({ album, showDetails = false }) => {
+const AlbumCard: FC<AlbumProps> = ({ album }) => {
     const [showPlayButton, setShowPlayButton] = useState<boolean>(false);
     const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
-    const { coverSize } = useAppSelector((state: RootState) => state.userSettings.browse);
+    const { coverSize, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.browse
+    );
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
@@ -111,63 +111,74 @@ const AlbumCard: FC<AlbumProps> = ({ album, showDetails = false }) => {
                 </Center>
             </Card.Section>
 
-            <Flex pt={7} justify="space-between">
-                <Stack spacing={0}>
-                    <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
-                        {album.title}
-                    </Text>
-                    <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
-                        {album.artist}
-                    </Text>
-                </Stack>
+            {showDetails && (
+                <Flex pt={7} justify="space-between">
+                    <Stack spacing={0}>
+                        <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
+                            {album.title}
+                        </Text>
+                        <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
+                            {album.artist}
+                        </Text>
+                    </Stack>
 
-                <Box>
-                    <Menu
-                        classNames={menuStyles.classes}
-                        position="top"
-                        withinPortal={true}
-                        withArrow
-                    >
-                        <Menu.Target>
-                            <Box className={classes.pointerOnHover}>
-                                <IconDotsVertical size={15} />
-                            </Box>
-                        </Menu.Target>
+                    <Box>
+                        <Menu
+                            classNames={menuStyles.classes}
+                            position="top"
+                            withinPortal={true}
+                            withArrow
+                        >
+                            <Menu.Target>
+                                <Box className={classes.pointerOnHover}>
+                                    <IconDotsVertical size={15} />
+                                </Box>
+                            </Menu.Target>
 
-                        <Menu.Dropdown>
-                            <Menu.Label>Playlist</Menu.Label>
-                            <Menu.Item
-                                onClick={() => {
-                                    addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
-                                }}
-                            >
-                                Append to end
-                            </Menu.Item>
-                            <Menu.Item
-                                onClick={() => {
-                                    addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" });
-                                }}
-                            >
-                                Replace
-                            </Menu.Item>
-                            <Menu.Item
-                                onClick={() => {
-                                    addMediaToPlaylist({ mediaId: album.id, action: "PLAY_NOW" });
-                                }}
-                            >
-                                Insert and play now
-                            </Menu.Item>
-                            <Menu.Item
-                                onClick={() => {
-                                    addMediaToPlaylist({ mediaId: album.id, action: "PLAY_NEXT" });
-                                }}
-                            >
-                                Insert and play next
-                            </Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-                </Box>
-            </Flex>
+                            <Menu.Dropdown>
+                                <Menu.Label>Playlist</Menu.Label>
+                                <Menu.Item
+                                    onClick={() => {
+                                        addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
+                                    }}
+                                >
+                                    Append to end
+                                </Menu.Item>
+                                <Menu.Item
+                                    onClick={() => {
+                                        addMediaToPlaylist({
+                                            mediaId: album.id,
+                                            action: "REPLACE",
+                                        });
+                                    }}
+                                >
+                                    Replace
+                                </Menu.Item>
+                                <Menu.Item
+                                    onClick={() => {
+                                        addMediaToPlaylist({
+                                            mediaId: album.id,
+                                            action: "PLAY_NOW",
+                                        });
+                                    }}
+                                >
+                                    Insert and play now
+                                </Menu.Item>
+                                <Menu.Item
+                                    onClick={() => {
+                                        addMediaToPlaylist({
+                                            mediaId: album.id,
+                                            action: "PLAY_NEXT",
+                                        });
+                                    }}
+                                >
+                                    Insert and play next
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </Box>
+                </Flex>
+            )}
         </Card>
     );
 };

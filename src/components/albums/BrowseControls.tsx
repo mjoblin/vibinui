@@ -1,18 +1,24 @@
 import React, { FC } from "react";
-import { Box, Button, Flex, Slider, Stack, Text, TextInput } from "@mantine/core";
+import { Box, Button, Checkbox, Flex, Slider, Stack, Text, TextInput } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     resetBrowseToDefaults,
     setBrowseCoverGap,
     setBrowseCoverSize,
+    setBrowseShowDetails,
     setFilterText,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 
 const BrowseControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { coverSize, coverGap } = useAppSelector((state: RootState) => state.userSettings.browse);
+    const { coverSize, coverGap, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.browse
+    );
+
+    // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
+    //  the tops of components to get them to look OK.
 
     return (
         <Flex gap={25}>
@@ -55,6 +61,14 @@ const BrowseControls: FC = () => {
                     onChange={(value) => dispatch(setBrowseCoverGap(value))}
                 />
             </Stack>
+
+            <Box pt={8} sx={{ alignSelf: "center" }}>
+                <Checkbox
+                    label="Show details"
+                    checked={showDetails}
+                    onChange={(event) => dispatch(setBrowseShowDetails(!showDetails))}
+                />
+            </Box>
 
             {/* Reset to defaults */}
             <Box sx={{ alignSelf: "center" }}>
