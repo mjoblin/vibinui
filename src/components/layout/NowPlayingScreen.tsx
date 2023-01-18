@@ -2,18 +2,18 @@ import React, { FC } from "react";
 
 import { Space } from "@mantine/core";
 
-import CurrentlyPlaying from "../currentlyPlaying/CurrentlyPlaying";
+import NowPlaying from "../currentlyPlaying/NowPlaying";
 import Track from "../track/Track";
 import Playback from "../playback/Playback";
 import PlaybackStatus from "../playbackStatus/PlaybackStatus";
 import Format from "../format/Format";
 import Stream from "../stream/Stream";
 
-const CurrentlyPlayingScreen: FC = () => {
+const NowPlayingScreen: FC = () => {
         return (
         <>
             <Track />
-            <CurrentlyPlaying />
+            <NowPlaying />
 
             <Space />
 
@@ -26,4 +26,4 @@ const CurrentlyPlayingScreen: FC = () => {
     );
 }
 
-export default CurrentlyPlayingScreen;
+export default NowPlayingScreen;

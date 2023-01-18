@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Box, createStyles, Group, Header } from "@mantine/core";
 
 import VibinLogo from "./VibinLogo";
-import CurrentlyPlaying from "../currentlyPlaying/CurrentlyPlaying";
+import NowPlaying from "../currentlyPlaying/NowPlaying";
 import TransportControls from "../currentlyPlaying/TransportControls";
 
 const NAV_HEIGHT = 60;
@@ -78,12 +78,12 @@ const NavigationBar: FC = () => {
                         <Group sx={{ height: "100%" }} spacing={0}>
                             <NavItem title="Browse" target="browse" />
                             <NavItem title="Playlist" target="playlist" />
-                            <NavItem title="Currently Playing" target="current" />
+                            <NavItem title="Now Playing" target="playing" />
                         </Group>
 
                         <Group spacing="lg" sx={{ flexGrow: 1 }}>
                             <TransportControls />
-                            <CurrentlyPlaying />
+                            <NowPlaying />
                         </Group>
                     </Group>
 

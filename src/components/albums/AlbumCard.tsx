@@ -16,11 +16,12 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: "#151515",
         opacity: 0,
         "&:hover": {
+            opacity: 1,
             cursor: "pointer",
         },
     },
     showPlayButton: {
-        opacity: 0.9,
+        opacity: 0.75,
         transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
     },
     pointerOnHover: {

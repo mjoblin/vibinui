@@ -37,7 +37,7 @@ const AlbumWall: FC = () => {
                         );
                     })
                     // TODO: Fix "Various" (unknown artist)
-                    // .sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various"))
+                    .sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various"))
                     .map((album) => <AlbumCard key={album.id} album={album} />)}
         </Box>
     );

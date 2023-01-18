@@ -5,7 +5,7 @@ import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import Playhead from "./Playhead";
 
-const CurrentlyPlaying: FC = () => {
+const NowPlaying: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentFormat = useAppSelector((state: RootState) => state.playback.current_format);
 
@@ -47,4 +47,4 @@ const CurrentlyPlaying: FC = () => {
     );
 };
 
-export default CurrentlyPlaying;
+export default NowPlaying;

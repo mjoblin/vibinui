@@ -18,8 +18,11 @@ import { RootState } from "../../app/store/store";
 
 const useStyles = createStyles((theme) => ({
     transportControl: {
+        opacity: 0.7,
+        transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
         "&:hover": {
             cursor: "pointer",
+            opacity: 1,
         },
     },
 }));

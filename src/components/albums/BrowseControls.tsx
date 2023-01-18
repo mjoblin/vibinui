@@ -13,7 +13,7 @@ import { RootState } from "../../app/store/store";
 
 const BrowseControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { coverSize, coverGap, showDetails } = useAppSelector(
+    const {  coverSize, coverGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
     );
 
@@ -26,6 +26,7 @@ const BrowseControls: FC = () => {
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
+                value={filterText}
                 onChange={(event) => dispatch(setFilterText(event.target.value))}
             />
 
@@ -33,7 +34,7 @@ const BrowseControls: FC = () => {
             <Stack spacing={5} pt={1}>
                 {/* TODO: Figure out how to properly get <Text> to match the <TextInput> label */}
                 <Text size="sm" sx={{ fontWeight: 500 }}>
-                    Cover size
+                    Album size
                 </Text>
                 <Slider
                     label={null}

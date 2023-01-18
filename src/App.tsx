@@ -5,7 +5,7 @@ import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core
 
 import { store } from "./app/store/store";
 import BrowseScreen from "./components/layout/BrowseScreen";
-import CurrentlyPlayingScreen from "./components/layout/CurrentlyPlayingScreen";
+import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import RootLayout from "./components/layout/RootLayout";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
@@ -36,7 +36,7 @@ export default function App() {
                             <Route path="/" element={<RootLayout />}>
                                 <Route path="browse" element={<BrowseScreen />} />
                                 <Route path="playlist" element={<PlaylistScreen />} />
-                                <Route path="current" element={<CurrentlyPlayingScreen />} />
+                                <Route path="playing" element={<NowPlayingScreen />} />
                             </Route>
                         </Routes>
                     </MantineProvider>
