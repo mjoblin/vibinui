@@ -1,6 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export const minCoverGap = 0;
+export const maxCoverGap = 50;
+export const minCoverSize = 100;
+export const maxCoverSize = 300;
+
 const DEFAULT_BROWSE_FILTER_TEXT = "";
 const DEFAULT_BROWSE_COVER_SIZE = 200;
 const DEFAULT_BROWSE_COVER_GAP = 25;

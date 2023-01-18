@@ -1,9 +1,34 @@
 import React, { FC } from "react";
-import { Flex, Image, Text } from "@mantine/core";
+import { Badge, Flex, Image, Text } from "@mantine/core";
 
+import type { Format } from "../../app/types";
 import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import Playhead from "./Playhead";
+
+/**
+ *
+ * @param format
+ */
+const codecDisplay = (format: Format): string => {
+    const bitDepth = format.bit_depth;
+
+    if (format.encoding) {
+        return format.encoding;
+    }
+
+    if (format.codec && format.sample_rate) {
+        return `${format.sample_rate / 1000}kHz${bitDepth ? `/${bitDepth}bit` : ""} ${
+            format.codec
+        }`;
+    }
+
+    if (format.codec) {
+        return format.codec;
+    }
+
+    return "unknown codec";
+};
 
 const NowPlaying: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
@@ -19,10 +44,27 @@ const NowPlaying: FC = () => {
             <Flex direction="column" gap={5} align="flex-end">
                 <Playhead />
 
-                {/* TODO: Change hardcoded rgb value to an app-defined theme color */}
-                <Text size="xs" color="#717171" sx={{ lineHeight: 1.25, fontSize: 10 }}>
-                    {currentFormat?.encoding || "unknown codec"}
-                </Text>
+                <Flex justify="space-between" sx={{ width: "100%" }}>
+                    <Flex gap={3}>
+                        {currentFormat?.lossless && (
+                            <Badge size="xs" variant="light" styles={{ root: { fontSize: 7 } }}>
+                                lossless
+                            </Badge>
+                        )}
+
+                        {/* TODO: What does .mqa look like for mqa tracks? Should more information be displayed? */}
+                        {currentFormat?.mqa !== "none" && (
+                            <Badge size="xs" variant="light" styles={{ root: { fontSize: 7 } }}>
+                                mqa
+                            </Badge>
+                        )}
+                    </Flex>
+
+                    {/* TODO: Change hardcoded rgb value to an app-defined theme color */}
+                    <Text size="xs" pt={2} color="#717171" sx={{ lineHeight: 1.25, fontSize: 10 }}>
+                        {currentFormat ? codecDisplay(currentFormat) : "unknown codec"}
+                    </Text>
+                </Flex>
             </Flex>
 
             <Flex direction="row" align="center" gap={10}>

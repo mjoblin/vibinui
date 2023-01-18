@@ -3,6 +3,10 @@ import { Box, Button, Checkbox, Flex, Slider, Stack, Text, TextInput } from "@ma
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
+    minCoverGap,
+    maxCoverGap,
+    minCoverSize,
+    maxCoverSize,
     resetBrowseToDefaults,
     setBrowseCoverGap,
     setBrowseCoverSize,
@@ -13,7 +17,7 @@ import { RootState } from "../../app/store/store";
 
 const BrowseControls: FC = () => {
     const dispatch = useAppDispatch();
-    const {  coverSize, coverGap, filterText, showDetails } = useAppSelector(
+    const { coverSize, coverGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
     );
 
@@ -38,8 +42,8 @@ const BrowseControls: FC = () => {
                 </Text>
                 <Slider
                     label={null}
-                    min={100}
-                    max={300}
+                    min={minCoverSize}
+                    max={maxCoverSize}
                     size={5}
                     sx={{ width: 200 }}
                     value={coverSize}
@@ -54,8 +58,8 @@ const BrowseControls: FC = () => {
                 </Text>
                 <Slider
                     label={null}
-                    min={0}
-                    max={50}
+                    min={minCoverGap}
+                    max={maxCoverGap}
                     size={5}
                     sx={{ width: 200 }}
                     value={coverGap}
@@ -71,17 +75,35 @@ const BrowseControls: FC = () => {
                 />
             </Box>
 
-            {/* Reset to defaults */}
-            <Box sx={{ alignSelf: "center" }}>
-                <Button
-                    compact
-                    variant="outline"
-                    size="xs"
-                    onClick={() => dispatch(resetBrowseToDefaults())}
-                >
-                    Reset
-                </Button>
-            </Box>
+            <Flex gap={10}>
+                {/* Reset to defaults */}
+                <Box sx={{ alignSelf: "center" }}>
+                    <Button
+                        compact
+                        variant="outline"
+                        size="xs"
+                        onClick={() => dispatch(resetBrowseToDefaults())}
+                    >
+                        Reset
+                    </Button>
+                </Box>
+
+                {/* Show a "tiny wall" preset */}
+                <Box sx={{ alignSelf: "center" }}>
+                    <Button
+                        compact
+                        variant="outline"
+                        size="xs"
+                        onClick={() => {
+                            dispatch(setBrowseCoverGap(minCoverGap));
+                            dispatch(setBrowseCoverSize(minCoverSize));
+                            dispatch(setBrowseShowDetails(false));
+                        }}
+                    >
+                        Tiny Wall
+                    </Button>
+                </Box>
+            </Flex>
         </Flex>
     );
 };
