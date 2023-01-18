@@ -4,6 +4,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
 import { vibinBaseApi } from "../services/vibinBase";
+import { vibinPlaylistApi } from "../services/vibinPlaylist";
 import { vibinTransportApi } from "../services/vibinTransport";
 import { vibinWebsocket } from "../services/vibinWebsocket";
 
@@ -12,12 +13,14 @@ export const store = configureStore({
         playback: playbackReducer,
         playlist: playlistReducer,
         [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
+        [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
         [vibinTransportApi.reducerPath]: vibinTransportApi.reducer,
         [vibinWebsocket.reducerPath]: vibinWebsocket.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
             vibinBaseApi.middleware,
+            vibinPlaylistApi.middleware,
             vibinTransportApi.middleware,
             vibinWebsocket.middleware
         ),
