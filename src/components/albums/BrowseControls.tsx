@@ -24,7 +24,7 @@ const BrowseControls: FC = () => {
             />
 
             {/* Cover size */}
-            <Stack spacing="xs">
+            <Stack spacing={5} pt={1}>
                 {/* TODO: Figure out how to properly get <Text> to match the <TextInput> label */}
                 <Text size="sm" sx={{ fontWeight: 500 }}>
                     Cover size
@@ -33,6 +33,7 @@ const BrowseControls: FC = () => {
                     label={null}
                     min={100}
                     max={300}
+                    size={5}
                     sx={{ width: 200 }}
                     value={coverSize}
                     onChange={(value) => dispatch(setBrowseCoverSize(value))}
@@ -40,7 +41,7 @@ const BrowseControls: FC = () => {
             </Stack>
 
             {/* Cover gap */}
-            <Stack spacing="xs">
+            <Stack spacing={5} pt={1}>
                 <Text size="sm" sx={{ fontWeight: 500 }}>
                     Gap
                 </Text>
@@ -48,6 +49,7 @@ const BrowseControls: FC = () => {
                     label={null}
                     min={0}
                     max={50}
+                    size={5}
                     sx={{ width: 200 }}
                     value={coverGap}
                     onChange={(value) => dispatch(setBrowseCoverGap(value))}
