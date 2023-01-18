@@ -153,7 +153,7 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
                                         });
                                     }}
                                 >
-                                    Replace
+                                    Replace and play now
                                 </Menu.Item>
                                 <Menu.Item
                                     onClick={() => {
