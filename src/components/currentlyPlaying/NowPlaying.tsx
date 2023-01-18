@@ -7,22 +7,26 @@ import { useAppSelector } from "../../app/hooks";
 import Playhead from "./Playhead";
 
 /**
+ * Return a string describing the provided encoding format.
  *
  * @param format
  */
 const codecDisplay = (format: Format): string => {
     const bitDepth = format.bit_depth;
 
+    // First defer to a predefined "encoding" field.
     if (format.encoding) {
         return format.encoding;
     }
 
+    // Attempt to build an encoding string from codec, sample_rate, and (optional) bit_depth.
     if (format.codec && format.sample_rate) {
         return `${format.sample_rate / 1000}kHz${bitDepth ? `/${bitDepth}bit` : ""} ${
             format.codec
         }`;
     }
 
+    // Fall back on just returning a codec field if there is one.
     if (format.codec) {
         return format.codec;
     }
