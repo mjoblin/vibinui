@@ -49,7 +49,7 @@ const BrowseControls: FC = () => {
             {/* Cover gap */}
             <Stack spacing={5} pt={1}>
                 <Text size="sm" sx={{ fontWeight: 500 }}>
-                    Gap
+                    Separation
                 </Text>
                 <Slider
                     label={null}

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Group } from "@mantine/core";
+import { createStyles, Group } from "@mantine/core";
 import {
     IconPlayerPause,
     IconPlayerPlay,
@@ -16,12 +16,21 @@ import {
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 
+const useStyles = createStyles((theme) => ({
+    transportControl: {
+        "&:hover": {
+            cursor: "pointer",
+        },
+    },
+}));
+
 const TransportControls: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [nextTrack] = useNextTrackMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [previousTrack] = usePreviousTrackMutation();
+    const { classes } = useStyles();
 
     // TODO: Give some hover feedback (perhaps lighten the icon background).
     // TODO: Make the default color a little lighter (pure white is too bright).
@@ -30,8 +39,10 @@ const TransportControls: FC = () => {
     return (
         <Group spacing="sm">
             <IconPlayerTrackPrev
+                className={classes.transportControl}
                 size={20}
                 stroke={1}
+                color="white"
                 fill="white"
                 onClick={() => previousTrack()}
             />
@@ -41,30 +52,59 @@ const TransportControls: FC = () => {
             ) : ["play", "buffering"].includes(playStatus) ? (
                 playStatus === "play" ? (
                     <IconPlayerPause
+                        className={classes.transportControl}
                         size={20}
                         stroke={1}
-                        fill={"white"}
+                        color="white"
+                        fill="white"
                         onClick={() => pausePlayback()}
                     />
                 ) : (
-                    <IconPlayerPause size={20} stroke={1} color="grey" fill="grey" />
+                    <IconPlayerPause
+                        className={classes.transportControl}
+                        size={20}
+                        stroke={1}
+                        color="grey"
+                        fill="grey"
+                    />
                 )
             ) : ["pause", "ready"].includes(playStatus) ? (
                 playStatus === "pause" ? (
                     <IconPlayerPlay
+                        className={classes.transportControl}
                         size={20}
                         stroke={1}
+                        color="white"
                         fill="white"
                         onClick={() => resumePlayback()}
                     />
                 ) : (
-                    <IconPlayerPlay size={20} stroke={1} color="grey" fill="grey" />
+                    <IconPlayerPlay
+                        className={classes.transportControl}
+                        size={20}
+                        stroke={1}
+                        color="grey"
+                        fill="grey"
+                    />
                 )
             ) : (
-                <IconPlayerPlay size={20} stroke={1} color="grey" fill={"white"} />
+                <IconPlayerPlay
+                    className={classes.transportControl}
+                    size={20}
+                    stroke={1}
+                    color="grey"
+                    fill="white"
+                />
             )}
 
-            <IconPlayerTrackNext size={20} stroke={1} fill={"white"} onClick={() => nextTrack()} />
+            <IconPlayerTrackNext
+                className={classes.transportControl}
+                size={20}
+                stroke={1}
+                color="white"
+                fill="white"
+                onClick={() => nextTrack()}
+            />
         </Group>
     );
 };

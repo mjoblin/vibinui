@@ -100,9 +100,9 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
                         }`}
                     >
                         <IconPlayerPlay
-                            size={35}
-                            stroke={1}
-                            fill={"white"}
+                            size={25}
+                            color="white"
+                            fill="white"
                             onClick={() =>
                                 addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })
                             }
