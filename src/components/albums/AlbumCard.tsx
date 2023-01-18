@@ -1,26 +1,14 @@
 import React, { FC, useState } from "react";
 import { Box, Card, Center, createStyles, Flex, Image, Menu, Stack, Text } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import { IconDotsVertical, IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 const useStyles = createStyles((theme) => ({
-    albumCard: {
-        width: 200,
-        border: "2px solid rgb(0, 0, 0, 0)",
-    },
-    cardPlayButtonContainer: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        height: 200,
-        width: "100%",
-        transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
-        "&:hover": {
-            backgroundColor: "rgb(0, 0, 0, 0.25)",
-        },
-    },
     cardPlayButton: {
         width: 50,
         height: 50,
@@ -68,13 +56,32 @@ type AlbumProps = {
 const AlbumCard: FC<AlbumProps> = ({ album, showDetails = false }) => {
     const [showPlayButton, setShowPlayButton] = useState<boolean>(false);
     const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
+    const { coverSize } = useAppSelector((state: RootState) => state.userSettings.browse);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
+
+    const { classes: dynamicClasses } = createStyles((theme) => ({
+        albumCard: {
+            width: coverSize,
+            border: "2px solid rgb(0, 0, 0, 0)",
+        },
+        cardPlayButtonContainer: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            height: coverSize,
+            width: "100%",
+            transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
+            "&:hover": {
+                backgroundColor: "rgb(0, 0, 0, 0.25)",
+            },
+        },
+    }))();
 
     return (
         // pr (padding-right) is smaller to allow for the right-side whitespace coming from
         // IconDotsVertical.
-        <Card radius="sm" p={7} pr={2} className={classes.albumCard}>
+        <Card radius="sm" p={7} pr={2} className={dynamicClasses.albumCard}>
             <Card.Section
                 onMouseOver={() => setShowPlayButton(true)}
                 onMouseLeave={() => setShowPlayButton(false)}
@@ -83,10 +90,10 @@ const AlbumCard: FC<AlbumProps> = ({ album, showDetails = false }) => {
                     src={album.album_art_uri}
                     alt={`${album.artist} / ${album.title}`}
                     fit="cover"
-                    width={200}
-                    height={200}
+                    width={coverSize}
+                    height={coverSize}
                 />
-                <Center className={classes.cardPlayButtonContainer}>
+                <Center className={dynamicClasses.cardPlayButtonContainer}>
                     <Center
                         className={`${classes.cardPlayButton} ${
                             showPlayButton ? classes.showPlayButton : ""

@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
+import userSettingsReducer from "./userSettingsSlice";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
 import { vibinTransportApi } from "../services/vibinTransport";
@@ -12,6 +13,7 @@ export const store = configureStore({
     reducer: {
         playback: playbackReducer,
         playlist: playlistReducer,
+        userSettings: userSettingsReducer,
         [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
         [vibinTransportApi.reducerPath]: vibinTransportApi.reducer,
