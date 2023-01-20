@@ -1,19 +1,28 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Box, Paper, Flex, Image, Stack, Text, createStyles } from "@mantine/core";
-import { IconDotsVertical } from "@tabler/icons";
 
 import { useGetTracksQuery } from "../../app/services/vibinBase";
 import { Album, Track } from "../../app/types";
 import { secstoHms } from "../../app/utils";
 import AlbumActions from "../albums/AlbumActions";
+import TrackActions from "../tracks/TrackActions";
 
-// TODO: Make this part of the theme.
+// TODO: Make these part of the theme.
 const DIMMED = "#808080";
+const HIGHLIGHT_COLOR = "#252525";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
         "&:hover": {
             cursor: "pointer",
+        },
+    },
+    highlight: {
+        backgroundColor: HIGHLIGHT_COLOR,
+    },
+    highlightOnHover: {
+        "&:hover": {
+            backgroundColor: HIGHLIGHT_COLOR,
         },
     },
 }));
@@ -23,38 +32,9 @@ type AlbumTracksProps = {
 };
 
 const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
-    // const { data, error, isLoading } = useGetTracksQuery(album.id);
+    const { data, error, isLoading } = useGetTracksQuery(album.id);
     const { classes } = useStyles();
-
-    const data = [
-        {
-            track_number: 1,
-            duration: 200,
-            album: "Album Title",
-            artist: "Artist Name",
-            title: "This is the Song Title",
-            art_url:
-                "https://img.washingtonpost.com/rw/2010-2019/WashingtonPost/2012/09/28/Style/Images/825646568796.jpg",
-        },
-        {
-            track_number: 2,
-            duration: 200,
-            album: "Album Title",
-            artist: "Artist Name",
-            title: "Song Two",
-            art_url:
-                "https://img.washingtonpost.com/rw/2010-2019/WashingtonPost/2012/09/28/Style/Images/825646568796.jpg",
-        },
-        {
-            track_number: 3,
-            duration: 200,
-            album: "Album Title",
-            artist: "Artist Name",
-            title: "The Third Song is This One",
-            art_url:
-                "https://img.washingtonpost.com/rw/2010-2019/WashingtonPost/2012/09/28/Style/Images/825646568796.jpg",
-        },
-    ];
+    const [actionsMenuOpen, setActionsMenuOpen] = useState<string | undefined>(undefined);
 
     // TODO: Add loading & error handling.
     if (!data) {
@@ -66,10 +46,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
             {/* Album details */}
             <Flex gap="md" justify="space-between">
                 <Image
-                    // src={album.album_art_uri}
-                    src={
-                        "https://img.washingtonpost.com/rw/2010-2019/WashingtonPost/2012/09/28/Style/Images/825646568796.jpg"
-                    }
+                    src={album.album_art_uri}
                     alt={`${album.artist} / ${album.title}`}
                     fit="cover"
                     width={100}
@@ -92,13 +69,28 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                     </Text>
                 </Stack>
 
-                <AlbumActions album={album} categories={["Playlist"]} />
+                <Box pr={5}>
+                    <AlbumActions album={album} categories={["Playlist"]} position="bottom" />
+                </Box>
             </Flex>
 
             {/* Track details */}
             <Stack sx={{ gap: 0 }}>
                 {data.map((track: Track) => (
-                    <Paper shadow="xs">
+                    <Paper
+                        shadow="xs"
+                        pr={5}
+                        // Highlight the track on hover. But if the actions menu is open, then keep
+                        // the selected track highlighted but don't highlight any other tracks
+                        // (until the actions menu goes away).
+                        className={
+                            actionsMenuOpen === track.id
+                                ? classes.highlight
+                                : actionsMenuOpen
+                                ? ""
+                                : classes.highlightOnHover
+                        }
+                    >
                         <Flex gap="sm" align="flex-start" justify="space-between">
                             <Flex w="1.5rem" justify="flex-end">
                                 <Text size="sm" color={DIMMED}>
@@ -131,9 +123,11 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                     {secstoHms(track.duration)}
                                 </Text>
 
-                                <Box className={classes.pointerOnHover}>
-                                    <IconDotsVertical size={15} />
-                                </Box>
+                                <TrackActions
+                                    track={track}
+                                    onOpen={() => setActionsMenuOpen(track.id!!)}
+                                    onClose={() => setActionsMenuOpen(undefined)}
+                                />
                             </Flex>
                         </Flex>
                     </Paper>

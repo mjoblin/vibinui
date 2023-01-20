@@ -1,13 +1,5 @@
 import React, { FC, useState } from "react";
-import {
-    Card,
-    Center,
-    createStyles,
-    Flex,
-    Image,
-    Stack,
-    Text,
-} from "@mantine/core";
+import { Card, Center, createStyles, Flex, Image, Stack, Text } from "@mantine/core";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
@@ -18,10 +10,10 @@ import AlbumActions from "./AlbumActions";
 
 const useStyles = createStyles((theme) => ({
     cardPlayButton: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-        border: "2px solid white",
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        border: "1.5px solid #A0A0A0",
         backgroundColor: "#151515",
         opacity: 0,
         "&:hover": {
@@ -104,7 +96,15 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
                     width={coverSize}
                     height={coverSize}
                 />
-                <Center className={dynamicClasses.cardPlayButtonContainer}>
+                <Center
+                    className={dynamicClasses.cardPlayButtonContainer}
+                    onClick={(event) => {
+                        if (event.detail === 2) {
+                            console.log("DOUBLE CLICK");
+                            event.preventDefault();
+                        }
+                    }}
+                >
                     <Center
                         className={`${classes.cardPlayButton} ${
                             showPlayButton ? classes.showPlayButton : ""

@@ -1,5 +1,6 @@
 import React, { FC, useState } from "react";
-import { Box, createStyles, Menu, Modal } from "@mantine/core";
+import { Box, createStyles, Menu, Modal, Tooltip } from "@mantine/core";
+import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconDotsVertical } from "@tabler/icons";
 
 import { Album } from "../../app/types";
@@ -29,28 +30,60 @@ const useMenuStyles = createStyles((theme) => ({
     //  trying to define a "target" key did not result in the desired behavior.
 }));
 
-type AlbumProps = {
+type AlbumActionsProps = {
     album: Album;
     categories?: AlbumActionCategory[];
+    position?: FloatingPosition;
+    onOpen?: () => void;
+    onClose?: () => void;
 };
 
 // TODO: Image fit is "cover", which will effectively zoom in on non-square album art. Could add
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-const AlbumActions: FC<AlbumProps> = ({ album, categories = ["Tracks", "Playlist"] }) => {
-    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
+const AlbumActions: FC<AlbumActionsProps> = ({
+    album,
+    categories = ["Tracks", "Playlist"],
+    position = "top",
+    onOpen = undefined,
+    onClose = undefined,
+}) => {
     const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
+    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
+    const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
     return (
         <Box>
-            <Menu classNames={menuStyles.classes} position="top" withinPortal={true} withArrow>
+            <Menu
+                classNames={menuStyles.classes}
+                position={position}
+                withinPortal={true}
+                withArrow
+                onOpen={() => {
+                    setIsActionsMenuOpen(true);
+                    onOpen && onOpen();
+                }}
+                onClose={() => {
+                    setIsActionsMenuOpen(false);
+                    onClose && onClose();
+                }}
+            >
                 <Menu.Target>
-                    <Box className={classes.pointerOnHover}>
-                        <IconDotsVertical size={15} />
-                    </Box>
+                    <Tooltip
+                        label="Album actions"
+                        color="blue"
+                        disabled={isActionsMenuOpen}
+                        openDelay={500}
+                        withArrow
+                        arrowSize={8}
+                    >
+                        <Box className={classes.pointerOnHover}>
+                            <IconDotsVertical size={15} />
+                        </Box>
+                    </Tooltip>
                 </Menu.Target>
 
                 <Menu.Dropdown>

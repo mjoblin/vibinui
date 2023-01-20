@@ -18,6 +18,7 @@ export type Album = {
 
 // Music track details.
 export type Track = {
+    id?: MediaId;  // TODO: This should not be optional
     track_number: number;
     duration: number;
     album: string;

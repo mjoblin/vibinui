@@ -30,6 +30,7 @@ export const vibinBaseApi = createApi({
                 //  entry, track, upnp browsable item, etc, and how those types differ between
                 //  backend and frontend.
                 return tracks.map((track: BackendTrack) => ({
+                    id: track.id,
                     track_number: parseInt(track.original_track_number, 10),
                     duration: hmsToSecs(track.duration),
                     album: track.album,
