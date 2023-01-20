@@ -4,7 +4,7 @@ import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import FieldValueList from "../fieldValueList/FieldValueList";
 
-const Track: FC = () => {
+const TrackDel: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
 
     return (
@@ -14,4 +14,4 @@ const Track: FC = () => {
     );
 };
 
-export default Track;
+export default TrackDel;

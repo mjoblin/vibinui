@@ -1,11 +1,20 @@
 import React, { FC, useState } from "react";
-import { Box, Card, Center, createStyles, Flex, Image, Menu, Stack, Text } from "@mantine/core";
-import { IconDotsVertical, IconPlayerPlay } from "@tabler/icons";
+import {
+    Card,
+    Center,
+    createStyles,
+    Flex,
+    Image,
+    Stack,
+    Text,
+} from "@mantine/core";
+import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import AlbumActions from "./AlbumActions";
 
 const useStyles = createStyles((theme) => ({
     cardPlayButton: {
@@ -54,6 +63,7 @@ type AlbumProps = {
 
 const AlbumCard: FC<AlbumProps> = ({ album }) => {
     const [showPlayButton, setShowPlayButton] = useState<boolean>(false);
+    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
     const { coverSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
@@ -123,61 +133,7 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
                         </Text>
                     </Stack>
 
-                    <Box>
-                        <Menu
-                            classNames={menuStyles.classes}
-                            position="top"
-                            withinPortal={true}
-                            withArrow
-                        >
-                            <Menu.Target>
-                                <Box className={classes.pointerOnHover}>
-                                    <IconDotsVertical size={15} />
-                                </Box>
-                            </Menu.Target>
-
-                            <Menu.Dropdown>
-                                <Menu.Label>Playlist</Menu.Label>
-                                <Menu.Item
-                                    onClick={() => {
-                                        addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
-                                    }}
-                                >
-                                    Append to end
-                                </Menu.Item>
-                                <Menu.Item
-                                    onClick={() => {
-                                        addMediaToPlaylist({
-                                            mediaId: album.id,
-                                            action: "REPLACE",
-                                        });
-                                    }}
-                                >
-                                    Replace and play now
-                                </Menu.Item>
-                                <Menu.Item
-                                    onClick={() => {
-                                        addMediaToPlaylist({
-                                            mediaId: album.id,
-                                            action: "PLAY_NOW",
-                                        });
-                                    }}
-                                >
-                                    Insert and play now
-                                </Menu.Item>
-                                <Menu.Item
-                                    onClick={() => {
-                                        addMediaToPlaylist({
-                                            mediaId: album.id,
-                                            action: "PLAY_NEXT",
-                                        });
-                                    }}
-                                >
-                                    Insert and play next
-                                </Menu.Item>
-                            </Menu.Dropdown>
-                        </Menu>
-                    </Box>
+                    <AlbumActions album={album} />
                 </Flex>
             )}
         </Card>

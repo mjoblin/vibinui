@@ -31,7 +31,8 @@ const codecDisplay = (format: Format): string => {
         return format.codec;
     }
 
-    return "unknown codec";
+    // Return a printable empty string.
+    return "\u00A0";
 };
 
 const NowPlaying: FC = () => {

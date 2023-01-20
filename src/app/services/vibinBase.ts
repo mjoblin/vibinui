@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type { Album, Track } from "../types";
+import{ hmsToSecs } from "../utils";
 
 type BackendTrack = {
     id: string;
@@ -30,7 +31,7 @@ export const vibinBaseApi = createApi({
                 //  backend and frontend.
                 return tracks.map((track: BackendTrack) => ({
                     track_number: parseInt(track.original_track_number, 10),
-                    duration: 100,  // TODO: Convert from hh:mm:ss.ms
+                    duration: hmsToSecs(track.duration),
                     album: track.album,
                     artist: track.artist,
                     title: track.title,
@@ -42,4 +43,4 @@ export const vibinBaseApi = createApi({
     }),
 });
 
-export const { useGetAlbumsQuery, useLazyGetTracksQuery } = vibinBaseApi;
+export const { useGetAlbumsQuery, useGetTracksQuery, useLazyGetTracksQuery } = vibinBaseApi;
