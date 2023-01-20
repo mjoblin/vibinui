@@ -78,6 +78,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
             <Stack sx={{ gap: 0 }}>
                 {data.map((track: Track) => (
                     <Paper
+                        key={track.id}
                         shadow="xs"
                         pr={5}
                         // Highlight the track on hover. But if the actions menu is open, then keep

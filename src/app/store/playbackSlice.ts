@@ -8,7 +8,7 @@ import { Format, Stream, Track } from "../types";
  * streamer. e.g. Whether it's playing or not; what the current track is; etc.
  */
 
-export type PlayStatus = "buffering" | "play" | "pause" | "ready";
+export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready";  // TODO: not_ready === standby?
 
 export type AudioSource = string;
 

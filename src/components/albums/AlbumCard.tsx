@@ -10,9 +10,9 @@ import AlbumActions from "./AlbumActions";
 
 const useStyles = createStyles((theme) => ({
     cardPlayButton: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         border: "1.5px solid #A0A0A0",
         backgroundColor: "#151515",
         opacity: 0,
