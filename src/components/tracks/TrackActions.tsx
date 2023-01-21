@@ -71,7 +71,7 @@ const TrackActions: FC<TrackActionsProps> = ({
                         withArrow
                         arrowSize={8}
                     >
-                        <Box className={classes.pointerOnHover}>
+                        <Box pt={4} className={classes.pointerOnHover}>
                             <IconDotsVertical size={15} />
                         </Box>
                     </Tooltip>

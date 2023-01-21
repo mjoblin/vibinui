@@ -1,19 +1,28 @@
 import React, { FC, useState } from "react";
-import { Box, createStyles, Menu, Modal, Tooltip } from "@mantine/core";
+import { Box, Center, createStyles, Menu, Tooltip } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconDotsVertical } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import AlbumTracks from "../tracks/AlbumTracks";
+import AlbumTracksModal from "../tracks/AlbumTracksModal";
 
 export type AlbumActionCategory = "Tracks" | "Playlist";
 
 const useStyles = createStyles((theme) => ({
-    pointerOnHover: {
+    actionsButtonContainer: {
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        backgroundColor: "rgb(255, 255, 255, 0.2)",
+        transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
         "&:hover": {
             cursor: "pointer",
+            backgroundColor: theme.colors.blue,
         },
+    },
+    buttonActive: {
+        backgroundColor: theme.colors.blue,
     },
 }));
 
@@ -26,8 +35,6 @@ const useMenuStyles = createStyles((theme) => ({
             color: theme.white,
         },
     },
-    // TODO: See if the pointerOnHover CSS can be defined here, since it's menu-specific. Note that
-    //  trying to define a "target" key did not result in the desired behavior.
 }));
 
 type AlbumActionsProps = {
@@ -42,7 +49,7 @@ type AlbumActionsProps = {
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-const AlbumActions: FC<AlbumActionsProps> = ({
+const AlbumActionsButton: FC<AlbumActionsProps> = ({
     album,
     categories = ["Tracks", "Playlist"],
     position = "top",
@@ -56,7 +63,7 @@ const AlbumActions: FC<AlbumActionsProps> = ({
     const menuStyles = useMenuStyles();
 
     return (
-        <Box>
+        <Box onClick={(event) => event.stopPropagation()}>
             <Menu
                 classNames={menuStyles.classes}
                 position={position}
@@ -80,9 +87,15 @@ const AlbumActions: FC<AlbumActionsProps> = ({
                         withArrow
                         arrowSize={8}
                     >
-                        <Box className={classes.pointerOnHover}>
-                            <IconDotsVertical size={15} />
-                        </Box>
+                        <Center
+                            className={`${classes.actionsButtonContainer} ${
+                                isActionsMenuOpen && classes.buttonActive
+                            }`}
+                        >
+                            <Box pt={2}>
+                                <IconDotsVertical size={15} />
+                            </Box>
+                        </Center>
                     </Tooltip>
                 </Menu.Target>
 
@@ -141,19 +154,16 @@ const AlbumActions: FC<AlbumActionsProps> = ({
                         </>
                     )}
                 </Menu.Dropdown>
-            </Menu>
 
-            {/* Tracks modal */}
-            <Modal
-                title="Album Details"
-                centered
-                opened={showTracksModal}
-                onClose={() => setShowTracksModal(false)}
-            >
-                <AlbumTracks album={album} />
-            </Modal>
+                {/* Track list modal */}
+                <AlbumTracksModal
+                    album={album}
+                    opened={showTracksModal}
+                    onClose={() => setShowTracksModal(false)}
+                />
+            </Menu>
         </Box>
     );
 };
 
-export default AlbumActions;
+export default AlbumActionsButton;

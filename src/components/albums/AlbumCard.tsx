@@ -1,49 +1,13 @@
 import React, { FC, useState } from "react";
-import { Card, Center, createStyles, Flex, Image, Stack, Text } from "@mantine/core";
-import { IconPlayerPlay } from "@tabler/icons";
+import { Card, createStyles, Flex, Image, Stack, Text } from "@mantine/core";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import AlbumActions from "./AlbumActions";
-
-const useStyles = createStyles((theme) => ({
-    cardPlayButton: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
-        border: "1.5px solid #A0A0A0",
-        backgroundColor: "#151515",
-        opacity: 0,
-        "&:hover": {
-            opacity: 1,
-            cursor: "pointer",
-        },
-    },
-    showPlayButton: {
-        opacity: 0.75,
-        transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
-    },
-    pointerOnHover: {
-        "&:hover": {
-            cursor: "pointer",
-        },
-    },
-}));
-
-const useMenuStyles = createStyles((theme) => ({
-    item: {
-        fontSize: 12,
-        padding: "7px 12px",
-        "&[data-hovered]": {
-            backgroundColor: theme.colors[theme.primaryColor][theme.fn.primaryShade()],
-            color: theme.white,
-        },
-    },
-    // TODO: See if the pointerOnHover CSS can be defined here, since it's menu-specific. Note that
-    //  trying to define a "target" key did not result in the desired behavior.
-}));
+import AlbumActionsButton from "./AlbumActionsButton";
+import AlbumTracksModal from "../tracks/AlbumTracksModal";
+import PlayButton from "./PlayButton";
 
 type AlbumProps = {
     album: Album;
@@ -54,19 +18,29 @@ type AlbumProps = {
 //  top/bottom or left/right bars as appropriate).
 
 const AlbumCard: FC<AlbumProps> = ({ album }) => {
-    const [showPlayButton, setShowPlayButton] = useState<boolean>(false);
-    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
     const { coverSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
     );
-    const { classes } = useStyles();
-    const menuStyles = useMenuStyles();
+    const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
+    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         albumCard: {
             width: coverSize,
             border: "2px solid rgb(0, 0, 0, 0)",
+        },
+        albumControls: {
+            position: "absolute",
+            width: "100%",
+            height: coverSize,
+            top: 0,
+            left: 0,
+            opacity: 0,
+            transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
+            "&:hover": {
+                opacity: 1,
+            },
         },
         cardPlayButtonContainer: {
             position: "absolute",
@@ -79,16 +53,17 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
                 backgroundColor: "rgb(0, 0, 0, 0.25)",
             },
         },
+        actionsMenuActive: {
+            opacity: 1,
+        },
     }))();
 
     return (
         // pr (padding-right) is smaller to allow for the right-side whitespace coming from
         // IconDotsVertical.
         <Card radius="sm" p={7} pr={2} className={dynamicClasses.albumCard}>
-            <Card.Section
-                onMouseOver={() => setShowPlayButton(true)}
-                onMouseLeave={() => setShowPlayButton(false)}
-            >
+            {/* Album image and play/action controls */}
+            <Card.Section onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
                 <Image
                     src={album.album_art_uri}
                     alt={`${album.artist} / ${album.title}`}
@@ -96,46 +71,61 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
                     width={coverSize}
                     height={coverSize}
                 />
-                <Center
-                    className={dynamicClasses.cardPlayButtonContainer}
-                    onClick={(event) => {
-                        if (event.detail === 2) {
-                            console.log("DOUBLE CLICK");
-                            event.preventDefault();
-                        }
-                    }}
+
+                <Flex
+                    p="xs"
+                    justify="space-between"
+                    align="flex-end"
+                    className={`${dynamicClasses.albumControls} ${
+                        isActionsMenuOpen && dynamicClasses.actionsMenuActive
+                    }`}
                 >
-                    <Center
-                        className={`${classes.cardPlayButton} ${
-                            showPlayButton ? classes.showPlayButton : ""
-                        }`}
-                    >
-                        <IconPlayerPlay
-                            size={25}
-                            color="white"
-                            fill="white"
-                            onClick={() =>
-                                addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })
-                            }
-                        />
-                    </Center>
-                </Center>
+                    <PlayButton
+                        onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}
+                    />
+
+                    <AlbumActionsButton
+                        album={album}
+                        onOpen={() => setIsActionsMenuOpen(true)}
+                        onClose={() => {
+                            // This timeout is to prevent an issue where the user clicks outside
+                            // the actions menu to close the menu, but the click is then picked up
+                            // by the onClick() handler on the album art, which then triggers the
+                            // display of the tracks modal. The delay in setting isActionsMenuOpen
+                            // will prevent this behavior.
+                            //
+                            // This only works as described when the user clicks on album art
+                            // associated with the actions menu.
+                            //
+                            // TODO: This feels hacky. It would be nice to see if there was a way
+                            //  to more cleanly ignore clicks which are outside a
+                            //  currently-displayed actions menu.
+                            //
+                            // TODO: Consider doing something in the AlbumWall component to prevent
+                            //  all other album interactions if an action menu is open.
+                            setTimeout(() => setIsActionsMenuOpen(false), 100);
+                        }}
+                    />
+                </Flex>
             </Card.Section>
 
+            {/* Album title, artist, etc. */}
             {showDetails && (
-                <Flex pt={7} justify="space-between">
-                    <Stack spacing={0}>
-                        <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
-                            {album.title}
-                        </Text>
-                        <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
-                            {album.artist}
-                        </Text>
-                    </Stack>
-
-                    <AlbumActions album={album} />
-                </Flex>
+                <Stack spacing={0} pt={7}>
+                    <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {album.title}
+                    </Text>
+                    <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
+                        {album.artist}
+                    </Text>
+                </Stack>
             )}
+
+            <AlbumTracksModal
+                album={album}
+                opened={showTracksModal}
+                onClose={() => setShowTracksModal(false)}
+            />
         </Card>
     );
 };

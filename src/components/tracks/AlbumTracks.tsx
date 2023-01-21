@@ -4,7 +4,7 @@ import { Box, Paper, Flex, Image, Stack, Text, createStyles } from "@mantine/cor
 import { useGetTracksQuery } from "../../app/services/vibinBase";
 import { Album, Track } from "../../app/types";
 import { secstoHms } from "../../app/utils";
-import AlbumActions from "../albums/AlbumActions";
+import AlbumActionsButton from "../albums/AlbumActionsButton";
 import TrackActions from "../tracks/TrackActions";
 
 // TODO: Make these part of the theme.
@@ -70,7 +70,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                 </Stack>
 
                 <Box pr={5}>
-                    <AlbumActions album={album} categories={["Playlist"]} position="bottom" />
+                    <AlbumActionsButton album={album} categories={["Playlist"]} position="bottom" />
                 </Box>
             </Flex>
 
