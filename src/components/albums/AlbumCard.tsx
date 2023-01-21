@@ -61,7 +61,7 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
     return (
         // pr (padding-right) is smaller to allow for the right-side whitespace coming from
         // IconDotsVertical.
-        <Card radius="sm" p={7} pr={2} className={dynamicClasses.albumCard}>
+        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} pr={2} className={dynamicClasses.albumCard}>
             {/* Album image and play/action controls */}
             <Card.Section onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
                 <Image
