@@ -5,6 +5,7 @@ import { useGetTracksQuery } from "../../app/services/vibinBase";
 import { Album, Track } from "../../app/types";
 import { secstoHms } from "../../app/utils";
 import AlbumActionsButton from "../albums/AlbumActionsButton";
+import AlbumArt from "../albums/AlbumArt";
 import TrackActionsButton from "./TrackActionsButton";
 
 // TODO: Make these part of the theme.
@@ -45,14 +46,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
         <Stack>
             {/* Album details */}
             <Flex gap="md" justify="space-between">
-                <Image
-                    src={album.album_art_uri}
-                    alt={`${album.artist} / ${album.title}`}
-                    fit="cover"
-                    width={100}
-                    height={100}
-                    sx={{ overflow: "hidden", borderRadius: "4px 0px 0px 4px" }}
-                />
+                <AlbumArt album={album} size={100} actionsMenuPosition={"bottom"} />
 
                 <Stack sx={{ gap: 0, flexGrow: 1 }}>
                     <Text size="lg" weight="bold" sx={{ lineHeight: 1.25 }}>
@@ -92,8 +86,8 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                 : classes.highlightOnHover
                         }
                     >
-                        <Flex gap="sm" align="flex-start" justify="space-between">
-                            <Flex w="1.5rem" justify="flex-end">
+                        <Flex gap="sm" align="center" justify="space-between">
+                            <Flex justify="flex-end" sx={{ minWidth: "1.5rem" }}>
                                 <Text size="sm" color={DIMMED}>
                                     {track.track_number}
                                 </Text>
@@ -119,7 +113,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                 )}
                             </Box>
 
-                            <Flex gap="sm" align="center" justify="center">
+                            <Flex gap="sm" align="center" justify="flex-end" sx={{ minWidth: "4rem" }}>
                                 <Text size="sm" color={DIMMED}>
                                     {secstoHms(track.duration)}
                                 </Text>

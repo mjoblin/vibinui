@@ -1,24 +1,17 @@
 import React, { FC, useState } from "react";
-import { Card, createStyles, Flex, Image, Stack, Text } from "@mantine/core";
+import { Card, createStyles, Stack, Text } from "@mantine/core";
 
 import { Album } from "../../app/types";
-import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import AlbumActionsButton from "./AlbumActionsButton";
+import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
-import PlayButton from "./PlayButton";
 
-type AlbumProps = {
+type AlbumCardProps = {
     album: Album;
 };
 
-// TODO: Image fit is "cover", which will effectively zoom in on non-square album art. Could add
-//  a prop to switch this to "contain" which will show the entire non-square art (and add
-//  top/bottom or left/right bars as appropriate).
-
-const AlbumCard: FC<AlbumProps> = ({ album }) => {
-    const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
+const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const { coverSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
     );
@@ -59,54 +52,15 @@ const AlbumCard: FC<AlbumProps> = ({ album }) => {
     }))();
 
     return (
-        // pr (padding-right) is smaller to allow for the right-side whitespace coming from
-        // IconDotsVertical.
-        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} pr={2} className={dynamicClasses.albumCard}>
-            {/* Album image and play/action controls */}
+        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.albumCard}>
+            {/* Album art with play/action controls */}
             <Card.Section onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
-                <Image
-                    src={album.album_art_uri}
-                    alt={`${album.artist} / ${album.title}`}
-                    fit="cover"
-                    width={coverSize}
-                    height={coverSize}
+                <AlbumArt
+                    album={album}
+                    size={coverSize}
+                    onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
+                    onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
                 />
-
-                <Flex
-                    p="xs"
-                    justify="space-between"
-                    align="flex-end"
-                    className={`${dynamicClasses.albumControls} ${
-                        isActionsMenuOpen && dynamicClasses.actionsMenuActive
-                    }`}
-                >
-                    <PlayButton
-                        onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}
-                    />
-
-                    <AlbumActionsButton
-                        album={album}
-                        onOpen={() => setIsActionsMenuOpen(true)}
-                        onClose={() => {
-                            // This timeout is to prevent an issue where the user clicks outside
-                            // the actions menu to close the menu, but the click is then picked up
-                            // by the onClick() handler on the album art, which then triggers the
-                            // display of the tracks modal. The delay in setting isActionsMenuOpen
-                            // will prevent this behavior.
-                            //
-                            // This only works as described when the user clicks on album art
-                            // associated with the actions menu.
-                            //
-                            // TODO: This feels hacky. It would be nice to see if there was a way
-                            //  to more cleanly ignore clicks which are outside a
-                            //  currently-displayed actions menu.
-                            //
-                            // TODO: Consider doing something in the AlbumWall component to prevent
-                            //  all other album interactions if an action menu is open.
-                            setTimeout(() => setIsActionsMenuOpen(false), 100);
-                        }}
-                    />
-                </Flex>
             </Card.Section>
 
             {/* Album title, artist, etc. */}

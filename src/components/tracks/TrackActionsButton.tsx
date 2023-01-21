@@ -84,14 +84,6 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                         <Menu.Label>Playlist</Menu.Label>
                         <Menu.Item
                             onClick={() => {
-                                // TODO: Ensure track.id can be guaranteed to exist
-                                addMediaToPlaylist({ mediaId: track.id!!, action: "APPEND" });
-                            }}
-                        >
-                            Append to end
-                        </Menu.Item>
-                        <Menu.Item
-                            onClick={() => {
                                 addMediaToPlaylist({
                                     mediaId: track.id!!,
                                     action: "REPLACE",
@@ -119,6 +111,13 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                             }}
                         >
                             Insert and play next
+                        </Menu.Item>
+                        <Menu.Item
+                            onClick={() => {
+                                addMediaToPlaylist({ mediaId: track.id!!, action: "APPEND" });
+                            }}
+                        >
+                            Append to end
                         </Menu.Item>
                     </>
                 </Menu.Dropdown>
