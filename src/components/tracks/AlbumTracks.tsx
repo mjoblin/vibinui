@@ -5,7 +5,7 @@ import { useGetTracksQuery } from "../../app/services/vibinBase";
 import { Album, Track } from "../../app/types";
 import { secstoHms } from "../../app/utils";
 import AlbumActionsButton from "../albums/AlbumActionsButton";
-import TrackActions from "../tracks/TrackActions";
+import TrackActionsButton from "./TrackActionsButton";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -124,7 +124,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                     {secstoHms(track.duration)}
                                 </Text>
 
-                                <TrackActions
+                                <TrackActionsButton
                                     track={track}
                                     onOpen={() => setActionsMenuOpen(track.id!!)}
                                     onClose={() => setActionsMenuOpen(undefined)}

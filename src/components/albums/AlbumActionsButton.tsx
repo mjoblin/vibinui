@@ -37,7 +37,7 @@ const useMenuStyles = createStyles((theme) => ({
     },
 }));
 
-type AlbumActionsProps = {
+type AlbumActionsButtonProps = {
     album: Album;
     categories?: AlbumActionCategory[];
     position?: FloatingPosition;
@@ -49,7 +49,7 @@ type AlbumActionsProps = {
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-const AlbumActionsButton: FC<AlbumActionsProps> = ({
+const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
     album,
     categories = ["Tracks", "Playlist"],
     position = "top",
@@ -86,6 +86,7 @@ const AlbumActionsButton: FC<AlbumActionsProps> = ({
                         openDelay={500}
                         withArrow
                         arrowSize={8}
+                        styles={{ tooltip: { fontSize: 12 } }}
                     >
                         <Center
                             className={`${classes.actionsButtonContainer} ${
