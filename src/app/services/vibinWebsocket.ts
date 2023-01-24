@@ -3,6 +3,7 @@ import { ThunkDispatch } from "@reduxjs/toolkit";
 import { Draft } from "immer";
 
 // import { isMessage } from "./schemaValidators";
+import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
 import {
     setAudioSources,
     setCurrentAudioSource,
@@ -23,7 +24,17 @@ const MAX_MESSAGE_COUNT = 10;
 //  payloads can contain nested objects with arbitrary key/value pairs.
 type SimpleObject = { [key: string | number]: any };
 
-type MessageType = "StateVars" | "PlayState" | "Position";
+type MessageType = "System" | "StateVars" | "PlayState" | "Position";
+
+type SystemPayload = {
+    streamer: {
+        name: string;
+        power: "on" | "off";
+    },
+    media_device: {
+        name: string;
+    }
+}
 
 type StateVarsPayload = {
     streamer_name: string;  // TODO: Should streamer_name and media_source_name be on VibinMessage?
@@ -75,7 +86,7 @@ export type VibinMessage = {
     id: string;
     time: number;
     type: MessageType;
-    payload: StateVarsPayload | PlayStatePayload | PositionPayload;
+    payload: SystemPayload | StateVarsPayload | PlayStatePayload | PositionPayload;
 }
 
 type ComparableMessageChunk = Draft<{ [key: number | string]: string }> | Map<any, any>;
@@ -212,7 +223,15 @@ function messageHandler(
             }
         };
 
-        if (data.type === "StateVars") {
+        if (data.type === "System") {
+            const system = data.payload as SystemPayload;
+            console.log("SYSTEM", system);
+
+            updateAppStateIfChanged(setMediaDeviceName.type, system.media_device?.name);
+            updateAppStateIfChanged(setStreamerName.type, system.streamer?.name);
+            updateAppStateIfChanged(setStreamerPower.type, system.streamer?.power);
+        }
+        else if (data.type === "StateVars") {
             const stateVars = data.payload as StateVarsPayload;
             const streamerName = stateVars.streamer_name;
 

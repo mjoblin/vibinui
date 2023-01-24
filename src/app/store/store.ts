@@ -1,21 +1,25 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
+import systemReducer from "./systemSlice";
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
 import userSettingsReducer from "./userSettingsSlice";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
+import { vibinSystemApi } from "../services/vibinSystem";
 import { vibinTransportApi } from "../services/vibinTransport";
 import { vibinWebsocket } from "../services/vibinWebsocket";
 
 export const store = configureStore({
     reducer: {
+        system: systemReducer,
         playback: playbackReducer,
         playlist: playlistReducer,
         userSettings: userSettingsReducer,
         [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
+        [vibinSystemApi.reducerPath]: vibinSystemApi.reducer,
         [vibinTransportApi.reducerPath]: vibinTransportApi.reducer,
         [vibinWebsocket.reducerPath]: vibinWebsocket.reducer,
     },
@@ -23,6 +27,7 @@ export const store = configureStore({
         getDefaultMiddleware().concat(
             vibinBaseApi.middleware,
             vibinPlaylistApi.middleware,
+            vibinSystemApi.middleware,
             vibinTransportApi.middleware,
             vibinWebsocket.middleware
         ),
