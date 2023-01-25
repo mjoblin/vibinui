@@ -23,6 +23,12 @@ const initialState: SystemState = {
     },
 };
 
+// TODO: Think about ways to distinguish between reducers intended for user-driven use, vs. those
+//  intended for infrastructure use. e.g. "setStreamerPower" (and others here) are intended to be
+//  used when a power-related message comes in from the backend over a websocket; it's not intended
+//  to be used by a user-facing component (which should be using useLazyPowerToggleQuery in the
+//  vibinSystem service).
+
 export const systemSlice = createSlice({
     name: "system",
     initialState,
