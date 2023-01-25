@@ -1,0 +1,37 @@
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
+
+import { Playlist } from "../types";
+
+/**
+ * TODO: Determine whether both store/playlistSlice and services/vibinPlaylist should coexists.
+ *  Perhaps everything should be managed in services/vibinPlaylist.
+ */
+
+export interface PlaylistState {
+    entries: Playlist | undefined;
+    current_track_index: number | undefined;
+}
+
+const initialState: PlaylistState = {
+    entries: undefined,
+    current_track_index: undefined,
+};
+
+export const playlistSlice = createSlice({
+    name: "playlist",
+    initialState,
+    reducers: {
+        setCurrentTrackIndex: (state, action: PayloadAction<number | undefined>) => {
+            state.current_track_index = action.payload;
+        },
+        setEntries: (state, action: PayloadAction<Playlist | undefined>) => {
+            state.entries = action.payload;
+        },
+    },
+});
+
+// Action creators are generated for each case reducer function
+export const { setCurrentTrackIndex, setEntries } = playlistSlice.actions;
+
+export default playlistSlice.reducer;
