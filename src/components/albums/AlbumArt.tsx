@@ -5,7 +5,7 @@ import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import AlbumActionsButton from "./AlbumActionsButton";
 import PlayButton from "./PlayButton";
-import {FloatingPosition} from "@mantine/core/lib/Floating/types";
+import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 
 const useStyles = createStyles((theme) => ({
     albumArtContainer: {
@@ -17,7 +17,11 @@ const useStyles = createStyles((theme) => ({
 }));
 
 type AlbumArtProps = {
-    album: Album;
+    album?: Album;
+    artUri?: string;
+    alt?: string;
+    radius?: number;
+    showControls?: boolean;
     size?: number;
     actionsMenuPosition?: FloatingPosition;
     onActionsMenuOpen?: () => void;
@@ -28,8 +32,27 @@ type AlbumArtProps = {
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
+/**
+ *
+ * Either `album` or `artUri` should be passed.
+ *
+ * @param album
+ * @param artUri
+ * @param alt
+ * @param showControls
+ * @param size
+ * @param actionsMenuPosition
+ * @param onActionsMenuOpen
+ * @param onActionsMenuClosed
+ * @constructor
+ */
+
 const AlbumArt: FC<AlbumArtProps> = ({
     album,
+    artUri,
+    alt,
+    radius = 0,
+    showControls = true,
     size = 150,
     actionsMenuPosition,
     onActionsMenuOpen,
@@ -68,58 +91,61 @@ const AlbumArt: FC<AlbumArtProps> = ({
     return (
         <Box className={classes.albumArtContainer}>
             <Image
-                src={album.album_art_uri}
-                alt={`${album.artist} / ${album.title}`}
+                src={artUri ? artUri : album ? album.album_art_uri : ""}
+                alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
                 fit="cover"
                 width={size}
                 height={size}
+                radius={radius}
             />
 
-            <Flex
-                p="xs"
-                justify="space-between"
-                align="flex-end"
-                className={`${dynamicClasses.albumControls} ${
-                    isActionsMenuOpen && classes.actionsMenuActive
-                }`}
-            >
-                <PlayButton
-                    onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}
-                />
+            {album && showControls && (
+                <Flex
+                    p="xs"
+                    justify="space-between"
+                    align="flex-end"
+                    className={`${dynamicClasses.albumControls} ${
+                        isActionsMenuOpen && classes.actionsMenuActive
+                    }`}
+                >
+                    <PlayButton
+                        onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}
+                    />
 
-                <AlbumActionsButton
-                    album={album}
-                    position={actionsMenuPosition}
-                    categories={["Playlist"]}
-                    onOpen={() => {
-                        setIsActionsMenuOpen(true);
-                        onActionsMenuOpen && onActionsMenuOpen();
-                    }}
-                    onClose={() => {
-                        // This timeout is to prevent an issue where the user clicks outside
-                        // the actions menu to close the menu, but the click is then picked up
-                        // by the onClick() handler on the album art, which then triggers the
-                        // display of the tracks modal. The delay in setting isActionsMenuOpen
-                        // will prevent this behavior.
-                        //
-                        // This only works as described when the user clicks on album art
-                        // associated with the actions menu.
-                        //
-                        // TODO: This feels hacky. It would be nice to see if there was a way
-                        //  to more cleanly ignore clicks which are outside a
-                        //  currently-displayed actions menu.
-                        //
-                        // TODO: Consider doing something in the AlbumWall component to prevent
-                        //  all other album interactions if an action menu is open. Or perhaps set
-                        //  some application state when the actions are visible (which other
-                        //  components can key off of to enable/disable behaviours).
-                        setTimeout(() => {
-                            setIsActionsMenuOpen(false);
-                            onActionsMenuClosed && onActionsMenuClosed();
-                        }, 250);
-                    }}
-                />
-            </Flex>
+                    <AlbumActionsButton
+                        album={album}
+                        position={actionsMenuPosition}
+                        categories={["Playlist"]}
+                        onOpen={() => {
+                            setIsActionsMenuOpen(true);
+                            onActionsMenuOpen && onActionsMenuOpen();
+                        }}
+                        onClose={() => {
+                            // This timeout is to prevent an issue where the user clicks outside
+                            // the actions menu to close the menu, but the click is then picked up
+                            // by the onClick() handler on the album art, which then triggers the
+                            // display of the tracks modal. The delay in setting isActionsMenuOpen
+                            // will prevent this behavior.
+                            //
+                            // This only works as described when the user clicks on album art
+                            // associated with the actions menu.
+                            //
+                            // TODO: This feels hacky. It would be nice to see if there was a way
+                            //  to more cleanly ignore clicks which are outside a
+                            //  currently-displayed actions menu.
+                            //
+                            // TODO: Consider doing something in the AlbumWall component to prevent
+                            //  all other album interactions if an action menu is open. Or perhaps set
+                            //  some application state when the actions are visible (which other
+                            //  components can key off of to enable/disable behaviours).
+                            setTimeout(() => {
+                                setIsActionsMenuOpen(false);
+                                onActionsMenuClosed && onActionsMenuClosed();
+                            }, 250);
+                        }}
+                    />
+                </Flex>
+            )}
         </Box>
     );
 };

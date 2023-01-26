@@ -69,6 +69,8 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
             </Flex>
 
             {/* Track details */}
+            {/* TODO: Consider whether this should be a table or grid instead (for cleaner layout
+                  behaviour across tracks) */}
             <Stack sx={{ gap: 0 }}>
                 {data.map((track: Track) => (
                     <Paper
@@ -113,7 +115,12 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                 )}
                             </Box>
 
-                            <Flex gap="sm" align="center" justify="flex-end" sx={{ minWidth: "4rem" }}>
+                            <Flex
+                                gap="sm"
+                                align="center"
+                                justify="flex-end"
+                                sx={{ minWidth: "4rem" }}
+                            >
                                 <Text size="sm" color={DIMMED}>
                                     {secstoHms(track.duration)}
                                 </Text>

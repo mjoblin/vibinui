@@ -12,29 +12,44 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: "rgb(255, 255, 255, 0.2)",
         transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
         "&:hover": {
-            cursor: "pointer",
             backgroundColor: theme.colors.blue,
+        },
+    },
+    onHover: {
+        "&:hover": {
+            cursor: "pointer",
         },
     },
 }));
 
 type PlayButtonProps = {
+    container?: boolean;
     onClick?: () => void;
 };
 
-const PlayButton: FC<PlayButtonProps> = ({ onClick }) => {
+const PlayButton: FC<PlayButtonProps> = ({ container = true, onClick }) => {
     const { classes } = useStyles();
 
-    return (
+    return container ? (
         <Center
             onClick={(event) => {
                 event.stopPropagation();
                 onClick && onClick();
             }}
-            className={classes.playButtonContainer}
+            className={`${classes.playButtonContainer} ${classes.onHover}`}
         >
             <IconPlayerPlay size={15} color="white" fill="white" />
         </Center>
+    ) : (
+        <Box
+            onClick={(event) => {
+                event.stopPropagation();
+                onClick && onClick();
+            }}
+            className={classes.onHover}
+        >
+            <IconPlayerPlay size={15} color="white" fill="white" />
+        </Box>
     );
 };
 

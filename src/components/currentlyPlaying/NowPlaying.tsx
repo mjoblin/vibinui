@@ -73,7 +73,8 @@ const NowPlaying: FC = () => {
             </Flex>
 
             <Flex direction="row" align="center" gap={10}>
-                {/* Make this look nicer when there's no image to display */}
+                {/* TODO: Make this look nicer when there's no image to display */}
+                {/* TODO: Consider replacing with <AlbumArt> */}
                 <Image
                     src={currentTrack.art_url}
                     radius="sm"
