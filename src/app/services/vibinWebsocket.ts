@@ -225,7 +225,6 @@ function messageHandler(
 
         if (data.type === "System") {
             const system = data.payload as SystemPayload;
-            console.log("SYSTEM", system);
 
             updateAppStateIfChanged(setMediaDeviceName.type, system.media_device?.name);
             updateAppStateIfChanged(setStreamerName.type, system.streamer?.name);
