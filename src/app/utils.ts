@@ -18,6 +18,10 @@ export const hmsToSecs = (hms: string): number => {
  * "00:03:12" becomes "3:12".
  */
 export const secstoHms = (duration: number): string => {
+    if (!duration) {
+        return "0:00";
+    }
+
     let hms: string = new Date(duration * 1000)
         .toISOString()
         .substring(11, 19)

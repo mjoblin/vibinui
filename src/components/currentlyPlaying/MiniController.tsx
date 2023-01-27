@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { Flex } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -16,10 +17,10 @@ const MiniController: FC = () => {
     return playStatus === "not_ready" ? (
         <></>
     ) : (
-        <>
+        <Flex gap={20} sx={{ flexGrow: 1 }}>
             <TransportControls />
-            <NowPlaying />
-        </>
+            <NowPlaying maxPlayheadWidth={300} />
+        </Flex>
     );
 };
 

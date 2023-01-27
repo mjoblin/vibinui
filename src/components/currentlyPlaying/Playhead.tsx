@@ -27,10 +27,10 @@ const Playhead: FC = () => {
     const [seek] = useSeekMutation();
 
     return (
-        <Flex direction="row" gap={7} align="center">
+        <Flex direction="row" gap={7} align="center" justify="space-between">
             {/* Display the current track time. This will either be the time of the playback head,
                 or the selected time when the slider is being manually updated. */}
-            <Text size="xs" sx={{ lineHeight: 1.25, fontSize: 10, minWidth: 30 }}>
+            <Text size="xs" sx={{ lineHeight: 1.25, fontSize: 10, width: 30 }}>
                 {isBeingManuallyUpdated
                     ? prettyDuration(manualPosition)
                     : playhead.position && typeof playhead.position === "number"
@@ -63,7 +63,8 @@ const Playhead: FC = () => {
                     setIsBeingManuallyUpdated(false);
                 }}
                 label={null}
-                sx={{ width: endTimeStyle === "totalTime" ? 150 : 150 - negativeTimeScreenSize }}
+                // sx={{ width: endTimeStyle === "totalTime" ? 150 : 150 - negativeTimeScreenSize }}
+                sx={{ flexGrow: 1 }}
                 size={2}
                 styles={(theme) => ({
                     track: {
@@ -86,9 +87,11 @@ const Playhead: FC = () => {
                 remaining (this behavior can be toggled by clicking on the time text). */}
             <Text
                 size="xs"
+                align="right"
                 sx={{
                     lineHeight: 1.25,
                     fontSize: 10,
+                    // minWidth: endTimeStyle === "totalTime" ? 30 : 30 + negativeTimeScreenSize,
                     minWidth: endTimeStyle === "totalTime" ? 30 : 30 + negativeTimeScreenSize,
                 }}
                 onClick={() =>
