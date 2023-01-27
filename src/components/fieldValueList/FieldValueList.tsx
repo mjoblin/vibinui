@@ -30,7 +30,7 @@ const FieldValueList: FC<FieldValueListProps> = ({
     // @ts-ignore
     const { classes: dynamicClasses } = createStyles((theme) => ({
         table: {
-            "td:first-child": {
+            "td:first-of-type": {
                 textAlign: "end",
                 lineHeight: rowHeight,
                 color: keyColor || theme.colors.dark[3],
@@ -38,7 +38,7 @@ const FieldValueList: FC<FieldValueListProps> = ({
                 fontWeight: keyWeight,
                 paddingRight: columnGap,
             },
-            "td:last-child": {
+            "td:last-of-type": {
                 lineHeight: rowHeight,
                 color: valueColor || theme.colors.dark[1],
                 fontSize: valueSize,

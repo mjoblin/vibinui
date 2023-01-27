@@ -1,11 +1,12 @@
 import React, { FC, useState } from "react";
-import { Box, Paper, Flex, Image, Stack, Text, createStyles } from "@mantine/core";
+import { Box, Paper, Flex, Stack, Text, createStyles } from "@mantine/core";
 
 import { useGetTracksQuery } from "../../app/services/vibinBase";
 import { Album, Track } from "../../app/types";
 import { secstoHms } from "../../app/utils";
 import AlbumActionsButton from "../albums/AlbumActionsButton";
 import AlbumArt from "../albums/AlbumArt";
+import AppendToPlaylistButton from "./AppendToPlaylistButton";
 import TrackActionsButton from "./TrackActionsButton";
 
 // TODO: Make these part of the theme.
@@ -130,6 +131,8 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                     onOpen={() => setActionsMenuOpen(track.id!!)}
                                     onClose={() => setActionsMenuOpen(undefined)}
                                 />
+
+                                <AppendToPlaylistButton mediaId={track.id!!} />
                             </Flex>
                         </Flex>
                     </Paper>

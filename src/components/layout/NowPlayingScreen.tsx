@@ -4,9 +4,7 @@ import { Box, Flex, Stack, Text } from "@mantine/core";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import AlbumArt from "../albums/AlbumArt";
-import Codec from "../currentlyPlaying/Codec";
 import FieldValueList from "../fieldValueList/FieldValueList";
-import FormatBadges from "../currentlyPlaying/FormatBadges";
 import NowPlaying from "../currentlyPlaying/NowPlaying";
 import PlayheadRing from "../currentlyPlaying/PlayheadRing";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
@@ -15,7 +13,6 @@ const ALBUM_ART_WIDTH = 300;
 
 const NowPlayingScreen: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
-    const currentFormat = useAppSelector((state: RootState) => state.playback.current_format);
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const currentStream = useAppSelector((state: RootState) => state.playback.current_stream);
 

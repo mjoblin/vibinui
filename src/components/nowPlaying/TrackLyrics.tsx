@@ -15,12 +15,12 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
         return <></>;
     }
 
-    const chunkRender = (chunk: LyricChunk) => {
+    const chunkRender = (chunk: LyricChunk, chunkIndex: number) => {
         return (
-            <Box>
+            <Box key={`chunk_${chunkIndex}`}>
                 {chunk.header && <Text weight="bold">{chunk.header}</Text>}
-                {chunk.body.map((line) => (
-                    <Text weight="normal">{line}</Text>
+                {chunk.body.map((line, lineIndex) => (
+                    <Text key={`line_${chunkIndex}_${lineIndex}`} weight="normal">{line}</Text>
                 ))}
             </Box>
         );
