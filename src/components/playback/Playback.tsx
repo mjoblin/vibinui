@@ -15,7 +15,7 @@ const Playback: FC = () => {
         <div>
             <div>Playback: {playStatus || "unknown"}</div>
             <div>Pos: {playheadPosition.toFixed(4)}</div>
-            <div>{currentSource}</div>
+            <div>source: {currentSource}</div>
             {/*<div>*/}
             {/*    Audio Sources:{" "}*/}
             {/*    {Object.keys(audioSources).map((sourceId: any) => (*/}

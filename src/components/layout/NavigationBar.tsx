@@ -89,9 +89,9 @@ const NavigationBar: FC = () => {
                             <NavItem title="Now Playing" target="playing" />
                         </Group>
 
-                        <Group spacing="lg" sx={{ flexGrow: 1 }}>
+                        {/*<Group spacing="lg" sx={{ flexGrow: 1 }}>*/}
                             <MiniController />
-                        </Group>
+                        {/*</Group>*/}
                     </Group>
 
                     <Group>

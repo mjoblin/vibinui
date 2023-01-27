@@ -8,6 +8,7 @@ import userSettingsReducer from "./userSettingsSlice";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
 import { vibinSystemApi } from "../services/vibinSystem";
+import { vibinTracksApi } from "../services/vibinTracks";
 import { vibinTransportApi } from "../services/vibinTransport";
 import { vibinWebsocket } from "../services/vibinWebsocket";
 
@@ -20,6 +21,7 @@ export const store = configureStore({
         [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
         [vibinSystemApi.reducerPath]: vibinSystemApi.reducer,
+        [vibinTracksApi.reducerPath]: vibinTracksApi.reducer,
         [vibinTransportApi.reducerPath]: vibinTransportApi.reducer,
         [vibinWebsocket.reducerPath]: vibinWebsocket.reducer,
     },
@@ -28,6 +30,7 @@ export const store = configureStore({
             vibinBaseApi.middleware,
             vibinPlaylistApi.middleware,
             vibinSystemApi.middleware,
+            vibinTracksApi.middleware,
             vibinTransportApi.middleware,
             vibinWebsocket.middleware
         ),
