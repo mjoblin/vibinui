@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Provider } from "react-redux";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
+import { NotificationsProvider } from "@mantine/notifications";
 
 import { store } from "./app/store/store";
 import BrowseScreen from "./components/layout/BrowseScreen";
@@ -25,20 +26,22 @@ export default function App() {
                     toggleColorScheme={toggleColorScheme}
                 >
                     <MantineProvider
-                        theme={{ colorScheme, loader: "dots" }}
+                        theme={{ colorScheme }}
                         withGlobalStyles
                         withNormalizeCSS
                     >
-                        <WebsocketManager />
-                        <PlayheadManager />  {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
-
-                        <Routes>
-                            <Route path="/" element={<RootLayout />}>
-                                <Route path="browse" element={<BrowseScreen />} />
-                                <Route path="playlist" element={<PlaylistScreen />} />
-                                <Route path="playing" element={<NowPlayingScreen />} />
-                            </Route>
-                        </Routes>
+                        <NotificationsProvider limit={5} autoClose={2500}>
+                            <WebsocketManager />
+                            <PlayheadManager />{" "}
+                            {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
+                            <Routes>
+                                <Route path="/" element={<RootLayout />}>
+                                    <Route path="browse" element={<BrowseScreen />} />
+                                    <Route path="playlist" element={<PlaylistScreen />} />
+                                    <Route path="playing" element={<NowPlayingScreen />} />
+                                </Route>
+                            </Routes>
+                        </NotificationsProvider>
                     </MantineProvider>
                 </ColorSchemeProvider>
             </BrowserRouter>

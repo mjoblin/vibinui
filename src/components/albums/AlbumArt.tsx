@@ -1,11 +1,13 @@
 import React, { FC, useState } from "react";
 import { Box, createStyles, Flex, Image } from "@mantine/core";
+import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import AlbumActionsButton from "./AlbumActionsButton";
 import PlayButton from "./PlayButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
+import VibinIconButton from "../shared/VibinIconButton";
 
 const useStyles = createStyles((theme) => ({
     albumArtContainer: {
@@ -108,7 +110,15 @@ const AlbumArt: FC<AlbumArtProps> = ({
                         isActionsMenuOpen && classes.actionsMenuActive
                     }`}
                 >
-                    <PlayButton
+                    {/*<PlayButton*/}
+                    {/*    onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}*/}
+                    {/*/>*/}
+
+                    <VibinIconButton
+                        icon={IconPlayerPlay}
+                        size={15}
+                        container={true}
+                        fill={true}
                         onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}
                     />
 

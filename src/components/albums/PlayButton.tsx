@@ -12,12 +12,17 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: "rgb(255, 255, 255, 0.2)",
         transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
         "&:hover": {
+            cursor: "pointer",
             backgroundColor: theme.colors.blue,
         },
     },
-    onHover: {
+    button: {
+        color: theme.colors.gray[4],
+        fill: theme.colors.gray[4],
         "&:hover": {
             cursor: "pointer",
+            color: theme.colors.gray[1],
+            fill: theme.colors.gray[1],
         },
     },
 }));
@@ -36,7 +41,7 @@ const PlayButton: FC<PlayButtonProps> = ({ container = true, onClick }) => {
                 event.stopPropagation();
                 onClick && onClick();
             }}
-            className={`${classes.playButtonContainer} ${classes.onHover}`}
+            className={classes.playButtonContainer}
         >
             <IconPlayerPlay size={15} color="white" fill="white" />
         </Center>
@@ -46,9 +51,8 @@ const PlayButton: FC<PlayButtonProps> = ({ container = true, onClick }) => {
                 event.stopPropagation();
                 onClick && onClick();
             }}
-            className={classes.onHover}
         >
-            <IconPlayerPlay size={15} color="white" fill="white" />
+            <IconPlayerPlay className={classes.button} size={15} />
         </Box>
     );
 };
