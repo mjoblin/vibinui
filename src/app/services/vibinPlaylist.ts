@@ -48,13 +48,13 @@ export const vibinPlaylistApi = createApi({
                 method: "POST",
             }),
         }),
-        deletePlaylistEntry: builder.mutation<void, { playlistId: PlaylistEntryId }>({
+        deletePlaylistEntryId: builder.mutation<void, { playlistId: PlaylistEntryId }>({
             query: ({ playlistId }) => ({
                 url: `delete/${playlistId}`,
                 method: "POST",
             }),
         }),
-        movePlaylistEntry: builder.mutation<
+        movePlaylistEntryId: builder.mutation<
             void,
             {
                 playlistId: PlaylistEntryId;
@@ -85,8 +85,8 @@ export const vibinPlaylistApi = createApi({
 export const {
     useAddMediaToPlaylistMutation,
     useClearPlaylistMutation,
-    useDeletePlaylistEntryMutation,
-    useMovePlaylistEntryMutation,
+    useDeletePlaylistEntryIdMutation,
+    useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
     usePlayPlaylistEntryIndexMutation,
 } = vibinPlaylistApi;

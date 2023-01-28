@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { createStyles, Group } from "@mantine/core";
+import { createStyles, Flex } from "@mantine/core";
 import {
     IconPlayerPause,
     IconPlayerPlay,
@@ -15,6 +15,7 @@ import {
 } from "../../app/services/vibinTransport";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import VibinIconButton from "../shared/VibinIconButton";
 
 const useStyles = createStyles((theme) => ({
     transportControl: {
@@ -35,18 +36,16 @@ const TransportControls: FC = () => {
     const [previousTrack] = usePreviousTrackMutation();
     const { classes } = useStyles();
 
-    // TODO: Give some hover feedback (perhaps lighten the icon background).
-    // TODO: Make the default color a little lighter (pure white is too bright).
     // TODO: Think about when prev/next should be disabled.
+    // TODO: Switch IconPlayerPlay and IconPlayerPause to VibinIconButton.
 
     return (
-        <Group spacing="sm">
-            <IconPlayerTrackPrev
-                className={classes.transportControl}
+        <Flex gap="sm">
+            <VibinIconButton
+                icon={IconPlayerTrackPrev}
                 size={20}
-                stroke={1}
-                color="white"
-                fill="white"
+                container={false}
+                fill={true}
                 onClick={() => previousTrack()}
             />
 
@@ -100,15 +99,14 @@ const TransportControls: FC = () => {
                 />
             )}
 
-            <IconPlayerTrackNext
-                className={classes.transportControl}
+            <VibinIconButton
+                icon={IconPlayerTrackNext}
                 size={20}
-                stroke={1}
-                color="white"
-                fill="white"
+                container={false}
+                fill={true}
                 onClick={() => nextTrack()}
             />
-        </Group>
+        </Flex>
     );
 };
 

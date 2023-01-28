@@ -1,11 +1,17 @@
 import React, { FC } from "react";
-import { Box, createStyles } from "@mantine/core";
+import { createStyles, Flex } from "@mantine/core";
+import { IconPlayerPlay, IconTrash } from "@tabler/icons";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { usePlayPlaylistEntryIdMutation } from "../../app/services/vibinPlaylist";
+import {
+    usePlayPlaylistEntryIdMutation,
+    useDeletePlaylistEntryIdMutation,
+} from "../../app/services/vibinPlaylist";
 import AlbumArt from "../albums/AlbumArt";
-import PlayButton from "../albums/PlayButton";
+import VibinIconButton from "../shared/VibinIconButton";
+
+// TODO: Add error handling for playlist delete/move.
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -21,12 +27,14 @@ const useStyles = createStyles((theme) => ({
             fontWeight: "bold",
         },
         td: {
+            fontSize: 14,
             paddingLeft: 5,
             paddingRight: 5,
-            paddingTop: 2,
-            paddingBottom: 2,
+            paddingTop: 0,
+            paddingBottom: 0,
         },
         "td:first-of-type": {
+            fontSize: 12,
             paddingLeft: 15,
         },
         "td:last-of-type": {
@@ -61,7 +69,8 @@ const useStyles = createStyles((theme) => ({
 
 const Playlist: FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
-    const [playPlaylistIndex] = usePlayPlaylistEntryIdMutation();
+    const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
+    const [deletePlaylistId] = useDeletePlaylistEntryIdMutation();
     const { classes } = useStyles();
 
     if (!playlist.entries) {
@@ -77,23 +86,34 @@ const Playlist: FC = () => {
         >
             <td className={`${classes.alignRight} ${classes.dimmed}`}>{entry.index + 1}</td>
             <td>
-                <AlbumArt artUri={entry.albumArtURI} size={30} radius={3} />
+                <AlbumArt artUri={entry.albumArtURI} size={20} radius={3} />
             </td>
             <td>{entry.title}</td>
-            <td className={classes.dimmed}>{entry.album}</td>
+            <td>{entry.album}</td>
             {/* TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward */}
-            <td className={classes.dimmed}>
-                {entry.genre === "(Unknown Genre)" ? "" : entry.genre}
-            </td>
+            <td>{entry.genre === "(Unknown Genre)" ? "" : entry.genre}</td>
             <td className={classes.alignRight}>{durationDisplay(entry.duration)}</td>
             <td>
-                {/* TODO: This top padding (to make the button position look right) feels hacky */}
-                <Box pt={3}>
-                    <PlayButton
+                {/* TODO: This top padding (to make the button position look right) is hacky.
+                      There's likely a better way to get everything (including the SVG icons) to
+                      be centered on the row. Note also that the "pt" here is affected by the
+                      paddingTop in the CSS for the <td> elements. */}
+                <Flex pt={4} pl={5} gap={10}>
+                    <VibinIconButton
+                        icon={IconPlayerPlay}
                         container={false}
-                        onClick={() => playPlaylistIndex({ playlistId: entry.id })}
+                        fill={true}
+                        onClick={() => playPlaylistId({ playlistId: entry.id })}
                     />
-                </Box>
+
+                    <VibinIconButton
+                        icon={IconTrash}
+                        container={false}
+                        onClick={() => {
+                            deletePlaylistId({ playlistId: entry.id });
+                        }}
+                    />
+                </Flex>
             </td>
         </tr>
     ));

@@ -132,7 +132,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                     onClose={() => setActionsMenuOpen(undefined)}
                                 />
 
-                                <AppendToPlaylistButton mediaId={track.id!!} />
+                                <AppendToPlaylistButton item={track} />
                             </Flex>
                         </Flex>
                     </Paper>
