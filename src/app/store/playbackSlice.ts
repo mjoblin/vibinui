@@ -12,6 +12,10 @@ export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready";
 
 export type AudioSource = string;
 
+export type RepeatState = "off" | "all";
+
+export type ShuffleState = "off" | "all";
+
 // TODO: Rename top-level state fields from snake_case to camelCase.
 
 export interface PlaybackState {
@@ -23,8 +27,8 @@ export interface PlaybackState {
     current_track: Track | undefined;
     current_format: Format | undefined;
     current_stream: Stream | undefined;
-    repeat: string | undefined;
-    shuffle: string | undefined;
+    repeat: RepeatState | undefined;
+    shuffle: ShuffleState | undefined;
     playhead: {
         position: number;
         position_normalized: number;
@@ -78,10 +82,10 @@ export const playbackSlice = createSlice({
         setPlayheadPositionNormalized: (state, action: PayloadAction<number>) => {
             state.playhead.position_normalized = action.payload;
         },
-        setRepeat: (state, action: PayloadAction<string | undefined>) => {
+        setRepeat: (state, action: PayloadAction<RepeatState | undefined>) => {
             state.repeat = action.payload;
         },
-        setShuffle: (state, action: PayloadAction<string | undefined>) => {
+        setShuffle: (state, action: PayloadAction<ShuffleState | undefined>) => {
             state.shuffle = action.payload;
         },
     },

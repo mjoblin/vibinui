@@ -14,6 +14,8 @@ import {
     setPlayheadPosition,
     setRepeat,
     setShuffle,
+    RepeatState,
+    ShuffleState,
 } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { RootState } from "../store/store";
@@ -46,7 +48,8 @@ type StateVarsPayload = {
 type PlayerState = "buffering" | "ready" | "play" | "pause" | "stop" | "no_signal";
 
 // TODO: Figure out if any of these are not optional. Making them all optional makes usage a little
-//  awkward (having to always allow for their optionality on reference).
+//  awkward (having to always allow for their optionality on reference). Also investigate
+//  formalizing some of these types, and find a suitable place fro those types to live.
 type PlayStatePayload = {
     state?: PlayerState;
     position?: number;
@@ -54,8 +57,8 @@ type PlayStatePayload = {
     queue_index?: number;
     queue_length?: number;
     queue_id?: number;
-    mode_repeat?: string;   // TODO: Determine valid values for repeat
-    mode_shuffle?: string;   // TODO: Determine valid values for shuffle
+    mode_repeat?: RepeatState;
+    mode_shuffle?: ShuffleState;
     metadata?: {
         class?: string;
         source?: string;

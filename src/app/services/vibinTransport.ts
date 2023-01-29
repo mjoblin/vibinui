@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type { MediaId } from "../types";
+import { RepeatState, ShuffleState } from "../store/playbackSlice";
 
 // Playhead seek target.
 //
@@ -28,6 +29,12 @@ export const vibinTransportApi = createApi({
         seek: builder.mutation<void, SeekTarget>({
             query: (seekTarget) => ({ url: `seek?target=${seekTarget}`, method: "POST" }),
         }),
+        toggleRepeat: builder.mutation<boolean, void>({
+            query: () => ({ url: `repeat`, method: "POST" }),
+        }),
+        toggleShuffle: builder.mutation<boolean, void>({
+            query: () => ({ url: `shuffle`, method: "POST" }),
+        }),
     }),
 });
 
@@ -37,4 +44,6 @@ export const {
     usePauseMutation,
     usePlayMutation,
     useSeekMutation,
+    useToggleRepeatMutation,
+    useToggleShuffleMutation,
 } = vibinTransportApi;

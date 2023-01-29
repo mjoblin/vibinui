@@ -1,5 +1,5 @@
-import React, { FC, ReactNode } from "react";
-import { Box, Center, createStyles } from "@mantine/core";
+import React, { FC, ReactNode, SyntheticEvent } from "react";
+import { Center, createStyles } from "@mantine/core";
 import { TablerIcon } from "@tabler/icons";
 
 // TODO: This is really just a simple Button. It might benefit from extending <Button> instead.
@@ -9,6 +9,9 @@ type VibinIconButtonProps = {
     size?: number;
     container?: boolean;
     fill?: boolean;
+    stroke?: number;
+    color?: string;
+    hoverColor?: string;
     onClick?: () => void;
 };
 
@@ -17,6 +20,9 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
     size = 15,
     container = true,
     fill = false,
+    stroke = 1,
+    color = undefined,
+    hoverColor = undefined,
     onClick,
 }) => {
     const { classes: dynamicClasses } = createStyles((theme, _params, getRef) => ({
@@ -37,44 +43,37 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
         },
         button: {
             ref: getRef("button"),
-            color: theme.colors.gray[5],
+            color: color ? color : theme.colors.gray[5],
             fill: fill ? theme.colors.gray[5] : undefined,
             transition: "color .2s ease-in-out, fill .2s ease-in-out",
             "&:hover": {
                 cursor: "pointer",
-                color: theme.colors.gray[1],
+                color: hoverColor ? hoverColor : theme.colors.gray[1],
                 fill: fill ? theme.colors.gray[1] : undefined,
             },
         },
     }))();
+
+    const clickHandler = (event: SyntheticEvent) => {
+        event.stopPropagation();
+        onClick && onClick();
+    };
 
     // TODO: Is there a way to keep TS happy here.
     // @ts-ignore
     const iconComponent: ReactNode = new icon({
         className: dynamicClasses.button,
         size,
-        stroke: 1,
+        stroke,
+        onClick: container ? undefined : clickHandler,
     });
 
     return container ? (
-        <Center
-            onClick={(event) => {
-                event.stopPropagation();
-                onClick && onClick();
-            }}
-            className={dynamicClasses.playButtonContainer}
-        >
+        <Center onClick={clickHandler} className={dynamicClasses.playButtonContainer}>
             {iconComponent}
         </Center>
     ) : (
-        <Box
-            onClick={(event) => {
-                event.stopPropagation();
-                onClick && onClick();
-            }}
-        >
-            {iconComponent}
-        </Box>
+        <>{iconComponent}</>
     );
 };
 

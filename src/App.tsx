@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 
@@ -18,33 +18,40 @@ export default function App() {
     const toggleColorScheme = (value?: ColorScheme) =>
         setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
+    const router = createBrowserRouter([
+        {
+            path: "/",
+            element: <RootLayout />,
+            children: [
+                {
+                    path: "browse",
+                    element: <BrowseScreen />,
+                },
+                {
+                    path: "playlist",
+                    element: <PlaylistScreen />,
+                },
+                {
+                    path: "playing",
+                    element: <NowPlayingScreen />,
+                },
+            ],
+        },
+    ]);
+
     return (
         <Provider store={store}>
-            <BrowserRouter>
-                <ColorSchemeProvider
-                    colorScheme={colorScheme}
-                    toggleColorScheme={toggleColorScheme}
-                >
-                    <MantineProvider
-                        theme={{ colorScheme }}
-                        withGlobalStyles
-                        withNormalizeCSS
-                    >
-                        <NotificationsProvider limit={5} autoClose={2500}>
-                            <WebsocketManager />
-                            <PlayheadManager />{" "}
-                            {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
-                            <Routes>
-                                <Route path="/" element={<RootLayout />}>
-                                    <Route path="browse" element={<BrowseScreen />} />
-                                    <Route path="playlist" element={<PlaylistScreen />} />
-                                    <Route path="playing" element={<NowPlayingScreen />} />
-                                </Route>
-                            </Routes>
-                        </NotificationsProvider>
-                    </MantineProvider>
-                </ColorSchemeProvider>
-            </BrowserRouter>
+            <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
+                <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+                    <NotificationsProvider limit={5} autoClose={2500}>
+                        <WebsocketManager />
+                        <PlayheadManager />
+
+                        {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
+                        <RouterProvider router={router} />
+                    </NotificationsProvider>
+                </MantineProvider>
+            </ColorSchemeProvider>
         </Provider>
     );
 }
