@@ -17,7 +17,7 @@ const MiniController: FC = () => {
     return playStatus === "not_ready" ? (
         <></>
     ) : (
-        <Flex gap={20} sx={{ flexGrow: 1 }}>
+        <Flex gap={10} sx={{ flexGrow: 1 }}>
             <TransportControls />
             <NowPlaying maxPlayheadWidth={300} />
         </Flex>

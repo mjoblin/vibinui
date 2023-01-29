@@ -30,22 +30,26 @@ const useStyles = createStyles((theme) => ({
             fontSize: 14,
             paddingLeft: 5,
             paddingRight: 5,
-            paddingTop: 0,
-            paddingBottom: 0,
+            paddingTop: 3,
+            paddingBottom: 3,
         },
         "td:first-of-type": {
             fontSize: 12,
             paddingLeft: 15,
+            borderRadius: "5px 0 0 5px",
         },
         "td:last-of-type": {
             paddingRight: 15,
+            borderRadius: "0 5px 5px 0",
         },
     },
     currentlyPlaying: {
+        color: theme.white,
         backgroundColor: theme.colors.blue,
     },
     highlightOnHover: {
         "&:hover": {
+            cursor: "pointer",
             backgroundColor: HIGHLIGHT_COLOR,
         },
     },
@@ -80,25 +84,27 @@ const Playlist: FC = () => {
     const playlistEntries = playlist.entries.map((entry, index) => (
         <tr
             key={entry.id}
-            className={`${classes.highlightOnHover} ${
-                index === playlist.current_track_index ? classes.currentlyPlaying : ""
-            }`}
+            className={
+                index === playlist.current_track_index
+                    ? classes.currentlyPlaying
+                    : classes.highlightOnHover
+            }
+            onClick={() => {
+                index !== playlist.current_track_index && playPlaylistId({ playlistId: entry.id });
+            }}
         >
             <td className={`${classes.alignRight} ${classes.dimmed}`}>{entry.index + 1}</td>
             <td>
                 <AlbumArt artUri={entry.albumArtURI} size={20} radius={3} />
             </td>
             <td>{entry.title}</td>
+            <td>{entry.artist}</td>
             <td>{entry.album}</td>
             {/* TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward */}
             <td>{entry.genre === "(Unknown Genre)" ? "" : entry.genre}</td>
             <td className={classes.alignRight}>{durationDisplay(entry.duration)}</td>
             <td>
-                {/* TODO: This top padding (to make the button position look right) is hacky.
-                      There's likely a better way to get everything (including the SVG icons) to
-                      be centered on the row. Note also that the "pt" here is affected by the
-                      paddingTop in the CSS for the <td> elements. */}
-                <Flex pt={4} pl={5} gap={10}>
+                <Flex pl={5} gap={10}>
                     <VibinIconButton
                         icon={IconPlayerPlay}
                         container={false}
@@ -125,6 +131,7 @@ const Playlist: FC = () => {
                     <td></td>
                     <td></td>
                     <td>Title</td>
+                    <td>Artist</td>
                     <td>Album</td>
                     <td>Genre</td>
                     <td></td>

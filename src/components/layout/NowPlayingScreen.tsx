@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Box, Flex, Stack, Text } from "@mantine/core";
+import React, { FC, useState } from "react";
+import { Box, Flex, Stack, Tabs, Text } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -12,6 +12,7 @@ import TrackLyrics from "../nowPlaying/TrackLyrics";
 const ALBUM_ART_WIDTH = 300;
 
 const NowPlayingScreen: FC = () => {
+    const [activeTab, setActiveTab] = useState<string | null>("lyrics");
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const currentStream = useAppSelector((state: RootState) => state.playback.current_stream);
@@ -56,19 +57,31 @@ const NowPlayingScreen: FC = () => {
                 </Stack>
             </Stack>
 
-            <Stack spacing="xs">
-                <Text size={28} weight="bold">
-                    {currentTrack.title}
-                </Text>
+            <Stack spacing="md" sx={{ flexGrow: 1 }}>
+                <Stack spacing="xs">
+                    <Text size={28} weight="bold">
+                        {currentTrack.title}
+                    </Text>
 
-                <FieldValueList
-                    fieldValues={{
-                        Artist: currentTrack.artist,
-                        Album: currentTrack.album,
-                    }}
-                />
+                    <FieldValueList
+                        fieldValues={{
+                            Artist: currentTrack.artist,
+                            Album: currentTrack.album,
+                        }}
+                    />
+                </Stack>
 
-                <Box>{trackId && <TrackLyrics trackId={trackId} />}</Box>
+                <Tabs value={activeTab} onTabChange={setActiveTab} variant="pills" sx={{ height: "100vh" }}>
+                    <Tabs.List>
+                        <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
+                    </Tabs.List>
+
+                    <Tabs.Panel value="lyrics" sx={{ height: "100vh", overflowY: "scroll" }}>
+                        <Box pt="md">
+                            {trackId && <TrackLyrics trackId={trackId} />}
+                        </Box>
+                    </Tabs.Panel>
+                </Tabs>
             </Stack>
         </Flex>
     );

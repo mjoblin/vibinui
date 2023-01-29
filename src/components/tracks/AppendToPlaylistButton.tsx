@@ -35,7 +35,6 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 message: item.title,
                 color: "teal",
                 icon: <IconCheck size={16} />,
-                autoClose: 2000,
             });
         } else if (addStatus.isError) {
             updateNotification({

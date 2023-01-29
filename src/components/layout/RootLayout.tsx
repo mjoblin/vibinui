@@ -19,7 +19,7 @@ const RootLayout: FC = () => {
             <NavigationBar />
 
             <Box sx={{ overflowY: "auto" }}>
-                <Box sx={{ paddingLeft: 15, paddingRight: 15, paddingTop: 10 }}>
+                <Box sx={{ paddingLeft: 15, paddingRight: 15, paddingTop: 10, paddingBottom: 20 }}>
                     <Outlet />
                 </Box>
             </Box>

@@ -1,10 +1,12 @@
 import React, { FC } from "react";
-import { createStyles, Flex } from "@mantine/core";
+import { createStyles, Flex, Stack, useMantineTheme } from "@mantine/core";
 import {
     IconPlayerPause,
     IconPlayerPlay,
     IconPlayerTrackNext,
     IconPlayerTrackPrev,
+    IconRepeat,
+    IconArrowsShuffle,
 } from "@tabler/icons";
 
 import {
@@ -12,6 +14,8 @@ import {
     usePauseMutation,
     usePlayMutation,
     usePreviousTrackMutation,
+    useToggleRepeatMutation,
+    useToggleShuffleMutation,
 } from "../../app/services/vibinTransport";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -30,17 +34,22 @@ const useStyles = createStyles((theme) => ({
 
 const TransportControls: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const repeatState = useAppSelector((state: RootState) => state.playback.repeat);
+    const shuffleState = useAppSelector((state: RootState) => state.playback.shuffle);
     const [nextTrack] = useNextTrackMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [previousTrack] = usePreviousTrackMutation();
+    const [toggleRepeat] = useToggleRepeatMutation();
+    const [toggleShuffle] = useToggleShuffleMutation();
+    const theme = useMantineTheme();
     const { classes } = useStyles();
 
     // TODO: Think about when prev/next should be disabled.
     // TODO: Switch IconPlayerPlay and IconPlayerPause to VibinIconButton.
 
     return (
-        <Flex gap="sm">
+        <Flex gap="xs" align="center">
             <VibinIconButton
                 icon={IconPlayerTrackPrev}
                 size={20}
@@ -106,6 +115,28 @@ const TransportControls: FC = () => {
                 fill={true}
                 onClick={() => nextTrack()}
             />
+
+            <Stack spacing={5}>
+                <VibinIconButton
+                    icon={IconRepeat}
+                    size={12}
+                    stroke={2}
+                    container={false}
+                    color={repeatState === "all" ? theme.colors.blue[5] : theme.colors.gray[6]}
+                    hoverColor={repeatState === "all" ? theme.colors.blue[2] : undefined}
+                    onClick={() => toggleRepeat()}
+                />
+
+                <VibinIconButton
+                    icon={IconArrowsShuffle}
+                    size={12}
+                    stroke={2}
+                    container={false}
+                    color={shuffleState === "all" ? theme.colors.blue[5] : theme.colors.gray[6]}
+                    hoverColor={shuffleState === "all" ? theme.colors.blue[2] : undefined}
+                    onClick={() => toggleShuffle()}
+                />
+            </Stack>
         </Flex>
     );
 };
