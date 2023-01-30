@@ -1,25 +1,47 @@
 import React, { FC } from "react";
-import { Box, createStyles, Flex, Stack } from "@mantine/core";
-import { IconPlayerPlay, IconTrash } from "@tabler/icons";
+import { Box, createStyles, Flex, ScrollArea, Stack, Table } from "@mantine/core";
+import { useListState } from "@mantine/hooks";
+import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import {
-    usePlayPlaylistEntryIdMutation,
     useDeletePlaylistEntryIdMutation,
+    useMovePlaylistEntryIdMutation,
+    usePlayPlaylistEntryIdMutation,
 } from "../../app/services/vibinPlaylist";
 import { useGetAlbumsQuery } from "../../app/services/vibinBase";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
 
-// TODO: Add error handling for playlist delete/move.
-
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
 const HIGHLIGHT_COLOR = "#252525";
+const TITLE_AND_ALBUM_COLUMN_GAP = 40;
 
+/**
+ *
+ * @param duration
+ */
 const durationDisplay = (duration: string): string =>
     duration.replace(/^0+:0?/, "").replace(/\.0+$/, "");
+
+/**
+ *
+ * @param text
+ */
+const getTextWidth = (text: string) => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    if (context) {
+        context.font = getComputedStyle(document.body).font;
+        return context.measureText(text).width;
+    }
+
+    return 0;
+};
 
 const useStyles = createStyles((theme) => ({
     table: {
@@ -27,29 +49,34 @@ const useStyles = createStyles((theme) => ({
         thead: {
             fontWeight: "bold",
         },
+        "tbody > tr:not(:first-of-type)": {
+            borderTop: `1px solid ${theme.colors.gray[8]}`,
+        },
+        "tbody > tr:not(:last-of-type)": {
+            borderBottom: `1px solid ${theme.colors.gray[8]}`,
+        },
         td: {
             fontSize: 14,
             paddingLeft: 5,
             paddingRight: 5,
-            paddingTop: 3,
-            paddingBottom: 3,
+            paddingTop: 8,
+            paddingBottom: 8,
         },
         "td:first-of-type": {
             fontSize: 12,
-            paddingLeft: 15,
-            borderRadius: "5px 0 0 5px",
+            paddingLeft: 25,
+            paddingRight: 15,
         },
         "td:nth-of-type(3),td:nth-of-type(4)": {
             paddingRight: 25,
         },
         "td:last-of-type": {
-            paddingRight: 15,
-            borderRadius: "0 5px 5px 0",
+            paddingRight: 25,
         },
     },
     currentlyPlaying: {
         color: theme.white,
-        backgroundColor: theme.colors.blue,
+        backgroundColor: theme.colors.dark[5],
     },
     highlightOnHover: {
         "&:hover": {
@@ -62,6 +89,15 @@ const useStyles = createStyles((theme) => ({
     },
     dimmed: {
         color: DIMMED,
+    },
+    dragHandle: {
+        ...theme.fn.focusStyles(),
+        width: 40,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        height: "100%",
+        color: theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.gray[6],
     },
 }));
 
@@ -77,15 +113,40 @@ const useStyles = createStyles((theme) => ({
 
 const Playlist: FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
-    const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
-    const [deletePlaylistId] = useDeletePlaylistEntryIdMutation();
     const { data: albums } = useGetAlbumsQuery();
+    const [deletePlaylistId] = useDeletePlaylistEntryIdMutation();
+    const [movePlaylistId] = useMovePlaylistEntryIdMutation();
+    const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
+    const [optimisticPlaylistEntries, optimisticPlaylistEntriesHandlers] = useListState(
+        playlist.entries
+    );
+
+    // Note on playlist re-ordering and optimistic UI updates:
+    //
+    // This component uses the playlist from Redux state *and* a local copy of that state (in
+    // optimisticPlaylistEntries) to support optimistic UI updates when playlist entries are
+    // reordered. When reordering, this component will reorder optimisticPlaylistEntries for
+    // immediate rendering updates, as well as request the reordering in the backend (using
+    // useMovePlaylistEntryIdMutation()). The backend will then announce the new playlist order,
+    // which will update the Redux playlist state, which will in turn reset
+    // optimisticPlaylistEntries (via useListState()) to now reflect the backend's playlist order.
 
     const { classes } = useStyles();
 
-    if (!playlist.entries) {
+    if (!optimisticPlaylistEntries) {
         return <></>;
     }
+
+    // TODO: Fix this text width determination to properly account for cases where the sub-text
+    //  (artist name and year/genre) might be wider than the main text above it (song title and
+    //  album name).
+
+    const maxTitleWidth = Math.max(
+        ...optimisticPlaylistEntries.map((elem) => getTextWidth(elem.title))
+    );
+    const maxAlbumWidth = Math.max(
+        ...optimisticPlaylistEntries.map((elem) => getTextWidth(elem.album))
+    );
 
     // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
 
@@ -110,90 +171,147 @@ const Playlist: FC = () => {
     /**
      * Generate an array of table rows; one row per playlist entry.
      */
-    const playlistEntries = playlist.entries.map((entry, index) => {
-       const year = albumYear(entry.album, entry.artist);
-       // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
-       const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre;
-       
-       const albumSubtitle =
-           year && genre
-               ? `${year} • ${genre}`
-               : !year && !genre
-               ? ""
-               : year && !genre
-               ? year
-               : genre;
-        
-        return (
-            <tr
-                key={entry.id}
-                className={
-                    index === playlist.current_track_index
-                        ? classes.currentlyPlaying
-                        : classes.highlightOnHover
-                }
-                onClick={() => {
-                    index !== playlist.current_track_index &&
-                        playPlaylistId({ playlistId: entry.id });
-                }}
-            >
-                <td className={`${classes.alignRight} ${classes.dimmed}`}>{entry.index + 1}</td>
-                <td>
-                    <AlbumArt artUri={entry.albumArtURI} size={20} radius={3} />
-                </td>
-                <td>
-                    <Stack spacing={0}>
-                        <Box>{entry.title}</Box>
-                        <Box sx={{ color: "#686868", fontSize: 12, lineHeight: 1 }}>
-                            {entry.artist}
-                        </Box>
-                    </Stack>
-                </td>
-                <td>
-                    <Stack spacing={0}>
-                        <Box>{entry.album}</Box>
-                        <Box sx={{ color: "#686868", fontSize: 12, lineHeight: 1 }}>
-                            {albumSubtitle}
-                        </Box>
-                    </Stack>
-                </td>
-                <td className={classes.alignRight}>{durationDisplay(entry.duration)}</td>
-                <td>
-                    <Flex pl={5} gap={10}>
-                        <VibinIconButton
-                            icon={IconPlayerPlay}
-                            container={false}
-                            fill={true}
-                            onClick={() => playPlaylistId({ playlistId: entry.id })}
-                        />
+    const playlistEntries = optimisticPlaylistEntries
+        // .sort((a, b) => a.index - b.index)
+        .map((entry, index) => {
+            const year = albumYear(entry.album, entry.artist);
+            // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
+            const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre;
 
-                        <VibinIconButton
-                            icon={IconTrash}
-                            container={false}
+            const albumSubtitle =
+                year && genre
+                    ? `${year} • ${genre}`
+                    : !year && !genre
+                    ? ""
+                    : year && !genre
+                    ? year
+                    : genre;
+
+            return (
+                <Draggable key={`${entry.id}`} index={index} draggableId={`${entry.id}`}>
+                    {(provided) => (
+                        <tr
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            key={entry.id.toString()}
+                            className={
+                                index === playlist.current_track_index
+                                    ? classes.currentlyPlaying
+                                    : classes.highlightOnHover
+                            }
                             onClick={() => {
-                                deletePlaylistId({ playlistId: entry.id });
+                                index !== playlist.current_track_index &&
+                                    playPlaylistId({ playlistId: entry.id });
                             }}
-                        />
-                    </Flex>
-                </td>
-            </tr>
-        );
-    });
+                        >
+                            <td
+                                className={`${classes.alignRight} ${classes.dimmed}`}
+                                style={{ width: 35 }}
+                            >
+                                {entry.index + 1}
+                            </td>
+                            <td style={{ width: 50 }}>
+                                <AlbumArt artUri={entry.albumArtURI} size={35} radius={3} />
+                            </td>
+                            <td style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}>
+                                <Stack spacing={0}>
+                                    <Box>{entry.title}</Box>
+                                    <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                        {entry.artist}
+                                    </Box>
+                                </Stack>
+                            </td>
+                            <td style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}>
+                                <Stack spacing={0}>
+                                    <Box>{entry.album}</Box>
+                                    <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                        {albumSubtitle}
+                                    </Box>
+                                </Stack>
+                            </td>
+                            <td className={classes.alignRight} style={{ width: 85 }}>
+                                {durationDisplay(entry.duration)}
+                            </td>
+                            <td style={{ width: 45 }}>
+                                <Flex pl={5} gap={5}>
+                                    <VibinIconButton
+                                        icon={IconPlayerPlay}
+                                        container={false}
+                                        fill={true}
+                                        onClick={() => playPlaylistId({ playlistId: entry.id })}
+                                    />
+
+                                    <VibinIconButton
+                                        icon={IconTrash}
+                                        container={false}
+                                        onClick={() => deletePlaylistId({ playlistId: entry.id })}
+                                    />
+                                </Flex>
+                            </td>
+                            <td  style={{ width: 15 }}>
+                                <div className={classes.dragHandle} {...provided.dragHandleProps}>
+                                    <IconGripVertical size={18} stroke={1.5} />
+                                </div>
+                            </td>
+                        </tr>
+                    )}
+                </Draggable>
+            );
+        });
 
     return (
-        <table className={classes.table}>
-            <thead>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td>Title</td>
-                    <td>Album</td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>{playlistEntries}</tbody>
-        </table>
+        <ScrollArea>
+            <DragDropContext
+                onDragEnd={({ draggableId, source, destination }) => {
+                    if (destination) {
+                        if (source.index === destination.index) {
+                            return;
+                        }
+
+                        // Reorder the component's local copy of the playlist entries used for
+                        // rendering. This is done as a form of optimistic update, to ensure the UI
+                        // is immediately showing the new playlist ordering.
+                        optimisticPlaylistEntriesHandlers.reorder({
+                            from: source.index,
+                            to: destination.index || 0,
+                        });
+
+                        // Request the playlist item move in the backend. The new backend playlist
+                        // ordering will then be announced back to the UI, at which point the UI
+                        // will mirror the backend state again (which presumably will also match
+                        // the local optimistic view of the playlist).
+                        movePlaylistId({
+                            playlistId: parseInt(draggableId, 10),
+                            fromIndex: source.index,
+                            toIndex: destination.index,
+                        });
+                    }
+                }}
+            >
+                <table className={classes.table}>
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>Title</td>
+                            <td>Album</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+
+                    <Droppable droppableId="dnd-list" direction="vertical">
+                        {(provided) => (
+                            <tbody {...provided.droppableProps} ref={provided.innerRef}>
+                                {playlistEntries}
+                                {provided.placeholder}
+                            </tbody>
+                        )}
+                    </Droppable>
+                </table>
+            </DragDropContext>
+        </ScrollArea>
     );
 };
 
