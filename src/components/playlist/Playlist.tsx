@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { createStyles, Flex } from "@mantine/core";
+import { Box, createStyles, Flex, Stack } from "@mantine/core";
 import { IconPlayerPlay, IconTrash } from "@tabler/icons";
 
 import { useAppSelector } from "../../app/hooks";
@@ -8,6 +8,7 @@ import {
     usePlayPlaylistEntryIdMutation,
     useDeletePlaylistEntryIdMutation,
 } from "../../app/services/vibinPlaylist";
+import { useGetAlbumsQuery } from "../../app/services/vibinBase";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
 
@@ -37,6 +38,9 @@ const useStyles = createStyles((theme) => ({
             fontSize: 12,
             paddingLeft: 15,
             borderRadius: "5px 0 0 5px",
+        },
+        "td:nth-of-type(3),td:nth-of-type(4)": {
+            paddingRight: 25,
         },
         "td:last-of-type": {
             paddingRight: 15,
@@ -75,54 +79,106 @@ const Playlist: FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
     const [deletePlaylistId] = useDeletePlaylistEntryIdMutation();
+    const { data: albums } = useGetAlbumsQuery();
+
     const { classes } = useStyles();
 
     if (!playlist.entries) {
         return <></>;
     }
 
-    const playlistEntries = playlist.entries.map((entry, index) => (
-        <tr
-            key={entry.id}
-            className={
-                index === playlist.current_track_index
-                    ? classes.currentlyPlaying
-                    : classes.highlightOnHover
-            }
-            onClick={() => {
-                index !== playlist.current_track_index && playPlaylistId({ playlistId: entry.id });
-            }}
-        >
-            <td className={`${classes.alignRight} ${classes.dimmed}`}>{entry.index + 1}</td>
-            <td>
-                <AlbumArt artUri={entry.albumArtURI} size={20} radius={3} />
-            </td>
-            <td>{entry.title}</td>
-            <td>{entry.artist}</td>
-            <td>{entry.album}</td>
-            {/* TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward */}
-            <td>{entry.genre === "(Unknown Genre)" ? "" : entry.genre}</td>
-            <td className={classes.alignRight}>{durationDisplay(entry.duration)}</td>
-            <td>
-                <Flex pl={5} gap={10}>
-                    <VibinIconButton
-                        icon={IconPlayerPlay}
-                        container={false}
-                        fill={true}
-                        onClick={() => playPlaylistId({ playlistId: entry.id })}
-                    />
+    // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
 
-                    <VibinIconButton
-                        icon={IconTrash}
-                        container={false}
-                        onClick={() => {
-                            deletePlaylistId({ playlistId: entry.id });
-                        }}
-                    />
-                </Flex>
-            </td>
-        </tr>
-    ));
+    /**
+     * Find the album year for the first album matching the given title & artist. This is a little
+     * flaky as it's taking a playlist title/artist and assuming it will match an album in the
+     * albums list. Also, the playlist artist could be a track artist which can be different from
+     * an album artist.
+     *
+     * TODO: See if this "playlist entry to full album entry" lookup can be made more reliable.
+     */
+    const albumYear = (title: string, artist: string): string | undefined => {
+        if (!albums) {
+            return undefined;
+        }
+
+        return albums
+            .find((album) => album.title === title && (album.artist === artist || !album.artist))
+            ?.date.split("-")[0];
+    };
+
+    /**
+     * Generate an array of table rows; one row per playlist entry.
+     */
+    const playlistEntries = playlist.entries.map((entry, index) => {
+       const year = albumYear(entry.album, entry.artist);
+       // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
+       const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre;
+       
+       const albumSubtitle =
+           year && genre
+               ? `${year} • ${genre}`
+               : !year && !genre
+               ? ""
+               : year && !genre
+               ? year
+               : genre;
+        
+        return (
+            <tr
+                key={entry.id}
+                className={
+                    index === playlist.current_track_index
+                        ? classes.currentlyPlaying
+                        : classes.highlightOnHover
+                }
+                onClick={() => {
+                    index !== playlist.current_track_index &&
+                        playPlaylistId({ playlistId: entry.id });
+                }}
+            >
+                <td className={`${classes.alignRight} ${classes.dimmed}`}>{entry.index + 1}</td>
+                <td>
+                    <AlbumArt artUri={entry.albumArtURI} size={20} radius={3} />
+                </td>
+                <td>
+                    <Stack spacing={0}>
+                        <Box>{entry.title}</Box>
+                        <Box sx={{ color: "#686868", fontSize: 12, lineHeight: 1 }}>
+                            {entry.artist}
+                        </Box>
+                    </Stack>
+                </td>
+                <td>
+                    <Stack spacing={0}>
+                        <Box>{entry.album}</Box>
+                        <Box sx={{ color: "#686868", fontSize: 12, lineHeight: 1 }}>
+                            {albumSubtitle}
+                        </Box>
+                    </Stack>
+                </td>
+                <td className={classes.alignRight}>{durationDisplay(entry.duration)}</td>
+                <td>
+                    <Flex pl={5} gap={10}>
+                        <VibinIconButton
+                            icon={IconPlayerPlay}
+                            container={false}
+                            fill={true}
+                            onClick={() => playPlaylistId({ playlistId: entry.id })}
+                        />
+
+                        <VibinIconButton
+                            icon={IconTrash}
+                            container={false}
+                            onClick={() => {
+                                deletePlaylistId({ playlistId: entry.id });
+                            }}
+                        />
+                    </Flex>
+                </td>
+            </tr>
+        );
+    });
 
     return (
         <table className={classes.table}>
@@ -131,9 +187,7 @@ const Playlist: FC = () => {
                     <td></td>
                     <td></td>
                     <td>Title</td>
-                    <td>Artist</td>
                     <td>Album</td>
-                    <td>Genre</td>
                     <td></td>
                     <td></td>
                 </tr>

@@ -23,32 +23,6 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
             width: coverSize,
             border: "2px solid rgb(0, 0, 0, 0)",
         },
-        albumControls: {
-            position: "absolute",
-            width: "100%",
-            height: coverSize,
-            top: 0,
-            left: 0,
-            opacity: 0,
-            transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
-            "&:hover": {
-                opacity: 1,
-            },
-        },
-        cardPlayButtonContainer: {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: coverSize,
-            width: "100%",
-            transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
-            "&:hover": {
-                backgroundColor: "rgb(0, 0, 0, 0.25)",
-            },
-        },
-        actionsMenuActive: {
-            opacity: 1,
-        },
     }))();
 
     return (

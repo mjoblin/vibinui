@@ -43,6 +43,8 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
         return <></>;
     }
 
+    // TODO: The date and genre processing here is similar to <Playlist>. Consider extracting.
+
     return (
         <Stack>
             {/* Album details */}
