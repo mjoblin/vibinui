@@ -1,17 +1,17 @@
-import React, { FC } from "react";
-import { Box, createStyles, Flex, ScrollArea, Stack, Table } from "@mantine/core";
-import { useListState } from "@mantine/hooks";
+import React, { FC, useEffect, useState } from "react";
+import { Box, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-import { useAppSelector } from "../../app/hooks";
+import { PlaylistEntry } from "../../app/types";
 import { RootState } from "../../app/store/store";
+import { useAppSelector } from "../../app/hooks";
+import { useGetAlbumsQuery } from "../../app/services/vibinBase";
 import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../app/services/vibinPlaylist";
-import { useGetAlbumsQuery } from "../../app/services/vibinBase";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
 
@@ -21,17 +21,19 @@ const HIGHLIGHT_COLOR = "#252525";
 const TITLE_AND_ALBUM_COLUMN_GAP = 40;
 
 /**
- *
- * @param duration
+ * Takes a duration string in "hh:mm:ss.ms" format and strips any redundant leading 0's and :'s.
+ * Also strips any trailing ".0*" (i.e. milliseconds). e.g. "00:04:17.000" will be returned as
+ * "4:17".
  */
 const durationDisplay = (duration: string): string =>
     duration.replace(/^0+:0?/, "").replace(/\.0+$/, "");
 
 /**
+ * Determines the width, in pixels, required to render the given text.
  *
- * @param text
+ * TODO: Investigate if/how this works for different font sizes.
  */
-const getTextWidth = (text: string) => {
+const getTextWidth = (text: string): number => {
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
 
@@ -41,6 +43,19 @@ const getTextWidth = (text: string) => {
     }
 
     return 0;
+};
+
+/**
+ * Returns a shallow copy of inArray, where the element at fromIndex has been moved to toIndex.
+ */
+const moveArrayElement = (inArray: any[], fromIndex: number, toIndex: number): any[] => {
+    const outArray = [...inArray];
+
+    const movedEntry = outArray[fromIndex];
+    outArray.splice(fromIndex, 1);
+    outArray.splice(toIndex, 0, movedEntry);
+
+    return outArray;
 };
 
 const useStyles = createStyles((theme) => ({
@@ -117,11 +132,11 @@ const Playlist: FC = () => {
     const [deletePlaylistId] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
-    const [optimisticPlaylistEntries, optimisticPlaylistEntriesHandlers] = useListState(
-        playlist.entries
-    );
+    const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
 
-    // Note on playlist re-ordering and optimistic UI updates:
+    const { classes } = useStyles();
+
+    // Notes on playlist re-ordering and optimistic UI updates:
     //
     // This component uses the playlist from Redux state *and* a local copy of that state (in
     // optimisticPlaylistEntries) to support optimistic UI updates when playlist entries are
@@ -129,10 +144,17 @@ const Playlist: FC = () => {
     // immediate rendering updates, as well as request the reordering in the backend (using
     // useMovePlaylistEntryIdMutation()). The backend will then announce the new playlist order,
     // which will update the Redux playlist state, which will in turn reset
-    // optimisticPlaylistEntries (via useListState()) to now reflect the backend's playlist order.
+    // optimisticPlaylistEntries to now reflect the backend's playlist order.
+    //
+    // Note also that Mantine has a useListState() hook which provides convenient ways to interface
+    // with lists, including a reorder() method. That approach is not being used here, but might
+    // be useful in the future. See: https://mantine.dev/hooks/use-list-state/
 
-    const { classes } = useStyles();
+    useEffect(() => {
+        setOptimisticPlaylistEntries(playlist?.entries || []);
+    }, [playlist?.entries]);
 
+    // TODO: Render something useful when there's no playlist.
     if (!optimisticPlaylistEntries) {
         return <></>;
     }
@@ -248,7 +270,7 @@ const Playlist: FC = () => {
                                     />
                                 </Flex>
                             </td>
-                            <td  style={{ width: 15 }}>
+                            <td style={{ width: 15 }}>
                                 <div className={classes.dragHandle} {...provided.dragHandleProps}>
                                     <IconGripVertical size={18} stroke={1.5} />
                                 </div>
@@ -271,10 +293,13 @@ const Playlist: FC = () => {
                         // Reorder the component's local copy of the playlist entries used for
                         // rendering. This is done as a form of optimistic update, to ensure the UI
                         // is immediately showing the new playlist ordering.
-                        optimisticPlaylistEntriesHandlers.reorder({
-                            from: source.index,
-                            to: destination.index || 0,
-                        });
+                        setOptimisticPlaylistEntries(
+                            moveArrayElement(
+                                optimisticPlaylistEntries,
+                                source.index,
+                                destination.index
+                            )
+                        );
 
                         // Request the playlist item move in the backend. The new backend playlist
                         // ordering will then be announced back to the UI, at which point the UI
