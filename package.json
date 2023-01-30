@@ -6,6 +6,7 @@
     "proxy": "http://192.168.1.30:7669",
     "dependencies": {
         "@emotion/react": "^11.10.5",
+        "@hello-pangea/dnd": "^16.2.0",
         "@mantine/core": "^5.10.0",
         "@mantine/hooks": "^5.10.0",
         "@mantine/notifications": "^5.10.2",

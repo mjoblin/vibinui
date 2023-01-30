@@ -1,3 +1,8 @@
+# NOTES
+
+Using `@hello-pangea/dnd` instead of `react-beautiful-dnd` due to issue outlined
+[here](https://stackoverflow.com/a/72355197).
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
