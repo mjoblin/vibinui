@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query";
 
+import internalReducer from "./internalSlice";
 import systemReducer from "./systemSlice";
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
@@ -14,6 +15,7 @@ import { vibinWebsocket } from "../services/vibinWebsocket";
 
 export const store = configureStore({
     reducer: {
+        internal: internalReducer,
         system: systemReducer,
         playback: playbackReducer,
         playlist: playlistReducer,

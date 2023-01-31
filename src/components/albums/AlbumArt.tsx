@@ -5,7 +5,6 @@ import { IconPlayerPlay } from "@tabler/icons";
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import AlbumActionsButton from "./AlbumActionsButton";
-import PlayButton from "./PlayButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 
@@ -16,6 +15,18 @@ const useStyles = createStyles((theme) => ({
     actionsMenuActive: {
         opacity: 1,
     },
+    albumControls: {
+        position: "absolute",
+        // width: size,
+        // height: size,
+        top: 0,
+        left: 0,
+        opacity: 0,
+        transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
+        "&:hover": {
+            opacity: 1,
+        },
+    },
 }));
 
 type AlbumArtProps = {
@@ -25,6 +36,7 @@ type AlbumArtProps = {
     radius?: number;
     showControls?: boolean;
     size?: number;
+    showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
     onActionsMenuOpen?: () => void;
     onActionsMenuClosed?: () => void;
@@ -41,14 +53,15 @@ type AlbumArtProps = {
  * @param album
  * @param artUri
  * @param alt
+ * @param radius
  * @param showControls
  * @param size
+ * @param showArtStub
  * @param actionsMenuPosition
  * @param onActionsMenuOpen
  * @param onActionsMenuClosed
  * @constructor
  */
-
 const AlbumArt: FC<AlbumArtProps> = ({
     album,
     artUri,
@@ -56,6 +69,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
     radius = 0,
     showControls = true,
     size = 150,
+    showArtStub = false,
     actionsMenuPosition,
     onActionsMenuOpen,
     onActionsMenuClosed,
@@ -64,56 +78,32 @@ const AlbumArt: FC<AlbumArtProps> = ({
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
-    const { classes: dynamicClasses } = createStyles((theme) => ({
-        albumControls: {
-            position: "absolute",
-            width: size,
-            height: size,
-            top: 0,
-            left: 0,
-            opacity: 0,
-            transition: "transform .2s ease-in-out, opacity .2s ease-in-out",
-            "&:hover": {
-                opacity: 1,
-            },
-        },
-        cardPlayButtonContainer: {
-            position: "absolute",
-            top: 0,
-            left: 0,
-            height: size,
-            width: "100%",
-            transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
-            "&:hover": {
-                backgroundColor: "rgb(0, 0, 0, 0.25)",
-            },
-        },
-    }))();
-
     return (
         <Box className={classes.albumArtContainer}>
-            <Image
-                src={artUri ? artUri : album ? album.album_art_uri : ""}
-                alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
-                fit="cover"
-                width={size}
-                height={size}
-                radius={radius}
-            />
+            {showArtStub ? (
+                <div style={{ width: size, height: size }}></div>
+            ) : (
+                <Image
+                    src={!showArtStub ? (artUri ? artUri : album ? album.album_art_uri : "") : ""}
+                    alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
+                    fit="cover"
+                    width={size}
+                    height={size}
+                    radius={radius}
+                />
+            )}
 
             {album && showControls && (
                 <Flex
                     p="xs"
                     justify="space-between"
                     align="flex-end"
-                    className={`${dynamicClasses.albumControls} ${
+                    // className={`${dynamicClasses.albumControls} ${
+                    className={`${classes.albumControls} ${
                         isActionsMenuOpen && classes.actionsMenuActive
                     }`}
+                    sx={{ width: size, height: size }}
                 >
-                    {/*<PlayButton*/}
-                    {/*    onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}*/}
-                    {/*/>*/}
-
                     <VibinIconButton
                         icon={IconPlayerPlay}
                         size={15}
