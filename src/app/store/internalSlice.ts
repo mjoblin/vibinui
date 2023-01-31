@@ -5,11 +5,12 @@ export interface InternalState {
     albumCard: {
         renderWidth: number;
         renderHeight: number;
-    },
+    };
 }
 
 const initialState: InternalState = {
     albumCard: {
+        // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
         renderWidth: 200,
         renderHeight: 200,
     },
@@ -19,7 +20,10 @@ export const systemSlice = createSlice({
     name: "internal",
     initialState,
     reducers: {
-        setAlbumCardRenderDimensions: (state, action: PayloadAction<{ width: number, height: number }>) => {
+        setAlbumCardRenderDimensions: (
+            state,
+            action: PayloadAction<{ width: number; height: number }>
+        ) => {
             state.albumCard.renderWidth = action.payload.width;
             state.albumCard.renderHeight = action.payload.height;
         },

@@ -18,8 +18,9 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const { coverSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
     );
-    const cardRenderSizes = useAppSelector((state: RootState) => state.internal.albumCard);
+    const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.albumCard);
     const { colors } = useMantineTheme();
+    const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const cardRef = useRef<HTMLDivElement>();
@@ -31,26 +32,42 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
         },
     }))();
 
+    /**
+     * For visible AlbumCards, we want to store their width and height in application state. We do
+     * this so the "last rendered" width and height can be used by not-visible AlbumCards to render
+     * an appropriately-sized empty box.
+     *
+     * The goal is render performance. The idea is to only fully render the AlbumCards currently
+     * visible, while doing a quick empty-container render for not-visible AlbumCards. Not-visible
+     * AlbumCards need their container to be rendered at roughly the correct size to ensure
+     * scrolling (and scrollbar height) works as expected by the user.
+     */
     useEffect(() => {
-        if (cardRef.current) {
-            console.debug(
-                `SET SIZE: ${cardRef.current.offsetWidth}x${cardRef.current.offsetHeight}`
-            );
-            dispatch(
-                setAlbumCardRenderDimensions({
-                    width: cardRef.current.offsetWidth,
-                    height: cardRef.current.offsetHeight,
-                })
-            );
+        if (cardRef.current && isVisible) {
+            const newRenderWidth = cardRef.current.offsetWidth;
+            const newRenderHeight = cardRef.current.offsetHeight;
+
+            newRenderWidth !== latestVisibleRenderSize.renderWidth &&
+                newRenderHeight !== latestVisibleRenderSize.renderHeight &&
+                dispatch(
+                    setAlbumCardRenderDimensions({
+                        width: newRenderWidth,
+                        height: newRenderHeight,
+                    })
+                );
         }
-    }, [cardRef, coverSize, showDetails, dispatch]);
+    }, [cardRef, isVisible, coverSize, showDetails]);
 
     return (
         // The visibility offset top/bottom is somewhat arbitrary. The goal is to pre-load enough
         // off-screen AlbumCards to reduce flickering when scrolling (as the art loads/renders).
         // Specifying too-big an offset however will result in laggier performance due to the
         // number of cards being rendered.
-        <VisibilitySensor partialVisibility={true} offset={{ top: -1000, bottom: -1000 }}>
+        <VisibilitySensor
+            onChange={setIsVisible}
+            partialVisibility={true}
+            offset={{ top: -1000, bottom: -1000 }}
+        >
             {/* @ts-ignore */}
             {({ isVisible }) =>
                 isVisible ? (
@@ -95,8 +112,8 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                 ) : (
                     <div
                         style={{
-                            width: cardRenderSizes.renderWidth,
-                            height: cardRenderSizes.renderHeight,
+                            width: latestVisibleRenderSize.renderWidth,
+                            height: latestVisibleRenderSize.renderHeight,
                             backgroundColor: colors.dark[6],
                         }}
                     ></div>
