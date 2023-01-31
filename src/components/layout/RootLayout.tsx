@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import { Box } from "@mantine/core";
 
 import NavigationBar from "./NavigationBar";
@@ -23,6 +23,8 @@ const RootLayout: FC = () => {
                     <Outlet />
                 </Box>
             </Box>
+
+            <ScrollRestoration />
         </Box>
     );
 };

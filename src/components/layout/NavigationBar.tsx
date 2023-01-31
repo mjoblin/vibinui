@@ -53,6 +53,7 @@ const NavItem: FC<NavItemProps> = ({ title, target }) => {
             component={Link}
             to={`/${target}`}
             className={`${classes.link} ${pathname === `/${target}` ? classes.active : ""}`}
+            preventScrollReset={true}
         >
             {title}
         </Box>
