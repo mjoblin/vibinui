@@ -3,6 +3,10 @@
 Using `@hello-pangea/dnd` instead of `react-beautiful-dnd` due to issue outlined
 [here](https://stackoverflow.com/a/72355197).
 
+The `react-visibility-sensor` dependency is causing `findDOMNode is deprecated in StrictMode`
+warnings. See the GibHub issues [141](https://github.com/joshwnj/react-visibility-sensor/pull/141)
+and [142](https://github.com/joshwnj/react-visibility-sensor/pull/142).
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
