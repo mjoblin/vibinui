@@ -17,8 +17,6 @@ const useStyles = createStyles((theme) => ({
     },
     albumControls: {
         position: "absolute",
-        // width: size,
-        // height: size,
         top: 0,
         left: 0,
         opacity: 0,
@@ -56,7 +54,6 @@ type AlbumArtProps = {
  * @param radius
  * @param showControls
  * @param size
- * @param showArtStub
  * @param actionsMenuPosition
  * @param onActionsMenuOpen
  * @param onActionsMenuClosed
@@ -69,7 +66,6 @@ const AlbumArt: FC<AlbumArtProps> = ({
     radius = 0,
     showControls = true,
     size = 150,
-    showArtStub = false,
     actionsMenuPosition,
     onActionsMenuOpen,
     onActionsMenuClosed,
@@ -80,25 +76,20 @@ const AlbumArt: FC<AlbumArtProps> = ({
 
     return (
         <Box className={classes.albumArtContainer}>
-            {showArtStub ? (
-                <div style={{ width: size, height: size }}></div>
-            ) : (
-                <Image
-                    src={!showArtStub ? (artUri ? artUri : album ? album.album_art_uri : "") : ""}
-                    alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
-                    fit="cover"
-                    width={size}
-                    height={size}
-                    radius={radius}
-                />
-            )}
+            <Image
+                src={artUri ? artUri : album ? album.album_art_uri : ""}
+                alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
+                fit="cover"
+                width={size}
+                height={size}
+                radius={radius}
+            />
 
             {album && showControls && (
                 <Flex
                     p="xs"
                     justify="space-between"
                     align="flex-end"
-                    // className={`${dynamicClasses.albumControls} ${
                     className={`${classes.albumControls} ${
                         isActionsMenuOpen && classes.actionsMenuActive
                     }`}
