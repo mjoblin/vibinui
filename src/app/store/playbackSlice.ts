@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Format, Stream, Track } from "../types";
+import { Format, MediaId, Stream, Track } from "../types";
 
 /**
  * The Playback slice is intended to contain information about the current playback status of the
@@ -25,6 +25,8 @@ export interface PlaybackState {
     };
     current_audio_source: AudioSource | undefined;
     current_track: Track | undefined;
+    current_track_media_id: MediaId | undefined;
+    current_album_media_id: MediaId | undefined;
     current_format: Format | undefined;
     current_stream: Stream | undefined;
     repeat: RepeatState | undefined;
@@ -40,6 +42,8 @@ const initialState: PlaybackState = {
     audio_sources: {},
     current_audio_source: undefined,
     current_track: undefined,
+    current_track_media_id: undefined,
+    current_album_media_id: undefined,
     current_format: undefined,
     current_stream: undefined,
     repeat: undefined,
@@ -73,6 +77,12 @@ export const playbackSlice = createSlice({
         setCurrentTrack: (state, action: PayloadAction<Track | undefined>) => {
             state.current_track = action.payload;
         },
+        setCurrentTrackMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
+            state.current_track_media_id = action.payload;
+        },
+        setCurrentAlbumMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
+            state.current_album_media_id = action.payload;
+        },
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {
             state.play_status = action.payload;
         },
@@ -99,6 +109,8 @@ export const {
     setCurrentFormat,
     setCurrentStream,
     setCurrentTrack,
+    setCurrentTrackMediaId,
+    setCurrentAlbumMediaId,
     setPlayStatus,
     setPlayheadPosition,
     setPlayheadPositionNormalized,

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Stack, Text } from "@mantine/core";
+import { Box, Loader, Stack, Text } from "@mantine/core";
 
 import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
 
@@ -8,11 +8,15 @@ type TrackLyricsProps = {
 };
 
 const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
-    const { data, error, isLoading } = useGetLyricsQuery(trackId);
+    const { data, error, isFetching } = useGetLyricsQuery(trackId);
 
     // TODO: Add loading state
     if (!data) {
         return <></>;
+    }
+
+    if (isFetching) {
+        return <Loader />
     }
 
     const chunkRender = (chunk: LyricChunk, chunkIndex: number) => {

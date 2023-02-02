@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Box, Flex, Stack, Tabs, Text } from "@mantine/core";
+import { Box, Flex, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -7,6 +7,7 @@ import AlbumArt from "../albums/AlbumArt";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import NowPlaying from "../currentlyPlaying/NowPlaying";
 import PlayheadRing from "../currentlyPlaying/PlayheadRing";
+import TrackLinks from "../nowPlaying/TrackLinks";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
 
 const ALBUM_ART_WIDTH = 300;
@@ -14,6 +15,12 @@ const ALBUM_ART_WIDTH = 300;
 const NowPlayingScreen: FC = () => {
     const [activeTab, setActiveTab] = useState<string | null>("lyrics");
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
+    const currentTrackId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
+    );
+    const currentAlbumId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const currentStream = useAppSelector((state: RootState) => state.playback.current_stream);
 
@@ -39,9 +46,6 @@ const NowPlayingScreen: FC = () => {
         return <Box>No Track</Box>;
     }
 
-    const trackFilename = currentStream?.url.split("/").pop();
-    const trackId = trackFilename && trackFilename.replace(/\.[^\.]+$/, "");
-
     // @ts-ignore
     return (
         <Flex gap={30}>
@@ -54,10 +58,17 @@ const NowPlayingScreen: FC = () => {
                         <PlayheadRing />
                         <FieldValueList fieldValues={sourceAndStreamDetails} />
                     </Flex>
+
+                    <FieldValueList
+                        fieldValues={{
+                            Track: currentTrackId || "unknown",
+                            Album: currentAlbumId || "unknown",
+                        }}
+                    />
                 </Stack>
             </Stack>
 
-            <Stack spacing="md" sx={{ flexGrow: 1 }}>
+            <Stack spacing="lg" sx={{ flexGrow: 1 }}>
                 <Stack spacing="xs">
                     <Text size={28} weight="bold">
                         {currentTrack.title}
@@ -69,17 +80,23 @@ const NowPlayingScreen: FC = () => {
                             Album: currentTrack.album,
                         }}
                     />
+
+                    {currentTrackId && <TrackLinks trackId={currentTrackId} />}
                 </Stack>
 
-                <Tabs value={activeTab} onTabChange={setActiveTab} variant="pills" sx={{ height: "100vh" }}>
+                <Tabs
+                    value={activeTab}
+                    onTabChange={setActiveTab}
+                    variant="pills"
+                >
                     <Tabs.List>
                         <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
                     </Tabs.List>
 
-                    <Tabs.Panel value="lyrics" sx={{ height: "100vh", overflowY: "scroll" }}>
-                        <Box pt="md">
-                            {trackId && <TrackLyrics trackId={trackId} />}
-                        </Box>
+                    <Tabs.Panel value="lyrics">
+                        <ScrollArea pt={15}>
+                            {currentTrackId && <TrackLyrics trackId={currentTrackId} />}
+                        </ScrollArea>
                     </Tabs.Panel>
                 </Tabs>
             </Stack>
