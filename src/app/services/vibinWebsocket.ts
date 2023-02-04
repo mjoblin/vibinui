@@ -10,6 +10,8 @@ import {
     setCurrentFormat,
     setCurrentStream,
     setCurrentTrack,
+    setCurrentTrackMediaId,
+    setCurrentAlbumMediaId,
     setPlayStatus,
     setPlayheadPosition,
     setRepeat,
@@ -77,6 +79,8 @@ type PlayStatePayload = {
         sample_rate?: number;
         bit_depth?: number;
         encoding?: string;
+        current_track_media_id: string | undefined;
+        current_album_media_id: string | undefined;
     };
 };
 
@@ -305,6 +309,16 @@ function messageHandler(
 
             // Set current play status ("play", "pause", etc).
             updateAppStateIfChanged(setPlayStatus.type, (data.payload as PlayStatePayload).state);
+
+            // Set current Track and Album Media IDs.
+            updateAppStateIfChanged(
+                setCurrentTrackMediaId.type,
+                (data.payload as PlayStatePayload).metadata?.current_track_media_id
+            );
+            updateAppStateIfChanged(
+                setCurrentAlbumMediaId.type,
+                (data.payload as PlayStatePayload).metadata?.current_album_media_id
+            );
 
             // Set track information.
             // NOTE: genre comes later from a StateVars message.

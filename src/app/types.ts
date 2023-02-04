@@ -3,6 +3,10 @@
 //  returned by the backend. Changing the types should perhaps be a backend change, after which
 //  these UI types could be updated to match.
 
+// TODO: Consider distinguishing between Album and Track media (owned by the mediasource) and Album
+//  and Track updates (owned by the streamer). They overlap a lot, but not entirely (the Media ID's
+//  are notably missing from the streamer updates).
+
 export type MediaId = string;
 
 // Album details.
@@ -18,7 +22,11 @@ export type Album = {
 
 // Music track details.
 export type Track = {
-    id?: MediaId;  // TODO: This should not be optional
+    // TODO: This MediaId should not be optional. Consider removing it entirely (playlist entries
+    //  get media ids from the back-end; and the playbackSlice stores current_track_media_id from
+    //  incoming Stream data). OR we need to distinguish between Album and Track media (owned by
+    //  the mediasource) and Album and Track updates owned by the streamer.
+    id?: MediaId;
     track_number: number;
     duration: number;
     album: string;
@@ -26,7 +34,7 @@ export type Track = {
     title: string;
     art_url: string;
     genre?: string;
-}
+};
 
 // File encoding details.
 export type Format = {
@@ -60,4 +68,6 @@ export type PlaylistEntry = {
     originalTrackNumber: string;
     title: string;
     uri: string;
+    albumMediaId: MediaId;
+    trackMediaId: MediaId;
 }
