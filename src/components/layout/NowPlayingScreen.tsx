@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Box, Flex, ScrollArea, Stack, Tabs, Text } from "@mantine/core";
+import { Box, Flex, ScrollArea, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -14,6 +14,7 @@ const ALBUM_ART_WIDTH = 300;
 
 const NowPlayingScreen: FC = () => {
     const [activeTab, setActiveTab] = useState<string | null>("lyrics");
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
@@ -58,44 +59,40 @@ const NowPlayingScreen: FC = () => {
                         <PlayheadRing />
                         <FieldValueList fieldValues={sourceAndStreamDetails} />
                     </Flex>
-
-                    <FieldValueList
-                        fieldValues={{
-                            Track: currentTrackId || "unknown",
-                            Album: currentAlbumId || "unknown",
-                        }}
-                    />
                 </Stack>
             </Stack>
 
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
                 <Stack spacing="xs">
-                    <Text size={28} weight="bold">
-                        {currentTrack.title}
-                    </Text>
+                    <Skeleton visible={!["play", "pause"].includes(playStatus || "")}>
+                        <Text size={28} weight="bold">
+                            {currentTrack.title || "-"}
+                        </Text>
 
-                    <FieldValueList
-                        fieldValues={{
-                            Artist: currentTrack.artist,
-                            Album: currentTrack.album,
-                        }}
-                    />
-
-                    {currentTrackId && <TrackLinks trackId={currentTrackId} />}
+                        <FieldValueList
+                            fieldValues={{
+                                Artist: currentTrack.artist,
+                                Album: currentTrack.album,
+                            }}
+                        />
+                    </Skeleton>
                 </Stack>
 
-                <Tabs
-                    value={activeTab}
-                    onTabChange={setActiveTab}
-                    variant="pills"
-                >
-                    <Tabs.List>
+                <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline">
+                    <Tabs.List mb={20}>
                         <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
+                        <Tabs.Tab value="links">Links</Tabs.Tab>
                     </Tabs.List>
 
                     <Tabs.Panel value="lyrics">
-                        <ScrollArea pt={15}>
+                        <ScrollArea>
                             {currentTrackId && <TrackLyrics trackId={currentTrackId} />}
+                        </ScrollArea>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="links">
+                        <ScrollArea>
+                            {currentTrackId && <TrackLinks trackId={currentTrackId} />}
                         </ScrollArea>
                     </Tabs.Panel>
                 </Tabs>

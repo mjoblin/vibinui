@@ -1,7 +1,9 @@
 import React, { FC } from "react";
-import { Box, Loader, Stack, Text } from "@mantine/core";
+import { Box, Flex, Stack, Text } from "@mantine/core";
 
 import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
+import SadLabel from "../shared/SadLabel";
+import SimpleLoader from "../shared/SimpleLoader";
 
 type TrackLyricsProps = {
     trackId: string;
@@ -10,13 +12,12 @@ type TrackLyricsProps = {
 const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
     const { data, error, isFetching } = useGetLyricsQuery(trackId);
 
-    // TODO: Add loading state
-    if (!data) {
-        return <></>;
+    if (isFetching) {
+        return <SimpleLoader label="Retrieving lyrics..." />;
     }
 
-    if (isFetching) {
-        return <Loader />
+    if (!data || data.length <= 0) {
+        return <SadLabel label="No lyrics found." />;
     }
 
     const chunkRender = (chunk: LyricChunk, chunkIndex: number) => {
@@ -24,7 +25,9 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
             <Box key={`chunk_${chunkIndex}`}>
                 {chunk.header && <Text weight="bold">{chunk.header}</Text>}
                 {chunk.body.map((line, lineIndex) => (
-                    <Text key={`line_${chunkIndex}_${lineIndex}`} weight="normal">{line}</Text>
+                    <Text key={`line_${chunkIndex}_${lineIndex}`} weight="normal">
+                        {line}
+                    </Text>
                 ))}
             </Box>
         );
