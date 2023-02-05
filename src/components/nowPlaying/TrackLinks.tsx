@@ -73,12 +73,13 @@ const TrackLinks: FC<TrackLinksProps> = ({ trackId }) => {
                     serviceA < serviceB ? -1 : serviceA > serviceB ? 1 : 0
                 )
                 .map(([service, links], index) => (
-                    <Stack spacing="sm" align="flex-start">
+                    <Stack key={service} spacing="sm" align="flex-start">
                         {services[service]?.logo({}) || <Text>{service}</Text>}
 
                         <Flex gap={8} align="center">
                             {links.map((link) => (
                                 <Anchor
+                                    key={`${service}::${link.name}`}
                                     href={link.url}
                                     target="_blank"
                                     underline={false}

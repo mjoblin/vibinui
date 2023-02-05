@@ -17,6 +17,8 @@ export type MediaLinks = {
     [key: string]: MediaLink[];
 };
 
+export type WaveformFormat = "dat" | "json" | "png";
+
 export const vibinTracksApi = createApi({
     reducerPath: "vibinTracksApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/tracks" }),
@@ -29,7 +31,27 @@ export const vibinTracksApi = createApi({
                 url: `${trackId}/links?all_types=${allTypes}`,
             }),
         }),
+        // TODO: Have return type handle JSON and binary waveform data types.
+        getWaveform: builder.query<
+            any,
+            { trackId: string; format: WaveformFormat; width?: number; height?: number }
+        >({
+            query: ({ trackId, format = "png", width, height }) => ({
+                url: `${trackId}/waveform${
+                    width || height ? `?width=${width}&height=${height}` : ""
+                }`,
+                headers: {
+                    accept:
+                        format === "json"
+                            ? "application/json"
+                            : format === "png"
+                            ? "image/png"
+                            : "application/octet-stream",
+                },
+                responseHandler: "content-type",
+            }),
+        }),
     }),
 });
 
-export const { useGetLyricsQuery, useGetLinksQuery } = vibinTracksApi;
+export const { useGetLyricsQuery, useGetLinksQuery, useGetWaveformQuery } = vibinTracksApi;
