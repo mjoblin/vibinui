@@ -3,6 +3,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Album, Track } from "../types";
 import{ hmsToSecs } from "../utils";
 
+// TODO: Consider refactoring these multiple API slices (Base, Playlist, etc) into a single slice.
+//  https://redux-toolkit.js.org/rtk-query/api/createApi
+
 type BackendTrack = {
     id: string;
     title: string;

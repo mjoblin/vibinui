@@ -55,7 +55,6 @@ const Playhead: FC = () => {
                     // UI will reflect the new value for the brief period between when the new
                     // value is set and when the new value is pushed to us from the backend (as
                     // part of its regular playhead update announcements over the websocket).
-                    console.log(`MANUALLY SETTING TO ${value}`);
                     dispatch(setPlayheadPosition(value));
                     // dispatch(pauseLocalPlayheadUpdates());
                     seek(value);

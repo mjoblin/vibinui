@@ -9,6 +9,7 @@ import NowPlaying from "../currentlyPlaying/NowPlaying";
 import PlayheadRing from "../currentlyPlaying/PlayheadRing";
 import TrackLinks from "../nowPlaying/TrackLinks";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
+import Waveform from "../nowPlaying/Waveform";
 
 const ALBUM_ART_WIDTH = 300;
 
@@ -81,12 +82,21 @@ const NowPlayingScreen: FC = () => {
                 <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline">
                     <Tabs.List mb={20}>
                         <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
+                        <Tabs.Tab value="waveform">Waveform</Tabs.Tab>
                         <Tabs.Tab value="links">Links</Tabs.Tab>
                     </Tabs.List>
 
                     <Tabs.Panel value="lyrics">
                         <ScrollArea>
                             {currentTrackId && <TrackLyrics trackId={currentTrackId} />}
+                        </ScrollArea>
+                    </Tabs.Panel>
+
+                    <Tabs.Panel value="waveform">
+                        <ScrollArea>
+                            {currentTrackId && (
+                                <Waveform trackId={currentTrackId} width={2048} height={500} />
+                            )}
                         </ScrollArea>
                     </Tabs.Panel>
 

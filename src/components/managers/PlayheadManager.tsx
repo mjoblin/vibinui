@@ -61,7 +61,7 @@ const PlayheadManager: FC = () => {
             );
     }, PLAYHEAD_UPDATE_INTERVAL);
 
-    return <></>;
+    return null;
 }
 
 export default PlayheadManager;
