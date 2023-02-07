@@ -6,6 +6,7 @@ import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { PlaylistEntry } from "../../app/types";
+import { getTextWidth } from "../../app/utils";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery } from "../../app/services/vibinBase";
@@ -29,23 +30,6 @@ const TITLE_AND_ALBUM_COLUMN_GAP = 40;
  */
 const durationDisplay = (duration: string): string =>
     duration.replace(/^0+:0?/, "").replace(/\.0+$/, "");
-
-/**
- * Determines the width, in pixels, required to render the given text.
- *
- * TODO: Investigate if/how this works for different font sizes.
- */
-const getTextWidth = (text: string): number => {
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
-
-    if (context) {
-        context.font = getComputedStyle(document.body).font;
-        return context.measureText(text).width;
-    }
-
-    return 0;
-};
 
 /**
  * Returns a shallow copy of inArray, where the element at fromIndex has been moved to toIndex.

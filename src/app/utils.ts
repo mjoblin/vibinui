@@ -29,3 +29,20 @@ export const secstoHms = (duration: number): string => {
 
     return hms;
 }
+
+/**
+ * Determines the width, in pixels, required to render the given text.
+ *
+ * TODO: Investigate if/how this works for different font sizes.
+ */
+export const getTextWidth = (text: string): number => {
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    if (context) {
+        context.font = getComputedStyle(document.body).font;
+        return context.measureText(text).width;
+    }
+
+    return 0;
+};

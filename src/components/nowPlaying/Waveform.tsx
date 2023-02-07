@@ -13,6 +13,8 @@ import { useSeekMutation } from "../../app/services/vibinTransport";
 const useStyles = createStyles((theme) => ({
     waveformContainer: {
         position: "relative",
+        border: `1px solid #105010`,
+        borderRadius: 5,
     },
     waveformProgress: {
         position: "absolute",
@@ -21,6 +23,7 @@ const useStyles = createStyles((theme) => ({
         bottom: 0,
         opacity: 0.35,
         background: "#000000",
+        borderRadius: 5,
     },
     dragHandle: {
         position: "absolute",
