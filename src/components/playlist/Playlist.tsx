@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { Box, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
@@ -14,6 +15,7 @@ import {
 } from "../../app/services/vibinPlaylist";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
+import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -129,12 +131,23 @@ const useStyles = createStyles((theme) => ({
 const Playlist: FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { data: albums } = useGetAlbumsQuery();
-    const [deletePlaylistId] = useDeletePlaylistEntryIdMutation();
+    const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
     const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
 
     const { classes } = useStyles();
+
+    useEffect(() => {
+        if (deleteStatus.isError) {
+            const { status, data } = deleteStatus.error as FetchBaseQueryError;
+
+            showNotification({
+                title: "Error removing Track from Playlist",
+                message: `[${status}] ${data}`,
+            });
+        }
+    }, [deleteStatus]);
 
     // Notes on playlist re-ordering and optimistic UI updates:
     //
@@ -266,7 +279,14 @@ const Playlist: FC = () => {
                                     <VibinIconButton
                                         icon={IconTrash}
                                         container={false}
-                                        onClick={() => deletePlaylistId({ playlistId: entry.id })}
+                                        onClick={() => {
+                                            deletePlaylistId({ playlistId: entry.id });
+
+                                            showNotification({
+                                                title: `Track removed from Playlist`,
+                                                message: entry.title,
+                                            });
+                                        }}
                                     />
                                 </Flex>
                             </td>

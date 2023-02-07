@@ -1,10 +1,12 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Flex, Image } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import AlbumActionsButton from "./AlbumActionsButton";
+import AlbumActionsButton, { AlbumActionCategory } from "./AlbumActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 
@@ -33,6 +35,7 @@ type AlbumArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
+    actionCategories?: AlbumActionCategory[];
     size?: number;
     showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
@@ -53,6 +56,7 @@ type AlbumArtProps = {
  * @param alt
  * @param radius
  * @param showControls
+ * @param actionCategories
  * @param size
  * @param actionsMenuPosition
  * @param onActionsMenuOpen
@@ -65,14 +69,26 @@ const AlbumArt: FC<AlbumArtProps> = ({
     alt,
     radius = 0,
     showControls = true,
+    actionCategories = ["Playlist"],
     size = 150,
     actionsMenuPosition,
     onActionsMenuOpen,
     onActionsMenuClosed,
 }) => {
-    const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
+    const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
+
+    useEffect(() => {
+        if (addStatus.isError) {
+            const { status, data } = addStatus.error as FetchBaseQueryError;
+
+            showNotification({
+                title: "Error replacing Playlist",
+                message: `[${status}] ${data}`,
+            });
+        }
+    }, [addStatus]);
 
     return (
         <Box className={classes.albumArtContainer}>
@@ -100,13 +116,20 @@ const AlbumArt: FC<AlbumArtProps> = ({
                         size={15}
                         container={true}
                         fill={true}
-                        onClick={() => addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" })}
+                        onClick={() => {
+                            addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" });
+
+                            showNotification({
+                                title: `Replaced Playlist with Album`,
+                                message: album.title,
+                            });
+                        }}
                     />
 
                     <AlbumActionsButton
                         album={album}
                         position={actionsMenuPosition}
-                        categories={["Playlist"]}
+                        categories={actionCategories}
                         onOpen={() => {
                             setIsActionsMenuOpen(true);
                             onActionsMenuOpen && onActionsMenuOpen();

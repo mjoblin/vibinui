@@ -1,6 +1,8 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, Center, createStyles, Menu, Tooltip } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
+import { showNotification } from "@mantine/notifications";
 import { IconDotsVertical } from "@tabler/icons";
 
 import { Album } from "../../app/types";
@@ -56,11 +58,22 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
     onOpen = undefined,
     onClose = undefined,
 }) => {
-    const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
+    const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
+
+    useEffect(() => {
+        if (addStatus.isError) {
+            const { status, data } = addStatus.error as FetchBaseQueryError;
+
+            showNotification({
+                title: "Error updating Playlist",
+                message: `[${status}] ${data}`,
+            });
+        }
+    }, [addStatus]);
 
     return (
         <Box onClick={(event) => event.stopPropagation()}>
@@ -117,16 +130,14 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                             <Menu.Label>Playlist</Menu.Label>
                             <Menu.Item
                                 onClick={() => {
-                                    addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
-                                }}
-                            >
-                                Append to end
-                            </Menu.Item>
-                            <Menu.Item
-                                onClick={() => {
                                     addMediaToPlaylist({
                                         mediaId: album.id,
                                         action: "REPLACE",
+                                    });
+
+                                    showNotification({
+                                        title: `Replaced Playlist with Album`,
+                                        message: album.title,
                                     });
                                 }}
                             >
@@ -138,6 +149,11 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                         mediaId: album.id,
                                         action: "PLAY_NOW",
                                     });
+
+                                    showNotification({
+                                        title: `Album inserted into Playlist and now playing`,
+                                        message: album.title,
+                                    });
                                 }}
                             >
                                 Insert and play now
@@ -148,9 +164,26 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                         mediaId: album.id,
                                         action: "PLAY_NEXT",
                                     });
+
+                                    showNotification({
+                                        title: `Album inserted next in Playlist`,
+                                        message: album.title,
+                                    });
                                 }}
                             >
                                 Insert and play next
+                            </Menu.Item>
+                            <Menu.Item
+                                onClick={() => {
+                                    addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
+
+                                    showNotification({
+                                        title: `Album appended to end of Playlist`,
+                                        message: album.title,
+                                    });
+                                }}
+                            >
+                                Append to end
                             </Menu.Item>
                         </>
                     )}

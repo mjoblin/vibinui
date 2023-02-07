@@ -1,5 +1,7 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Menu, Tooltip } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import { IconDotsVertical } from "@tabler/icons";
 
 import { Track } from "../../app/types";
@@ -41,10 +43,26 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
     onOpen = undefined,
     onClose = undefined,
 }) => {
-    const [addMediaToPlaylist] = useAddMediaToPlaylistMutation();
+    const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
+
+    // For notifications, we assume that any playlist changes are successful. If we do get some
+    // sort of error though then a second notification is created. This is done instead of
+    // attempting to track the success/fail state of each playlist update separately and modifying
+    // the update's notification to reflect success/fail.
+
+    useEffect(() => {
+        if (addStatus.isError) {
+            const { status, data } = addStatus.error as FetchBaseQueryError;
+
+            showNotification({
+                title: "Error updating Playlist",
+                message: `[${status}] ${data}`,
+            });
+        }
+    }, [addStatus]);
 
     return (
         <Box>
@@ -88,6 +106,11 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                                     mediaId: track.id!!,
                                     action: "REPLACE",
                                 });
+
+                                showNotification({
+                                    title: `Replaced Playlist with Track`,
+                                    message: track.title,
+                                });
                             }}
                         >
                             Replace and play now
@@ -97,6 +120,11 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                                 addMediaToPlaylist({
                                     mediaId: track.id!!,
                                     action: "PLAY_NOW",
+                                });
+
+                                showNotification({
+                                    title: `Track inserted into Playlist and now playing`,
+                                    message: track.title,
                                 });
                             }}
                         >
@@ -108,6 +136,11 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                                     mediaId: track.id!!,
                                     action: "PLAY_NEXT",
                                 });
+
+                                showNotification({
+                                    title: `Track inserted next in Playlist`,
+                                    message: track.title,
+                                });
                             }}
                         >
                             Insert and play next
@@ -115,6 +148,11 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                         <Menu.Item
                             onClick={() => {
                                 addMediaToPlaylist({ mediaId: track.id!!, action: "APPEND" });
+
+                                showNotification({
+                                    title: `Track appended to end of Playlist`,
+                                    message: track.title,
+                                });
                             }}
                         >
                             Append to end

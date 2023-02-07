@@ -43,7 +43,7 @@ export default function App() {
         <Provider store={store}>
             <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
                 <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-                    <NotificationsProvider limit={5} autoClose={2500}>
+                    <NotificationsProvider limit={5} autoClose={3000}>
                         <WebsocketManager />
                         <PlayheadManager />
 
