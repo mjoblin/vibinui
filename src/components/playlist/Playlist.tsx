@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
@@ -15,7 +16,6 @@ import {
 } from "../../app/services/vibinPlaylist";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
-import {FetchBaseQueryError} from "@reduxjs/toolkit/query";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
