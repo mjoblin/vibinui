@@ -82,8 +82,8 @@ const NowPlayingScreen: FC = () => {
                 <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline">
                     <Tabs.List mb={20}>
                         <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
-                        <Tabs.Tab value="links">Links</Tabs.Tab>
                         <Tabs.Tab value="waveform">Waveform</Tabs.Tab>
+                        <Tabs.Tab value="links">Links</Tabs.Tab>
                     </Tabs.List>
 
                     <Tabs.Panel value="lyrics">
@@ -92,15 +92,17 @@ const NowPlayingScreen: FC = () => {
                         </ScrollArea>
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="links">
+                    <Tabs.Panel value="waveform">
                         <ScrollArea>
-                            {currentTrackId && <TrackLinks trackId={currentTrackId} />}
+                            {currentTrackId && (
+                                <Waveform trackId={currentTrackId} width={2048} height={500} />
+                            )}
                         </ScrollArea>
                     </Tabs.Panel>
 
-                    <Tabs.Panel value="waveform">
+                    <Tabs.Panel value="links">
                         <ScrollArea>
-                            {currentTrackId && <Waveform trackId={currentTrackId} width={2048} height={500} />}
+                            {currentTrackId && <TrackLinks trackId={currentTrackId} />}
                         </ScrollArea>
                     </Tabs.Panel>
                 </Tabs>
