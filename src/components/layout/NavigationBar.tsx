@@ -79,9 +79,8 @@ const NavigationBar: FC = () => {
                         sx={{
                             height: "100%",
                             flexGrow: 1,
-                            gap: 75,
-                            paddingLeft: 50,
-                            paddingRight: 50,
+                            gap: 55,
+                            paddingLeft: 30,
                         }}
                     >
                         <Group sx={{ height: "100%" }} spacing={0}>
@@ -90,9 +89,7 @@ const NavigationBar: FC = () => {
                             <NavItem title="Now Playing" target="playing" />
                         </Group>
 
-                        {/*<Group spacing="lg" sx={{ flexGrow: 1 }}>*/}
-                            <MiniController />
-                        {/*</Group>*/}
+                        <MiniController />
                     </Group>
 
                     <Group>

@@ -102,7 +102,7 @@ const NowPlayingScreen: FC = () => {
                     <Tabs.Panel value="waveform">
                         <ScrollArea>
                             {currentTrackId && (
-                                <Waveform trackId={currentTrackId} width={2048} height={500} />
+                                <Waveform trackId={currentTrackId} width={2048} height={700} />
                             )}
                         </ScrollArea>
                     </Tabs.Panel>
