@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+import { NowPlayingTab } from "../../components/layout/NowPlayingScreen";
+
 export const minCoverGap = 0;
 export const maxCoverGap = 50;
 export const minCoverSize = 100;
@@ -18,6 +20,9 @@ export interface UserSettingsState {
         coverGap: number;
         showDetails: boolean;
     };
+    nowPlaying: {
+        activeTab: NowPlayingTab;
+    };
 }
 
 const initialState: UserSettingsState = {
@@ -26,6 +31,9 @@ const initialState: UserSettingsState = {
         coverSize: DEFAULT_BROWSE_COVER_SIZE,
         coverGap: DEFAULT_BROWSE_COVER_GAP,
         showDetails: DEFAULT_BROWSE_SHOW_DETAILS,
+    },
+    nowPlaying: {
+        activeTab: "lyrics",
     },
 };
 
@@ -51,6 +59,9 @@ export const userSettingsSlice = createSlice({
             state.browse.coverGap = DEFAULT_BROWSE_COVER_GAP;
             state.browse.showDetails = DEFAULT_BROWSE_SHOW_DETAILS;
         },
+        setNowPlayingActiveTab: (state, action: PayloadAction<NowPlayingTab>) => {
+            state.nowPlaying.activeTab = action.payload;
+        },
     },
 });
 
@@ -61,6 +72,7 @@ export const {
     setBrowseCoverGap,
     setBrowseShowDetails,
     resetBrowseToDefaults,
+    setNowPlayingActiveTab,
 } = userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;

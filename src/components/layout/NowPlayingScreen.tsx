@@ -1,8 +1,9 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import { Box, Flex, ScrollArea, Skeleton, Stack, Tabs, Text } from "@mantine/core";
 
-import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setNowPlayingActiveTab } from "../../app/store/userSettingsSlice";
 import AlbumArt from "../albums/AlbumArt";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import NowPlaying from "../currentlyPlaying/NowPlaying";
@@ -11,17 +12,17 @@ import TrackLinks from "../nowPlaying/TrackLinks";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
 import Waveform from "../nowPlaying/Waveform";
 
+export type NowPlayingTab = "lyrics" | "waveform" | "links";
+
 const ALBUM_ART_WIDTH = 300;
 
 const NowPlayingScreen: FC = () => {
-    const [activeTab, setActiveTab] = useState<string | null>("lyrics");
+    const dispatch = useAppDispatch();
+    const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
-    );
-    const currentAlbumId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
     );
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const currentStream = useAppSelector((state: RootState) => state.playback.current_stream);
@@ -79,7 +80,13 @@ const NowPlayingScreen: FC = () => {
                     </Skeleton>
                 </Stack>
 
-                <Tabs value={activeTab} onTabChange={setActiveTab} variant="outline">
+                <Tabs
+                    value={activeTab}
+                    onTabChange={(tabName) =>
+                        dispatch(setNowPlayingActiveTab(tabName as NowPlayingTab))
+                    }
+                    variant="outline"
+                >
                     <Tabs.List mb={20}>
                         <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
                         <Tabs.Tab value="waveform">Waveform</Tabs.Tab>
