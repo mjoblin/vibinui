@@ -291,12 +291,14 @@ const Playlist: FC = () => {
                                         icon={IconPlayerPlay}
                                         container={false}
                                         fill={true}
+                                        tooltipLabel="Play"
                                         onClick={() => playPlaylistId({ playlistId: entry.id })}
                                     />
 
                                     <VibinIconButton
                                         icon={IconTrash}
                                         container={false}
+                                        tooltipLabel="Remove from Playlist"
                                         onClick={() => {
                                             deletePlaylistId({ playlistId: entry.id });
 
