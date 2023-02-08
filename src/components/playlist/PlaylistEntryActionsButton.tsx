@@ -100,6 +100,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                     setIsActionsMenuOpen(false);
                     onClose && onClose();
                 }}
+                // TODO: Setting zIndex to ensure it renders over the Nav bar; find better approach
+                zIndex={999}
             >
                 <Menu.Target>
                     {/* TODO: Following will not work until <VibinTooltip> supports forwarded refs */}
