@@ -116,6 +116,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
                         size={15}
                         container={true}
                         fill={true}
+                        tooltipLabel="Play"
                         onClick={() => {
                             addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" });
 

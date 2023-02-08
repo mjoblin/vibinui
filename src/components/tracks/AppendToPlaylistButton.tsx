@@ -1,10 +1,12 @@
 import React, { FC } from "react";
-import { Box, createStyles, Tooltip } from "@mantine/core";
+import { Box, createStyles } from "@mantine/core";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons";
 
 import { Album, Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
+import VibinTooltip from "../shared/VibinTooltip";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
@@ -37,10 +39,15 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 icon: <IconCheck size={16} />,
             });
         } else if (addStatus.isError) {
+            // TODO: Centralize API error handling somewhere.
+            const err = addStatus.error as FetchBaseQueryError;
+            const status = err.status;
+            const issue = err.data || "Unknown error";
+
             updateNotification({
                 id: notificationId,
                 title: "Error updating Playlist",
-                message: item.title,
+                message: `${item.title}: [${status}] ${issue}`,
                 color: "red",
                 icon: <IconExclamationMark size={16} />,
                 autoClose: false,
@@ -50,14 +57,7 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
 
     return (
         <Box>
-            <Tooltip
-                label={`Append ${itemType} to Playlist`}
-                color="blue"
-                openDelay={500}
-                withArrow
-                arrowSize={8}
-                styles={{ tooltip: { fontSize: 12 } }}
-            >
+            <VibinTooltip label={`Append ${itemType} to Playlist`}>
                 <Box
                     pt={3}
                     className={classes.pointerOnHover}
@@ -76,7 +76,7 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 >
                     <IconPlaylistAdd size={15} />
                 </Box>
-            </Tooltip>
+            </VibinTooltip>
         </Box>
     );
 };

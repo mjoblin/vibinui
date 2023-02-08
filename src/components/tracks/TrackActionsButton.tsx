@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Menu, Tooltip } from "@mantine/core";
+import { Box, createStyles, Menu } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconDotsVertical } from "@tabler/icons";
 
 import { Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
+import VibinTooltip from "../shared/VibinTooltip";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
@@ -81,19 +82,11 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                 }}
             >
                 <Menu.Target>
-                    <Tooltip
-                        label="Track actions"
-                        color="blue"
-                        disabled={isActionsMenuOpen}
-                        openDelay={500}
-                        withArrow
-                        arrowSize={8}
-                        styles={{ tooltip: { fontSize: 12 } }}
-                    >
+                    <VibinTooltip label="Track actions" disabled={isActionsMenuOpen}>
                         <Box pt={4} className={classes.pointerOnHover}>
                             <IconDotsVertical size={15} />
                         </Box>
-                    </Tooltip>
+                    </VibinTooltip>
                 </Menu.Target>
 
                 <Menu.Dropdown>
