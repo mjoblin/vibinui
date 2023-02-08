@@ -17,6 +17,7 @@ import {
 } from "../../app/services/vibinPlaylist";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
+import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -79,10 +80,17 @@ const useStyles = createStyles((theme) => ({
         color: theme.white,
         backgroundColor: theme.colors.dark[5],
     },
+    highlight: {
+        backgroundColor: HIGHLIGHT_COLOR,
+    },
     highlightOnHover: {
         "&:hover": {
-            cursor: "pointer",
             backgroundColor: HIGHLIGHT_COLOR,
+        },
+    },
+    pointerOnHover: {
+        "&:hover": {
+            cursor: "pointer",
         },
     },
     alignRight: {
@@ -118,6 +126,7 @@ const Playlist: FC = () => {
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
+    const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
     const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
 
     const { classes } = useStyles();
@@ -189,6 +198,9 @@ const Playlist: FC = () => {
 
     /**
      * Generate an array of table rows; one row per playlist entry.
+     *
+     * TODO: Consider per-row interactivity and feedback. Currently, clicking the title or artist
+     *  (but no other columns, aside from the play button) will play the entry.
      */
     const playlistEntries = optimisticPlaylistEntries
         // .sort((a, b) => a.index - b.index)
@@ -216,12 +228,12 @@ const Playlist: FC = () => {
                             className={
                                 index === playlist.current_track_index
                                     ? classes.currentlyPlaying
+                                    : actionsMenuOpenFor
+                                    ? actionsMenuOpenFor === entry.id
+                                        ? classes.highlight
+                                        : ""
                                     : classes.highlightOnHover
                             }
-                            onClick={() => {
-                                index !== playlist.current_track_index &&
-                                    playPlaylistId({ playlistId: entry.id });
-                            }}
                         >
                             <td
                                 className={`${classes.alignRight} ${classes.dimmed}`}
@@ -232,7 +244,18 @@ const Playlist: FC = () => {
                             <td style={{ width: 50 }}>
                                 <AlbumArt artUri={entry.albumArtURI} size={35} radius={3} />
                             </td>
-                            <td style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}>
+                            <td
+                                className={
+                                    index !== playlist.current_track_index
+                                        ? classes.pointerOnHover
+                                        : ""
+                                }
+                                style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
+                                onClick={() => {
+                                    index !== playlist.current_track_index &&
+                                        playPlaylistId({ playlistId: entry.id });
+                                }}
+                            >
                                 <Stack spacing={0}>
                                     <Box>{entry.title}</Box>
                                     <Box sx={{ color: "#686868", fontSize: 12 }}>
@@ -240,7 +263,18 @@ const Playlist: FC = () => {
                                     </Box>
                                 </Stack>
                             </td>
-                            <td style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}>
+                            <td
+                                className={
+                                    index !== playlist.current_track_index
+                                        ? classes.pointerOnHover
+                                        : ""
+                                }
+                                style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
+                                onClick={() => {
+                                    index !== playlist.current_track_index &&
+                                        playPlaylistId({ playlistId: entry.id });
+                                }}
+                            >
                                 <Stack spacing={0}>
                                     <Box>{entry.album}</Box>
                                     <Box sx={{ color: "#686868", fontSize: 12 }}>
@@ -252,7 +286,7 @@ const Playlist: FC = () => {
                                 {durationDisplay(entry.duration)}
                             </td>
                             <td style={{ width: 45 }}>
-                                <Flex pl={5} gap={5}>
+                                <Flex pl={5} gap={5} align="center">
                                     <VibinIconButton
                                         icon={IconPlayerPlay}
                                         container={false}
@@ -271,6 +305,14 @@ const Playlist: FC = () => {
                                                 message: entry.title,
                                             });
                                         }}
+                                    />
+
+                                    <PlaylistEntryActionsButton
+                                        entry={entry}
+                                        entryCount={playlistEntries.length}
+                                        currentlyPlayingIndex={playlist.current_track_index}
+                                        onOpen={() => setActionsMenuOpenFor(entry.id)}
+                                        onClose={() => setActionsMenuOpenFor(undefined)}
                                     />
                                 </Flex>
                             </td>

@@ -36,7 +36,7 @@ type AlbumTracksProps = {
 const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
     const { data, error, isLoading } = useGetTracksQuery(album.id);
     const { classes } = useStyles();
-    const [actionsMenuOpen, setActionsMenuOpen] = useState<string | undefined>(undefined);
+    const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<string | undefined>(undefined);
 
     // TODO: Add loading & error handling.
     if (!data) {
@@ -84,9 +84,9 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                         // the selected track highlighted but don't highlight any other tracks
                         // (until the actions menu goes away).
                         className={
-                            actionsMenuOpen === track.id
+                            actionsMenuOpenFor === track.id
                                 ? classes.highlight
-                                : actionsMenuOpen
+                                : actionsMenuOpenFor
                                 ? ""
                                 : classes.highlightOnHover
                         }
@@ -130,8 +130,8 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
 
                                 <TrackActionsButton
                                     track={track}
-                                    onOpen={() => setActionsMenuOpen(track.id!!)}
-                                    onClose={() => setActionsMenuOpen(undefined)}
+                                    onOpen={() => setActionsMenuOpenFor(track.id!!)}
+                                    onClose={() => setActionsMenuOpenFor(undefined)}
                                 />
 
                                 <AppendToPlaylistButton item={track} />
