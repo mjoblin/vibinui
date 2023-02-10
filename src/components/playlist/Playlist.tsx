@@ -136,8 +136,9 @@ const Playlist: FC = () => {
             const { status, data } = deleteStatus.error as FetchBaseQueryError;
 
             showNotification({
-                title: "Error removing Track from Playlist",
+                title: "Error removing Entry from Playlist",
                 message: `[${status}] ${data}`,
+                autoClose: false,
             });
         }
     }, [deleteStatus]);
@@ -303,7 +304,7 @@ const Playlist: FC = () => {
                                             deletePlaylistId({ playlistId: entry.id });
 
                                             showNotification({
-                                                title: `Track removed from Playlist`,
+                                                title: `Entry removed from Playlist`,
                                                 message: entry.title,
                                             });
                                         }}

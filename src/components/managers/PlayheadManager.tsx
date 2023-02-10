@@ -34,6 +34,7 @@ export const normalizePosition = (currentPosition: number, trackDuration: number
  */
 const PlayheadManager: FC = () => {
     const dispatch = useDispatch();
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
     const [lastBackendSyncTime, setLastBackendSyncTime] = useState<number>(Date.now());
@@ -51,6 +52,10 @@ const PlayheadManager: FC = () => {
 
     // Perform more fine-grained updates in between updates from the backend.
     useInterval(() => {
+        if (playStatus !== "play") {
+            return;
+        }
+
         const secondsSinceLastBackendSync = (Date.now() - lastBackendSyncTime) / 1000;
 
         currentTrack?.duration &&

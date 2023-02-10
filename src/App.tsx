@@ -11,7 +11,6 @@ import RootLayout from "./components/layout/RootLayout";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
 import WebsocketManager from "./components/managers/WebsocketManager";
-import Debug from "./components/layout/Debug";
 
 export default function App() {
     const [colorScheme, setColorScheme] = useState<ColorScheme>("dark");
@@ -45,7 +44,6 @@ export default function App() {
             <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
                 <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
                     <NotificationsProvider limit={5} autoClose={3000}>
-                        <Debug />
                         <WebsocketManager />
                         <PlayheadManager />
 

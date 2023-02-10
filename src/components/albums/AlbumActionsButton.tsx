@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Menu } from "@mantine/core";
+import { Box, Center, createStyles, Menu, Tooltip } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { showNotification } from "@mantine/notifications";
 import { IconDotsVertical } from "@tabler/icons";
@@ -8,7 +8,6 @@ import { IconDotsVertical } from "@tabler/icons";
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
-import VibinTooltip from "../shared/VibinTooltip";
 
 export type AlbumActionCategory = "Tracks" | "Playlist";
 
@@ -72,6 +71,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
             showNotification({
                 title: "Error updating Playlist",
                 message: `[${status}] ${data}`,
+                autoClose: false,
             });
         }
     }, [addStatus]);
@@ -93,7 +93,16 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                 }}
             >
                 <Menu.Target>
-                    <VibinTooltip label="Album actions" disabled={isActionsMenuOpen}>
+                    {/* TODO: Not using <VibinTooltip> until it supports forwarded refs */}
+                    <Tooltip
+                        label="Album actions"
+                        color="blue"
+                        disabled={isActionsMenuOpen}
+                        openDelay={500}
+                        withArrow
+                        arrowSize={8}
+                        styles={{ tooltip: { fontSize: 12 } }}
+                    >
                         <Center
                             className={`${classes.actionsButtonContainer} ${
                                 isActionsMenuOpen && classes.buttonActive
@@ -103,7 +112,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 <IconDotsVertical size={15} />
                             </Box>
                         </Center>
-                    </VibinTooltip>
+                    </Tooltip>
                 </Menu.Target>
 
                 <Menu.Dropdown>
