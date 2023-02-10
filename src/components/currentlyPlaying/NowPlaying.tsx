@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Flex, Image, Text } from "@mantine/core";
+import { Flex, Image, Notification, Text } from "@mantine/core";
 
 import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
@@ -12,13 +12,16 @@ type NowPlayingProps = {
     maxPlayheadWidth?: number;
 };
 
+// TODO: Rename this component. It clashes with <NowPlayingScreen>.
+
 const NowPlaying: FC<NowPlayingProps> = ({ showAlbumDetails = true, maxPlayheadWidth }) => {
+    const playback = useAppSelector((state: RootState) => state.playback);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentFormat = useAppSelector((state: RootState) => state.playback.current_format);
 
-    // TODO: Probably want to make this nicer overall.
-    if (!currentTrack) {
-        return <Text>No Track</Text>;
+    // TODO: Consider what to render when there's nothing playing
+    if (playback.play_status === "not_ready" || !currentTrack) {
+        return null;
     }
 
     return (

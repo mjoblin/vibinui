@@ -2,6 +2,8 @@ import React, { FC } from "react";
 import { Outlet, ScrollRestoration } from "react-router-dom";
 import { Box } from "@mantine/core";
 
+import Debug from "./Debug";
+import HotkeyManager from "./HotkeyManager";
 import NavigationBar from "./NavigationBar";
 
 // TODO: Look into using mantine theme constants for things like padding.
@@ -25,6 +27,8 @@ const RootLayout: FC = () => {
             </Box>
 
             <ScrollRestoration />
+            <HotkeyManager />
+            <Debug />
         </Box>
     );
 };
