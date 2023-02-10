@@ -7,6 +7,7 @@ import SadLabel from "../shared/SadLabel";
 import SimpleLoader from "../shared/SimpleLoader";
 import DiscogsLogoImage from "../../assets/images/discogs_logo.svg";
 import GeniusLogoImage from "../../assets/images/genius_logo.png";
+import RateYourMusicImage from "../../assets/images/rateyourmusic_logo.png";
 
 const DiscogsLogo: FC = () => {
     return <Image src={DiscogsLogoImage} width="fit-content" height={20} radius={3} />;
@@ -14,6 +15,15 @@ const DiscogsLogo: FC = () => {
 
 const GeniusLogo: FC = () => {
     return <Image src={GeniusLogoImage} width="fit-content" height={20} radius={3} />;
+};
+
+const RateYourMusicLogo: FC = () => {
+    return (
+        <Flex gap={7}>
+            <Image src={RateYourMusicImage} width="fit-content" height={25} radius={3} />
+            <Text size="sm" weight="bold">RYM</Text>
+        </Flex>
+    );
 };
 
 const WikipediaLogo: FC = () => {
@@ -44,6 +54,9 @@ const services: Services = {
     },
     Genius: {
         logo: GeniusLogo,
+    },
+    RateYourMusic: {
+        logo: RateYourMusicLogo,
     },
     Wikipedia: {
         logo: WikipediaLogo,
