@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Provider } from "react-redux";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { NotificationsProvider } from "@mantine/notifications";
 
@@ -34,6 +34,10 @@ export default function App() {
                 {
                     path: "playing",
                     element: <NowPlayingScreen />,
+                },
+                {
+                    index: true,
+                    element: <Navigate to="/browse" replace />,
                 },
             ],
         },
