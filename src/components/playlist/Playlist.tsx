@@ -76,6 +76,12 @@ const useStyles = createStyles((theme) => ({
             paddingRight: 25,
         },
     },
+    tableSimple: {
+        td: {
+            paddingTop: 3,
+            paddingBottom: 3,
+        },
+    },
     currentlyPlaying: {
         color: theme.white,
         backgroundColor: theme.colors.dark[5],
@@ -122,6 +128,7 @@ const useStyles = createStyles((theme) => ({
 
 const Playlist: FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
+    const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { data: albums } = useGetAlbumsQuery();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
@@ -242,9 +249,11 @@ const Playlist: FC = () => {
                             >
                                 {entry.index + 1}
                             </td>
-                            <td style={{ width: 50 }}>
-                                <AlbumArt artUri={entry.albumArtURI} size={35} radius={3} />
-                            </td>
+                            {viewMode === "detailed" && (
+                                <td style={{ width: 50 }}>
+                                    <AlbumArt artUri={entry.albumArtURI} size={35} radius={3} />
+                                </td>
+                            )}
                             <td
                                 className={
                                     index !== playlist.current_track_index
@@ -259,9 +268,11 @@ const Playlist: FC = () => {
                             >
                                 <Stack spacing={0}>
                                     <Box>{entry.title}</Box>
-                                    <Box sx={{ color: "#686868", fontSize: 12 }}>
-                                        {entry.artist}
-                                    </Box>
+                                    {viewMode === "detailed" &&
+                                        <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                            {entry.artist}
+                                        </Box>
+                                    }
                                 </Stack>
                             </td>
                             <td
@@ -278,9 +289,11 @@ const Playlist: FC = () => {
                             >
                                 <Stack spacing={0}>
                                     <Box>{entry.album}</Box>
-                                    <Box sx={{ color: "#686868", fontSize: 12 }}>
-                                        {albumSubtitle}
-                                    </Box>
+                                    {viewMode === "detailed" &&
+                                        <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                            {albumSubtitle}
+                                        </Box>
+                                    }
                                 </Stack>
                             </td>
                             <td className={classes.alignRight} style={{ width: 85 }}>
@@ -330,6 +343,8 @@ const Playlist: FC = () => {
             );
         });
 
+    // --------------------------------------------------------------------------------------------
+
     return (
         <ScrollArea>
             <DragDropContext
@@ -362,11 +377,11 @@ const Playlist: FC = () => {
                     }
                 }}
             >
-                <table className={classes.table}>
+                <table className={`${classes.table} ${viewMode === "simple" ? classes.tableSimple : ""}`}>
                     <thead>
                         <tr>
                             <td></td>
-                            <td></td>
+                            {viewMode === "detailed" && <td></td>}
                             <td>Title</td>
                             <td>Album</td>
                             <td></td>
