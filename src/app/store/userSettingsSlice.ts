@@ -13,12 +13,17 @@ const DEFAULT_BROWSE_COVER_SIZE = 200;
 const DEFAULT_BROWSE_COVER_GAP = 25;
 const DEFAULT_BROWSE_SHOW_DETAILS = true;
 
+export type PlaylistViewMode = "simple" | "detailed";
+
 export interface UserSettingsState {
     browse: {
         filterText: string;
         coverSize: number;
         coverGap: number;
         showDetails: boolean;
+    };
+    playlist: {
+        viewMode: PlaylistViewMode;
     };
     nowPlaying: {
         activeTab: NowPlayingTab;
@@ -31,6 +36,9 @@ const initialState: UserSettingsState = {
         coverSize: DEFAULT_BROWSE_COVER_SIZE,
         coverGap: DEFAULT_BROWSE_COVER_GAP,
         showDetails: DEFAULT_BROWSE_SHOW_DETAILS,
+    },
+    playlist: {
+        viewMode: "detailed",
     },
     nowPlaying: {
         activeTab: "lyrics",
@@ -59,6 +67,9 @@ export const userSettingsSlice = createSlice({
             state.browse.coverGap = DEFAULT_BROWSE_COVER_GAP;
             state.browse.showDetails = DEFAULT_BROWSE_SHOW_DETAILS;
         },
+        setPlaylistViewMode: (state, action: PayloadAction<PlaylistViewMode>) => {
+            state.playlist.viewMode = action.payload;
+        },
         setNowPlayingActiveTab: (state, action: PayloadAction<NowPlayingTab>) => {
             state.nowPlaying.activeTab = action.payload;
         },
@@ -72,6 +83,7 @@ export const {
     setBrowseCoverGap,
     setBrowseShowDetails,
     resetBrowseToDefaults,
+    setPlaylistViewMode,
     setNowPlayingActiveTab,
 } = userSettingsSlice.actions;
 
