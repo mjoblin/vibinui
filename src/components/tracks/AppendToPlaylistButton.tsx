@@ -1,11 +1,10 @@
 import React, { FC } from "react";
-import { Box, createStyles } from "@mantine/core";
+import { Box, createStyles, Tooltip } from "@mantine/core";
 import { showNotification, updateNotification } from "@mantine/notifications";
 import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons";
 
 import { Album, Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import VibinTooltip from "../shared/VibinTooltip";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 
 const useStyles = createStyles((theme) => ({
@@ -57,7 +56,7 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
 
     return (
         <Box>
-            <VibinTooltip label={`Append ${itemType} to Playlist`}>
+            <Tooltip label={`Append ${itemType} to Playlist`}>
                 <Box
                     pt={3}
                     className={classes.pointerOnHover}
@@ -76,7 +75,7 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 >
                     <IconPlaylistAdd size={15} />
                 </Box>
-            </VibinTooltip>
+            </Tooltip>
         </Box>
     );
 };

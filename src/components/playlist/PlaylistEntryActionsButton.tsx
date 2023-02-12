@@ -16,7 +16,6 @@ import {
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../app/services/vibinPlaylist";
-import VibinTooltip from "../shared/VibinTooltip";
 
 const useStyles = createStyles((theme) => ({
     button: {
@@ -104,22 +103,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                 zIndex={999}
             >
                 <Menu.Target>
-                    {/* TODO: Following will not work until <VibinTooltip> supports forwarded refs */}
-                    {/*<VibinTooltip label="Entry actions" disabled={isActionsMenuOpen}>*/}
-                    {/*    <Box pt={4} className={classes.button}>*/}
-                    {/*        <IconDotsVertical size={15} />*/}
-                    {/*    </Box>*/}
-                    {/*</VibinTooltip>*/}
-
-                    <Tooltip
-                        label="Entry actions"
-                        color="blue"
-                        disabled={isActionsMenuOpen}
-                        openDelay={500}
-                        withArrow
-                        arrowSize={8}
-                        styles={{ tooltip: { fontSize: 12 } }}
-                    >
+                    <Tooltip label="Entry actions" disabled={isActionsMenuOpen}>
                         <Box pt={4} className={classes.button}>
                             <IconDotsVertical size={15} />
                         </Box>
