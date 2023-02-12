@@ -1,7 +1,6 @@
 import React, { FC, ReactNode, SyntheticEvent } from "react";
-import { Center, createStyles } from "@mantine/core";
+import { Center, createStyles, Tooltip } from "@mantine/core";
 import { TablerIcon } from "@tabler/icons";
-import VibinTooltip from "./VibinTooltip";
 
 // TODO: This is really just a simple Button. It might benefit from extending <Button> instead.
 
@@ -72,15 +71,15 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
     });
 
     return container ? (
-        <VibinTooltip label={tooltipLabel} disabled={!tooltipLabel}>
+        <Tooltip label={tooltipLabel} disabled={!tooltipLabel}>
             <Center onClick={clickHandler} className={dynamicClasses.playButtonContainer}>
                 {iconComponent}
             </Center>
-        </VibinTooltip>
+        </Tooltip>
     ) : (
-        <VibinTooltip label={tooltipLabel} disabled={!tooltipLabel}>
+        <Tooltip label={tooltipLabel} disabled={!tooltipLabel}>
             {iconComponent}
-        </VibinTooltip>
+        </Tooltip>
     );
 };
 

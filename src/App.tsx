@@ -42,7 +42,24 @@ export default function App() {
     return (
         <Provider store={store}>
             <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
-                <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
+                <MantineProvider
+                    withGlobalStyles
+                    withNormalizeCSS
+                    theme={{
+                        colorScheme,
+                        components: {
+                            Tooltip: {
+                                defaultProps: {
+                                    color: "blue",
+                                    openDelay: 500,
+                                    withArrow: true,
+                                    arrowSize: 8,
+                                    styles: { tooltip: { fontSize: 12 } },
+                                },
+                            },
+                        },
+                    }}
+                >
                     <NotificationsProvider limit={5} autoClose={3000}>
                         <WebsocketManager />
                         <PlayheadManager />
