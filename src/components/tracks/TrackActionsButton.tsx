@@ -65,8 +65,10 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
             showNotification({
+                color: "red",
                 title: "Error updating Playlist",
                 message: `[${status}] ${data}`,
+                autoClose: false,
             });
         }
     }, [addStatus]);
