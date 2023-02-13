@@ -1,9 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Menu, Tooltip } from "@mantine/core";
+import { Box, Center, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { showNotification } from "@mantine/notifications";
-import { IconDotsVertical } from "@tabler/icons";
+import {
+    IconCornerDownRight,
+    IconCornerDownRightDouble,
+    IconDotsVertical,
+    IconList,
+    IconPlayerPlay,
+    IconPlaylistAdd,
+} from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
@@ -61,6 +68,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
+    const { colors } = useMantineTheme();
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
@@ -120,7 +128,10 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                     {categories.includes("Tracks") && (
                         <>
                             <Menu.Label>Tracks</Menu.Label>
-                            <Menu.Item onClick={() => setShowTracksModal(true)}>
+                            <Menu.Item
+                                icon={<IconList size={14} />}
+                                onClick={() => setShowTracksModal(true)}
+                            >
                                 View tracks
                             </Menu.Item>
                         </>
@@ -131,6 +142,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                         <>
                             <Menu.Label>Playlist</Menu.Label>
                             <Menu.Item
+                                icon={<IconPlayerPlay size={14} fill={colors.gray[5]} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
                                         mediaId: album.id,
@@ -146,6 +158,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 Replace and play now
                             </Menu.Item>
                             <Menu.Item
+                                icon={<IconCornerDownRight size={14} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
                                         mediaId: album.id,
@@ -161,6 +174,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 Insert and play now
                             </Menu.Item>
                             <Menu.Item
+                                icon={<IconCornerDownRightDouble size={14} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
                                         mediaId: album.id,
@@ -176,6 +190,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 Insert and play next
                             </Menu.Item>
                             <Menu.Item
+                                icon={<IconPlaylistAdd size={12} />}
                                 onClick={() => {
                                     addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
 
