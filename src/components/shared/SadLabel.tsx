@@ -3,13 +3,15 @@ import { Flex, Text } from "@mantine/core";
 
 type SadLabelProps = {
     label: string;
+    labelSize?: number;
+    sadSize?: number;
 };
 
-const SadLabel: FC<SadLabelProps> = ({ label }) => {
+const SadLabel: FC<SadLabelProps> = ({ label, labelSize = 16, sadSize = 26 }) => {
     return (
-        <Flex gap="xs">
-            <Text>😔</Text>
-            <Text>{label}</Text>
+        <Flex gap="0.8rem" align="center">
+            <Text size={sadSize}>😔</Text>
+            <Text size={labelSize} weight="bold">{label}</Text>
         </Flex>
     );
 };
