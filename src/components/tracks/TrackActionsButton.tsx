@@ -1,8 +1,14 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Menu, Tooltip } from "@mantine/core";
+import { Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { IconDotsVertical } from "@tabler/icons";
+import {
+    IconCornerDownRight,
+    IconCornerDownRightDouble,
+    IconDotsVertical,
+    IconPlayerPlay,
+    IconPlaylistAdd,
+} from "@tabler/icons";
 
 import { Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
@@ -45,6 +51,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
 }) => {
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
+    const { colors } = useMantineTheme();
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
@@ -93,6 +100,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                     <>
                         <Menu.Label>Playlist</Menu.Label>
                         <Menu.Item
+                            icon={<IconPlayerPlay size={14} fill={colors.gray[5]} />}
                             onClick={() => {
                                 addMediaToPlaylist({
                                     mediaId: track.id!!,
@@ -108,6 +116,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                             Replace and play now
                         </Menu.Item>
                         <Menu.Item
+                            icon={<IconCornerDownRight size={14} />}
                             onClick={() => {
                                 addMediaToPlaylist({
                                     mediaId: track.id!!,
@@ -123,6 +132,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                             Insert and play now
                         </Menu.Item>
                         <Menu.Item
+                            icon={<IconCornerDownRightDouble size={14} />}
                             onClick={() => {
                                 addMediaToPlaylist({
                                     mediaId: track.id!!,
@@ -138,6 +148,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                             Insert and play next
                         </Menu.Item>
                         <Menu.Item
+                            icon={<IconPlaylistAdd size={14} />}
                             onClick={() => {
                                 addMediaToPlaylist({ mediaId: track.id!!, action: "APPEND" });
 

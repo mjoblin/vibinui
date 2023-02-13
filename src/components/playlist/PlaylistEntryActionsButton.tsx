@@ -5,6 +5,7 @@ import { showNotification } from "@mantine/notifications";
 import {
     IconArrowBarToDown,
     IconArrowBarToUp,
+    IconCornerDownRightDouble,
     IconDotsVertical,
     IconPlayerPlay,
     IconTrash
@@ -114,7 +115,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                     <>
                         <Menu.Label>General</Menu.Label>
                         <Menu.Item
-                            icon={<IconPlayerPlay size={12} fill={colors.gray[5]} />}
+                            icon={<IconPlayerPlay size={14} fill={colors.gray[3]} />}
                             onClick={() => {
                                 playPlaylistId({ playlistId: entry.id });
                             }}
@@ -122,7 +123,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             Play now
                         </Menu.Item>
                         <Menu.Item
-                            icon={<IconTrash size={12} />}
+                            icon={<IconTrash size={14} />}
                             onClick={() => {
                                 deletePlaylistId({ playlistId: entry.id });
 
@@ -137,7 +138,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                         <Menu.Label>Move</Menu.Label>
                         <Menu.Item
-                            icon={<IconArrowBarToUp size={12} />}
+                            icon={<IconArrowBarToUp size={14} />}
                             onClick={() => {
                                 moveEntry({
                                     playlistId: entry.id,
@@ -155,7 +156,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
                         <Menu.Item
                             disabled={!currentlyPlayingIndex}
-                            icon={<IconPlayerPlay size={12} />}
+                            icon={<IconCornerDownRightDouble size={14} />}
                             onClick={() => {
                                 if (!currentlyPlayingIndex) {
                                     return;
