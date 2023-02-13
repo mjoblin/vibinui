@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
+import { Box, Center, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -18,6 +18,7 @@ import {
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
+import SadLabel from "../shared/SadLabel";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -169,8 +170,12 @@ const Playlist: FC = () => {
     }, [playlist?.entries]);
 
     // TODO: Render something useful when there's no playlist.
-    if (!optimisticPlaylistEntries) {
-        return <></>;
+    if (optimisticPlaylistEntries.length <= 0) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="No Playlist to display" />
+            </Center>
+        );
     }
 
     // TODO: Fix this text width determination to properly account for cases where the sub-text

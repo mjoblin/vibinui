@@ -50,7 +50,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
     }
 
     if (!data || data.length <= 0) {
-        return <SadLabel label="No lyrics found." />;
+        return <SadLabel label="No lyrics found" />;
     }
 
     /**

@@ -2,7 +2,7 @@ import React, { FC, useEffect } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import {
     ActionIcon,
-    Box,
+    Center,
     createStyles,
     Flex,
     ScrollArea,
@@ -26,6 +26,7 @@ import PlayheadRing from "../currentlyPlaying/PlayheadRing";
 import TrackLinks from "../nowPlaying/TrackLinks";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
 import Waveform from "../nowPlaying/Waveform";
+import SadLabel from "../shared/SadLabel";
 
 export type NowPlayingTab = "lyrics" | "waveform" | "links";
 
@@ -131,8 +132,11 @@ const NowPlayingScreen: FC = () => {
     }
 
     if (!currentTrack) {
-        // TODO: Improve display when no track is playing.
-        return <Box>No Track</Box>;
+        return (
+            <Center pt="xl">
+                <SadLabel label="Nothing is currently playing" />
+            </Center>
+        );
     }
 
     // @ts-ignore
