@@ -76,11 +76,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
             const { status, data } = moveEntryStatus.error as FetchBaseQueryError;
 
             showNotification({
+                color: "red",
                 title:
                     moveEntryStatus.isError || deleteStatus.isError
                         ? "Error updating Playlist"
                         : "Error playing Entry",
                 message: `[${status}] ${data}`,
+                autoClose: false,
             });
         }
     }, [moveEntryStatus, deleteStatus, playStatus]);
