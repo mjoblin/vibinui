@@ -8,6 +8,7 @@ import playlistReducer from "./playlistSlice";
 import userSettingsReducer from "./userSettingsSlice";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
+import { vibinPlaylistsApi } from "../services/vibinPlaylists";
 import { vibinSystemApi } from "../services/vibinSystem";
 import { vibinTracksApi } from "../services/vibinTracks";
 import { vibinTransportApi } from "../services/vibinTransport";
@@ -22,6 +23,7 @@ export const store = configureStore({
         userSettings: userSettingsReducer,
         [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
+        [vibinPlaylistsApi.reducerPath]: vibinPlaylistsApi.reducer,
         [vibinSystemApi.reducerPath]: vibinSystemApi.reducer,
         [vibinTracksApi.reducerPath]: vibinTracksApi.reducer,
         [vibinTransportApi.reducerPath]: vibinTransportApi.reducer,
@@ -31,6 +33,7 @@ export const store = configureStore({
         getDefaultMiddleware().concat(
             vibinBaseApi.middleware,
             vibinPlaylistApi.middleware,
+            vibinPlaylistsApi.middleware,
             vibinSystemApi.middleware,
             vibinTracksApi.middleware,
             vibinTransportApi.middleware,
