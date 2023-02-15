@@ -145,7 +145,8 @@ const Playlist: FC = () => {
 
             showNotification({
                 title: "Error removing Entry from Playlist",
-                message: `[${status}] ${data}`,
+                message: `[${status}] ${JSON.stringify(data)}`,
+                color: "red",
                 autoClose: false,
             });
         }

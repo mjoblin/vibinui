@@ -5,10 +5,11 @@ import internalReducer from "./internalSlice";
 import systemReducer from "./systemSlice";
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
+import storedPlaylistsReducer from "./storedPlaylistsSlice";
 import userSettingsReducer from "./userSettingsSlice";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
-import { vibinPlaylistsApi } from "../services/vibinPlaylists";
+import { vibinStoredPlaylistsApi } from "../services/vibinStoredPlaylists";
 import { vibinSystemApi } from "../services/vibinSystem";
 import { vibinTracksApi } from "../services/vibinTracks";
 import { vibinTransportApi } from "../services/vibinTransport";
@@ -20,10 +21,11 @@ export const store = configureStore({
         system: systemReducer,
         playback: playbackReducer,
         playlist: playlistReducer,
+        storedPlaylists: storedPlaylistsReducer,
         userSettings: userSettingsReducer,
         [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
-        [vibinPlaylistsApi.reducerPath]: vibinPlaylistsApi.reducer,
+        [vibinStoredPlaylistsApi.reducerPath]: vibinStoredPlaylistsApi.reducer,
         [vibinSystemApi.reducerPath]: vibinSystemApi.reducer,
         [vibinTracksApi.reducerPath]: vibinTracksApi.reducer,
         [vibinTransportApi.reducerPath]: vibinTransportApi.reducer,
@@ -33,7 +35,7 @@ export const store = configureStore({
         getDefaultMiddleware().concat(
             vibinBaseApi.middleware,
             vibinPlaylistApi.middleware,
-            vibinPlaylistsApi.middleware,
+            vibinStoredPlaylistsApi.middleware,
             vibinSystemApi.middleware,
             vibinTracksApi.middleware,
             vibinTransportApi.middleware,

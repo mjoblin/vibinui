@@ -12,8 +12,8 @@ export type StoredPlaylist = {
     entry_ids: MediaId[];
 }
 
-export const vibinPlaylistsApi = createApi({
-    reducerPath: "vibinPlaylistsApi",
+export const vibinStoredPlaylistsApi = createApi({
+    reducerPath: "vibinStoredPlaylistsApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/playlists" }),
     endpoints: (builder) => ({
         getStoredPlaylists: builder.query<StoredPlaylist[], void>({
@@ -32,6 +32,7 @@ export const vibinPlaylistsApi = createApi({
         >({
             query: ({ storedPlaylistId, name }) => ({
                 url: storedPlaylistId,
+                method: "PUT",
                 params: {
                     name,
                 },
@@ -53,7 +54,7 @@ export const vibinPlaylistsApi = createApi({
                 },
             }),
         }),
-        enableStoredPlaylist: builder.query<StoredPlaylist, StoredPlaylistId>({
+        activateStoredPlaylist: builder.query<StoredPlaylist, StoredPlaylistId>({
             query: ( storedPlaylistId ) => ({
                 url: `${storedPlaylistId}/make_current`,
                 method: "POST",
@@ -68,5 +69,5 @@ export const {
     useLazyUpdateStoredPlaylistNameQuery,
     useLazyDeleteStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
-    useLazyEnableStoredPlaylistQuery,
-} = vibinPlaylistsApi;
+    useLazyActivateStoredPlaylistQuery,
+} = vibinStoredPlaylistsApi;
