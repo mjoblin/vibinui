@@ -1,6 +1,15 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
+import {
+    Box,
+    Center,
+    createStyles,
+    Flex,
+    ScrollArea,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -19,6 +28,7 @@ import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../shared/SadLabel";
+import StandbyMode from "../shared/StandbyMode";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -128,8 +138,10 @@ const useStyles = createStyles((theme) => ({
  */
 
 const Playlist: FC = () => {
+    const { colors } = useMantineTheme();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const { data: albums } = useGetAlbumsQuery();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
@@ -169,6 +181,10 @@ const Playlist: FC = () => {
     useEffect(() => {
         setOptimisticPlaylistEntries(playlist?.entries || []);
     }, [playlist?.entries]);
+
+    if (playStatus === "not_ready") {
+        return <StandbyMode />;
+    }
 
     // TODO: Render something useful when there's no playlist.
     if (optimisticPlaylistEntries.length <= 0) {
@@ -253,7 +269,9 @@ const Playlist: FC = () => {
                                 className={`${classes.alignRight} ${classes.dimmed}`}
                                 style={{ width: 35 }}
                             >
-                                {entry.index + 1}
+                                <Text size={12} color={colors.dark[3]}>
+                                    {entry.index + 1}
+                                </Text>
                             </td>
                             {viewMode === "detailed" && (
                                 <td style={{ width: 50 }}>
@@ -273,12 +291,12 @@ const Playlist: FC = () => {
                                 }}
                             >
                                 <Stack spacing={0}>
-                                    <Box>{entry.title}</Box>
-                                    {viewMode === "detailed" &&
-                                        <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                    <Text>{entry.title}</Text>
+                                    {viewMode === "detailed" && (
+                                        <Text size={12} color={colors.dark[3]}>
                                             {entry.artist}
-                                        </Box>
-                                    }
+                                        </Text>
+                                    )}
                                 </Stack>
                             </td>
                             <td
@@ -294,12 +312,12 @@ const Playlist: FC = () => {
                                 }}
                             >
                                 <Stack spacing={0}>
-                                    <Box>{entry.album}</Box>
-                                    {viewMode === "detailed" &&
-                                        <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                    <Text>{entry.album}</Text>
+                                    {viewMode === "detailed" && (
+                                        <Text size={12} color={colors.dark[3]}>
                                             {albumSubtitle}
-                                        </Box>
-                                    }
+                                        </Text>
+                                    )}
                                 </Stack>
                             </td>
                             <td className={classes.alignRight} style={{ width: 85 }}>
@@ -383,7 +401,11 @@ const Playlist: FC = () => {
                     }
                 }}
             >
-                <table className={`${classes.table} ${viewMode === "simple" ? classes.tableSimple : ""}`}>
+                <table
+                    className={`${classes.table} ${
+                        viewMode === "simple" ? classes.tableSimple : ""
+                    }`}
+                >
                     <thead>
                         <tr>
                             <td></td>

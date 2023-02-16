@@ -1,7 +1,17 @@
-import React, { FC, useEffect } from "react";
-import { Center, createStyles, Table, Text, TextInput } from "@mantine/core";
+import React, { FC, useEffect, useState } from "react";
+import {
+    ActionIcon,
+    Center,
+    createStyles,
+    Dialog,
+    Table,
+    Text,
+    TextInput,
+    Tooltip,
+    useMantineTheme,
+} from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { IconTrash } from "@tabler/icons";
+import { IconDotsCircleHorizontal, IconTrash } from "@tabler/icons";
 
 import { useAppSelector } from "../../app/hooks";
 import {
@@ -9,8 +19,8 @@ import {
     useLazyUpdateStoredPlaylistNameQuery,
 } from "../../app/services/vibinStoredPlaylists";
 import { RootState } from "../../app/store/store";
-
-const epochSecondsToString = (seconds: number) => new Date(seconds * 1000).toLocaleString();
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { epochSecondsToString } from "../../app/utils";
 
 const useStyles = createStyles((theme) => ({
     editorTable: {
@@ -28,12 +38,38 @@ const useStyles = createStyles((theme) => ({
 
 const StoredPlaylistsEditor: FC = () => {
     const { classes } = useStyles();
-    const { stored_playlists: storedPlaylists } = useAppSelector(
-        (state: RootState) => state.storedPlaylists
-    );
+    const { colors } = useMantineTheme();
+    const { stored_playlists: storedPlaylists, active_stored_playlist_id: activeStoredPlaylistId } =
+        useAppSelector((state: RootState) => state.storedPlaylists);
     const [deleteStoredPlaylist, deleteStoredPlaylistStatus] = useLazyDeleteStoredPlaylistQuery();
     const [updateStoredPlaylistName, updateStoredPlaylistNameStatus] =
         useLazyUpdateStoredPlaylistNameQuery();
+    const [showNameNewPlaylistDialog, setShowNameNewPlaylistDialog] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (updateStoredPlaylistNameStatus.isSuccess) {
+            showNotification({
+                title: "Stored Playlist renamed",
+                message:
+                    storedPlaylists.find(
+                        (storedPlaylist) => storedPlaylist.id === activeStoredPlaylistId
+                    )?.name || "Unknown name",
+            });
+        } else if (updateStoredPlaylistNameStatus.isError) {
+            const { status, data } = updateStoredPlaylistNameStatus.error as FetchBaseQueryError;
+
+            showNotification({
+                title: "Error updating Stored Playlist",
+                message: `[${status}] ${JSON.stringify(data)}`,
+                color: "red",
+                autoClose: false,
+            });
+        }
+    }, [
+        updateStoredPlaylistNameStatus.isSuccess,
+        updateStoredPlaylistNameStatus.isError,
+        storedPlaylists,
+    ]);
 
     const storedPlaylistRows =
         storedPlaylists && storedPlaylists.length > 0
@@ -41,7 +77,7 @@ const StoredPlaylistsEditor: FC = () => {
                   .sort((a, b) => (a.updated < b.updated ? 1 : a.updated > b.updated ? -1 : 0))
                   .map((storedPlaylist) => {
                       return (
-                          <tr>
+                          <tr key={storedPlaylist.id}>
                               <td>
                                   <TextInput
                                       defaultValue={storedPlaylist.name}
@@ -54,14 +90,29 @@ const StoredPlaylistsEditor: FC = () => {
                                       }
                                   />
                               </td>
-                              <td>{epochSecondsToString(storedPlaylist.created)}</td>
-                              <td>{epochSecondsToString(storedPlaylist.updated)}</td>
+                              <td>
+                                  <Text color={colors.gray[6]}>
+                                      {epochSecondsToString(storedPlaylist.created)}
+                                  </Text>
+                              </td>
+                              <td>
+                                  <Text color={colors.gray[6]}>
+                                      {epochSecondsToString(storedPlaylist.updated)}
+                                  </Text>
+                              </td>
                               <td>
                                   <Center>
-                                      <IconTrash
-                                          size={16}
-                                          onClick={() => deleteStoredPlaylist(storedPlaylist.id)}
-                                      />
+                                      <Tooltip label={"Delete Stored Playlist"} position="bottom">
+                                          <ActionIcon variant="subtle">
+                                              <IconTrash
+                                                  size={16}
+                                                  color={colors.gray[6]}
+                                                  onClick={() =>
+                                                      deleteStoredPlaylist(storedPlaylist.id)
+                                                  }
+                                              />
+                                          </ActionIcon>
+                                      </Tooltip>
                                   </Center>
                               </td>
                           </tr>
@@ -70,21 +121,31 @@ const StoredPlaylistsEditor: FC = () => {
             : [];
 
     if (storedPlaylistRows.length <= 0) {
-        return <Text weight="bold">No Stored Playlists to display</Text>;
+        return <Text weight="bold">No Playlists to display</Text>;
     }
 
     return (
-        <Table className={classes.editorTable}>
-            <thead>
-                <tr>
-                    <td>Name</td>
-                    <td>Created</td>
-                    <td>Updated</td>
-                    <td></td>
-                </tr>
-            </thead>
-            <tbody>{storedPlaylistRows}</tbody>
-        </Table>
+        <>
+            <Table className={classes.editorTable}>
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Created</td>
+                        <td>Updated</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>{storedPlaylistRows}</tbody>
+            </Table>
+
+            <Dialog
+                opened={showNameNewPlaylistDialog}
+                position={{ top: 100 }}
+                onClose={() => setShowNameNewPlaylistDialog(false)}
+            >
+                <TextInput label="Playlist Name" />
+            </Dialog>
+        </>
     );
 };
 

@@ -27,6 +27,7 @@ import TrackLinks from "../nowPlaying/TrackLinks";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
 import Waveform from "../nowPlaying/Waveform";
 import SadLabel from "../shared/SadLabel";
+import StandbyMode from "../shared/StandbyMode";
 
 export type NowPlayingTab = "lyrics" | "waveform" | "links";
 
@@ -40,41 +41,6 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: "rgb(0, 0, 0, 0.75)",
     },
 }));
-
-/**
- *
- */
-const StandbyMode: FC = () => {
-    const streamerName = useAppSelector((state: RootState) => state.system.streamer.name);
-    const [togglePower, togglePowerStatus] = useLazyPowerToggleQuery();
-
-    useEffect(() => {
-        if (togglePowerStatus.isError) {
-            const { status, data } = togglePowerStatus.error as FetchBaseQueryError;
-
-            showNotification({
-                title: "Could not power on the streamer",
-                message: `[${status}] ${data}`,
-                autoClose: false,
-            });
-        }
-    }, [togglePowerStatus]);
-
-    return (
-        <Flex pt={35} gap={15} justify="center" align="center">
-            <ActionIcon
-                size="lg"
-                color="blue"
-                variant="filled"
-                radius={5}
-                onClick={() => togglePower()}
-            >
-                <IconPower size={20} />
-            </ActionIcon>
-            <Text>{`${streamerName} is in standby mode`}</Text>
-        </Flex>
-    );
-};
 
 /**
  *
