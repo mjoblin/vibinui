@@ -77,7 +77,6 @@ const PlaylistControls: FC = () => {
         active_synced_with_store: activeSyncedWithStore,
         stored_playlists: storedPlaylists,
     } = useAppSelector((state: RootState) => state.storedPlaylists);
-    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();
     const [showEditor, setShowEditor] = useState<boolean>(false);
@@ -154,7 +153,6 @@ const PlaylistControls: FC = () => {
                         placeholder="Select a Playlist"
                         itemComponent={PlaylistSelectItem}
                         withinPortal={true}
-                        disabled={playStatus === "not_ready"}
                         data={playlistDetails}
                         limit={10}
                         value={activeStoredPlaylistId}
@@ -167,7 +165,7 @@ const PlaylistControls: FC = () => {
                 {/* Playlist save options */}
                 <Menu shadow="md" position="bottom-start">
                     <Menu.Target>
-                        <ActionIcon disabled={playStatus === "not_ready"} variant="transparent">
+                        <ActionIcon variant="transparent">
                             <IconDotsCircleHorizontal size={20} color={colors.gray[6]} />
                         </ActionIcon>
                     </Menu.Target>
