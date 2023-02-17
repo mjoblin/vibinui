@@ -190,7 +190,7 @@ const PlaylistControls: FC = () => {
                             <Menu.Dropdown>
                                 <Menu.Label>Save</Menu.Label>
                                 <Menu.Item
-                                    disabled={!activeStoredPlaylistId}
+                                    disabled={!activeStoredPlaylistId || activeSyncedWithStore}
                                     icon={
                                         <Indicator
                                             size={7}
@@ -228,6 +228,7 @@ const PlaylistControls: FC = () => {
             {/* Playlist display options (simple vs. detailed) */}
             <SegmentedControl
                 value={viewMode}
+                radius={5}
                 onChange={(value) =>
                     value && dispatch(setPlaylistViewMode(value as PlaylistViewMode))
                 }

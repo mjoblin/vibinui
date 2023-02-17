@@ -97,7 +97,7 @@ const NowPlayingScreen: FC = () => {
         return <StandbyMode />;
     }
 
-    if (!currentTrack) {
+    if (playStatus === "ready" || !currentTrack) {
         return (
             <Center pt="xl">
                 <SadLabel label="Nothing is currently playing" />

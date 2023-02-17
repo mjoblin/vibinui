@@ -188,9 +188,16 @@ const Playlist: FC = () => {
     if (playStatus === "not_ready") {
         return <StandbyMode />;
     }
+    
+    const playlistEntries: PlaylistEntry[] =
+        optimisticPlaylistEntries.length > 0
+            ? optimisticPlaylistEntries
+            : playlist?.entries && playlist.entries.length > 0
+            ? playlist.entries
+            : [];
 
     // TODO: Render something useful when there's no playlist.
-    if (optimisticPlaylistEntries.length <= 0) {
+    if (playlistEntries.length <= 0) {
         return (
             <Center pt="xl">
                 <SadLabel label="No Playlist to display" />
@@ -203,10 +210,10 @@ const Playlist: FC = () => {
     //  album name).
 
     const maxTitleWidth = Math.max(
-        ...optimisticPlaylistEntries.map((elem) => getTextWidth(elem.title))
+        ...playlistEntries.map((elem) => getTextWidth(elem.title))
     );
     const maxAlbumWidth = Math.max(
-        ...optimisticPlaylistEntries.map((elem) => getTextWidth(elem.album))
+        ...playlistEntries.map((elem) => getTextWidth(elem.album))
     );
 
     // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
@@ -235,7 +242,7 @@ const Playlist: FC = () => {
      * TODO: Consider per-row interactivity and feedback. Currently, clicking the title or artist
      *  (but no other columns, aside from the play button) will play the entry.
      */
-    const playlistEntries = optimisticPlaylistEntries
+    const renderedPlaylistEntries = playlistEntries
         // .sort((a, b) => a.index - b.index)
         .map((entry, index) => {
             const year = albumYear(entry.album, entry.artist);
@@ -360,7 +367,7 @@ const Playlist: FC = () => {
 
                                     <PlaylistEntryActionsButton
                                         entry={entry}
-                                        entryCount={playlistEntries.length}
+                                        entryCount={renderedPlaylistEntries.length}
                                         currentlyPlayingIndex={playlist.current_track_index}
                                         onOpen={() => setActionsMenuOpenFor(entry.id)}
                                         onClose={() => setActionsMenuOpenFor(undefined)}
@@ -433,7 +440,7 @@ const Playlist: FC = () => {
                     <Droppable droppableId="dnd-list" direction="vertical">
                         {(provided) => (
                             <tbody {...provided.droppableProps} ref={provided.innerRef}>
-                                {playlistEntries}
+                                {renderedPlaylistEntries}
                                 {provided.placeholder}
                             </tbody>
                         )}
