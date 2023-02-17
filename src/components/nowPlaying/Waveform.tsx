@@ -32,7 +32,7 @@ const useStyles = createStyles((theme) => ({
         bottom: 0,
         width: 0,
         cursor: "col-resize",
-        borderLeft: "3px solid #a0a0a0",
+        borderLeft: "1px solid #a0a0a0",
         "&:hover": {
             borderLeft: "3px solid #ffffff",
         },

@@ -8,6 +8,7 @@ import {
     Flex,
     Group,
     Indicator,
+    Loader,
     Menu,
     Modal,
     SegmentedControl,
@@ -75,6 +76,7 @@ const PlaylistControls: FC = () => {
     const {
         active_stored_playlist_id: activeStoredPlaylistId,
         active_synced_with_store: activeSyncedWithStore,
+        activating_stored_playlist: activatingStoredPlaylist,
         stored_playlists: storedPlaylists,
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
@@ -87,7 +89,6 @@ const PlaylistControls: FC = () => {
         initialValues: {
             name: "",
         },
-
         validate: {
             name: isNotEmpty(),
         },
@@ -134,70 +135,94 @@ const PlaylistControls: FC = () => {
 
     const playlistDetails: { value: string; label: string }[] =
         storedPlaylists && storedPlaylists.length > 0
-            ? storedPlaylists.map((storedPlaylist) => {
-                  return {
-                      value: storedPlaylist.id || "",
-                      label: storedPlaylist.name || "unknown",
-                      entryCount: storedPlaylist.entry_ids.length,
-                      updated: storedPlaylist.updated,
-                  };
-              })
+            ? [...storedPlaylists]
+                  .sort((a, b) => a.name.localeCompare(b.name))
+                  .map((storedPlaylist) => {
+                      return {
+                          value: storedPlaylist.id || "",
+                          label: storedPlaylist.name || "unknown",
+                          entryCount: storedPlaylist.entry_ids.length,
+                          updated: storedPlaylist.updated,
+                      };
+                  })
             : [];
 
     return (
         <Flex gap={25} align="center">
-            <Flex gap={5} align="center">
-                {/* Playlist names (selecting a Playlist name will activate it) */}
-                <Indicator size={7} disabled={activeSyncedWithStore}>
-                    <Select
-                        placeholder="Select a Playlist"
-                        itemComponent={PlaylistSelectItem}
-                        withinPortal={true}
-                        data={playlistDetails}
-                        limit={10}
-                        value={activeStoredPlaylistId}
-                        w={250}
-                        maxDropdownHeight={700}
-                        onChange={(value) => value && activateStoredPlaylistId(value)}
-                    />
-                </Indicator>
+            <Flex gap={5} w={275} align="center">
+                {activatingStoredPlaylist && (
+                    <Flex gap={10} align="center">
+                        <Loader size="sm" />
+                        <Text size="xs" weight="bold">
+                            Activating...
+                        </Text>
+                    </Flex>
+                )}
 
-                {/* Playlist save options */}
-                <Menu shadow="md" position="bottom-start">
-                    <Menu.Target>
-                        <ActionIcon variant="transparent">
-                            <IconDotsCircleHorizontal size={20} color={colors.gray[6]} />
-                        </ActionIcon>
-                    </Menu.Target>
+                {!activatingStoredPlaylist && (
+                    <>
+                        {/* Playlist names (selecting a Playlist name will activate it) */}
+                        <Indicator
+                            size={7}
+                            disabled={!activeStoredPlaylistId || activeSyncedWithStore}
+                        >
+                            <Select
+                                placeholder="Select a Playlist"
+                                itemComponent={PlaylistSelectItem}
+                                withinPortal={true}
+                                data={playlistDetails}
+                                limit={10}
+                                value={activeStoredPlaylistId}
+                                w={250}
+                                maxDropdownHeight={700}
+                                onChange={(value) => value && activateStoredPlaylistId(value)}
+                            />
+                        </Indicator>
 
-                    <Menu.Dropdown>
-                        <Menu.Label>Save</Menu.Label>
-                        <Menu.Item
-                            icon={
-                                <Indicator size={7} disabled={activeSyncedWithStore}>
-                                    <IconFile size={14} />
-                                </Indicator>
-                            }
-                            onClick={() => storePlaylist({ replace: true })}
-                        >
-                            Save Playlist
-                        </Menu.Item>
-                        <Menu.Item
-                            icon={<IconFilePlus size={14} />}
-                            onClick={() => setShowNameNewPlaylistDialog(true)}
-                        >
-                            Save Playlist as New...
-                        </Menu.Item>
+                        {/* Playlist save options */}
+                        <Menu shadow="md" position="bottom-start">
+                            <Menu.Target>
+                                <ActionIcon variant="transparent">
+                                    <IconDotsCircleHorizontal size={20} color={colors.gray[6]} />
+                                </ActionIcon>
+                            </Menu.Target>
 
-                        <Menu.Label>Management</Menu.Label>
-                        <Menu.Item
-                            icon={<IconListDetails size={14} />}
-                            onClick={() => setShowEditor(true)}
-                        >
-                            Playlists Manager...
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
+                            <Menu.Dropdown>
+                                <Menu.Label>Save</Menu.Label>
+                                <Menu.Item
+                                    disabled={!activeStoredPlaylistId}
+                                    icon={
+                                        <Indicator
+                                            size={7}
+                                            disabled={
+                                                !activeStoredPlaylistId || activeSyncedWithStore
+                                            }
+                                        >
+                                            <IconFile size={14} />
+                                        </Indicator>
+                                    }
+                                    onClick={() => storePlaylist({ replace: true })}
+                                >
+                                    Save Playlist
+                                </Menu.Item>
+                                <Menu.Item
+                                    icon={<IconFilePlus size={14} />}
+                                    onClick={() => setShowNameNewPlaylistDialog(true)}
+                                >
+                                    Save Playlist as New...
+                                </Menu.Item>
+
+                                <Menu.Label>Management</Menu.Label>
+                                <Menu.Item
+                                    icon={<IconListDetails size={14} />}
+                                    onClick={() => setShowEditor(true)}
+                                >
+                                    Playlists Manager...
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </>
+                )}
             </Flex>
 
             {/* Playlist display options (simple vs. detailed) */}

@@ -12,7 +12,14 @@ type AlbumTracksModalProps = {
 
 const AlbumTracksModal: FC<AlbumTracksModalProps> = ({ album, opened, onClose = undefined }) => {
     return (
-        <Modal title={album.title} centered size="lg" opened={opened} onClose={() => onClose && onClose()}>
+        <Modal
+            title={album.title}
+            centered
+            size="lg"
+            radius={7}
+            opened={opened}
+            onClose={() => onClose && onClose()}
+        >
             <AlbumTracks album={album} />
         </Modal>
     );

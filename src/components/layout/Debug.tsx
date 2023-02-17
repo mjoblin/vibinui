@@ -1,6 +1,7 @@
 import React, { FC, useState } from "react";
 import { Box, CloseButton, createStyles, Flex, Stack, Text, Title } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
+import Draggable from "react-draggable";
 
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
@@ -25,6 +26,7 @@ const useStyles = createStyles((theme) => ({
 const Debug: FC = () => {
     const system = useAppSelector((state: RootState) => state.system);
     const playback = useAppSelector((state: RootState) => state.playback);
+    const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
     const [showDebug, setShowDebug] = useState<boolean>(false);
     const { classes } = useStyles();
 
@@ -33,41 +35,67 @@ const Debug: FC = () => {
     const fontSize = 12;
 
     return showDebug ? (
-        <Box className={classes.debugContainer}>
-            <Flex justify="space-between" align="center" pb={5}>
-                <Title size={13} color="#838383">DEBUG</Title>
-                <CloseButton size="md" onClick={() => setShowDebug(false)} />
-            </Flex>
+        <Draggable bounds="parent" >
+            <Box className={classes.debugContainer}>
+                <Flex justify="space-between" align="center" pb={5}>
+                    <Title size={13} color="#838383">
+                        DEBUG
+                    </Title>
+                    <CloseButton size="md" onClick={() => setShowDebug(false)} />
+                </Flex>
 
-            <Stack>
-                <Stack spacing={0}>
-                    <Title size={fontSize}>SYSTEM</Title>
-                    <FieldValueList
-                        fieldValues={{
-                            streamerName: system.streamer.name || "undefined",
-                            streamerPower: system.streamer.power || "undefined",
-                            mediaDeviceName: system.media_device.name || "undefined",
-                        }}
-                        keySize={fontSize}
-                        valueSize={fontSize}
-                    />
-                </Stack>
+                <Stack>
+                    {/* System */}
+                    <Stack spacing={0}>
+                        <Title size={fontSize}>SYSTEM</Title>
+                        <FieldValueList
+                            fieldValues={{
+                                streamerName: system.streamer.name || "undefined",
+                                streamerPower: system.streamer.power || "undefined",
+                                mediaDeviceName: system.media_device.name || "undefined",
+                            }}
+                            keySize={fontSize}
+                            valueSize={fontSize}
+                        />
+                    </Stack>
 
-                <Stack spacing={0}>
-                    <Title size={fontSize}>PLAYBACK</Title>
-                    <FieldValueList
-                        fieldValues={{
-                            playStatus: playback.play_status || "undefined",
-                            currentAudioSource: playback.current_audio_source || "undefined",
-                            currentTrackMediaId: playback.current_track_media_id || "<none>",
-                            currentAlbumMediaId: playback.current_album_media_id || "<none>",
-                        }}
-                        keySize={fontSize}
-                        valueSize={fontSize}
-                    />
+                    {/* Playback */}
+                    <Stack spacing={0}>
+                        <Title size={fontSize}>PLAYBACK</Title>
+                        <FieldValueList
+                            fieldValues={{
+                                playStatus: playback.play_status || "undefined",
+                                currentAudioSource: playback.current_audio_source || "undefined",
+                                currentTrackMediaId: playback.current_track_media_id || "<none>",
+                                currentAlbumMediaId: playback.current_album_media_id || "<none>",
+                            }}
+                            keySize={fontSize}
+                            valueSize={fontSize}
+                        />
+                    </Stack>
+
+                    {/* Stored Playlists */}
+                    <Stack spacing={0}>
+                        <Title size={fontSize}>STORED PLAYLISTS</Title>
+                        <FieldValueList
+                            fieldValues={{
+                                activeStoredPlaylistId:
+                                    storedPlaylists.active_stored_playlist_id || "undefined",
+                                activeSyncedWithStore: storedPlaylists.active_synced_with_store
+                                    ? "True"
+                                    : "False",
+                                activatingStoredPlaylist: storedPlaylists.activating_stored_playlist
+                                    ? "True"
+                                    : "False",
+                                count: storedPlaylists.stored_playlists.length,
+                            }}
+                            keySize={fontSize}
+                            valueSize={fontSize}
+                        />
+                    </Stack>
                 </Stack>
-            </Stack>
-        </Box>
+            </Box>
+        </Draggable>
     ) : null;
 };
 

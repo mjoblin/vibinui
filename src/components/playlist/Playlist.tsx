@@ -4,6 +4,7 @@ import {
     Center,
     createStyles,
     Flex,
+    Overlay,
     ScrollArea,
     Stack,
     Text,
@@ -141,6 +142,9 @@ const Playlist: FC = () => {
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const {
+        activating_stored_playlist: activatingStoredPlaylist,
+    } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { data: albums } = useGetAlbumsQuery();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
@@ -292,7 +296,11 @@ const Playlist: FC = () => {
                                 <Stack spacing={0}>
                                     <Text>{entry.title}</Text>
                                     {viewMode === "detailed" && (
-                                        <Text size={12} color={colors.dark[3]}>
+                                        <Text
+                                            size={12}
+                                            color={colors.dark[3]}
+                                            style={{ whiteSpace: "nowrap" }}
+                                        >
                                             {entry.artist}
                                         </Text>
                                     )}
@@ -313,7 +321,11 @@ const Playlist: FC = () => {
                                 <Stack spacing={0}>
                                     <Text>{entry.album}</Text>
                                     {viewMode === "detailed" && (
-                                        <Text size={12} color={colors.dark[3]}>
+                                        <Text
+                                            size={12}
+                                            color={colors.dark[3]}
+                                            style={{ whiteSpace: "nowrap" }}
+                                        >
                                             {albumSubtitle}
                                         </Text>
                                     )}
@@ -370,6 +382,7 @@ const Playlist: FC = () => {
 
     return (
         <ScrollArea>
+            {activatingStoredPlaylist && <Overlay opacity={0.5} color="#000000" radius={5} />}
             <DragDropContext
                 onDragEnd={({ draggableId, source, destination }) => {
                     if (destination) {
