@@ -4,6 +4,9 @@ import {
     Center,
     createStyles,
     Dialog,
+    Flex,
+    SegmentedControl,
+    Stack,
     Table,
     Text,
     TextInput,
@@ -11,9 +14,9 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
-import { IconDotsCircleHorizontal, IconTrash } from "@tabler/icons";
+import { IconTrash } from "@tabler/icons";
 
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     useLazyDeleteStoredPlaylistQuery,
     useLazyUpdateStoredPlaylistNameQuery,
@@ -21,6 +24,10 @@ import {
 import { RootState } from "../../app/store/store";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { epochSecondsToString } from "../../app/utils";
+import {
+    PlaylistEditorSortField,
+    setPlaylistEditorSortField,
+} from "../../app/store/userSettingsSlice";
 
 const useStyles = createStyles((theme) => ({
     editorTable: {
@@ -37,10 +44,14 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const StoredPlaylistsEditor: FC = () => {
+    const dispatch = useAppDispatch();
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
     const { stored_playlists: storedPlaylists, active_stored_playlist_id: activeStoredPlaylistId } =
         useAppSelector((state: RootState) => state.storedPlaylists);
+    const { sortField: playlistEditorSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.playlist.editor
+    );
     const [deleteStoredPlaylist, deleteStoredPlaylistStatus] = useLazyDeleteStoredPlaylistQuery();
     const [updateStoredPlaylistName, updateStoredPlaylistNameStatus] =
         useLazyUpdateStoredPlaylistNameQuery();
@@ -74,7 +85,18 @@ const StoredPlaylistsEditor: FC = () => {
     const storedPlaylistRows =
         storedPlaylists && storedPlaylists.length > 0
             ? [...storedPlaylists]
-                  .sort((a, b) => (a.updated < b.updated ? 1 : a.updated > b.updated ? -1 : 0))
+                  .sort((a, b) => {
+                      const aValue = a[playlistEditorSortField];
+                      const bValue = b[playlistEditorSortField];
+
+                      const result = aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+
+                      if (playlistEditorSortField === "name") {
+                          return result * -1;
+                      }
+
+                      return result;
+                  })
                   .map((storedPlaylist) => {
                       return (
                           <tr key={storedPlaylist.id}>
@@ -102,8 +124,13 @@ const StoredPlaylistsEditor: FC = () => {
                               </td>
                               <td>
                                   <Center>
-                                      <Tooltip label={"Delete Stored Playlist"} position="bottom">
-                                          <ActionIcon variant="subtle">
+                                      <Tooltip label="Delete Stored Playlist" position="bottom">
+                                          <ActionIcon
+                                              variant="subtle"
+                                              disabled={
+                                                  storedPlaylist.id === activeStoredPlaylistId
+                                              }
+                                          >
                                               <IconTrash
                                                   size={16}
                                                   color={colors.gray[6]}
@@ -125,7 +152,35 @@ const StoredPlaylistsEditor: FC = () => {
     }
 
     return (
-        <>
+        <Stack spacing="md">
+            <Flex gap="xs" align="center">
+                <Text size="sm">Sort field:</Text>
+                <SegmentedControl
+                    value={playlistEditorSortField}
+                    size="xs"
+                    color="blue"
+                    radius={5}
+                    onChange={(value) =>
+                        value &&
+                        dispatch(setPlaylistEditorSortField(value as PlaylistEditorSortField))
+                    }
+                    data={[
+                        {
+                            value: "name",
+                            label: <Text>Name</Text>,
+                        },
+                        {
+                            value: "created",
+                            label: <Text>Created</Text>,
+                        },
+                        {
+                            value: "updated",
+                            label: <Text>Updated</Text>,
+                        },
+                    ]}
+                />
+            </Flex>
+
             <Table className={classes.editorTable}>
                 <thead>
                     <tr>
@@ -145,7 +200,7 @@ const StoredPlaylistsEditor: FC = () => {
             >
                 <TextInput label="Playlist Name" />
             </Dialog>
-        </>
+        </Stack>
     );
 };
 

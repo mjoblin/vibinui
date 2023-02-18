@@ -79,6 +79,7 @@ const PlaylistControls: FC = () => {
         activating_stored_playlist: activatingStoredPlaylist,
         stored_playlists: storedPlaylists,
     } = useAppSelector((state: RootState) => state.storedPlaylists);
+    const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();
     const [showEditor, setShowEditor] = useState<boolean>(false);
@@ -93,7 +94,16 @@ const PlaylistControls: FC = () => {
             name: isNotEmpty(),
         },
     });
+    
+    useEffect(() => {
+        setActiveStoredPlaylistName(
+            storedPlaylists.find((playlist) => playlist.id === activeStoredPlaylistId)?.name
+        );
+    }, [activeStoredPlaylistId, storedPlaylists]);
 
+    /**
+     *
+     */
     useEffect(() => {
         if (activatePlaylistStatus.isSuccess) {
             showNotification({
@@ -115,23 +125,30 @@ const PlaylistControls: FC = () => {
         }
     }, [activatePlaylistStatus.isSuccess, activatePlaylistStatus.isError]);
 
+    /**
+     *
+     */
     useEffect(() => {
+        const replacing = !!storePlaylistStatus.originalArgs?.replace;
+
         if (storePlaylistStatus.isSuccess) {
             showNotification({
-                title: "New Stored Playlist created",
-                message: newFormName || "Unknown name",
+                title: replacing ? "Playlist saved" : "New Playlist created",
+                message: replacing ? activeStoredPlaylistName : newFormName || "Unknown name",
             });
         } else if (storePlaylistStatus.isError) {
             const { status, data } = activatePlaylistStatus.error as FetchBaseQueryError;
 
             showNotification({
-                title: "Error creating new Stored Playlist",
+                title: `Error ${replacing ? "saving" : "creating new"} Playlist`,
                 message: `[${status}] ${JSON.stringify(data)}`,
                 color: "red",
                 autoClose: false,
             });
         }
     }, [storePlaylistStatus.isSuccess, storePlaylistStatus.isError, newFormName]);
+
+    // --------------------------------------------------------------------------------------------
 
     const playlistDetails: { value: string; label: string }[] =
         storedPlaylists && storedPlaylists.length > 0
@@ -146,6 +163,8 @@ const PlaylistControls: FC = () => {
                       };
                   })
             : [];
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Flex gap={25} align="center">
@@ -274,7 +293,7 @@ const PlaylistControls: FC = () => {
                 opened={showNameNewPlaylistDialog}
                 centered={true}
                 size="auto"
-                title="Create new Stored Playlist"
+                title="Create new Playlist"
                 onClose={() => setShowNameNewPlaylistDialog(false)}
             >
                 <Box

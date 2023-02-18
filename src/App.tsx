@@ -61,6 +61,15 @@ export default function App() {
                                     styles: { tooltip: { fontSize: 12 } },
                                 },
                             },
+                            Modal: {
+                                styles: {
+                                    header: {
+                                        fontWeight: "bold",
+                                        fontSize: 14,
+                                        textTransform: "uppercase",
+                                    },
+                                },
+                            },
                         },
                     }}
                 >
