@@ -1,5 +1,15 @@
 import React, { FC } from "react";
-import { Box, Button, Checkbox, Flex, Slider, Stack, Text, TextInput } from "@mantine/core";
+import {
+    Box,
+    Button,
+    Checkbox,
+    Flex,
+    Slider,
+    Stack,
+    Text,
+    TextInput,
+    useMantineTheme,
+} from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -14,12 +24,16 @@ import {
     setFilterText,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
+import { useGetAlbumsQuery } from "../../app/services/vibinBase";
 
 const BrowseControls: FC = () => {
     const dispatch = useAppDispatch();
+    const { colors } = useMantineTheme();
+    const { data: albums } = useGetAlbumsQuery();
     const { coverSize, coverGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.browse
     );
+    const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.browse);
 
     // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
     //  the tops of components to get them to look OK.
@@ -103,6 +117,25 @@ const BrowseControls: FC = () => {
                         Tiny Wall
                     </Button>
                 </Box>
+            </Flex>
+
+            {/* "Showing x of y albums" */}
+            <Flex gap={3} justify="right" align="flex-end" sx={{ flexGrow: 1 }}>
+                <Text size="xs" color={colors.gray[6]}>
+                    Showing
+                </Text>
+                <Text size="xs" color={colors.gray[6]} weight="bold">
+                    {filteredAlbumCount}
+                </Text>
+                <Text size="xs" color={colors.gray[6]}>
+                    of
+                </Text>
+                <Text size="xs" color={colors.gray[6]} weight="bold">
+                    {albums?.length || 0}
+                </Text>
+                <Text size="xs" color={colors.gray[6]}>
+                    albums
+                </Text>
             </Flex>
         </Flex>
     );
