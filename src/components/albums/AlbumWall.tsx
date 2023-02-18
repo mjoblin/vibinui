@@ -2,12 +2,14 @@ import React, { FC } from "react";
 import { Box, Center, createStyles } from "@mantine/core";
 
 import type { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery } from "../../app/services/vibinBase";
+import { setFilteredAlbumCount } from "../../app/store/internalSlice";
 import AlbumCard from "./AlbumCard";
 import SadLabel from "../shared/SadLabel";
 
 const AlbumWall: FC = () => {
+    const dispatch = useAppDispatch();
     const filterText = useAppSelector((state: RootState) => state.userSettings.browse.filterText);
     const { coverSize, coverGap } = useAppSelector((state: RootState) => state.userSettings.browse);
     const { data, error, isLoading } = useGetAlbumsQuery();
@@ -21,6 +23,8 @@ const AlbumWall: FC = () => {
         },
     }))();
 
+    // TODO: Handle useGetAlbumsQuery isError, isLoading, etc.
+
     if (!data || data.length <= 0) {
         return (
             <Center pt="xl">
@@ -28,7 +32,7 @@ const AlbumWall: FC = () => {
             </Center>
         );
     }
-    
+
     const albumsToDisplay = data
         .filter((album) => {
             if (filterText === "") {
@@ -44,6 +48,8 @@ const AlbumWall: FC = () => {
         })
         // TODO: Fix "Various" (unknown artist)
         .sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various"));
+
+    dispatch(setFilteredAlbumCount(albumsToDisplay.length));
 
     if (albumsToDisplay.length <= 0) {
         return (

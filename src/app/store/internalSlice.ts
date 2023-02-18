@@ -6,6 +6,9 @@ export interface InternalState {
         renderWidth: number;
         renderHeight: number;
     };
+    browse: {
+        filteredAlbumCount: number;
+    };
 }
 
 const initialState: InternalState = {
@@ -13,6 +16,10 @@ const initialState: InternalState = {
         // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
         renderWidth: 200,
         renderHeight: 200,
+    },
+    browse: {
+        // Number of albums currently displayed in the Browse screen.
+        filteredAlbumCount: 0,
     },
 };
 
@@ -27,9 +34,12 @@ export const systemSlice = createSlice({
             state.albumCard.renderWidth = action.payload.width;
             state.albumCard.renderHeight = action.payload.height;
         },
+        setFilteredAlbumCount: (state, action: PayloadAction<number>) => {
+            state.browse.filteredAlbumCount = action.payload;
+        },
     },
 });
 
-export const { setAlbumCardRenderDimensions } = systemSlice.actions;
+export const { setAlbumCardRenderDimensions, setFilteredAlbumCount } = systemSlice.actions;
 
 export default systemSlice.reducer;
