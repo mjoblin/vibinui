@@ -1,3 +1,10 @@
+import dayjs from "dayjs";
+import localizedFormat from "dayjs/plugin/localizedFormat";
+import relativeTime from "dayjs/plugin/relativeTime";
+
+dayjs.extend(localizedFormat);
+dayjs.extend(relativeTime);
+
 // TODO: Write tests
 
 /**
@@ -28,7 +35,7 @@ export const secstoHms = (duration: number): string => {
         .replace(/^00:0?/, "");
 
     return hms;
-}
+};
 
 /**
  * Determines the width, in pixels, required to render the given text.
@@ -46,3 +53,13 @@ export const getTextWidth = (text: string): number => {
 
     return 0;
 };
+
+/**
+ * Convert a unix time (in seconds) to a string, like "August 16, 2018 8:02 PM".
+ */
+export const epochSecondsToString = (seconds: number) => dayjs.unix(seconds).format("lll");
+
+/**
+ * Convert a unix time (in seconds) to a relative offset string, like "5 days ago".
+ */
+export const epochSecondsToStringRelative = (seconds: number) => dayjs.unix(seconds).fromNow();

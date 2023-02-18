@@ -14,6 +14,7 @@ const DEFAULT_BROWSE_COVER_GAP = 25;
 const DEFAULT_BROWSE_SHOW_DETAILS = true;
 
 export type PlaylistViewMode = "simple" | "detailed";
+export type PlaylistEditorSortField = "name" | "created" | "updated";
 
 export interface UserSettingsState {
     browse: {
@@ -24,6 +25,9 @@ export interface UserSettingsState {
     };
     playlist: {
         viewMode: PlaylistViewMode;
+        editor: {
+            sortField: PlaylistEditorSortField;
+        };
     };
     nowPlaying: {
         activeTab: NowPlayingTab;
@@ -39,6 +43,9 @@ const initialState: UserSettingsState = {
     },
     playlist: {
         viewMode: "detailed",
+        editor: {
+            sortField: "name",
+        },
     },
     nowPlaying: {
         activeTab: "lyrics",
@@ -70,6 +77,9 @@ export const userSettingsSlice = createSlice({
         setPlaylistViewMode: (state, action: PayloadAction<PlaylistViewMode>) => {
             state.playlist.viewMode = action.payload;
         },
+        setPlaylistEditorSortField: (state, action: PayloadAction<PlaylistEditorSortField>) => {
+            state.playlist.editor.sortField = action.payload;
+        },
         setNowPlayingActiveTab: (state, action: PayloadAction<NowPlayingTab>) => {
             state.nowPlaying.activeTab = action.payload;
         },
@@ -84,6 +94,7 @@ export const {
     setBrowseShowDetails,
     resetBrowseToDefaults,
     setPlaylistViewMode,
+    setPlaylistEditorSortField,
     setNowPlayingActiveTab,
 } = userSettingsSlice.actions;
 

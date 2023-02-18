@@ -58,7 +58,7 @@ const NowPlaying: FC<NowPlayingProps> = ({ showAlbumDetails = true, maxPlayheadW
                             {currentTrack.title}
                         </Text>
                         <Text size="xs" sx={{ lineHeight: 1.25 }}>
-                            {currentTrack.artist} - {currentTrack.album}
+                            {currentTrack.artist}{currentTrack.album && ` - ${currentTrack.album}`}
                         </Text>
                     </Flex>
                 </Flex>

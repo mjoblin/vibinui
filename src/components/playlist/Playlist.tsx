@@ -1,6 +1,15 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Flex, ScrollArea, Stack } from "@mantine/core";
+import {
+    Center,
+    createStyles,
+    Flex,
+    Overlay,
+    ScrollArea,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 import { showNotification } from "@mantine/notifications";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
@@ -19,6 +28,7 @@ import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../shared/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../shared/SadLabel";
+import StandbyMode from "../shared/StandbyMode";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -128,8 +138,13 @@ const useStyles = createStyles((theme) => ({
  */
 
 const Playlist: FC = () => {
+    const { colors } = useMantineTheme();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const {
+        activating_stored_playlist: activatingStoredPlaylist,
+    } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { data: albums } = useGetAlbumsQuery();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
@@ -145,7 +160,8 @@ const Playlist: FC = () => {
 
             showNotification({
                 title: "Error removing Entry from Playlist",
-                message: `[${status}] ${data}`,
+                message: `[${status}] ${JSON.stringify(data)}`,
+                color: "red",
                 autoClose: false,
             });
         }
@@ -169,8 +185,19 @@ const Playlist: FC = () => {
         setOptimisticPlaylistEntries(playlist?.entries || []);
     }, [playlist?.entries]);
 
+    if (playStatus === "not_ready") {
+        return <StandbyMode />;
+    }
+    
+    const playlistEntries: PlaylistEntry[] =
+        optimisticPlaylistEntries.length > 0
+            ? optimisticPlaylistEntries
+            : playlist?.entries && playlist.entries.length > 0
+            ? playlist.entries
+            : [];
+
     // TODO: Render something useful when there's no playlist.
-    if (optimisticPlaylistEntries.length <= 0) {
+    if (playlistEntries.length <= 0) {
         return (
             <Center pt="xl">
                 <SadLabel label="No Playlist to display" />
@@ -183,10 +210,10 @@ const Playlist: FC = () => {
     //  album name).
 
     const maxTitleWidth = Math.max(
-        ...optimisticPlaylistEntries.map((elem) => getTextWidth(elem.title))
+        ...playlistEntries.map((elem) => getTextWidth(elem.title))
     );
     const maxAlbumWidth = Math.max(
-        ...optimisticPlaylistEntries.map((elem) => getTextWidth(elem.album))
+        ...playlistEntries.map((elem) => getTextWidth(elem.album))
     );
 
     // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
@@ -215,7 +242,7 @@ const Playlist: FC = () => {
      * TODO: Consider per-row interactivity and feedback. Currently, clicking the title or artist
      *  (but no other columns, aside from the play button) will play the entry.
      */
-    const playlistEntries = optimisticPlaylistEntries
+    const renderedPlaylistEntries = playlistEntries
         // .sort((a, b) => a.index - b.index)
         .map((entry, index) => {
             const year = albumYear(entry.album, entry.artist);
@@ -252,7 +279,9 @@ const Playlist: FC = () => {
                                 className={`${classes.alignRight} ${classes.dimmed}`}
                                 style={{ width: 35 }}
                             >
-                                {entry.index + 1}
+                                <Text size={12} color={colors.dark[3]}>
+                                    {entry.index + 1}
+                                </Text>
                             </td>
                             {viewMode === "detailed" && (
                                 <td style={{ width: 50 }}>
@@ -272,12 +301,16 @@ const Playlist: FC = () => {
                                 }}
                             >
                                 <Stack spacing={0}>
-                                    <Box>{entry.title}</Box>
-                                    {viewMode === "detailed" &&
-                                        <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                    <Text>{entry.title}</Text>
+                                    {viewMode === "detailed" && (
+                                        <Text
+                                            size={12}
+                                            color={colors.dark[3]}
+                                            style={{ whiteSpace: "nowrap" }}
+                                        >
                                             {entry.artist}
-                                        </Box>
-                                    }
+                                        </Text>
+                                    )}
                                 </Stack>
                             </td>
                             <td
@@ -293,12 +326,16 @@ const Playlist: FC = () => {
                                 }}
                             >
                                 <Stack spacing={0}>
-                                    <Box>{entry.album}</Box>
-                                    {viewMode === "detailed" &&
-                                        <Box sx={{ color: "#686868", fontSize: 12 }}>
+                                    <Text>{entry.album}</Text>
+                                    {viewMode === "detailed" && (
+                                        <Text
+                                            size={12}
+                                            color={colors.dark[3]}
+                                            style={{ whiteSpace: "nowrap" }}
+                                        >
                                             {albumSubtitle}
-                                        </Box>
-                                    }
+                                        </Text>
+                                    )}
                                 </Stack>
                             </td>
                             <td className={classes.alignRight} style={{ width: 85 }}>
@@ -330,7 +367,7 @@ const Playlist: FC = () => {
 
                                     <PlaylistEntryActionsButton
                                         entry={entry}
-                                        entryCount={playlistEntries.length}
+                                        entryCount={renderedPlaylistEntries.length}
                                         currentlyPlayingIndex={playlist.current_track_index}
                                         onOpen={() => setActionsMenuOpenFor(entry.id)}
                                         onClose={() => setActionsMenuOpenFor(undefined)}
@@ -352,6 +389,7 @@ const Playlist: FC = () => {
 
     return (
         <ScrollArea>
+            {activatingStoredPlaylist && <Overlay opacity={0.5} color="#000000" radius={5} />}
             <DragDropContext
                 onDragEnd={({ draggableId, source, destination }) => {
                     if (destination) {
@@ -382,7 +420,11 @@ const Playlist: FC = () => {
                     }
                 }}
             >
-                <table className={`${classes.table} ${viewMode === "simple" ? classes.tableSimple : ""}`}>
+                <table
+                    className={`${classes.table} ${
+                        viewMode === "simple" ? classes.tableSimple : ""
+                    }`}
+                >
                     <thead>
                         <tr>
                             <td></td>
@@ -398,7 +440,7 @@ const Playlist: FC = () => {
                     <Droppable droppableId="dnd-list" direction="vertical">
                         {(provided) => (
                             <tbody {...provided.droppableProps} ref={provided.innerRef}>
-                                {playlistEntries}
+                                {renderedPlaylistEntries}
                                 {provided.placeholder}
                             </tbody>
                         )}

@@ -12,15 +12,13 @@ import NowPlaying from "./NowPlaying";
 const MiniController: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
 
-    // TODO: What is the playStatus if the streamer is totally offline?
-
-    return playStatus === "not_ready" ? (
-        <></>
-    ) : (
+    return ["play", "pause", "buffering"].includes(playStatus || "") ? (
         <Flex gap={10} sx={{ flexGrow: 1 }}>
             <TransportControls />
             <NowPlaying maxPlayheadWidth={300} />
         </Flex>
+    ) : (
+        <></>
     );
 };
 
