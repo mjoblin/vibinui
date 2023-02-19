@@ -2,6 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface InternalState {
+    application: {
+        showHotkeys: boolean;
+        showDebugPanel: boolean;
+    };
     albumCard: {
         renderWidth: number;
         renderHeight: number;
@@ -12,6 +16,10 @@ export interface InternalState {
 }
 
 const initialState: InternalState = {
+    application: {
+        showHotkeys: false,
+        showDebugPanel: false,
+    },
     albumCard: {
         // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
         renderWidth: 200,
@@ -23,10 +31,16 @@ const initialState: InternalState = {
     },
 };
 
-export const systemSlice = createSlice({
+export const internalSlice = createSlice({
     name: "internal",
     initialState,
     reducers: {
+        setShowHotkeys: (state, action: PayloadAction<boolean | undefined>) => {
+            state.application.showHotkeys = action.payload === undefined ? true : action.payload;
+        },
+        setShowDebugPanel: (state, action: PayloadAction<boolean | undefined>) => {
+            state.application.showDebugPanel = action.payload === undefined ? true : action.payload;
+        },
         setAlbumCardRenderDimensions: (
             state,
             action: PayloadAction<{ width: number; height: number }>
@@ -40,6 +54,11 @@ export const systemSlice = createSlice({
     },
 });
 
-export const { setAlbumCardRenderDimensions, setFilteredAlbumCount } = systemSlice.actions;
+export const {
+    setShowHotkeys,
+    setShowDebugPanel,
+    setAlbumCardRenderDimensions,
+    setFilteredAlbumCount,
+} = internalSlice.actions;
 
-export default systemSlice.reducer;
+export default internalSlice.reducer;

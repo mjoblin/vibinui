@@ -8,6 +8,7 @@ export const maxCoverGap = 50;
 export const minCoverSize = 100;
 export const maxCoverSize = 300;
 
+const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_BROWSE_COVER_SIZE = 200;
 const DEFAULT_BROWSE_COVER_GAP = 25;
 const DEFAULT_BROWSE_FILTER_TEXT = "";
@@ -18,6 +19,7 @@ const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
 //  in the user settings state.
+export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_BROWSE_COVER_GAP = "browse.coverGap";
 export const LSKEY_BROWSE_COVER_SIZE = "browse.coverSize";
 export const LSKEY_BROWSE_FILTER_TEXT = "browse.filterText";
@@ -26,10 +28,14 @@ export const LSKEY_NOWPLAYING_ACTIVETAB = "nowPlaying.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
 
+export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "updated";
 
 export interface UserSettingsState {
+    application: {
+        theme: ApplicationTheme;
+    };
     browse: {
         coverGap: number;
         coverSize: number;
@@ -62,6 +68,9 @@ const getLocalStorageValue = (key: string, defaultValue: any) => {
 };
 
 const initialState: UserSettingsState = {
+    application: {
+        theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
+    },
     browse: {
         coverGap: getLocalStorageValue(LSKEY_BROWSE_COVER_GAP, DEFAULT_BROWSE_COVER_GAP),
         coverSize: getLocalStorageValue(LSKEY_BROWSE_COVER_SIZE, DEFAULT_BROWSE_COVER_SIZE),
@@ -86,6 +95,9 @@ export const userSettingsSlice = createSlice({
     name: "userSettings",
     initialState,
     reducers: {
+        setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
+            state.application.theme = action.payload;
+        },
         resetBrowseToDefaults: (state) => {
             state.browse.filterText = DEFAULT_BROWSE_FILTER_TEXT;
             state.browse.coverSize = DEFAULT_BROWSE_COVER_SIZE;
@@ -118,6 +130,7 @@ export const userSettingsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
+    setApplicationTheme,
     resetBrowseToDefaults,
     setBrowseCoverGap,
     setBrowseCoverSize,

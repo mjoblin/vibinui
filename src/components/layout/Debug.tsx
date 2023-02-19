@@ -1,10 +1,11 @@
-import React, { FC, useState } from "react";
-import { Box, CloseButton, createStyles, Flex, Stack, Text, Title } from "@mantine/core";
+import React, { FC } from "react";
+import { Box, CloseButton, createStyles, Flex, Stack, Title } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 import Draggable from "react-draggable";
 
 import { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setShowDebugPanel } from "../../app/store/internalSlice";
 import FieldValueList from "../fieldValueList/FieldValueList";
 
 const useStyles = createStyles((theme) => ({
@@ -24,24 +25,25 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const Debug: FC = () => {
+    const dispatch = useAppDispatch();
+    const { classes } = useStyles();
     const system = useAppSelector((state: RootState) => state.system);
     const playback = useAppSelector((state: RootState) => state.playback);
     const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
-    const [showDebug, setShowDebug] = useState<boolean>(false);
-    const { classes } = useStyles();
+    const { showDebugPanel } = useAppSelector((state: RootState) => state.internal.application);
 
-    useHotkeys([["mod+D", () => setShowDebug(!showDebug)]]);
+    useHotkeys([["D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
 
     const fontSize = 12;
 
-    return showDebug ? (
-        <Draggable bounds="parent" >
+    return showDebugPanel ? (
+        <Draggable bounds="parent">
             <Box className={classes.debugContainer}>
                 <Flex justify="space-between" align="center" pb={5}>
                     <Title size={13} color="#838383">
                         DEBUG
                     </Title>
-                    <CloseButton size="md" onClick={() => setShowDebug(false)} />
+                    <CloseButton size="md" onClick={() => dispatch(setShowDebugPanel(false))} />
                 </Flex>
 
                 <Stack>

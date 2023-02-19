@@ -4,6 +4,7 @@ import get from "lodash/get";
 
 import type { RootState, AppDispatch } from "./store";
 import {
+    LSKEY_APPLICATION_THEME,
     LSKEY_BROWSE_COVER_GAP,
     LSKEY_BROWSE_COVER_SIZE,
     LSKEY_BROWSE_FILTER_TEXT,
@@ -11,6 +12,7 @@ import {
     LSKEY_NOWPLAYING_ACTIVETAB,
     LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     LSKEY_PLAYLIST_VIEWMODE,
+    setApplicationTheme,
     setBrowseCoverGap,
     setBrowseCoverSize,
     setBrowseFilterText,
@@ -38,6 +40,7 @@ export const localStorageMiddleware = createListenerMiddleware();
 // Map the redux action name to the redux state key (dot.delimited). The local storage key will
 // match the dot-delimited redux key.
 export const actionToLocalStorageKeyMapper: Record<string, string> = {
+    [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
     [setBrowseCoverGap.type]: LSKEY_BROWSE_COVER_GAP,
     [setBrowseCoverSize.type]: LSKEY_BROWSE_COVER_SIZE,
     [setBrowseShowDetails.type]: LSKEY_BROWSE_SHOW_DETAILS,
@@ -49,6 +52,7 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
 
 localStorageMiddleware.startListening({
     matcher: isAnyOf(
+        setApplicationTheme,
         setBrowseCoverGap,
         setBrowseCoverSize,
         setBrowseShowDetails,
