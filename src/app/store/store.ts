@@ -7,6 +7,7 @@ import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
 import storedPlaylistsReducer from "./storedPlaylistsSlice";
 import userSettingsReducer from "./userSettingsSlice";
+import { localStorageMiddleware } from "./localStorageMiddleware";
 import { vibinBaseApi } from "../services/vibinBase";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
 import { vibinStoredPlaylistsApi } from "../services/vibinStoredPlaylists";
@@ -33,6 +34,7 @@ export const store = configureStore({
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
+            localStorageMiddleware.middleware,
             vibinBaseApi.middleware,
             vibinPlaylistApi.middleware,
             vibinStoredPlaylistsApi.middleware,
@@ -45,8 +47,5 @@ export const store = configureStore({
 
 setupListeners(store.dispatch);
 
-// Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
-
-// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
 export type AppDispatch = typeof store.dispatch;

@@ -20,8 +20,8 @@ import {
     resetBrowseToDefaults,
     setBrowseCoverGap,
     setBrowseCoverSize,
+    setBrowseFilterText,
     setBrowseShowDetails,
-    setFilterText,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery } from "../../app/services/vibinBase";
@@ -45,7 +45,7 @@ const BrowseControls: FC = () => {
                 placeholder="Filter text"
                 label="Filter"
                 value={filterText}
-                onChange={(event) => dispatch(setFilterText(event.target.value))}
+                onChange={(event) => dispatch(setBrowseFilterText(event.target.value))}
             />
 
             {/* Cover size */}
