@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, CloseButton, createStyles, Flex, Stack, Title } from "@mantine/core";
+import { Box, CloseButton, createStyles, Flex, Stack, Title, useMantineTheme } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 import Draggable from "react-draggable";
 
@@ -22,10 +22,19 @@ const useStyles = createStyles((theme) => ({
         border: `1px solid ${theme.colors.gray[8]}`,
         borderRadius: 5,
     },
+    dragHandle: {
+        backgroundImage: `radial-gradient(${theme.colors.dark[4]} 20%, ${theme.colors.dark[7]} 20%)`,
+        backgroundPosition: "0 0",
+        backgroundSize: "3px 3px",
+        "&:hover": {
+            cursor: "grabbing",
+        },
+    },
 }));
 
 const Debug: FC = () => {
     const dispatch = useAppDispatch();
+    const { colors } = useMantineTheme();
     const { classes } = useStyles();
     const system = useAppSelector((state: RootState) => state.system);
     const playback = useAppSelector((state: RootState) => state.playback);
@@ -37,10 +46,10 @@ const Debug: FC = () => {
     const fontSize = 12;
 
     return showDebugPanel ? (
-        <Draggable bounds="parent">
+        <Draggable bounds="parent" handle=".dragHandle">
             <Box className={classes.debugContainer}>
                 <Flex justify="space-between" align="center" pb={5}>
-                    <Title size={13} color="#838383">
+                    <Title size={13} color={colors.dark[1]} w="100%" className={`dragHandle ${classes.dragHandle}`}>
                         DEBUG
                     </Title>
                     <CloseButton size="md" onClick={() => dispatch(setShowDebugPanel(false))} />
