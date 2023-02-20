@@ -198,7 +198,8 @@ const StoredPlaylistsEditor: FC = () => {
                 position={{ top: 100 }}
                 onClose={() => setShowNameNewPlaylistDialog(false)}
             >
-                <TextInput label="Playlist Name" />
+                {/* TODO: Figure out why autoFocus isn't doing anything */}
+                <TextInput label="Playlist Name" autoFocus />
             </Dialog>
         </Stack>
     );

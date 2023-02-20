@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Center, createStyles } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Loader, Text } from "@mantine/core";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -23,7 +23,24 @@ const AlbumWall: FC = () => {
         },
     }))();
 
-    // TODO: Handle useGetAlbumsQuery isError, isLoading, etc.
+    if (isLoading) {
+        return (
+            <Center>
+                <Loader size="sm" />
+                <Text size={14} weight="bold" pl={10}>
+                    Retrieving albums...
+                </Text>
+            </Center>
+        );
+    }
+
+    if (error) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="Could not retrieve album details" />
+            </Center>
+        );
+    }
 
     if (!data || data.length <= 0) {
         return (
