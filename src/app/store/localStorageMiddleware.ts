@@ -12,6 +12,7 @@ import {
     LSKEY_NOWPLAYING_ACTIVETAB,
     LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     LSKEY_PLAYLIST_VIEWMODE,
+    resetBrowseToDefaults,
     setApplicationTheme,
     setBrowseCoverGap,
     setBrowseCoverSize,
@@ -52,6 +53,7 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
 
 localStorageMiddleware.startListening({
     matcher: isAnyOf(
+        resetBrowseToDefaults,
         setApplicationTheme,
         setBrowseCoverGap,
         setBrowseCoverSize,
@@ -61,6 +63,21 @@ localStorageMiddleware.startListening({
         setPlaylistViewMode
     ),
     effect: (action, listenerApi) => {
+        if (action.type === resetBrowseToDefaults.type) {
+            // Special-case resetBrowseToDefaults to delete the local storage keys associated with
+            // the resetBrowseToDefaults action.
+            //
+            // TODO: This is prone to getting out of sync with resetBrowseToDefaults. See if
+            //  there's an elegant way to implement the reset feature such that the state is
+            //  reflected appropriately in Redux and local storage, without multiple places being
+            //  aware of what "reset" means.
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseCoverGap.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseCoverSize.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseShowDetails.type]);
+
+            return;
+        }
+
         const key = actionToLocalStorageKeyMapper[action.type];
         const value = get((listenerApi.getState() as RootState).userSettings, key);
 

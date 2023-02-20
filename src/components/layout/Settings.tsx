@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
     ActionIcon,
     Box,
@@ -8,19 +8,38 @@ import {
     Switch,
     useMantineColorScheme,
 } from "@mantine/core";
+import { showNotification } from "@mantine/notifications";
 import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useLazyPowerToggleQuery } from "../../app/services/vibinSystem";
-import { setApplicationTheme } from "../../app/store/userSettingsSlice";
 import { setShowDebugPanel, setShowHotkeys } from "../../app/store/internalSlice";
+import { PowerStatus } from "../../app/store/systemSlice";
 
 const Settings: FC = () => {
     const dispatch = useAppDispatch();
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [togglePower] = useLazyPowerToggleQuery();
     const streamer = useAppSelector((state: RootState) => state.system.streamer);
+    const previousPowerState = useRef<PowerStatus>(streamer.power);
+
+    useEffect(() => {
+        if (previousPowerState.current === undefined) {
+            previousPowerState.current = streamer.power;
+            return;
+        }
+
+        showNotification({
+            title: `Streamer Power`,
+            color: streamer.power === "on" ? "green" : "yellow",
+            message: streamer.power
+                ? `Streamer has been powered ${streamer.power}`
+                : "Unknown streamer power state",
+        });
+
+        previousPowerState.current = streamer.power;
+    }, [streamer.power]);
 
     return (
         <Menu shadow="md" width={200}>
