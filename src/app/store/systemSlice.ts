@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-type PowerStatus = "on" | "off" | undefined;
+export type PowerStatus = "on" | "off" | undefined;
 
 export interface SystemState {
     streamer: {
