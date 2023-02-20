@@ -27,7 +27,7 @@ const useStyles = createStyles((theme) => ({
         backgroundPosition: "0 0",
         backgroundSize: "3px 3px",
         "&:hover": {
-            cursor: "grabbing",
+            cursor: "grab",
         },
     },
 }));
