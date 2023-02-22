@@ -97,8 +97,6 @@ const AlbumArt: FC<AlbumArtProps> = ({
                 src={artUri ? artUri : album ? album.album_art_uri : ""}
                 alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
                 fit="cover"
-                width={size}
-                height={size}
                 radius={radius}
             />
 

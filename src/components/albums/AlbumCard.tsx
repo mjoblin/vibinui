@@ -87,6 +87,7 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                                 album={album}
                                 actionCategories={["Tracks", "Playlist"]}
                                 size={coverSize}
+                                radius={5}
                                 onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                                 onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
                             />

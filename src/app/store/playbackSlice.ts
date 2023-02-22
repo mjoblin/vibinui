@@ -8,9 +8,19 @@ import { Format, MediaId, Stream, Track } from "../types";
  * streamer. e.g. Whether it's playing or not; what the current track is; etc.
  */
 
-export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready";  // TODO: not_ready === standby?
+export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready" | "connecting";  // TODO: not_ready === standby?
 
-export type AudioSource = string;
+export type AudioSource = {
+    id: string;
+    name: string;
+    default_name: string;
+    class: string;
+    nameable: boolean;
+    ui_selectable: boolean;
+    description: string;
+    description_locale: string;
+    preferred_order: number;
+};
 
 export type RepeatState = "off" | "all";
 

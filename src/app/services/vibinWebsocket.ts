@@ -20,6 +20,7 @@ import {
     ShuffleState,
 } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
+import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 import { RootState } from "../store/store";
 
@@ -29,7 +30,13 @@ const MAX_MESSAGE_COUNT = 10;
 //  payloads can contain nested objects with arbitrary key/value pairs.
 type SimpleObject = { [key: string | number]: any };
 
-type MessageType = "System" | "StateVars" | "PlayState" | "Position" | "StoredPlaylists";
+type MessageType =
+    | "System"
+    | "StateVars"
+    | "PlayState"
+    | "Position"
+    | "StoredPlaylists"
+    | "Presets";
 
 type SystemPayload = {
     streamer: {
@@ -89,6 +96,8 @@ type PositionPayload = {
     position: number;
 }
 
+type PresetsPayload = PresetsState;
+
 type StoredPlaylistsPayload = StoredPlaylistsState;
 
 // TODO: More clearly define the vibin backend message format.
@@ -101,7 +110,8 @@ export type VibinMessage = {
         | StateVarsPayload
         | PlayStatePayload
         | PositionPayload
-        | StoredPlaylistsPayload;
+        | StoredPlaylistsPayload
+        | PresetsPayload;
 };
 
 type ComparableMessageChunk = Draft<{ [key: number | string]: string }> | Map<any, any>;
@@ -362,6 +372,12 @@ function messageHandler(
             updateAppStateIfChanged(
                 setShuffle.type,
                 (data.payload as PlayStatePayload).mode_shuffle
+            );
+        }
+        else if (data.type === "Presets") {
+            updateAppStateIfChanged(
+                setPresetsState.type,
+                data.payload as PresetsState
             );
         }
         else if (data.type === "StoredPlaylists") {

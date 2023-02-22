@@ -76,7 +76,7 @@ const Debug: FC = () => {
                         <FieldValueList
                             fieldValues={{
                                 playStatus: playback.play_status || "undefined",
-                                currentAudioSource: playback.current_audio_source || "undefined",
+                                currentAudioSourceName: playback.current_audio_source?.name || "undefined",
                                 currentTrackMediaId: playback.current_track_media_id || "<none>",
                                 currentAlbumMediaId: playback.current_album_media_id || "<none>",
                             }}

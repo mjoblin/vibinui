@@ -7,6 +7,10 @@ export const minCoverGap = 0;
 export const maxCoverGap = 50;
 export const minCoverSize = 100;
 export const maxCoverSize = 300;
+export const minPresetCardGap = 0;
+export const maxPresetCardGap = 50;
+export const minPresetCardSize = 100;
+export const maxPresetCardSize = 300;
 
 const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_BROWSE_COVER_SIZE = 200;
@@ -16,6 +20,9 @@ const DEFAULT_BROWSE_SHOW_DETAILS = true;
 const DEFAULT_NOWPLAYING_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
+const DEFAULT_PRESETS_CARD_SIZE = 200;
+const DEFAULT_PRESETS_CARD_GAP = 25;
+const DEFAULT_PRESETS_SHOW_DETAILS = true;
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
 //  in the user settings state.
@@ -27,6 +34,9 @@ export const LSKEY_BROWSE_SHOW_DETAILS = "browse.showDetails";
 export const LSKEY_NOWPLAYING_ACTIVETAB = "nowPlaying.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
+export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
+export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
+export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
 
 export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
@@ -50,6 +60,11 @@ export interface UserSettingsState {
             sortField: PlaylistEditorSortField;
         };
         viewMode: PlaylistViewMode;
+    };
+    presets: {
+        cardGap: number;
+        cardSize: number;
+        showDetails: boolean;
     };
 }
 
@@ -89,6 +104,11 @@ const initialState: UserSettingsState = {
         },
         viewMode: getLocalStorageValue(LSKEY_PLAYLIST_VIEWMODE, DEFAULT_PLAYLIST_VIEWMODE),
     },
+    presets: {
+        cardGap: getLocalStorageValue(LSKEY_PRESETS_CARD_GAP, DEFAULT_PRESETS_CARD_GAP),
+        cardSize: getLocalStorageValue(LSKEY_PRESETS_CARD_SIZE, DEFAULT_PRESETS_CARD_SIZE),
+        showDetails: getLocalStorageValue(LSKEY_PRESETS_SHOW_DETAILS, DEFAULT_PRESETS_SHOW_DETAILS),
+    },
 };
 
 export const userSettingsSlice = createSlice({
@@ -125,6 +145,20 @@ export const userSettingsSlice = createSlice({
         setPlaylistViewMode: (state, action: PayloadAction<PlaylistViewMode>) => {
             state.playlist.viewMode = action.payload;
         },
+        resetPresetsToDefaults: (state) => {
+            state.presets.cardSize = DEFAULT_PRESETS_CARD_SIZE;
+            state.presets.cardGap = DEFAULT_PRESETS_CARD_GAP;
+            state.presets.showDetails = DEFAULT_PRESETS_SHOW_DETAILS;
+        },
+        setPresetsCardGap: (state, action: PayloadAction<number>) => {
+            state.presets.cardGap = action.payload;
+        },
+        setPresetsCardSize: (state, action: PayloadAction<number>) => {
+            state.presets.cardSize = action.payload;
+        },
+        setPresetsShowDetails: (state, action: PayloadAction<boolean>) => {
+            state.presets.showDetails = action.payload;
+        },
     },
 });
 
@@ -132,6 +166,7 @@ export const userSettingsSlice = createSlice({
 export const {
     setApplicationTheme,
     resetBrowseToDefaults,
+    resetPresetsToDefaults,
     setBrowseCoverGap,
     setBrowseCoverSize,
     setBrowseFilterText,
@@ -139,6 +174,9 @@ export const {
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
     setPlaylistViewMode,
+    setPresetsCardGap,
+    setPresetsCardSize,
+    setPresetsShowDetails,
 } = userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;
