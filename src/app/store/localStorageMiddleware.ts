@@ -12,7 +12,11 @@ import {
     LSKEY_NOWPLAYING_ACTIVETAB,
     LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     LSKEY_PLAYLIST_VIEWMODE,
+    LSKEY_PRESETS_CARD_GAP,
+    LSKEY_PRESETS_CARD_SIZE,
+    LSKEY_PRESETS_SHOW_DETAILS,
     resetBrowseToDefaults,
+    resetPresetsToDefaults,
     setApplicationTheme,
     setBrowseCoverGap,
     setBrowseCoverSize,
@@ -21,6 +25,9 @@ import {
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
     setPlaylistViewMode,
+    setPresetsCardGap,
+    setPresetsCardSize,
+    setPresetsShowDetails,
 } from "./userSettingsSlice";
 
 // ------------------------------------------------------------------------------------------------
@@ -49,18 +56,25 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setNowPlayingActiveTab.type]: LSKEY_NOWPLAYING_ACTIVETAB,
     [setPlaylistEditorSortField.type]: LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     [setPlaylistViewMode.type]: LSKEY_PLAYLIST_VIEWMODE,
+    [setPresetsCardGap.type]: LSKEY_PRESETS_CARD_GAP,
+    [setPresetsCardSize.type]: LSKEY_PRESETS_CARD_SIZE,
+    [setPresetsShowDetails.type]: LSKEY_PRESETS_SHOW_DETAILS,
 };
 
 localStorageMiddleware.startListening({
     matcher: isAnyOf(
         resetBrowseToDefaults,
+        resetPresetsToDefaults,
         setApplicationTheme,
         setBrowseCoverGap,
         setBrowseCoverSize,
         setBrowseShowDetails,
         setNowPlayingActiveTab,
         setPlaylistEditorSortField,
-        setPlaylistViewMode
+        setPlaylistViewMode,
+        setPresetsCardGap,
+        setPresetsCardSize,
+        setPresetsShowDetails,
     ),
     effect: (action, listenerApi) => {
         if (action.type === resetBrowseToDefaults.type) {
@@ -74,6 +88,16 @@ localStorageMiddleware.startListening({
             localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseCoverGap.type]);
             localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseCoverSize.type]);
             localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseShowDetails.type]);
+
+            return;
+        }
+
+        if (action.type === resetPresetsToDefaults.type) {
+            // Special-case resetPresetsToDefaults to delete the local storage keys associated with
+            // the resetPresetsToDefaults action.
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setPresetsCardGap.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setPresetsCardSize.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setPresetsShowDetails.type]);
 
             return;
         }

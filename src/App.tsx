@@ -6,9 +6,10 @@ import { NotificationsProvider } from "@mantine/notifications";
 import { RootState } from "./app/store/store";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
+import RootLayout from "./components/layout/RootLayout";
 import BrowseScreen from "./components/layout/BrowseScreen";
 import NowPlayingScreen from "./components/layout/NowPlayingScreen";
-import RootLayout from "./components/layout/RootLayout";
+import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
 import WebsocketManager from "./components/managers/WebsocketManager";
@@ -37,6 +38,10 @@ export default function App() {
                 {
                     path: "playlist",
                     element: <PlaylistScreen />,
+                },
+                {
+                    path: "presets",
+                    element: <PresetsScreen />,
                 },
                 {
                     path: "playing",
