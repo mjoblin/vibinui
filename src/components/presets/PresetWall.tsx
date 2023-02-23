@@ -24,7 +24,7 @@ const PresetWall: FC = () => {
     return (
         <Box className={dynamicClasses.presetsWall}>
             {presets.map((preset) => (
-                <PresetCard preset={preset} />
+                <PresetCard key={preset.id} preset={preset} />
             ))}
         </Box>
     );

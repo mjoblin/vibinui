@@ -8,7 +8,7 @@ export type Preset = {
     id: PresetId;
     name: string;
     type: PresetType;
-    className: string;
+    class: string;
     state: string;
     is_playing: boolean;
     art_url: string;

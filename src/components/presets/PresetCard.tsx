@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import {
     ActionIcon,
     Card,
@@ -48,10 +48,48 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );
-    const { play_status: playState } = useAppSelector((state: RootState) => state.playback);
+    const playState = useAppSelector((state: RootState) => state.playback.play_status);
     const [playPresetId] = useLazyPlayPresetIdQuery();
+    const [waitingForConnection, setWaitingForConnection] = useState<boolean>(false);
+    const previousPlayState = useRef(playState);
+    const previousIsPlayingState = useRef(preset.is_playing);
 
-    const presetIsActive = preset.is_playing && playState === "play";
+    // --------------------------------------------------------------------------------------------
+    // The following two effects are in place to ensure that the preset's "active" state (i.e. that
+    // it's currently being listened to) is correct. Ideally preset.is_playing could be relied on,
+    // and it mostly can *except* for when a new preset is started. When a new preset is started,
+    // there's a brief period where the preset's is_playing is true but *before* the playState is
+    // "connecting". These two effects prevent a flash of the active border just before the
+    // connecting playState is registered.
+    //
+    // TODO: This still flickers the active border when changing from a non-stream.radio preset
+    //  to a stream-radio preset.
+    //
+    // TODO: When the UI is refreshed, a stream.media.upnp preset will have an is_playing of false,
+    //  even if it was playing.
+
+    useEffect(() => {
+        if (preset.is_playing !== previousIsPlayingState.current) {
+            setWaitingForConnection(preset.is_playing);
+            previousIsPlayingState.current = preset.is_playing;
+        }
+    }, [preset.is_playing]);
+
+    useEffect(() => {
+        if (playState !== previousPlayState.current) {
+            if (previousPlayState.current === "connecting") {
+                setWaitingForConnection(false);
+            }
+            previousPlayState.current = playState;
+        }
+    }, [playState]);
+
+    // --------------------------------------------------------------------------------------------
+
+    const presetIsActive =
+        preset.class === "stream.radio"
+            ? preset.is_playing && playState === "play" && !waitingForConnection
+            : preset.is_playing;
     const borderSize = 3;
     const overlayWidth = cardSize - borderSize * 2;
     const overlayHeight = cardSize - borderSize * 2;
