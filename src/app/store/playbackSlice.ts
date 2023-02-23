@@ -8,7 +8,17 @@ import { Format, MediaId, Stream, Track } from "../types";
  * streamer. e.g. Whether it's playing or not; what the current track is; etc.
  */
 
-export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready" | "connecting";  // TODO: not_ready === standby?
+export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready" | "connecting"; // TODO: not_ready === standby?
+
+export type TransportAction =
+    | "next"
+    | "pause"
+    | "play"
+    | "previous"
+    | "repeat"
+    | "seek"
+    | "shuffle"
+    | "stop";
 
 export type AudioSource = {
     id: string;
@@ -30,7 +40,9 @@ export type ShuffleState = "off" | "all";
 
 export interface PlaybackState {
     play_status: PlayStatus | undefined;
-    audio_sources: {    // TODO: Audio Sources doesn't belong in current playback slice
+    active_transport_actions: TransportAction[];
+    audio_sources: {
+        // TODO: Audio Sources doesn't belong in current playback slice
         [key: number]: AudioSource;
     };
     current_audio_source: AudioSource | undefined;
@@ -44,11 +56,12 @@ export interface PlaybackState {
     playhead: {
         position: number;
         position_normalized: number;
-    }
+    };
 }
 
 const initialState: PlaybackState = {
     play_status: undefined,
+    active_transport_actions: [],
     audio_sources: {},
     current_audio_source: undefined,
     current_track: undefined,
@@ -61,7 +74,7 @@ const initialState: PlaybackState = {
     playhead: {
         position: 0,
         position_normalized: 0,
-    }
+    },
 };
 
 export const playbackSlice = createSlice({
@@ -71,6 +84,9 @@ export const playbackSlice = createSlice({
         restartPlayhead: (state) => {
             state.playhead.position = 0;
             state.playhead.position_normalized = 0;
+        },
+        setActiveTransportActions: (state, action: PayloadAction<TransportAction[]>) => {
+            state.active_transport_actions = action.payload;
         },
         setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource }>) => {
             state.audio_sources = action.payload;
@@ -114,6 +130,7 @@ export const playbackSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
     restartPlayhead,
+    setActiveTransportActions,
     setAudioSources,
     setCurrentAudioSource,
     setCurrentFormat,

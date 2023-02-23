@@ -5,6 +5,7 @@ import { Draft } from "immer";
 // import { isMessage } from "./schemaValidators";
 import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
 import {
+    setActiveTransportActions,
     setAudioSources,
     setCurrentAudioSource,
     setCurrentFormat,
@@ -17,7 +18,7 @@ import {
     setRepeat,
     setShuffle,
     RepeatState,
-    ShuffleState,
+    ShuffleState, TransportAction,
 } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
@@ -31,12 +32,15 @@ const MAX_MESSAGE_COUNT = 10;
 type SimpleObject = { [key: string | number]: any };
 
 type MessageType =
-    | "System"
-    | "StateVars"
+    | "ActiveTransportControls"
     | "PlayState"
     | "Position"
+    | "Presets"
+    | "StateVars"
     | "StoredPlaylists"
-    | "Presets";
+    | "System";
+
+type ActiveTransportControlsPayload = TransportAction[];
 
 type SystemPayload = {
     streamer: {
@@ -106,12 +110,13 @@ export type VibinMessage = {
     time: number;
     type: MessageType;
     payload:
-        | SystemPayload
-        | StateVarsPayload
+        | ActiveTransportControlsPayload
         | PlayStatePayload
         | PositionPayload
+        | PresetsPayload
+        | StateVarsPayload
         | StoredPlaylistsPayload
-        | PresetsPayload;
+        | SystemPayload;
 };
 
 type ComparableMessageChunk = Draft<{ [key: number | string]: string }> | Map<any, any>;
@@ -372,6 +377,12 @@ function messageHandler(
             updateAppStateIfChanged(
                 setShuffle.type,
                 (data.payload as PlayStatePayload).mode_shuffle
+            );
+        }
+        else if (data.type === "ActiveTransportControls") {
+            updateAppStateIfChanged(
+                setActiveTransportActions.type,
+                data.payload as ActiveTransportControlsPayload
             );
         }
         else if (data.type === "Presets") {
