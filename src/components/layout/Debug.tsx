@@ -49,7 +49,12 @@ const Debug: FC = () => {
         <Draggable bounds="parent" handle=".dragHandle">
             <Box className={classes.debugContainer}>
                 <Flex justify="space-between" align="center" pb={5}>
-                    <Title size={13} color={colors.dark[1]} w="100%" className={`dragHandle ${classes.dragHandle}`}>
+                    <Title
+                        size={13}
+                        color={colors.dark[1]}
+                        w="100%"
+                        className={`dragHandle ${classes.dragHandle}`}
+                    >
                         DEBUG
                     </Title>
                     <CloseButton size="md" onClick={() => dispatch(setShowDebugPanel(false))} />
@@ -76,7 +81,12 @@ const Debug: FC = () => {
                         <FieldValueList
                             fieldValues={{
                                 playStatus: playback.play_status || "undefined",
-                                currentAudioSourceName: playback.current_audio_source?.name || "undefined",
+                                activeTransportActions:
+                                    playback.active_transport_actions.length > 0
+                                        ? playback.active_transport_actions.join(", ")
+                                        : "<none>",
+                                currentAudioSourceName:
+                                    playback.current_audio_source?.name || "undefined",
                                 currentTrackMediaId: playback.current_track_media_id || "<none>",
                                 currentAlbumMediaId: playback.current_album_media_id || "<none>",
                             }}
