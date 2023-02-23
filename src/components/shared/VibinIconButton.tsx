@@ -2,7 +2,7 @@ import React, { FC, ReactNode, SyntheticEvent } from "react";
 import { Center, createStyles, Tooltip } from "@mantine/core";
 import { TablerIcon } from "@tabler/icons";
 
-// TODO: This is really just a simple Button. It might benefit from extending <Button> instead.
+// TODO: Deprecate this and replace it with Mantine's ActionButton.
 
 type VibinIconButtonProps = {
     icon: TablerIcon;

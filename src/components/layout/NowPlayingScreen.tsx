@@ -180,8 +180,8 @@ const NowPlayingScreen: FC = () => {
                             </Tabs.Panel>
                         )}
 
-                        {tabsToDisplay.includes("lyrics") && (
-                            <Tabs.Panel value="lyrics">
+                        {tabsToDisplay.includes("links") && (
+                            <Tabs.Panel value="links">
                                 <ScrollArea>
                                     {currentTrackId && <TrackLinks trackId={currentTrackId} />}
                                 </ScrollArea>

@@ -9,8 +9,6 @@ import { useSeekMutation } from "../../app/services/vibinTransport";
 const leadingZeros = new RegExp("^00:");
 const negativeTimeScreenSize = 5;  // Allow for minus sign when end time style is timeRemaining
 
-// TODO: Disable manual seeks for non-NAS media sources.
-
 /**
  * Convert a duration in seconds into "hh:mm:ss", without the hh: if it would have been "00:".
  */
@@ -20,6 +18,9 @@ const prettyDuration = (duration: number) =>
 const Playhead: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playhead = useAppSelector((state: RootState) => state.playback.playhead);
+    const activeTransportActions = useAppSelector(
+        (state: RootState) => state.playback.active_transport_actions
+    );
     const [isBeingManuallyUpdated, setIsBeingManuallyUpdated] = useState<boolean>(false);
     const [manualPosition, setManualPosition] = useState<number>(0);
     const [endTimeStyle, setEndTimeStyle] = useState<"totalTime" | "timeRemaining">("totalTime");
@@ -41,6 +42,7 @@ const Playhead: FC = () => {
             {/* Display the slider. This can be manually updated, which will result in a playhead
                 seek being performed. */}
             <Slider
+                disabled={!activeTransportActions.includes("seek")}
                 min={0}
                 max={currentTrack?.duration || 0}
                 step={1}
