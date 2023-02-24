@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import { Box, Paper, Flex, Stack, Text, createStyles } from "@mantine/core";
 
-import { useGetTracksQuery } from "../../app/services/vibinBase";
+import { useGetTracksQuery } from "../../app/services/vibinAlbums";
 import { Album, Track } from "../../app/types";
 import { secstoHms } from "../../app/utils";
 import AlbumActionsButton from "../albums/AlbumActionsButton";

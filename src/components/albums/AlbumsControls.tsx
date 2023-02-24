@@ -4,6 +4,7 @@ import {
     Button,
     Checkbox,
     Flex,
+    Select,
     Slider,
     Stack,
     Text,
@@ -13,25 +14,28 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
+    AlbumCollection,
     minCoverGap,
     maxCoverGap,
     minCoverSize,
     maxCoverSize,
-    resetBrowseToDefaults,
-    setBrowseCoverGap,
-    setBrowseCoverSize,
-    setBrowseFilterText,
-    setBrowseShowDetails,
+    resetAlbumsToDefaults,
+    setAlbumsActiveCollection,
+    setAlbumsCoverGap,
+    setAlbumsCoverSize,
+    setAlbumsFilterText,
+    setAlbumsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import { useGetAlbumsQuery } from "../../app/services/vibinBase";
+import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 
-const BrowseControls: FC = () => {
+const AlbumsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const { data: albums } = useGetAlbumsQuery();
-    const { coverSize, coverGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.browse
+    const { data: allAlbums } = useGetAlbumsQuery();
+    const { data: newAlbums } = useGetNewAlbumsQuery();
+    const { activeCollection, coverSize, coverGap, filterText, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
     );
     const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.browse);
 
@@ -39,13 +43,27 @@ const BrowseControls: FC = () => {
     //  the tops of components to get them to look OK.
 
     return (
-        <Flex gap={25}>
+        <Flex gap={25} align="center">
+            {/* Active collection */}
+            <Select
+                label="Show"
+                value={activeCollection}
+                data={[
+                    { value: "all", label: "All Albums" },
+                    { value: "new", label: "New Albums" },
+                ]}
+                onChange={(value) =>
+                    value && dispatch(setAlbumsActiveCollection(value as AlbumCollection))
+                }
+            />
+
             {/* Filter text */}
+            {/* TODO: Consider debouncing setAlbumsFilterText() if performance is an issue */}
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
                 value={filterText}
-                onChange={(event) => dispatch(setBrowseFilterText(event.target.value))}
+                onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
             />
 
             {/* Cover size */}
@@ -61,7 +79,7 @@ const BrowseControls: FC = () => {
                     size={5}
                     sx={{ width: 200 }}
                     value={coverSize}
-                    onChange={(value) => dispatch(setBrowseCoverSize(value))}
+                    onChange={(value) => dispatch(setAlbumsCoverSize(value))}
                 />
             </Stack>
 
@@ -77,7 +95,7 @@ const BrowseControls: FC = () => {
                     size={5}
                     sx={{ width: 200 }}
                     value={coverGap}
-                    onChange={(value) => dispatch(setBrowseCoverGap(value))}
+                    onChange={(value) => dispatch(setAlbumsCoverGap(value))}
                 />
             </Stack>
 
@@ -85,7 +103,7 @@ const BrowseControls: FC = () => {
                 <Checkbox
                     label="Show details"
                     checked={showDetails}
-                    onChange={(event) => dispatch(setBrowseShowDetails(!showDetails))}
+                    onChange={(event) => dispatch(setAlbumsShowDetails(!showDetails))}
                 />
             </Box>
 
@@ -96,7 +114,7 @@ const BrowseControls: FC = () => {
                         compact
                         variant="outline"
                         size="xs"
-                        onClick={() => dispatch(resetBrowseToDefaults())}
+                        onClick={() => dispatch(resetAlbumsToDefaults())}
                     >
                         Reset
                     </Button>
@@ -109,9 +127,9 @@ const BrowseControls: FC = () => {
                         variant="outline"
                         size="xs"
                         onClick={() => {
-                            dispatch(setBrowseCoverGap(minCoverGap));
-                            dispatch(setBrowseCoverSize(minCoverSize));
-                            dispatch(setBrowseShowDetails(false));
+                            dispatch(setAlbumsCoverGap(minCoverGap));
+                            dispatch(setAlbumsCoverSize(minCoverSize));
+                            dispatch(setAlbumsShowDetails(false));
                         }}
                     >
                         Tiny Wall
@@ -120,7 +138,7 @@ const BrowseControls: FC = () => {
             </Flex>
 
             {/* "Showing x of y albums" */}
-            <Flex gap={3} justify="right" align="flex-end" sx={{ flexGrow: 1 }}>
+            <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 <Text size="xs" color={colors.gray[6]}>
                     Showing
                 </Text>
@@ -131,7 +149,7 @@ const BrowseControls: FC = () => {
                     of
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {albums?.length || 0}
+                    {activeCollection === "all" ? allAlbums?.length || 0 : newAlbums?.length || 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     albums
@@ -141,4 +159,4 @@ const BrowseControls: FC = () => {
     );
 };
 
-export default BrowseControls;
+export default AlbumsControls;

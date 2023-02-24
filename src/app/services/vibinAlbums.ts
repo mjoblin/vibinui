@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type { Album, Track } from "../types";
-import{ hmsToSecs } from "../utils";
+import { hmsToSecs } from "../utils";
 
-// TODO: Consider refactoring these multiple API slices (Base, Playlist, etc) into a single slice.
+// TODO: Consider refactoring these multiple API slices (Albums, Playlist, etc) into a single slice.
 //  https://redux-toolkit.js.org/rtk-query/api/createApi
 
 type BackendTrack = {
@@ -17,17 +17,20 @@ type BackendTrack = {
     genre: string;
     album_art_uri: string;
     original_track_number: string;
-}
+};
 
-export const vibinBaseApi = createApi({
-    reducerPath: "vibinBaseApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/" }),
+export const vibinAlbumsApi = createApi({
+    reducerPath: "vibinAlbumsApi",
+    baseQuery: fetchBaseQuery({ baseUrl: "/albums" }),
     endpoints: (builder) => ({
         getAlbums: builder.query<Album[], void>({
-            query: () => "albums",
+            query: () => "",
+        }),
+        getNewAlbums: builder.query<Album[], void>({
+            query: () => "new",
         }),
         getTracks: builder.query<Track[], string>({
-            query: (albumMediaId) => `albums/${albumMediaId}/tracks`,
+            query: (albumMediaId) => `${albumMediaId}/tracks`,
             transformResponse(tracks: BackendTrack[]): Promise<Track[]> | Track[] {
                 // TODO: Figure out how to handle different-but-similar types, such as playlist
                 //  entry, track, upnp browsable item, etc, and how those types differ between
@@ -42,9 +45,10 @@ export const vibinBaseApi = createApi({
                     art_url: track.album_art_uri,
                     genre: track.genre,
                 }));
-            }
+            },
         }),
     }),
 });
 
-export const { useGetAlbumsQuery, useGetTracksQuery, useLazyGetTracksQuery } = vibinBaseApi;
+export const { useGetAlbumsQuery, useGetNewAlbumsQuery, useGetTracksQuery, useLazyGetTracksQuery } =
+    vibinAlbumsApi;

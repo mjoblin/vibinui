@@ -1,18 +1,21 @@
 import React, { FC } from "react";
-import { Box, Center, createStyles, Flex, Loader, Text } from "@mantine/core";
+import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useGetAlbumsQuery } from "../../app/services/vibinBase";
+import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import { setFilteredAlbumCount } from "../../app/store/internalSlice";
 import AlbumCard from "./AlbumCard";
 import SadLabel from "../shared/SadLabel";
 
 const AlbumWall: FC = () => {
     const dispatch = useAppDispatch();
-    const filterText = useAppSelector((state: RootState) => state.userSettings.browse.filterText);
-    const { coverSize, coverGap } = useAppSelector((state: RootState) => state.userSettings.browse);
-    const { data, error, isLoading } = useGetAlbumsQuery();
+    const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
+    const { activeCollection, coverSize, coverGap } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
+    );
+    const { data: allAlbums, error: allError, isLoading: allIsLoading } = useGetAlbumsQuery();
+    const { data: newAlbums, error: newError, isLoading: newIsLoading } = useGetNewAlbumsQuery();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         albumWall: {
@@ -23,7 +26,7 @@ const AlbumWall: FC = () => {
         },
     }))();
 
-    if (isLoading) {
+    if ((activeCollection === "all" && allIsLoading) || (activeCollection === "new" && newIsLoading)) {
         return (
             <Center>
                 <Loader size="sm" />
@@ -34,7 +37,7 @@ const AlbumWall: FC = () => {
         );
     }
 
-    if (error) {
+    if ((activeCollection === "all" && allError) || (activeCollection === "new" && newError)) {
         return (
             <Center pt="xl">
                 <SadLabel label="Could not retrieve album details" />
@@ -42,7 +45,9 @@ const AlbumWall: FC = () => {
         );
     }
 
-    if (!data || data.length <= 0) {
+    const collection = activeCollection === "all" ? allAlbums : newAlbums;
+
+    if (!collection || collection.length <= 0) {
         return (
             <Center pt="xl">
                 <SadLabel label="No Albums available" />
@@ -50,7 +55,7 @@ const AlbumWall: FC = () => {
         );
     }
 
-    const albumsToDisplay = data
+    const albumsToDisplay = collection
         .filter((album) => {
             if (filterText === "") {
                 return true;
@@ -64,7 +69,7 @@ const AlbumWall: FC = () => {
             );
         })
         // TODO: Fix "Various" (unknown artist)
-        .sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various"));
+        // .sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various"));
 
     dispatch(setFilteredAlbumCount(albumsToDisplay.length));
 

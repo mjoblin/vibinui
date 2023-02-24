@@ -98,6 +98,8 @@ const AlbumArt: FC<AlbumArtProps> = ({
                 alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
                 fit="cover"
                 radius={radius}
+                width={size}
+                height={size}
             />
 
             {album && showControls && (

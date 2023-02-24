@@ -2,15 +2,15 @@ import React, { FC } from "react";
 import { Stack } from "@mantine/core";
 
 import AlbumWall from "../albums/AlbumWall";
-import BrowseControls from "../albums/BrowseControls";
+import AlbumsControls from "../albums/AlbumsControls";
 
-const BrowseScreen: FC = () => {
+const AlbumsScreen: FC = () => {
     return (
         <Stack spacing="xl">
-            <BrowseControls />
+            <AlbumsControls />
             <AlbumWall />
         </Stack>
     );
 };
 
-export default BrowseScreen;
+export default AlbumsScreen;

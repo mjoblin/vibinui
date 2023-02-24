@@ -5,23 +5,25 @@ import get from "lodash/get";
 import type { RootState, AppDispatch } from "./store";
 import {
     LSKEY_APPLICATION_THEME,
-    LSKEY_BROWSE_COVER_GAP,
-    LSKEY_BROWSE_COVER_SIZE,
-    LSKEY_BROWSE_FILTER_TEXT,
-    LSKEY_BROWSE_SHOW_DETAILS,
+    LSKEY_ALBUMS_ACTIVE_COLLECTION,
+    LSKEY_ALBUMS_COVER_GAP,
+    LSKEY_ALBUMS_COVER_SIZE,
+    LSKEY_ALBUMS_FILTER_TEXT,
+    LSKEY_ALBUMS_SHOW_DETAILS,
     LSKEY_NOWPLAYING_ACTIVETAB,
     LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     LSKEY_PLAYLIST_VIEWMODE,
     LSKEY_PRESETS_CARD_GAP,
     LSKEY_PRESETS_CARD_SIZE,
     LSKEY_PRESETS_SHOW_DETAILS,
-    resetBrowseToDefaults,
+    resetAlbumsToDefaults,
     resetPresetsToDefaults,
     setApplicationTheme,
-    setBrowseCoverGap,
-    setBrowseCoverSize,
-    setBrowseFilterText,
-    setBrowseShowDetails,
+    setAlbumsActiveCollection,
+    setAlbumsCoverGap,
+    setAlbumsCoverSize,
+    setAlbumsFilterText,
+    setAlbumsShowDetails,
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
     setPlaylistViewMode,
@@ -49,10 +51,11 @@ export const localStorageMiddleware = createListenerMiddleware();
 // match the dot-delimited redux key.
 export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
-    [setBrowseCoverGap.type]: LSKEY_BROWSE_COVER_GAP,
-    [setBrowseCoverSize.type]: LSKEY_BROWSE_COVER_SIZE,
-    [setBrowseShowDetails.type]: LSKEY_BROWSE_SHOW_DETAILS,
-    [setBrowseFilterText.type]: LSKEY_BROWSE_FILTER_TEXT,
+    [setAlbumsActiveCollection.type]: LSKEY_ALBUMS_ACTIVE_COLLECTION,
+    [setAlbumsCoverGap.type]: LSKEY_ALBUMS_COVER_GAP,
+    [setAlbumsCoverSize.type]: LSKEY_ALBUMS_COVER_SIZE,
+    [setAlbumsShowDetails.type]: LSKEY_ALBUMS_SHOW_DETAILS,
+    [setAlbumsFilterText.type]: LSKEY_ALBUMS_FILTER_TEXT,
     [setNowPlayingActiveTab.type]: LSKEY_NOWPLAYING_ACTIVETAB,
     [setPlaylistEditorSortField.type]: LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     [setPlaylistViewMode.type]: LSKEY_PLAYLIST_VIEWMODE,
@@ -63,12 +66,13 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
 
 localStorageMiddleware.startListening({
     matcher: isAnyOf(
-        resetBrowseToDefaults,
+        resetAlbumsToDefaults,
         resetPresetsToDefaults,
         setApplicationTheme,
-        setBrowseCoverGap,
-        setBrowseCoverSize,
-        setBrowseShowDetails,
+        setAlbumsActiveCollection,
+        setAlbumsCoverGap,
+        setAlbumsCoverSize,
+        setAlbumsShowDetails,
         setNowPlayingActiveTab,
         setPlaylistEditorSortField,
         setPlaylistViewMode,
@@ -77,17 +81,17 @@ localStorageMiddleware.startListening({
         setPresetsShowDetails,
     ),
     effect: (action, listenerApi) => {
-        if (action.type === resetBrowseToDefaults.type) {
-            // Special-case resetBrowseToDefaults to delete the local storage keys associated with
-            // the resetBrowseToDefaults action.
+        if (action.type === resetAlbumsToDefaults.type) {
+            // Special-case resetAlbumsToDefaults to delete the local storage keys associated with
+            // the resetAlbumsToDefaults action.
             //
-            // TODO: This is prone to getting out of sync with resetBrowseToDefaults. See if
+            // TODO: This is prone to getting out of sync with resetAlbumsToDefaults. See if
             //  there's an elegant way to implement the reset feature such that the state is
             //  reflected appropriately in Redux and local storage, without multiple places being
             //  aware of what "reset" means.
-            localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseCoverGap.type]);
-            localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseCoverSize.type]);
-            localStorage.removeItem(actionToLocalStorageKeyMapper[setBrowseShowDetails.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setAlbumsCoverGap.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setAlbumsCoverSize.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setAlbumsShowDetails.type]);
 
             return;
         }

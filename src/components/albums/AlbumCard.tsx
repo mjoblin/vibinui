@@ -16,7 +16,7 @@ type AlbumCardProps = {
 const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const dispatch = useAppDispatch();
     const { coverSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.browse
+        (state: RootState) => state.userSettings.albums
     );
     const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.albumCard);
     const { colors } = useMantineTheme();
@@ -25,10 +25,12 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const cardRef = useRef<HTMLDivElement>();
 
+    const borderSize = 2;
+
     const { classes: dynamicClasses } = createStyles((theme) => ({
         albumCard: {
             width: coverSize,
-            border: "2px solid rgb(0, 0, 0, 0)",
+            border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();
 
@@ -86,7 +88,7 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                             <AlbumArt
                                 album={album}
                                 actionCategories={["Tracks", "Playlist"]}
-                                size={coverSize}
+                                size={coverSize - borderSize * 2}
                                 radius={5}
                                 onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                                 onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
