@@ -138,7 +138,7 @@ const NowPlayingScreen: FC = () => {
                     />
                 </Stack>
 
-                {tabsToDisplay && (
+                {tabsToDisplay && currentTrackId && (
                     <Tabs
                         value={activeTab}
                         onTabChange={(tabName) =>

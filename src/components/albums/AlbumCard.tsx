@@ -16,7 +16,7 @@ type AlbumCardProps = {
 const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const dispatch = useAppDispatch();
     const { coverSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.browse
+        (state: RootState) => state.userSettings.albums
     );
     const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.albumCard);
     const { colors } = useMantineTheme();

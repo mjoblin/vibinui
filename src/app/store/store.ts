@@ -9,7 +9,7 @@ import presetsReducer from "./presetsSlice";
 import storedPlaylistsReducer from "./storedPlaylistsSlice";
 import userSettingsReducer from "./userSettingsSlice";
 import { localStorageMiddleware } from "./localStorageMiddleware";
-import { vibinBaseApi } from "../services/vibinBase";
+import { vibinAlbumsApi } from "../services/vibinAlbums";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
 import { vibinPresetsApi } from "../services/vibinPresets";
 import { vibinStoredPlaylistsApi } from "../services/vibinStoredPlaylists";
@@ -27,7 +27,7 @@ export const store = configureStore({
         presets: presetsReducer,
         storedPlaylists: storedPlaylistsReducer,
         userSettings: userSettingsReducer,
-        [vibinBaseApi.reducerPath]: vibinBaseApi.reducer,
+        [vibinAlbumsApi.reducerPath]: vibinAlbumsApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
         [vibinPresetsApi.reducerPath]: vibinPresetsApi.reducer,
         [vibinStoredPlaylistsApi.reducerPath]: vibinStoredPlaylistsApi.reducer,
@@ -39,7 +39,7 @@ export const store = configureStore({
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
             localStorageMiddleware.middleware,
-            vibinBaseApi.middleware,
+            vibinAlbumsApi.middleware,
             vibinPlaylistApi.middleware,
             vibinPresetsApi.middleware,
             vibinStoredPlaylistsApi.middleware,

@@ -7,7 +7,7 @@ import { RootState } from "./app/store/store";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
 import RootLayout from "./components/layout/RootLayout";
-import BrowseScreen from "./components/layout/BrowseScreen";
+import AlbumsScreen from "./components/layout/AlbumsScreen";
 import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
@@ -32,8 +32,8 @@ export default function App() {
             element: <RootLayout />,
             children: [
                 {
-                    path: "browse",
-                    element: <BrowseScreen />,
+                    path: "albums",
+                    element: <AlbumsScreen />,
                 },
                 {
                     path: "playlist",
@@ -49,7 +49,7 @@ export default function App() {
                 },
                 {
                     index: true,
-                    element: <Navigate to="/browse" replace />,
+                    element: <Navigate to="/albums" replace />,
                 },
             ],
         },

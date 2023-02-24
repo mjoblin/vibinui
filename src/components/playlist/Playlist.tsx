@@ -18,7 +18,7 @@ import { PlaylistEntry } from "../../app/types";
 import { getTextWidth } from "../../app/utils";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
-import { useGetAlbumsQuery } from "../../app/services/vibinBase";
+import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
 import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
