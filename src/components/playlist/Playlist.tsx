@@ -15,7 +15,7 @@ import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { PlaylistEntry } from "../../app/types";
-import { getTextWidth } from "../../app/utils";
+import { getTextWidth, yearFromDate } from "../../app/utils";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
@@ -226,14 +226,16 @@ const Playlist: FC = () => {
      *
      * TODO: See if this "playlist entry to full album entry" lookup can be made more reliable.
      */
-    const albumYear = (title: string, artist: string): string | undefined => {
+    const albumYear = (title: string, artist: string): number | undefined => {
         if (!albums) {
             return undefined;
         }
-
-        return albums
-            .find((album) => album.title === title && (album.artist === artist || !album.artist))
-            ?.date.split("-")[0];
+        
+        const album = albums.find(
+            (album) => album.title === title && (album.artist === artist || !album.artist)
+        );
+        
+        return album ? yearFromDate(album.date) : undefined;
     };
 
     /**

@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { MediaId, Track } from "../types";
 
 export type LyricChunk = {
     header: string | undefined;
@@ -31,6 +32,9 @@ export const vibinTracksApi = createApi({
                 url: `${trackId}/links?all_types=${allTypes}`,
             }),
         }),
+        getTrackById: builder.query<Track, MediaId>({
+            query: (trackId) => trackId,
+        }),
         // TODO: Have return type handle JSON and binary waveform data types.
         getWaveform: builder.query<
             any,
@@ -54,4 +58,10 @@ export const vibinTracksApi = createApi({
     }),
 });
 
-export const { useGetLyricsQuery, useGetLinksQuery, useGetWaveformQuery } = vibinTracksApi;
+export const {
+    useGetLinksQuery,
+    useGetLyricsQuery,
+    useGetTrackByIdQuery,
+    useGetWaveformQuery,
+    useLazyGetTrackByIdQuery,
+} = vibinTracksApi;

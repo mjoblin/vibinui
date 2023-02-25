@@ -1,9 +1,9 @@
 import React, { FC, useState } from "react";
 import { Box, Paper, Flex, Stack, Text, createStyles } from "@mantine/core";
 
-import { useGetTracksQuery } from "../../app/services/vibinAlbums";
+import { useGetAlbumTracksQuery } from "../../app/services/vibinAlbums";
 import { Album, Track } from "../../app/types";
-import { secstoHms } from "../../app/utils";
+import { secstoHms, yearFromDate } from "../../app/utils";
 import AlbumActionsButton from "../albums/AlbumActionsButton";
 import AlbumArt from "../albums/AlbumArt";
 import AppendToPlaylistButton from "./AppendToPlaylistButton";
@@ -34,7 +34,7 @@ type AlbumTracksProps = {
 };
 
 const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
-    const { data, error, isLoading } = useGetTracksQuery(album.id);
+    const { data, error, isLoading } = useGetAlbumTracksQuery(album.id);
     const { classes } = useStyles();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<string | undefined>(undefined);
 
@@ -59,9 +59,9 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                         {album.artist}
                     </Text>
                     <Text size="xs" weight="bold" color={DIMMED}>
-                        {album.date.split("-")[0]}{" "}
+                        {yearFromDate(album.date) || ""}
                         {album.genre && album.genre.toLowerCase() !== "unknown"
-                            ? `• ${album.genre.toUpperCase()}`
+                            ? ` • ${album.genre.toUpperCase()}`
                             : ""}
                     </Text>
                 </Stack>

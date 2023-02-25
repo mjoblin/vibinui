@@ -1,12 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
     ActionIcon,
-    Box,
     Center,
     createStyles,
     Flex,
     ScrollArea,
-    Skeleton,
     Stack,
     Tabs,
     Text,
@@ -17,6 +15,7 @@ import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setNowPlayingActiveTab } from "../../app/store/userSettingsSlice";
 import { usePlayMutation } from "../../app/services/vibinTransport";
+import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
 import AlbumArt from "../albums/AlbumArt";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import NowPlaying from "../currentlyPlaying/NowPlaying";
@@ -27,6 +26,8 @@ import Waveform from "../nowPlaying/Waveform";
 import SadLabel from "../shared/SadLabel";
 import StandbyMode from "../shared/StandbyMode";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
+import { yearFromDate } from "../../app/utils";
+import { Track } from "../../app/types";
 
 export type NowPlayingTab = "links" | "lyrics" | "waveform";
 
@@ -85,6 +86,35 @@ const NowPlayingScreen: FC = () => {
         (state: RootState) => state.playback.current_track_media_id
     );
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const [getTrack, getTrackResult] = useLazyGetTrackByIdQuery();
+    const [trackYearAndGenre, setTrackYearAndGenre] = useState<string | undefined>(undefined);
+
+    /**
+     *
+     */
+    useEffect(() => {
+        setTrackYearAndGenre(undefined);
+        currentTrackId && getTrack(currentTrackId);
+
+    }, [currentTrackId, getTrack]);
+
+    /**
+     *
+     */
+    useEffect(() => {
+        if (getTrackResult.isSuccess) {
+            const track = getTrackResult.data as Track;
+            const year = track.date && yearFromDate(track.date);
+            let genre = track.genre !== "Unknown" ? track.genre?.toLocaleUpperCase() : undefined;
+
+            let result = year ? `${year} • ` : "";
+            result = genre ? `${result}${genre}` : result;
+
+            setTrackYearAndGenre(result);
+        }
+    }, [getTrackResult]);
+
+    // --------------------------------------------------------------------------------------------
 
     if (playStatus === "not_ready") {
         return <StandbyMode />;
@@ -129,14 +159,20 @@ const NowPlayingScreen: FC = () => {
                     <Text size={28} weight="bold" lh={1}>
                         {currentTrack.title || "-"}
                     </Text>
-
                     <FieldValueList
                         fieldValues={{
                             Artist: currentTrack.artist,
                             Album: currentTrack.album,
                         }}
                     />
+                    {trackYearAndGenre && (
+                        <Text size="xs" color="grey" weight="bold">
+                            {trackYearAndGenre}
+                        </Text>
+                    )}
                 </Stack>
+
+                {/* Tabs */}
 
                 {tabsToDisplay && currentTrackId && (
                     <Tabs

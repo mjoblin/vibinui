@@ -63,3 +63,17 @@ export const epochSecondsToString = (seconds: number) => dayjs.unix(seconds).for
  * Convert a unix time (in seconds) to a relative offset string, like "5 days ago".
  */
 export const epochSecondsToStringRelative = (seconds: number) => dayjs.unix(seconds).fromNow();
+
+/**
+ * Return the year component (as a number) from a provided date string, e.g. "2023-01-01" will
+ * return 2023. Returns undefined if the year cannot be determined.
+ */
+export const yearFromDate = (date: string): number | undefined => {
+    const year = new Date(Date.parse(date)).getUTCFullYear();
+
+    if (isNaN(year)) {
+        return undefined;
+    }
+
+    return year;
+}
