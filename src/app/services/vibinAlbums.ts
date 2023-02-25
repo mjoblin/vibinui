@@ -2,9 +2,20 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type { Album, Track } from "../types";
 import { hmsToSecs } from "../utils";
+import { MediaId } from "../types";
 
 // TODO: Consider refactoring these multiple API slices (Albums, Playlist, etc) into a single slice.
 //  https://redux-toolkit.js.org/rtk-query/api/createApi
+
+type BackendAlbum = {
+    id: MediaId;
+    title: string;
+    creator: string;
+    date: string;
+    artist: string;
+    genre: string;
+    album_art_uri: string;
+};
 
 type BackendTrack = {
     id: string;
@@ -23,13 +34,16 @@ export const vibinAlbumsApi = createApi({
     reducerPath: "vibinAlbumsApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/albums" }),
     endpoints: (builder) => ({
+        getAlbumById: builder.query<Album, MediaId>({
+            query: (albumId) => albumId,
+        }),
         getAlbums: builder.query<Album[], void>({
             query: () => "",
         }),
         getNewAlbums: builder.query<Album[], void>({
             query: () => "new",
         }),
-        getTracks: builder.query<Track[], string>({
+        getAlbumTracks: builder.query<Track[], string>({
             query: (albumMediaId) => `${albumMediaId}/tracks`,
             transformResponse(tracks: BackendTrack[]): Promise<Track[]> | Track[] {
                 // TODO: Figure out how to handle different-but-similar types, such as playlist
@@ -50,5 +64,11 @@ export const vibinAlbumsApi = createApi({
     }),
 });
 
-export const { useGetAlbumsQuery, useGetNewAlbumsQuery, useGetTracksQuery, useLazyGetTracksQuery } =
-    vibinAlbumsApi;
+export const {
+    useGetAlbumByIdQuery,
+    useGetAlbumsQuery,
+    useGetAlbumTracksQuery,
+    useGetNewAlbumsQuery,
+    useLazyGetAlbumByIdQuery,
+    useLazyGetAlbumTracksQuery,
+} = vibinAlbumsApi;

@@ -6,6 +6,7 @@ import { Album } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../app/store/internalSlice";
+import { yearFromDate } from "../../app/utils";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 
@@ -60,6 +61,8 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
         }
     }, [cardRef, isVisible, coverSize, showDetails]);
 
+    const albumYear = yearFromDate(album.date);
+
     return (
         // The visibility offset top/bottom is somewhat arbitrary. The goal is to pre-load enough
         // off-screen AlbumCards to reduce flickering when scrolling (as the art loads/renders).
@@ -95,14 +98,19 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                             />
                         </Card.Section>
 
-                        {/* Album title, artist, etc. */}
+                        {/* Album title, artist, year, genre */}
                         {showDetails && (
                             <Stack spacing={0} pt={7}>
                                 <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                                     {album.title}
                                 </Text>
                                 <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
-                                    {album.artist}
+                                    {`${album.artist}${
+                                        albumYear ? `${album.artist ? " • " : ""}${albumYear}` : ""
+                                    }`}
+                                </Text>
+                                <Text size={11} color="grey" weight="bold" sx={{ lineHeight: 1.25 }}>
+                                    {album.genre === "Unknown" ? "" : album.genre.toLocaleUpperCase()}
                                 </Text>
                             </Stack>
                         )}
