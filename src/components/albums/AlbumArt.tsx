@@ -6,7 +6,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import AlbumActionsButton, { AlbumActionCategory } from "./AlbumActionsButton";
+import MediaActionsButton, { ActionCategory } from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 
@@ -35,13 +35,15 @@ type AlbumArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
-    actionCategories?: AlbumActionCategory[];
+    actionCategories?: ActionCategory[];
     size?: number;
     showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
     onActionsMenuOpen?: () => void;
     onActionsMenuClosed?: () => void;
 };
+
+// NOTE: AlbumArt and TrackArt are very similar.
 
 // TODO: Image fit is "cover", which will effectively zoom in on non-square album art. Could add
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
@@ -128,8 +130,9 @@ const AlbumArt: FC<AlbumArtProps> = ({
                         }}
                     />
 
-                    <AlbumActionsButton
-                        album={album}
+                    <MediaActionsButton
+                        mediaType="album"
+                        media={album}
                         position={actionsMenuPosition}
                         categories={actionCategories}
                         onOpen={() => {

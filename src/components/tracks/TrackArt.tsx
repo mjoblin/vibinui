@@ -6,18 +6,20 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-// import AlbumActionsButton, { AlbumActionCategory } from "./AlbumActionsButton";
+import MediaActionsButton from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 
+// NOTE: TrackArt and AlbumArt are very similar.
+
 const useStyles = createStyles((theme) => ({
-    albumArtContainer: {
+    trackArtContainer: {
         position: "relative",
     },
     actionsMenuActive: {
         opacity: 1,
     },
-    albumControls: {
+    trackControls: {
         position: "absolute",
         top: 0,
         left: 0,
@@ -35,7 +37,6 @@ type TrackArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
-    // actionCategories?: AlbumActionCategory[];
     size?: number;
     showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
@@ -43,20 +44,19 @@ type TrackArtProps = {
     onActionsMenuClosed?: () => void;
 };
 
-// TODO: Image fit is "cover", which will effectively zoom in on non-square album art. Could add
+// TODO: Image fit is "cover", which will effectively zoom in on non-square track art. Could add
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
 /**
  *
- * Either `album` or `artUri` should be passed.
+ * Either `track` or `artUri` should be passed.
  *
- * @param album
+ * @param track
  * @param artUri
  * @param alt
  * @param radius
  * @param showControls
- * @param actionCategories
  * @param size
  * @param actionsMenuPosition
  * @param onActionsMenuOpen
@@ -92,7 +92,7 @@ const TrackArt: FC<TrackArtProps> = ({
     }, [addStatus]);
 
     return (
-        <Box className={classes.albumArtContainer}>
+        <Box className={classes.trackArtContainer}>
             <Image
                 src={artUri ? artUri : track ? track.album_art_uri : ""}
                 alt={alt ? alt : track ? `${track.artist} / ${track.title}` : "unknown"}
@@ -107,7 +107,7 @@ const TrackArt: FC<TrackArtProps> = ({
                     p="xs"
                     justify="space-between"
                     align="flex-end"
-                    className={`${classes.albumControls} ${
+                    className={`${classes.trackControls} ${
                         isActionsMenuOpen && classes.actionsMenuActive
                     }`}
                     sx={{ width: size, height: size }}
@@ -132,38 +132,38 @@ const TrackArt: FC<TrackArtProps> = ({
                         }}
                     />
 
-                    {/*<AlbumActionsButton*/}
-                    {/*    album={album}*/}
-                    {/*    position={actionsMenuPosition}*/}
-                    {/*    categories={actionCategories}*/}
-                    {/*    onOpen={() => {*/}
-                    {/*        setIsActionsMenuOpen(true);*/}
-                    {/*        onActionsMenuOpen && onActionsMenuOpen();*/}
-                    {/*    }}*/}
-                    {/*    onClose={() => {*/}
-                    {/*        // This timeout is to prevent an issue where the user clicks outside*/}
-                    {/*        // the actions menu to close the menu, but the click is then picked up*/}
-                    {/*        // by the onClick() handler on the album art, which then triggers the*/}
-                    {/*        // display of the tracks modal. The delay in setting isActionsMenuOpen*/}
-                    {/*        // will prevent this behavior.*/}
-                    {/*        //*/}
-                    {/*        // This only works as described when the user clicks on album art*/}
-                    {/*        // associated with the actions menu.*/}
-                    {/*        //*/}
-                    {/*        // TODO: This feels hacky. It would be nice to see if there was a way*/}
-                    {/*        //  to more cleanly ignore clicks which are outside a*/}
-                    {/*        //  currently-displayed actions menu.*/}
-                    {/*        //*/}
-                    {/*        // TODO: Consider doing something in the AlbumWall component to prevent*/}
-                    {/*        //  all other album interactions if an action menu is open. Or perhaps set*/}
-                    {/*        //  some application state when the actions are visible (which other*/}
-                    {/*        //  components can key off of to enable/disable behaviours).*/}
-                    {/*        setTimeout(() => {*/}
-                    {/*            setIsActionsMenuOpen(false);*/}
-                    {/*            onActionsMenuClosed && onActionsMenuClosed();*/}
-                    {/*        }, 250);*/}
-                    {/*    }}*/}
-                    {/*/>*/}
+                    <MediaActionsButton
+                        mediaType="track"
+                        media={track}
+                        position={actionsMenuPosition}
+                        onOpen={() => {
+                            setIsActionsMenuOpen(true);
+                            onActionsMenuOpen && onActionsMenuOpen();
+                        }}
+                        onClose={() => {
+                            // This timeout is to prevent an issue where the user clicks outside
+                            // the actions menu to close the menu, but the click is then picked up
+                            // by the onClick() handler on the track art, which then triggers the
+                            // display of the tracks modal. The delay in setting isActionsMenuOpen
+                            // will prevent this behavior.
+                            //
+                            // This only works as described when the user clicks on track art
+                            // associated with the actions menu.
+                            //
+                            // TODO: This feels hacky. It would be nice to see if there was a way
+                            //  to more cleanly ignore clicks which are outside a
+                            //  currently-displayed actions menu.
+                            //
+                            // TODO: Consider doing something in the TrackWall component to prevent
+                            //  all other track interactions if an action menu is open. Or perhaps set
+                            //  some application state when the actions are visible (which other
+                            //  components can key off of to enable/disable behaviours).
+                            setTimeout(() => {
+                                setIsActionsMenuOpen(false);
+                                onActionsMenuClosed && onActionsMenuClosed();
+                            }, 250);
+                        }}
+                    />
                 </Flex>
             )}
         </Box>

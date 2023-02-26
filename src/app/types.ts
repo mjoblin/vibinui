@@ -22,11 +22,7 @@ export type Album = {
 
 // Music track details.
 export type Track = {
-    // TODO: This MediaId should not be optional. Consider removing it entirely (playlist entries
-    //  get media ids from the back-end; and the playbackSlice stores current_track_media_id from
-    //  incoming Stream data). OR we need to distinguish between Album and Track media (owned by
-    //  the mediasource) and Album and Track updates owned by the streamer.
-    id?: MediaId;
+    id: MediaId;
     track_number: number;
     duration: number;
     album: string;
