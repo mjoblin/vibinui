@@ -20,6 +20,14 @@ export type Album = {
     album_art_uri: string; // TODO: This vs. art_url (be consistent; will need to rename somewhere)
 };
 
+// Artist details
+export type Artist = {
+    id: MediaId;
+    title: string;
+    genre: string;
+    album_art_uri: string; // TODO: This vs. art_url (be consistent; will need to rename somewhere)
+};
+
 // Music track details.
 export type Track = {
     id: MediaId;

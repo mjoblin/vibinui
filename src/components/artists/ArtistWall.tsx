@@ -1,23 +1,24 @@
 import React, { FC } from "react";
 import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
-import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import { setFilteredTrackCount } from "../../app/store/internalSlice";
-import TrackCard from "./TrackCard";
+import { useGetArtistsQuery } from "../../app/services/vibinArtists";
+import { setFilteredAlbumCount, setFilteredTrackCount } from "../../app/store/internalSlice";
+import ArtistCard from "./ArtistCard";
 import SadLabel from "../shared/SadLabel";
+import { useDebouncedValue } from "@mantine/hooks";
 
-const TrackWall: FC = () => {
+const ArtistWall: FC = () => {
     const dispatch = useAppDispatch();
-    const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
+    const { cardSize, cardGap, filterText } = useAppSelector(
+        (state: RootState) => state.userSettings.artists
+    );
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
-    const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.tracks);
-    const { data: allTracks, error, isLoading } = useGetTracksQuery();
+    const { data: allArtists, error, isLoading } = useGetArtistsQuery();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        trackWall: {
+        artistWall: {
             display: "grid",
             gap: cardGap,
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
@@ -30,7 +31,7 @@ const TrackWall: FC = () => {
             <Center>
                 <Loader size="sm" />
                 <Text size={14} weight="bold" pl={10}>
-                    Retrieving tracks...
+                    Retrieving artists...
                 </Text>
             </Center>
         );
@@ -39,20 +40,20 @@ const TrackWall: FC = () => {
     if (error) {
         return (
             <Center pt="xl">
-                <SadLabel label="Could not retrieve track details" />
+                <SadLabel label="Could not retrieve artist details" />
             </Center>
         );
     }
 
-    if (!allTracks || allTracks.length <= 0) {
+    if (!allArtists || allArtists.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label="No Tracks available" />
+                <SadLabel label="No Artists available" />
             </Center>
         );
     }
 
-    const tracksToDisplay = allTracks.filter((track) => {
+    const artistsToDisplay = allArtists.filter((artist) => {
         if (debouncedFilterText === "") {
             return true;
         }
@@ -61,13 +62,13 @@ const TrackWall: FC = () => {
 
         return (
             // (track.artist || "Various").toLowerCase().includes(filterValueLower) ||
-            track.title.toLowerCase().includes(filterValueLower)
+            artist.title.toLowerCase().includes(filterValueLower)
         );
     });
 
-    dispatch(setFilteredTrackCount(tracksToDisplay.length));
+    dispatch(setFilteredTrackCount(artistsToDisplay.length));
 
-    if (tracksToDisplay.length <= 0) {
+    if (artistsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
                 <SadLabel label="No matching Tracks" />
@@ -76,12 +77,12 @@ const TrackWall: FC = () => {
     }
 
     return (
-        <Box className={dynamicClasses.trackWall}>
-            {tracksToDisplay.map((track) => (
-                <TrackCard key={track.id} track={track} />
+        <Box className={dynamicClasses.artistWall}>
+            {artistsToDisplay.map((artist) => (
+                <ArtistCard key={artist.id} artist={artist} />
             ))}
         </Box>
     );
 };
 
-export default TrackWall;
+export default ArtistWall;

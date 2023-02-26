@@ -11,7 +11,7 @@ import SadLabel from "../shared/SadLabel";
 const AlbumWall: FC = () => {
     const dispatch = useAppDispatch();
     const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
-    const { activeCollection, coverSize, coverGap } = useAppSelector(
+    const { activeCollection, cardSize, cardGap } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
     const { data: allAlbums, error: allError, isLoading: allIsLoading } = useGetAlbumsQuery();
@@ -20,8 +20,8 @@ const AlbumWall: FC = () => {
     const { classes: dynamicClasses } = createStyles((theme) => ({
         albumWall: {
             display: "grid",
-            gap: coverGap,
-            gridTemplateColumns: `repeat(auto-fit, ${coverSize}px)`,
+            gap: cardGap,
+            gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
             paddingBottom: 15,
         },
     }))();

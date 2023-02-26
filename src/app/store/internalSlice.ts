@@ -13,6 +13,13 @@ export interface InternalState {
     albums: {
         filteredAlbumCount: number;
     };
+    artistCard: {
+        renderWidth: number;
+        renderHeight: number;
+    };
+    artists: {
+        filteredArtistCount: number;
+    };
     trackCard: {
         renderWidth: number;
         renderHeight: number;
@@ -21,6 +28,8 @@ export interface InternalState {
         filteredTrackCount: number;
     };
 }
+
+// TODO: Move the *Card blocks under their respective top-level section.
 
 const initialState: InternalState = {
     application: {
@@ -35,6 +44,15 @@ const initialState: InternalState = {
     albums: {
         // Number of albums currently displayed in the Albums screen.
         filteredAlbumCount: 0,
+    },
+    artistCard: {
+        // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
+        renderWidth: 200,
+        renderHeight: 200,
+    },
+    artists: {
+        // Number of artists currently displayed in the Albums screen.
+        filteredArtistCount: 0,
     },
     trackCard: {
         // Dimensions of the last-rendered TrackCard, to inform not-visible TrackCard container sizes.
@@ -67,6 +85,16 @@ export const internalSlice = createSlice({
         setFilteredAlbumCount: (state, action: PayloadAction<number>) => {
             state.albums.filteredAlbumCount = action.payload;
         },
+        setArtistCardRenderDimensions: (
+            state,
+            action: PayloadAction<{ width: number; height: number }>
+        ) => {
+            state.artistCard.renderWidth = action.payload.width;
+            state.artistCard.renderHeight = action.payload.height;
+        },
+        setFilteredArtistCount: (state, action: PayloadAction<number>) => {
+            state.artists.filteredArtistCount = action.payload;
+        },
         setFilteredTrackCount: (state, action: PayloadAction<number>) => {
             state.tracks.filteredTrackCount = action.payload;
         },
@@ -84,7 +112,9 @@ export const {
     setShowHotkeys,
     setShowDebugPanel,
     setAlbumCardRenderDimensions,
+    setArtistCardRenderDimensions,
     setFilteredAlbumCount,
+    setFilteredArtistCount,
     setFilteredTrackCount,
     setTrackCardRenderDimensions,
 } = internalSlice.actions;

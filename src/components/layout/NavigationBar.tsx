@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Box, createStyles, Group, Header } from "@mantine/core";
+import { Box, createStyles, Group, Header, Text } from "@mantine/core";
 
 import VibinLogo from "./VibinLogo";
 import MiniController from "../currentlyPlaying/MiniController";
@@ -42,9 +42,10 @@ type NavItemProps = {
     title: string;
     target: string;
     active?: boolean;
+    weight?: "normal" | "bold";
 };
 
-const NavItem: FC<NavItemProps> = ({ title, target }) => {
+const NavItem: FC<NavItemProps> = ({ title, target, weight = "normal" }) => {
     const { pathname } = useLocation();
     const { classes } = useStyles();
 
@@ -55,7 +56,7 @@ const NavItem: FC<NavItemProps> = ({ title, target }) => {
             className={`${classes.link} ${pathname === `/${target}` ? classes.active : ""}`}
             preventScrollReset={true}
         >
-            {title}
+            <Text weight={weight}>{title}</Text>
         </Box>
     );
 };
@@ -86,6 +87,7 @@ const NavigationBar: FC = () => {
                         <Group sx={{ height: "100%" }} spacing={0}>
                             <NavItem title="Albums" target="albums" />
                             <NavItem title="Tracks" target="tracks" />
+                            <NavItem title="Artists" target="artists" />
                             <NavItem title="Playlist" target="playlist" />
                             <NavItem title="Presets" target="presets" />
                             <NavItem title="Now Playing" target="playing" />
