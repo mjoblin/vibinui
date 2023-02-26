@@ -36,17 +36,13 @@ const ArtistsControls: FC = () => {
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
-    const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.albums);
-
-    // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
-    //  the tops of components to get them to look OK.
+    const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
 
     return (
         <Flex gap={25} align="center">
             <GlowTitle>Artists</GlowTitle>
 
             {/* Filter text */}
-            {/* TODO: Consider debouncing setArtistsFilterText() if performance is an issue */}
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
@@ -131,7 +127,7 @@ const ArtistsControls: FC = () => {
                     Showing
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {filteredAlbumCount}
+                    {filteredArtistCount}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     of
@@ -140,7 +136,7 @@ const ArtistsControls: FC = () => {
                     {allArtists?.length || 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
-                    albums
+                    artists
                 </Text>
             </Flex>
         </Flex>

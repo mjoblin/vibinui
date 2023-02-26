@@ -4,17 +4,15 @@ import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
-import { setFilteredAlbumCount, setFilteredTrackCount } from "../../app/store/internalSlice";
+import { setFilteredArtistCount } from "../../app/store/internalSlice";
 import ArtistCard from "./ArtistCard";
 import SadLabel from "../shared/SadLabel";
-import { useDebouncedValue } from "@mantine/hooks";
 
 const ArtistWall: FC = () => {
     const dispatch = useAppDispatch();
     const { cardSize, cardGap, filterText } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
-    const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -54,19 +52,18 @@ const ArtistWall: FC = () => {
     }
 
     const artistsToDisplay = allArtists.filter((artist) => {
-        if (debouncedFilterText === "") {
+        if (filterText === "") {
             return true;
         }
 
-        const filterValueLower = debouncedFilterText.toLowerCase();
+        const filterValueLower = filterText.toLowerCase();
 
         return (
-            // (track.artist || "Various").toLowerCase().includes(filterValueLower) ||
             artist.title.toLowerCase().includes(filterValueLower)
         );
     });
 
-    dispatch(setFilteredTrackCount(artistsToDisplay.length));
+    dispatch(setFilteredArtistCount(artistsToDisplay.length));
 
     if (artistsToDisplay.length <= 0) {
         return (
