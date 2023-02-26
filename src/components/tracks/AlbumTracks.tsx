@@ -4,7 +4,7 @@ import { Box, Paper, Flex, Stack, Text, createStyles } from "@mantine/core";
 import { useGetAlbumTracksQuery } from "../../app/services/vibinAlbums";
 import { Album, Track } from "../../app/types";
 import { secstoHms, yearFromDate } from "../../app/utils";
-import AlbumActionsButton from "../albums/AlbumActionsButton";
+import MediaActionsButton from "../shared/MediaActionsButton";
 import AlbumArt from "../albums/AlbumArt";
 import AppendToPlaylistButton from "./AppendToPlaylistButton";
 import TrackActionsButton from "./TrackActionsButton";
@@ -67,7 +67,12 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                 </Stack>
 
                 <Box pr={5}>
-                    <AlbumActionsButton album={album} categories={["Playlist"]} position="bottom" />
+                    <MediaActionsButton
+                        media={album}
+                        mediaType="album"
+                        categories={["Playlist"]}
+                        position="bottom"
+                    />
                 </Box>
             </Flex>
 

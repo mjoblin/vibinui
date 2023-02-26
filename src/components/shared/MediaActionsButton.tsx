@@ -12,11 +12,12 @@ import {
     IconPlaylistAdd,
 } from "@tabler/icons";
 
-import { Album } from "../../app/types";
+import { Album, Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 
-export type AlbumActionCategory = "Tracks" | "Playlist";
+export type MediaType = "album" | "track";
+export type ActionCategory = "Tracks" | "Playlist";
 
 const useStyles = createStyles((theme) => ({
     actionsButtonContainer: {
@@ -46,9 +47,10 @@ const useMenuStyles = createStyles((theme) => ({
     },
 }));
 
-type AlbumActionsButtonProps = {
-    album: Album;
-    categories?: AlbumActionCategory[];
+type MediaActionsButtonProps = {
+    mediaType: MediaType; // TODO: Can "mediaType" be replaced with type checking on "media".
+    media: Album | Track;
+    categories?: ActionCategory[];
     position?: FloatingPosition;
     onOpen?: () => void;
     onClose?: () => void;
@@ -58,8 +60,9 @@ type AlbumActionsButtonProps = {
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
-    album,
+const MediaActionsButton: FC<MediaActionsButtonProps> = ({
+    mediaType,
+    media,
     categories = ["Tracks", "Playlist"],
     position = "top",
     onOpen = undefined,
@@ -85,6 +88,8 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
         }
     }, [addStatus]);
 
+    const mediaTypeDisplay = mediaType && mediaType[0].toUpperCase() + mediaType.slice(1);
+
     return (
         <Box onClick={(event) => event.stopPropagation()}>
             <Menu
@@ -104,7 +109,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                 <Menu.Target>
                     {/* TODO: Not using <VibinTooltip> until it supports forwarded refs */}
                     <Tooltip
-                        label="Album actions"
+                        label={`${mediaTypeDisplay} actions`}
                         color="blue"
                         disabled={isActionsMenuOpen}
                         openDelay={500}
@@ -126,7 +131,7 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
 
                 <Menu.Dropdown>
                     {/* Tracks */}
-                    {categories.includes("Tracks") && (
+                    {mediaType === "album" && categories.includes("Tracks") && (
                         <>
                             <Menu.Label>Tracks</Menu.Label>
                             <Menu.Item
@@ -146,13 +151,13 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 icon={<IconPlayerPlay size={14} fill={colors.gray[5]} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
-                                        mediaId: album.id,
+                                        mediaId: media.id,
                                         action: "REPLACE",
                                     });
 
                                     showNotification({
-                                        title: `Replaced Playlist with Album`,
-                                        message: album.title,
+                                        title: `Replaced Playlist with ${mediaTypeDisplay}`,
+                                        message: media.title,
                                     });
                                 }}
                             >
@@ -162,13 +167,13 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 icon={<IconCornerDownRight size={14} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
-                                        mediaId: album.id,
+                                        mediaId: media.id,
                                         action: "PLAY_NOW",
                                     });
 
                                     showNotification({
-                                        title: `Album inserted into Playlist and now playing`,
-                                        message: album.title,
+                                        title: `${mediaTypeDisplay} inserted into Playlist and now playing`,
+                                        message: media.title,
                                     });
                                 }}
                             >
@@ -178,13 +183,13 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                                 icon={<IconCornerDownRightDouble size={14} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
-                                        mediaId: album.id,
+                                        mediaId: media.id,
                                         action: "PLAY_NEXT",
                                     });
 
                                     showNotification({
-                                        title: `Album inserted next in Playlist`,
-                                        message: album.title,
+                                        title: `${mediaTypeDisplay} inserted next in Playlist`,
+                                        message: media.title,
                                     });
                                 }}
                             >
@@ -193,11 +198,11 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                             <Menu.Item
                                 icon={<IconPlaylistAdd size={12} />}
                                 onClick={() => {
-                                    addMediaToPlaylist({ mediaId: album.id, action: "APPEND" });
+                                    addMediaToPlaylist({ mediaId: media.id, action: "APPEND" });
 
                                     showNotification({
-                                        title: `Album appended to end of Playlist`,
-                                        message: album.title,
+                                        title: `${mediaTypeDisplay} appended to end of Playlist`,
+                                        message: media.title,
                                     });
                                 }}
                             >
@@ -207,15 +212,17 @@ const AlbumActionsButton: FC<AlbumActionsButtonProps> = ({
                     )}
                 </Menu.Dropdown>
 
-                {/* Track list modal */}
-                <AlbumTracksModal
-                    album={album}
-                    opened={showTracksModal}
-                    onClose={() => setShowTracksModal(false)}
-                />
+                {mediaType === "album" && (
+                    // Track list modal
+                    <AlbumTracksModal
+                        album={media as Album}
+                        opened={showTracksModal}
+                        onClose={() => setShowTracksModal(false)}
+                    />
+                )}
             </Menu>
         </Box>
     );
 };
 
-export default AlbumActionsButton;
+export default MediaActionsButton;

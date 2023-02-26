@@ -85,6 +85,7 @@ const NavigationBar: FC = () => {
                     >
                         <Group sx={{ height: "100%" }} spacing={0}>
                             <NavItem title="Albums" target="albums" />
+                            <NavItem title="Tracks" target="tracks" />
                             <NavItem title="Playlist" target="playlist" />
                             <NavItem title="Presets" target="presets" />
                             <NavItem title="Now Playing" target="playing" />

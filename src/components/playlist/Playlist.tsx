@@ -249,7 +249,7 @@ const Playlist: FC = () => {
         .map((entry, index) => {
             const year = albumYear(entry.album, entry.artist);
             // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
-            const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre;
+            const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre.toLocaleUpperCase();
 
             const albumSubtitle =
                 year && genre

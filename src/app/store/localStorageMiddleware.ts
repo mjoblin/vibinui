@@ -16,8 +16,13 @@ import {
     LSKEY_PRESETS_CARD_GAP,
     LSKEY_PRESETS_CARD_SIZE,
     LSKEY_PRESETS_SHOW_DETAILS,
+    LSKEY_TRACKS_COVER_GAP,
+    LSKEY_TRACKS_COVER_SIZE,
+    LSKEY_TRACKS_FILTER_TEXT,
+    LSKEY_TRACKS_SHOW_DETAILS,
     resetAlbumsToDefaults,
     resetPresetsToDefaults,
+    resetTracksToDefaults,
     setApplicationTheme,
     setAlbumsActiveCollection,
     setAlbumsCoverGap,
@@ -30,6 +35,10 @@ import {
     setPresetsCardGap,
     setPresetsCardSize,
     setPresetsShowDetails,
+    setTracksCoverGap,
+    setTracksCoverSize,
+    setTracksFilterText,
+    setTracksShowDetails,
 } from "./userSettingsSlice";
 
 // ------------------------------------------------------------------------------------------------
@@ -62,12 +71,17 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setPresetsCardGap.type]: LSKEY_PRESETS_CARD_GAP,
     [setPresetsCardSize.type]: LSKEY_PRESETS_CARD_SIZE,
     [setPresetsShowDetails.type]: LSKEY_PRESETS_SHOW_DETAILS,
+    [setTracksCoverGap.type]: LSKEY_TRACKS_COVER_GAP,
+    [setTracksCoverSize.type]: LSKEY_TRACKS_COVER_SIZE,
+    [setTracksShowDetails.type]: LSKEY_TRACKS_SHOW_DETAILS,
+    [setTracksFilterText.type]: LSKEY_TRACKS_FILTER_TEXT,
 };
 
 localStorageMiddleware.startListening({
     matcher: isAnyOf(
         resetAlbumsToDefaults,
         resetPresetsToDefaults,
+        resetTracksToDefaults,
         setApplicationTheme,
         setAlbumsActiveCollection,
         setAlbumsCoverGap,
@@ -79,6 +93,9 @@ localStorageMiddleware.startListening({
         setPresetsCardGap,
         setPresetsCardSize,
         setPresetsShowDetails,
+        setTracksCoverGap,
+        setTracksCoverSize,
+        setTracksShowDetails,
     ),
     effect: (action, listenerApi) => {
         if (action.type === resetAlbumsToDefaults.type) {
@@ -102,6 +119,16 @@ localStorageMiddleware.startListening({
             localStorage.removeItem(actionToLocalStorageKeyMapper[setPresetsCardGap.type]);
             localStorage.removeItem(actionToLocalStorageKeyMapper[setPresetsCardSize.type]);
             localStorage.removeItem(actionToLocalStorageKeyMapper[setPresetsShowDetails.type]);
+
+            return;
+        }
+
+        if (action.type === resetTracksToDefaults.type) {
+            // Special-case resetTracksToDefaults to delete the local storage keys associated with
+            // the resetTracksToDefaults action.
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setTracksCoverGap.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setTracksCoverSize.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setTracksShowDetails.type]);
 
             return;
         }

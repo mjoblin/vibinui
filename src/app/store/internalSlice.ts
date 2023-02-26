@@ -10,8 +10,15 @@ export interface InternalState {
         renderWidth: number;
         renderHeight: number;
     };
-    browse: {
+    albums: {
         filteredAlbumCount: number;
+    };
+    trackCard: {
+        renderWidth: number;
+        renderHeight: number;
+    };
+    tracks: {
+        filteredTrackCount: number;
     };
 }
 
@@ -25,9 +32,18 @@ const initialState: InternalState = {
         renderWidth: 200,
         renderHeight: 200,
     },
-    browse: {
-        // Number of albums currently displayed in the Browse screen.
+    albums: {
+        // Number of albums currently displayed in the Albums screen.
         filteredAlbumCount: 0,
+    },
+    trackCard: {
+        // Dimensions of the last-rendered TrackCard, to inform not-visible TrackCard container sizes.
+        renderWidth: 200,
+        renderHeight: 200,
+    },
+    tracks: {
+        // Number of tracks currently displayed in the Tracks screen.
+        filteredTrackCount: 0,
     },
 };
 
@@ -49,7 +65,17 @@ export const internalSlice = createSlice({
             state.albumCard.renderHeight = action.payload.height;
         },
         setFilteredAlbumCount: (state, action: PayloadAction<number>) => {
-            state.browse.filteredAlbumCount = action.payload;
+            state.albums.filteredAlbumCount = action.payload;
+        },
+        setFilteredTrackCount: (state, action: PayloadAction<number>) => {
+            state.tracks.filteredTrackCount = action.payload;
+        },
+        setTrackCardRenderDimensions: (
+            state,
+            action: PayloadAction<{ width: number; height: number }>
+        ) => {
+            state.trackCard.renderWidth = action.payload.width;
+            state.trackCard.renderHeight = action.payload.height;
         },
     },
 });
@@ -59,6 +85,8 @@ export const {
     setShowDebugPanel,
     setAlbumCardRenderDimensions,
     setFilteredAlbumCount,
+    setFilteredTrackCount,
+    setTrackCardRenderDimensions,
 } = internalSlice.actions;
 
 export default internalSlice.reducer;

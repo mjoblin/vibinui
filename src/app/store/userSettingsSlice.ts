@@ -18,11 +18,15 @@ const DEFAULT_ALBUMS_COVER_SIZE = 200;
 const DEFAULT_ALBUMS_COVER_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
+const DEFAULT_TRACKS_COVER_SIZE = DEFAULT_ALBUMS_COVER_SIZE;
+const DEFAULT_TRACKS_COVER_GAP = DEFAULT_ALBUMS_COVER_GAP;
+const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
+const DEFAULT_TRACKS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
 const DEFAULT_NOWPLAYING_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
-const DEFAULT_PRESETS_CARD_SIZE = 200;
-const DEFAULT_PRESETS_CARD_GAP = 25;
+const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_COVER_SIZE;
+const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_COVER_GAP;
 const DEFAULT_PRESETS_SHOW_DETAILS = true;
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
@@ -33,6 +37,10 @@ export const LSKEY_ALBUMS_COVER_GAP = "albums.coverGap";
 export const LSKEY_ALBUMS_COVER_SIZE = "albums.coverSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
+export const LSKEY_TRACKS_COVER_GAP = "tracks.coverGap";
+export const LSKEY_TRACKS_COVER_SIZE = "tracks.coverSize";
+export const LSKEY_TRACKS_FILTER_TEXT = "tracks.filterText";
+export const LSKEY_TRACKS_SHOW_DETAILS = "tracks.showDetails";
 export const LSKEY_NOWPLAYING_ACTIVETAB = "nowPlaying.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
@@ -51,6 +59,12 @@ export interface UserSettingsState {
     };
     albums: {
         activeCollection: AlbumCollection;
+        coverGap: number;
+        coverSize: number;
+        filterText: string;
+        showDetails: boolean;
+    };
+    tracks: {
         coverGap: number;
         coverSize: number;
         filterText: string;
@@ -100,6 +114,12 @@ const initialState: UserSettingsState = {
         filterText: getLocalStorageValue(LSKEY_ALBUMS_FILTER_TEXT, DEFAULT_ALBUMS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
     },
+    tracks: {
+        coverGap: getLocalStorageValue(LSKEY_TRACKS_COVER_GAP, DEFAULT_TRACKS_COVER_GAP),
+        coverSize: getLocalStorageValue(LSKEY_TRACKS_COVER_SIZE, DEFAULT_TRACKS_COVER_SIZE),
+        filterText: getLocalStorageValue(LSKEY_TRACKS_FILTER_TEXT, DEFAULT_TRACKS_FILTER_TEXT),
+        showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
+    },
     nowPlaying: {
         activeTab: getLocalStorageValue(LSKEY_NOWPLAYING_ACTIVETAB, DEFAULT_NOWPLAYING_ACTIVETAB),
     },
@@ -123,14 +143,20 @@ export const userSettingsSlice = createSlice({
     name: "userSettings",
     initialState,
     reducers: {
-        setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
-            state.application.theme = action.payload;
-        },
         resetAlbumsToDefaults: (state) => {
-            state.albums.filterText = DEFAULT_ALBUMS_FILTER_TEXT;
             state.albums.coverSize = DEFAULT_ALBUMS_COVER_SIZE;
             state.albums.coverGap = DEFAULT_ALBUMS_COVER_GAP;
             state.albums.showDetails = DEFAULT_ALBUMS_SHOW_DETAILS;
+        },
+        resetPresetsToDefaults: (state) => {
+            state.presets.cardSize = DEFAULT_PRESETS_CARD_SIZE;
+            state.presets.cardGap = DEFAULT_PRESETS_CARD_GAP;
+            state.presets.showDetails = DEFAULT_PRESETS_SHOW_DETAILS;
+        },
+        resetTracksToDefaults: (state) => {
+            state.tracks.coverSize = DEFAULT_TRACKS_COVER_SIZE;
+            state.tracks.coverGap = DEFAULT_TRACKS_COVER_GAP;
+            state.tracks.showDetails = DEFAULT_TRACKS_SHOW_DETAILS;
         },
         setAlbumsActiveCollection: (state, action: PayloadAction<AlbumCollection>) => {
             state.albums.activeCollection = action.payload;
@@ -147,6 +173,9 @@ export const userSettingsSlice = createSlice({
         setAlbumsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.albums.showDetails = action.payload;
         },
+        setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
+            state.application.theme = action.payload;
+        },
         setNowPlayingActiveTab: (state, action: PayloadAction<NowPlayingTab>) => {
             state.nowPlaying.activeTab = action.payload;
         },
@@ -156,10 +185,17 @@ export const userSettingsSlice = createSlice({
         setPlaylistViewMode: (state, action: PayloadAction<PlaylistViewMode>) => {
             state.playlist.viewMode = action.payload;
         },
-        resetPresetsToDefaults: (state) => {
-            state.presets.cardSize = DEFAULT_PRESETS_CARD_SIZE;
-            state.presets.cardGap = DEFAULT_PRESETS_CARD_GAP;
-            state.presets.showDetails = DEFAULT_PRESETS_SHOW_DETAILS;
+        setTracksCoverGap: (state, action: PayloadAction<number>) => {
+            state.tracks.coverGap = action.payload;
+        },
+        setTracksCoverSize: (state, action: PayloadAction<number>) => {
+            state.tracks.coverSize = action.payload;
+        },
+        setTracksFilterText: (state, action: PayloadAction<string>) => {
+            state.tracks.filterText = action.payload;
+        },
+        setTracksShowDetails: (state, action: PayloadAction<boolean>) => {
+            state.tracks.showDetails = action.payload;
         },
         setPresetsCardGap: (state, action: PayloadAction<number>) => {
             state.presets.cardGap = action.payload;
@@ -175,20 +211,25 @@ export const userSettingsSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const {
-    setApplicationTheme,
     resetAlbumsToDefaults,
-    setAlbumsActiveCollection,
     resetPresetsToDefaults,
+    resetTracksToDefaults,
+    setAlbumsActiveCollection,
     setAlbumsCoverGap,
     setAlbumsCoverSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
+    setApplicationTheme,
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
     setPlaylistViewMode,
     setPresetsCardGap,
     setPresetsCardSize,
     setPresetsShowDetails,
+    setTracksCoverGap,
+    setTracksCoverSize,
+    setTracksFilterText,
+    setTracksShowDetails,
 } = userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;
