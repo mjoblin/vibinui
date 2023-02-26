@@ -28,6 +28,7 @@ import StandbyMode from "../shared/StandbyMode";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
 import { yearFromDate } from "../../app/utils";
 import { Track } from "../../app/types";
+import GlowTitle from "../shared/GlowTitle";
 
 export type NowPlayingTab = "links" | "lyrics" | "waveform";
 
@@ -105,10 +106,12 @@ const NowPlayingScreen: FC = () => {
         if (getTrackResult.isSuccess) {
             const track = getTrackResult.data as Track;
             const year = track.date && yearFromDate(track.date);
-            let genre = track.genre !== "Unknown" ? track.genre?.toLocaleUpperCase() : undefined;
+            let genre =
+                track.genre !== "Unknown" && track.genre !== "(Unknown Genre)"
+                    ? track.genre?.toLocaleUpperCase()
+                    : undefined;
 
-            let result = year ? `${year} • ` : "";
-            result = genre ? `${result}${genre}` : result;
+            let result = [year, genre].filter(value => value !== undefined).join(" • ");
 
             setTrackYearAndGenre(result);
         }
@@ -134,12 +137,20 @@ const NowPlayingScreen: FC = () => {
 
     // @ts-ignore
     return (
-        <Flex gap={30} pt={10}>
+        <Flex gap={30} pt={7}>
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth}>
+                <GlowTitle>Now Playing</GlowTitle>
+
                 <Stack spacing="xs">
-                    <Flex justify="flex-end">
+                    <Flex justify="space-between">
                         <MediaSourceBadge />
+
+                        {trackYearAndGenre && (
+                            <Text size="xs" color="grey" weight="bold">
+                                {trackYearAndGenre}
+                            </Text>
+                        )}
                     </Flex>
 
                     <AlbumArt artUri={currentTrack.art_url} size={albumArtWidth} radius={5} />
@@ -155,21 +166,14 @@ const NowPlayingScreen: FC = () => {
 
             {/* RHS stack: Track name, album, artist, and tabs */}
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
-                <Stack spacing="xs">
-                    <Text size={28} weight="bold" lh={1}>
-                        {currentTrack.title || "-"}
-                    </Text>
+                <Stack spacing={5}>
+                    <GlowTitle>{currentTrack.title || "-"}</GlowTitle>
                     <FieldValueList
                         fieldValues={{
                             Artist: currentTrack.artist,
                             Album: currentTrack.album,
                         }}
                     />
-                    {trackYearAndGenre && (
-                        <Text size="xs" color="grey" weight="bold">
-                            {trackYearAndGenre}
-                        </Text>
-                    )}
                 </Stack>
 
                 {/* Tabs */}

@@ -35,6 +35,9 @@ export const vibinTracksApi = createApi({
         getTrackById: builder.query<Track, MediaId>({
             query: (trackId) => trackId,
         }),
+        getTracks: builder.query<Track[], void>({
+            query: () => "",
+        }),
         // TODO: Have return type handle JSON and binary waveform data types.
         getWaveform: builder.query<
             any,
@@ -62,6 +65,7 @@ export const {
     useGetLinksQuery,
     useGetLyricsQuery,
     useGetTrackByIdQuery,
+    useGetTracksQuery,
     useGetWaveformQuery,
     useLazyGetTrackByIdQuery,
 } = vibinTracksApi;

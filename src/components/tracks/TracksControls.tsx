@@ -3,9 +3,7 @@ import {
     Box,
     Button,
     Checkbox,
-    createStyles,
     Flex,
-    Select,
     Slider,
     Stack,
     Text,
@@ -15,59 +13,40 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-    AlbumCollection,
     minCoverGap,
     maxCoverGap,
     minCoverSize,
     maxCoverSize,
-    resetAlbumsToDefaults,
-    setAlbumsActiveCollection,
-    setAlbumsCoverGap,
-    setAlbumsCoverSize,
-    setAlbumsFilterText,
-    setAlbumsShowDetails,
+    resetTracksToDefaults,
+    setTracksCoverGap,
+    setTracksCoverSize,
+    setTracksFilterText,
+    setTracksShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
+import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import GlowTitle from "../shared/GlowTitle";
 
-const AlbumsControls: FC = () => {
+const TracksControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const { data: allAlbums } = useGetAlbumsQuery();
-    const { data: newAlbums } = useGetNewAlbumsQuery();
-    const { activeCollection, coverSize, coverGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
+    const { data: allTracks } = useGetTracksQuery();
+    const { coverSize, coverGap, filterText, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.tracks
     );
-    const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.albums);
-
-    // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
-    //  the tops of components to get them to look OK.
+    const { filteredTrackCount } = useAppSelector((state: RootState) => state.internal.tracks);
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Albums</GlowTitle>
-
-            {/* Active collection */}
-            <Select
-                label="Show"
-                value={activeCollection}
-                data={[
-                    { value: "all", label: "All Albums" },
-                    { value: "new", label: "New Albums" },
-                ]}
-                onChange={(value) =>
-                    value && dispatch(setAlbumsActiveCollection(value as AlbumCollection))
-                }
-            />
+            <GlowTitle>Tracks</GlowTitle>
 
             {/* Filter text */}
-            {/* TODO: Consider debouncing setAlbumsFilterText() if performance is an issue */}
+            {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
                 value={filterText}
-                onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
+                onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
             />
 
             {/* Cover size */}
@@ -83,7 +62,7 @@ const AlbumsControls: FC = () => {
                     size={5}
                     sx={{ width: 200 }}
                     value={coverSize}
-                    onChange={(value) => dispatch(setAlbumsCoverSize(value))}
+                    onChange={(value) => dispatch(setTracksCoverSize(value))}
                 />
             </Stack>
 
@@ -99,7 +78,7 @@ const AlbumsControls: FC = () => {
                     size={5}
                     sx={{ width: 200 }}
                     value={coverGap}
-                    onChange={(value) => dispatch(setAlbumsCoverGap(value))}
+                    onChange={(value) => dispatch(setTracksCoverGap(value))}
                 />
             </Stack>
 
@@ -107,7 +86,7 @@ const AlbumsControls: FC = () => {
                 <Checkbox
                     label="Show details"
                     checked={showDetails}
-                    onChange={(event) => dispatch(setAlbumsShowDetails(!showDetails))}
+                    onChange={(event) => dispatch(setTracksShowDetails(!showDetails))}
                 />
             </Box>
 
@@ -118,7 +97,7 @@ const AlbumsControls: FC = () => {
                         compact
                         variant="outline"
                         size="xs"
-                        onClick={() => dispatch(resetAlbumsToDefaults())}
+                        onClick={() => dispatch(resetTracksToDefaults())}
                     >
                         Reset
                     </Button>
@@ -131,9 +110,9 @@ const AlbumsControls: FC = () => {
                         variant="outline"
                         size="xs"
                         onClick={() => {
-                            dispatch(setAlbumsCoverGap(minCoverGap));
-                            dispatch(setAlbumsCoverSize(minCoverSize));
-                            dispatch(setAlbumsShowDetails(false));
+                            dispatch(setTracksCoverGap(minCoverGap));
+                            dispatch(setTracksCoverSize(minCoverSize));
+                            dispatch(setTracksShowDetails(false));
                         }}
                     >
                         Tiny Wall
@@ -141,26 +120,26 @@ const AlbumsControls: FC = () => {
                 </Box>
             </Flex>
 
-            {/* "Showing x of y albums" */}
+            {/* "Showing x of y tracks" */}
             <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 <Text size="xs" color={colors.gray[6]}>
                     Showing
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {filteredAlbumCount}
+                    {filteredTrackCount}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     of
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {activeCollection === "all" ? allAlbums?.length || 0 : newAlbums?.length || 0}
+                    {allTracks?.length || 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
-                    albums
+                    tracks
                 </Text>
             </Flex>
         </Flex>
     );
 };
 
-export default AlbumsControls;
+export default TracksControls;

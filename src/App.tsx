@@ -12,6 +12,7 @@ import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
+import TracksScreen from "./components/layout/TracksScreen";
 import WebsocketManager from "./components/managers/WebsocketManager";
 
 export default function App() {
@@ -34,6 +35,10 @@ export default function App() {
                 {
                     path: "albums",
                     element: <AlbumsScreen />,
+                },
+                {
+                    path: "tracks",
+                    element: <TracksScreen />,
                 },
                 {
                     path: "playlist",

@@ -13,6 +13,7 @@ import {
     setPresetsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
+import GlowTitle from "../shared/GlowTitle";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -21,7 +22,9 @@ const PresetsControls: FC = () => {
     );
 
     return (
-        <Flex gap={25}>
+        <Flex gap={25} pt={7}>
+            <GlowTitle>Presets</GlowTitle>
+
             {/* Preset size */}
             <Stack spacing={5} pt={1}>
                 {/* TODO: Figure out how to properly get <Text> to match the <TextInput> label */}
