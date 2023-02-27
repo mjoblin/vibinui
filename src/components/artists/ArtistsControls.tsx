@@ -3,7 +3,9 @@ import {
     Box,
     Button,
     Checkbox,
+    createStyles,
     Flex,
+    Select,
     Slider,
     Stack,
     Text,
@@ -17,36 +19,35 @@ import {
     maxCardGap,
     minCardSize,
     maxCardSize,
-    resetTracksToDefaults,
-    setTracksCardGap,
-    setTracksCardSize,
-    setTracksFilterText,
-    setTracksShowDetails,
+    resetArtistsToDefaults,
+    setArtistsCardGap,
+    setArtistsCardSize,
+    setArtistsFilterText,
+    setArtistsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import { useGetTracksQuery } from "../../app/services/vibinTracks";
+import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import GlowTitle from "../shared/GlowTitle";
 
-const TracksControls: FC = () => {
+const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const { data: allTracks } = useGetTracksQuery();
+    const { data: allArtists } = useGetArtistsQuery();
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
+        (state: RootState) => state.userSettings.artists
     );
-    const { filteredTrackCount } = useAppSelector((state: RootState) => state.internal.tracks);
+    const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Tracks</GlowTitle>
+            <GlowTitle>Artists</GlowTitle>
 
             {/* Filter text */}
-            {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
                 value={filterText}
-                onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
+                onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
             />
 
             {/* Cover size */}
@@ -62,7 +63,7 @@ const TracksControls: FC = () => {
                     size={5}
                     sx={{ width: 200 }}
                     value={cardSize}
-                    onChange={(value) => dispatch(setTracksCardSize(value))}
+                    onChange={(value) => dispatch(setArtistsCardSize(value))}
                 />
             </Stack>
 
@@ -78,7 +79,7 @@ const TracksControls: FC = () => {
                     size={5}
                     sx={{ width: 200 }}
                     value={cardGap}
-                    onChange={(value) => dispatch(setTracksCardGap(value))}
+                    onChange={(value) => dispatch(setArtistsCardGap(value))}
                 />
             </Stack>
 
@@ -86,7 +87,7 @@ const TracksControls: FC = () => {
                 <Checkbox
                     label="Show details"
                     checked={showDetails}
-                    onChange={(event) => dispatch(setTracksShowDetails(!showDetails))}
+                    onChange={(event) => dispatch(setArtistsShowDetails(!showDetails))}
                 />
             </Box>
 
@@ -97,7 +98,7 @@ const TracksControls: FC = () => {
                         compact
                         variant="outline"
                         size="xs"
-                        onClick={() => dispatch(resetTracksToDefaults())}
+                        onClick={() => dispatch(resetArtistsToDefaults())}
                     >
                         Reset
                     </Button>
@@ -110,9 +111,9 @@ const TracksControls: FC = () => {
                         variant="outline"
                         size="xs"
                         onClick={() => {
-                            dispatch(setTracksCardGap(minCardGap));
-                            dispatch(setTracksCardSize(minCardSize));
-                            dispatch(setTracksShowDetails(false));
+                            dispatch(setArtistsCardGap(minCardGap));
+                            dispatch(setArtistsCardSize(minCardSize));
+                            dispatch(setArtistsShowDetails(false));
                         }}
                     >
                         Tiny Wall
@@ -120,26 +121,26 @@ const TracksControls: FC = () => {
                 </Box>
             </Flex>
 
-            {/* "Showing x of y tracks" */}
+            {/* "Showing x of y albums" */}
             <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 <Text size="xs" color={colors.gray[6]}>
                     Showing
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {filteredTrackCount}
+                    {filteredArtistCount}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     of
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {allTracks?.length || 0}
+                    {allArtists?.length || 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
-                    tracks
+                    artists
                 </Text>
             </Flex>
         </Flex>
     );
 };
 
-export default TracksControls;
+export default ArtistsControls;

@@ -16,14 +16,14 @@ import {
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     AlbumCollection,
-    minCoverGap,
-    maxCoverGap,
-    minCoverSize,
-    maxCoverSize,
+    minCardGap,
+    maxCardGap,
+    minCardSize,
+    maxCardSize,
     resetAlbumsToDefaults,
     setAlbumsActiveCollection,
-    setAlbumsCoverGap,
-    setAlbumsCoverSize,
+    setAlbumsCardGap,
+    setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
 } from "../../app/store/userSettingsSlice";
@@ -36,7 +36,7 @@ const AlbumsControls: FC = () => {
     const { colors } = useMantineTheme();
     const { data: allAlbums } = useGetAlbumsQuery();
     const { data: newAlbums } = useGetNewAlbumsQuery();
-    const { activeCollection, coverSize, coverGap, filterText, showDetails } = useAppSelector(
+    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
     const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.albums);
@@ -78,12 +78,12 @@ const AlbumsControls: FC = () => {
                 </Text>
                 <Slider
                     label={null}
-                    min={minCoverSize}
-                    max={maxCoverSize}
+                    min={minCardSize}
+                    max={maxCardSize}
                     size={5}
                     sx={{ width: 200 }}
-                    value={coverSize}
-                    onChange={(value) => dispatch(setAlbumsCoverSize(value))}
+                    value={cardSize}
+                    onChange={(value) => dispatch(setAlbumsCardSize(value))}
                 />
             </Stack>
 
@@ -94,12 +94,12 @@ const AlbumsControls: FC = () => {
                 </Text>
                 <Slider
                     label={null}
-                    min={minCoverGap}
-                    max={maxCoverGap}
+                    min={minCardGap}
+                    max={maxCardGap}
                     size={5}
                     sx={{ width: 200 }}
-                    value={coverGap}
-                    onChange={(value) => dispatch(setAlbumsCoverGap(value))}
+                    value={cardGap}
+                    onChange={(value) => dispatch(setAlbumsCardGap(value))}
                 />
             </Stack>
 
@@ -131,8 +131,8 @@ const AlbumsControls: FC = () => {
                         variant="outline"
                         size="xs"
                         onClick={() => {
-                            dispatch(setAlbumsCoverGap(minCoverGap));
-                            dispatch(setAlbumsCoverSize(minCoverSize));
+                            dispatch(setAlbumsCardGap(minCardGap));
+                            dispatch(setAlbumsCardSize(minCardSize));
                             dispatch(setAlbumsShowDetails(false));
                         }}
                     >

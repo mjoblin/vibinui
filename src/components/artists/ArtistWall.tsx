@@ -1,0 +1,85 @@
+import React, { FC } from "react";
+import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
+
+import type { RootState } from "../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useGetArtistsQuery } from "../../app/services/vibinArtists";
+import { setFilteredArtistCount } from "../../app/store/internalSlice";
+import ArtistCard from "./ArtistCard";
+import SadLabel from "../shared/SadLabel";
+
+const ArtistWall: FC = () => {
+    const dispatch = useAppDispatch();
+    const { cardSize, cardGap, filterText } = useAppSelector(
+        (state: RootState) => state.userSettings.artists
+    );
+    const { data: allArtists, error, isLoading } = useGetArtistsQuery();
+
+    const { classes: dynamicClasses } = createStyles((theme) => ({
+        artistWall: {
+            display: "grid",
+            gap: cardGap,
+            gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
+            paddingBottom: 15,
+        },
+    }))();
+
+    if (isLoading) {
+        return (
+            <Center>
+                <Loader size="sm" />
+                <Text size={14} weight="bold" pl={10}>
+                    Retrieving artists...
+                </Text>
+            </Center>
+        );
+    }
+
+    if (error) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="Could not retrieve artist details" />
+            </Center>
+        );
+    }
+
+    if (!allArtists || allArtists.length <= 0) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="No Artists available" />
+            </Center>
+        );
+    }
+
+    const artistsToDisplay = allArtists.filter((artist) => {
+        if (filterText === "") {
+            return true;
+        }
+
+        const filterValueLower = filterText.toLowerCase();
+
+        return (
+            artist.title.toLowerCase().includes(filterValueLower)
+        );
+    });
+
+    dispatch(setFilteredArtistCount(artistsToDisplay.length));
+
+    if (artistsToDisplay.length <= 0) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="No matching Tracks" />
+            </Center>
+        );
+    }
+
+    return (
+        <Box className={dynamicClasses.artistWall}>
+            {artistsToDisplay.map((artist) => (
+                <ArtistCard key={artist.id} artist={artist} />
+            ))}
+        </Box>
+    );
+};
+
+export default ArtistWall;

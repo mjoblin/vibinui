@@ -13,14 +13,14 @@ const TrackWall: FC = () => {
     const dispatch = useAppDispatch();
     const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
-    const { coverSize, coverGap } = useAppSelector((state: RootState) => state.userSettings.tracks);
+    const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.tracks);
     const { data: allTracks, error, isLoading } = useGetTracksQuery();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         trackWall: {
             display: "grid",
-            gap: coverGap,
-            gridTemplateColumns: `repeat(auto-fit, ${coverSize}px)`,
+            gap: cardGap,
+            gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
             paddingBottom: 15,
         },
     }))();

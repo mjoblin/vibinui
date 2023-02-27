@@ -15,7 +15,7 @@ type TrackCardProps = {
 
 const TrackCard: FC<TrackCardProps> = ({ track }) => {
     const dispatch = useAppDispatch();
-    const { coverSize, showDetails } = useAppSelector(
+    const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
     const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.trackCard);
@@ -29,7 +29,7 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         trackCard: {
-            width: coverSize,
+            width: cardSize,
             border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();
@@ -58,7 +58,7 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
                     })
                 );
         }
-    }, [cardRef, isVisible, coverSize, showDetails]);
+    }, [cardRef, isVisible, cardSize, showDetails]);
 
     const trackYear = track.date && yearFromDate(track.date);
 
@@ -90,7 +90,7 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
                             <TrackArt
                                 track={track}
                                 // actionCategories={["Tracks", "Playlist"]}
-                                size={coverSize - borderSize * 2}
+                                size={cardSize - borderSize * 2}
                                 radius={5}
                                 onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                                 onActionsMenuClosed={() => setIsActionsMenuOpen(false)}

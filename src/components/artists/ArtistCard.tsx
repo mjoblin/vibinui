@@ -2,24 +2,23 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { Card, createStyles, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
-import { Album } from "../../app/types";
+import { Artist } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { setAlbumCardRenderDimensions } from "../../app/store/internalSlice";
+import { setTrackCardRenderDimensions } from "../../app/store/internalSlice";
 import { yearFromDate } from "../../app/utils";
-import AlbumArt from "./AlbumArt";
-import AlbumTracksModal from "../tracks/AlbumTracksModal";
+import ArtistArt from "./ArtistArt";
 
-type AlbumCardProps = {
-    album: Album;
+type ArtistCardProps = {
+    artist: Artist;
 };
 
-const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
+const ArtistCard: FC<ArtistCardProps> = ({ artist }) => {
     const dispatch = useAppDispatch();
     const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
+        (state: RootState) => state.userSettings.artists
     );
-    const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.albumCard);
+    const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.artistCard);
     const { colors } = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
@@ -29,20 +28,20 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        albumCard: {
+        artistCard: {
             width: cardSize,
             border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();
 
     /**
-     * For visible AlbumCards, we want to store their width and height in application state. We do
-     * this so the "last rendered" width and height can be used by not-visible AlbumCards to render
+     * For visible TrackCards, we want to store their width and height in application state. We do
+     * this so the "last rendered" width and height can be used by not-visible TrackCards to render
      * an appropriately-sized empty box.
      *
-     * The goal is render performance. The idea is to only fully render the AlbumCards currently
-     * visible, while doing a quick empty-container render for not-visible AlbumCards. Not-visible
-     * AlbumCards need their container to be rendered at roughly the correct size to ensure
+     * The goal is render performance. The idea is to only fully render the TrackCards currently
+     * visible, while doing a quick empty-container render for not-visible TrackCards. Not-visible
+     * TrackCards need their container to be rendered at roughly the correct size to ensure
      * scrolling (and scrollbar height) works as expected by the user.
      */
     useEffect(() => {
@@ -53,7 +52,7 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
             newRenderWidth !== latestVisibleRenderSize.renderWidth &&
                 newRenderHeight !== latestVisibleRenderSize.renderHeight &&
                 dispatch(
-                    setAlbumCardRenderDimensions({
+                    setTrackCardRenderDimensions({
                         width: newRenderWidth,
                         height: newRenderHeight,
                     })
@@ -61,11 +60,9 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
         }
     }, [cardRef, isVisible, cardSize, showDetails]);
 
-    const albumYear = yearFromDate(album.date);
-
     return (
         // The visibility offset top/bottom is somewhat arbitrary. The goal is to pre-load enough
-        // off-screen AlbumCards to reduce flickering when scrolling (as the art loads/renders).
+        // off-screen TrackCards to reduce flickering when scrolling (as the art loads/renders).
         // Specifying too-big an offset however will result in laggier performance due to the
         // number of cards being rendered.
         <VisibilitySensor
@@ -82,15 +79,15 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                         radius="sm"
                         p={7}
                         pb={showDetails ? 7 : 0}
-                        className={dynamicClasses.albumCard}
+                        className={dynamicClasses.artistCard}
                     >
-                        {/* Album art with play/action controls */}
+                        {/* Track art with play/action controls */}
                         <Card.Section
                             onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}
                         >
-                            <AlbumArt
-                                album={album}
-                                actionCategories={["Tracks", "Playlist"]}
+                            <ArtistArt
+                                artist={artist}
+                                // actionCategories={["Tracks", "Playlist"]}
                                 size={cardSize - borderSize * 2}
                                 radius={5}
                                 onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
@@ -98,28 +95,14 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                             />
                         </Card.Section>
 
-                        {/* Album title, artist, year, genre */}
+                        {/* Artist title (name) */}
                         {showDetails && (
                             <Stack spacing={0} pt={7}>
                                 <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
-                                    {album.title}
-                                </Text>
-                                <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
-                                    {`${album.artist}${
-                                        albumYear ? `${album.artist ? " • " : ""}${albumYear}` : ""
-                                    }`}
-                                </Text>
-                                <Text size={11} color="grey" weight="bold" sx={{ lineHeight: 1.25 }}>
-                                    {album.genre === "Unknown" ? "" : album.genre.toLocaleUpperCase()}
+                                    {artist.title}
                                 </Text>
                             </Stack>
                         )}
-
-                        <AlbumTracksModal
-                            album={album}
-                            opened={showTracksModal}
-                            onClose={() => setShowTracksModal(false)}
-                        />
                     </Card>
                 ) : (
                     <div
@@ -135,4 +118,4 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     );
 };
 
-export default AlbumCard;
+export default ArtistCard;

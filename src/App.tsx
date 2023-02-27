@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
 import RootLayout from "./components/layout/RootLayout";
 import AlbumsScreen from "./components/layout/AlbumsScreen";
+import ArtistsScreen from "./components/layout/ArtistsScreen";
 import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
@@ -39,6 +40,10 @@ export default function App() {
                 {
                     path: "tracks",
                     element: <TracksScreen />,
+                },
+                {
+                    path: "artists",
+                    element: <ArtistsScreen />,
                 },
                 {
                     path: "playlist",
