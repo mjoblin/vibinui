@@ -18,7 +18,9 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
-    const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.trackCard);
+    const latestVisibleRenderSize = useAppSelector(
+        (state: RootState) => state.internal.tracks.trackCard
+    );
     const { colors } = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);

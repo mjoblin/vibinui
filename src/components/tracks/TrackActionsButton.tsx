@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import {
     IconCornerDownRight,
     IconCornerDownRightDouble,
@@ -12,6 +11,7 @@ import {
 
 import { Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
+import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
@@ -64,11 +64,9 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
-            showNotification({
-                color: "red",
+            showErrorNotification({
                 title: "Error updating Playlist",
                 message: `[${status}] ${data}`,
-                autoClose: false,
             });
         }
     }, [addStatus]);
@@ -109,7 +107,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                                     action: "REPLACE",
                                 });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: `Replaced Playlist with Track`,
                                     message: track.title,
                                 });
@@ -125,7 +123,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                                     action: "PLAY_NOW",
                                 });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: `Track inserted into Playlist and now playing`,
                                     message: track.title,
                                 });
@@ -141,7 +139,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                                     action: "PLAY_NEXT",
                                 });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: `Track inserted next in Playlist`,
                                     message: track.title,
                                 });
@@ -154,7 +152,7 @@ const TrackActionsButton: FC<TrackActionsButtonProps> = ({
                             onClick={() => {
                                 addMediaToPlaylist({ mediaId: track.id!!, action: "APPEND" });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: `Track appended to end of Playlist`,
                                     message: track.title,
                                 });

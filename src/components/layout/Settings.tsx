@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef, useState } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import {
     ActionIcon,
     Box,
@@ -14,7 +14,7 @@ import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useLazyPowerToggleQuery } from "../../app/services/vibinSystem";
-import { setShowDebugPanel, setShowHotkeys } from "../../app/store/internalSlice";
+import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { PowerStatus } from "../../app/store/systemSlice";
 
 const Settings: FC = () => {
@@ -31,7 +31,7 @@ const Settings: FC = () => {
         }
 
         showNotification({
-            title: `Streamer Power`,
+            title: "Streamer Power",
             color: streamer.power === "on" ? "green" : "yellow",
             message: streamer.power
                 ? `Streamer has been powered ${streamer.power}`
@@ -65,15 +65,15 @@ const Settings: FC = () => {
                 <Menu.Label>Application</Menu.Label>
                 <Menu.Item
                     icon={<IconKeyboard size={14} />}
-                    onClick={() => dispatch(setShowHotkeys())}
+                    onClick={() => dispatch(setShowKeyboardShortcuts())}
                 >
-                    Show Hotkeys...
+                    Keyboard Shortcuts...
                 </Menu.Item>
                 <Menu.Item
                     icon={<IconBug size={14} />}
                     onClick={() => dispatch(setShowDebugPanel())}
                 >
-                    Show Debug panel...
+                    Debug panel...
                 </Menu.Item>
                 <Menu.Item>
                     <SegmentedControl

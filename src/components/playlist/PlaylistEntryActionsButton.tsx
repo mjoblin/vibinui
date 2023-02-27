@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import {
     IconArrowBarToDown,
     IconArrowBarToUp,
@@ -17,6 +16,7 @@ import {
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../app/services/vibinPlaylist";
+import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 
 const useStyles = createStyles((theme) => ({
     button: {
@@ -75,14 +75,12 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
         if (moveEntryStatus.isError || deleteStatus.isError || playStatus.isError) {
             const { status, data } = moveEntryStatus.error as FetchBaseQueryError;
 
-            showNotification({
-                color: "red",
+            showErrorNotification({
                 title:
                     moveEntryStatus.isError || deleteStatus.isError
                         ? "Error updating Playlist"
                         : "Error playing Entry",
                 message: `[${status}] ${data}`,
-                autoClose: false,
             });
         }
     }, [moveEntryStatus, deleteStatus, playStatus]);
@@ -129,7 +127,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             onClick={() => {
                                 deletePlaylistId({ playlistId: entry.id });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: "Entry removed from Playlist",
                                     message: entry.title,
                                 });
@@ -148,8 +146,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                     toIndex: 0,
                                 });
 
-                                showNotification({
-                                    title: `Entry moved to top of Playlist`,
+                                showSuccessNotification({
+                                    title: "Entry moved to top of Playlist",
                                     message: entry.title,
                                 });
                             }}
@@ -172,7 +170,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                     toIndex: newIndex,
                                 });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: `Entry moved to play next (#${newIndex + 1})`,
                                     message: entry.title,
                                 });
@@ -189,7 +187,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                     toIndex: entryCount - 1,
                                 });
 
-                                showNotification({
+                                showSuccessNotification({
                                     title: "Entry moved to bottom of Playlist",
                                     message: entry.title,
                                 });

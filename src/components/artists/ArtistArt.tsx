@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Flex, Image } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { Artist } from "../../app/types";
@@ -9,6 +8,7 @@ import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist"
 import MediaActionsButton from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
+import { showErrorNotification } from "../../app/utils";
 
 // NOTE: TrackArt and AlbumArt are very similar.
 
@@ -83,10 +83,9 @@ const ArtistArt: FC<ArtistArtProps> = ({
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
-            showNotification({
+            showErrorNotification({
                 title: "Error replacing Playlist",
                 message: `[${status}] ${data}`,
-                autoClose: false,
             });
         }
     }, [addStatus]);
