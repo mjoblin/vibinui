@@ -1,19 +1,18 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect } from "react";
 import {
     ActionIcon,
+    Button,
     Center,
     createStyles,
-    Dialog,
     Flex,
+    Popover,
     SegmentedControl,
     Stack,
     Table,
     Text,
     TextInput,
-    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { IconTrash } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -23,7 +22,7 @@ import {
 } from "../../app/services/vibinStoredPlaylists";
 import { RootState } from "../../app/store/store";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { epochSecondsToString } from "../../app/utils";
+import { epochSecondsToString, showErrorNotification, showSuccessNotification } from "../../app/utils";
 import {
     PlaylistEditorSortField,
     setPlaylistEditorSortField,
@@ -55,25 +54,16 @@ const StoredPlaylistsEditor: FC = () => {
     const [deleteStoredPlaylist, deleteStoredPlaylistStatus] = useLazyDeleteStoredPlaylistQuery();
     const [updateStoredPlaylistName, updateStoredPlaylistNameStatus] =
         useLazyUpdateStoredPlaylistNameQuery();
-    const [showNameNewPlaylistDialog, setShowNameNewPlaylistDialog] = useState<boolean>(false);
 
     useEffect(() => {
         if (updateStoredPlaylistNameStatus.isSuccess) {
-            showNotification({
-                title: "Stored Playlist renamed",
-                message:
-                    storedPlaylists.find(
-                        (storedPlaylist) => storedPlaylist.id === activeStoredPlaylistId
-                    )?.name || "Unknown name",
-            });
+            // TODO: Consider adding playlist name here
+            showSuccessNotification({ message: "Playlist renamed" });
         } else if (updateStoredPlaylistNameStatus.isError) {
             const { status, data } = updateStoredPlaylistNameStatus.error as FetchBaseQueryError;
-
-            showNotification({
-                title: "Error updating Stored Playlist",
+            showErrorNotification({
+                title: "Error updating Playlist",
                 message: `[${status}] ${JSON.stringify(data)}`,
-                color: "red",
-                autoClose: false,
             });
         }
     }, [
@@ -81,6 +71,13 @@ const StoredPlaylistsEditor: FC = () => {
         updateStoredPlaylistNameStatus.isError,
         storedPlaylists,
     ]);
+
+    useEffect(() => {
+        if (deleteStoredPlaylistStatus.isSuccess) {
+            // TODO: Consider adding playlist name here
+            showSuccessNotification({ message: "Playlist deleted" });
+        }
+    }, [deleteStoredPlaylistStatus.isSuccess])
 
     const storedPlaylistRows =
         storedPlaylists && storedPlaylists.length > 0
@@ -105,6 +102,9 @@ const StoredPlaylistsEditor: FC = () => {
                                       defaultValue={storedPlaylist.name}
                                       onBlur={(event) =>
                                           event.target.value !== storedPlaylist.name &&
+                                          !storedPlaylists
+                                              .map((playlist) => playlist.name)
+                                              .includes(event.target.value) &&
                                           updateStoredPlaylistName({
                                               storedPlaylistId: storedPlaylist.id,
                                               name: event.target.value,
@@ -123,23 +123,46 @@ const StoredPlaylistsEditor: FC = () => {
                                   </Text>
                               </td>
                               <td>
+                                  {/* Delete Playlist */}
                                   <Center>
-                                      <Tooltip label="Delete Stored Playlist" position="bottom">
-                                          <ActionIcon
-                                              variant="subtle"
-                                              disabled={
-                                                  storedPlaylist.id === activeStoredPlaylistId
-                                              }
-                                          >
-                                              <IconTrash
-                                                  size={16}
-                                                  color={colors.gray[6]}
-                                                  onClick={() =>
-                                                      deleteStoredPlaylist(storedPlaylist.id)
+                                      <Popover
+                                          position="bottom"
+                                          withArrow
+                                          arrowPosition="center"
+                                          disabled={storedPlaylist.id === activeStoredPlaylistId}
+                                      >
+                                          <Popover.Target>
+                                              <ActionIcon
+                                                  variant="subtle"
+                                                  disabled={
+                                                      storedPlaylist.id === activeStoredPlaylistId
                                                   }
-                                              />
-                                          </ActionIcon>
-                                      </Tooltip>
+                                              >
+                                                  <IconTrash size={16} color={colors.gray[6]} />
+                                              </ActionIcon>
+                                          </Popover.Target>
+                                          <Popover.Dropdown>
+                                              <Stack align="center">
+                                                  <Flex gap={5}>
+                                                      <Text>Delete Playlist</Text>
+                                                      <Text weight="bold">
+                                                          {storedPlaylist.name}
+                                                      </Text>
+                                                      <Text>?</Text>
+                                                  </Flex>
+
+                                                  <Button
+                                                      size="xs"
+                                                      maw="6rem"
+                                                      onClick={() =>
+                                                          deleteStoredPlaylist(storedPlaylist.id)
+                                                      }
+                                                  >
+                                                      Delete
+                                                  </Button>
+                                              </Stack>
+                                          </Popover.Dropdown>
+                                      </Popover>
                                   </Center>
                               </td>
                           </tr>
@@ -192,15 +215,6 @@ const StoredPlaylistsEditor: FC = () => {
                 </thead>
                 <tbody>{storedPlaylistRows}</tbody>
             </Table>
-
-            <Dialog
-                opened={showNameNewPlaylistDialog}
-                position={{ top: 100 }}
-                onClose={() => setShowNameNewPlaylistDialog(false)}
-            >
-                {/* TODO: Figure out why autoFocus isn't doing anything */}
-                <TextInput label="Playlist Name" autoFocus />
-            </Dialog>
         </Stack>
     );
 };

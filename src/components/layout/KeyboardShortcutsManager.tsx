@@ -5,57 +5,70 @@ import { useHotkeys } from "@mantine/hooks";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import {
+    useNextTrackMutation,
     usePauseMutation,
     usePlayMutation,
+    usePreviousTrackMutation,
     useSeekMutation,
 } from "../../app/services/vibinTransport";
 import FieldValueList from "../fieldValueList/FieldValueList";
-import { setShowHotkeys } from "../../app/store/internalSlice";
+import { setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 
 const SEEK_OFFSET_SECS = 10;
 
-const HotkeyManager: FC = () => {
+const KeyboardShortcutsManager: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const { showHotkeys } = useAppSelector((state: RootState) => state.internal.application);
+    const { showKeyboardShortcuts } = useAppSelector(
+        (state: RootState) => state.internal.application
+    );
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const duration = useAppSelector((state: RootState) => state.playback.current_track?.duration);
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
+    const [nextTrack] = useNextTrackMutation();
+    const [previousTrack] = usePreviousTrackMutation();
     const [seek] = useSeekMutation();
 
     useHotkeys([
-        ["h", () => dispatch(setShowHotkeys(!showHotkeys))],
+        ["shift+?", () => dispatch(setShowKeyboardShortcuts(!showKeyboardShortcuts))],
         ["j", () => seek(Math.max(position - SEEK_OFFSET_SECS, 0))],
         ["k", () => (playStatus === "play" ? pausePlayback() : resumePlayback())],
         ["l", () => duration && seek(Math.min(position + SEEK_OFFSET_SECS, duration))],
+        [",", () => previousTrack()],
+        [".", () => nextTrack()],
     ]);
 
-    return showHotkeys ? (
+    return showKeyboardShortcuts ? (
         <Modal
-            opened={showHotkeys}
+            opened={showKeyboardShortcuts}
             centered
-            title="Hotkeys"
+            title="Keyboard Shortcuts"
             overlayBlur={1}
-            onClose={() => dispatch(setShowHotkeys(false))}
+            onClose={() => dispatch(setShowKeyboardShortcuts(false))}
         >
             <Stack spacing="md">
                 <Paper p="md" radius={5} withBorder>
                     <Stack spacing="sm">
                         <Stack spacing={0}>
-                            <Text weight="bold">Playback</Text>
+                            <Text weight="bold" transform="uppercase">
+                                Playback
+                            </Text>
                             <Text fz="xs" c="dimmed">
                                 Control the playhead during playback
                             </Text>
                         </Stack>
                         <FieldValueList
                             fieldValues={{
-                                J: `Seek back ${SEEK_OFFSET_SECS} seconds`,
-                                K: "Play/Pause",
-                                L: `Seek forwards ${SEEK_OFFSET_SECS} seconds`,
+                                j: `Seek back ${SEEK_OFFSET_SECS} seconds`,
+                                k: "Play/Pause",
+                                l: `Seek forwards ${SEEK_OFFSET_SECS} seconds`,
+                                ",": "Previous track",
+                                ".": "Next track",
                             }}
                             columnGap={10}
+                            keyFontFamily="courier"
                             keySize={16}
                             keyWeight="bold"
                             keyColor={colors.gray[1]}
@@ -69,15 +82,17 @@ const HotkeyManager: FC = () => {
                 <Paper p="md" radius={5} withBorder>
                     <Stack spacing="sm">
                         <Stack spacing={0}>
-                            <Text weight="bold">Application</Text>
+                            <Text weight="bold" transform="uppercase">
+                                Application
+                            </Text>
                             <Text fz="xs" c="dimmed">
                                 Application-wide controls
                             </Text>
                         </Stack>
                         <FieldValueList
                             fieldValues={{
-                                H: `Show this Help screen`,
-                                D: `Show the Debug panel`,
+                                "?": `Show this Help screen`,
+                                d: `Show the Debug panel`,
                             }}
                             columnGap={10}
                             keySize={16}
@@ -94,4 +109,4 @@ const HotkeyManager: FC = () => {
     ) : null;
 };
 
-export default HotkeyManager;
+export default KeyboardShortcutsManager;

@@ -6,6 +6,7 @@ interface FieldValueListProps {
         [key: string]: string | number | boolean;
     };
     keySize?: number;
+    keyFontFamily?: string;
     keyColor?: string;
     keyWeight?: React.CSSProperties["fontWeight"];
     valueSize?: number;
@@ -19,6 +20,7 @@ const FieldValueList: FC<FieldValueListProps> = ({
     fieldValues,
     keySize = 14,
     keyColor,
+    keyFontFamily = "",
     keyWeight = "normal",
     valueSize = 14,
     valueColor,
@@ -32,6 +34,7 @@ const FieldValueList: FC<FieldValueListProps> = ({
         table: {
             "td:first-of-type": {
                 textAlign: "end",
+                fontFamily: keyFontFamily,
                 lineHeight: rowHeight,
                 color: keyColor || theme.colors.dark[3],
                 fontSize: keySize,

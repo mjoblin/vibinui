@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, Center, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
-import { showNotification } from "@mantine/notifications";
 import {
     IconCornerDownRight,
     IconCornerDownRightDouble,
@@ -15,6 +14,7 @@ import {
 import { Album, Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
+import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 
 export type MediaType = "album" | "track";
 export type ActionCategory = "Tracks" | "Playlist";
@@ -79,11 +79,9 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
-            showNotification({
-                color: "red",
+            showErrorNotification({
                 title: "Error updating Playlist",
                 message: `[${status}] ${data}`,
-                autoClose: false,
             });
         }
     }, [addStatus]);
@@ -155,7 +153,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                         action: "REPLACE",
                                     });
 
-                                    showNotification({
+                                    showSuccessNotification({
                                         title: `Replaced Playlist with ${mediaTypeDisplay}`,
                                         message: media.title,
                                     });
@@ -171,7 +169,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                         action: "PLAY_NOW",
                                     });
 
-                                    showNotification({
+                                    showSuccessNotification({
                                         title: `${mediaTypeDisplay} inserted into Playlist and now playing`,
                                         message: media.title,
                                     });
@@ -187,7 +185,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                         action: "PLAY_NEXT",
                                     });
 
-                                    showNotification({
+                                    showSuccessNotification({
                                         title: `${mediaTypeDisplay} inserted next in Playlist`,
                                         message: media.title,
                                     });
@@ -200,7 +198,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 onClick={() => {
                                     addMediaToPlaylist({ mediaId: media.id, action: "APPEND" });
 
-                                    showNotification({
+                                    showSuccessNotification({
                                         title: `${mediaTypeDisplay} appended to end of Playlist`,
                                         message: media.title,
                                     });

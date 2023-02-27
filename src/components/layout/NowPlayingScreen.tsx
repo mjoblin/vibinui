@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import {
     ActionIcon,
+    Box,
     Center,
     createStyles,
     Flex,
@@ -153,8 +154,10 @@ const NowPlayingScreen: FC = () => {
                         )}
                     </Flex>
 
-                    <AlbumArt artUri={currentTrack.art_url} size={albumArtWidth} radius={5} />
-                    {playStatus === "pause" && <PlaybackPaused />}
+                    <Stack>
+                        <AlbumArt artUri={currentTrack.art_url} size={albumArtWidth} radius={5} />
+                        {playStatus === "pause" && <PlaybackPaused />}
+                    </Stack>
 
                     <NowPlaying showAlbumDetails={false} />
 
@@ -167,7 +170,7 @@ const NowPlayingScreen: FC = () => {
             {/* RHS stack: Track name, album, artist, and tabs */}
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
                 <Stack spacing={5}>
-                    <GlowTitle>{currentTrack.title || "-"}</GlowTitle>
+                    <GlowTitle color="#ff7f00">{currentTrack.title || "-"}</GlowTitle>
                     <FieldValueList
                         fieldValues={{
                             Artist: currentTrack.artist,

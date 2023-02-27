@@ -1,3 +1,6 @@
+import React, { ReactNode } from "react";
+import { showNotification } from "@mantine/notifications";
+import { IconCheck, IconX } from "@tabler/icons";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -77,3 +80,52 @@ export const yearFromDate = (date: string): number | undefined => {
 
     return year;
 }
+
+interface VibinNotification {
+    id?: string;
+    title?: string;
+    message?: string;
+    icon?: ReactNode;
+    loading?: boolean;
+    autoClose?: boolean;
+}
+
+/**
+ */
+export const showSuccessNotification = ({
+    id,
+    title,
+    message,
+    icon,
+    loading = false,
+    autoClose = true,
+}: VibinNotification) =>
+    showNotification({
+        id,
+        title,
+        message,
+        color: "teal",
+        icon: icon || IconCheck({ size: 18 }),
+        loading,
+        autoClose,
+    });
+
+/**
+ */
+export const showErrorNotification = ({
+    id,
+    title,
+    message,
+    icon,
+    loading = false,
+    autoClose = false,
+}: VibinNotification) =>
+    showNotification({
+        id,
+        title,
+        message,
+        color: "red",
+        icon: icon || IconX({ size: 18 }),
+        loading,
+        autoClose,
+    });

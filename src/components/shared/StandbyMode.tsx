@@ -1,12 +1,12 @@
 import React, { FC, useEffect } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { ActionIcon, Flex, Text } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { IconPower } from "@tabler/icons";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { useLazyPowerToggleQuery } from "../../app/services/vibinSystem";
+import { showErrorNotification } from "../../app/utils";
 
 /**
  *
@@ -19,10 +19,9 @@ const StandbyMode: FC = () => {
         if (togglePowerStatus.isError) {
             const { status, data } = togglePowerStatus.error as FetchBaseQueryError;
 
-            showNotification({
+            showErrorNotification({
                 title: "Could not power on the streamer",
                 message: `[${status}] ${data}`,
-                autoClose: false,
             });
         }
     }, [togglePowerStatus]);

@@ -19,7 +19,6 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
 import {
     IconDotsCircleHorizontal,
     IconFile,
@@ -37,7 +36,11 @@ import {
 import { RootState } from "../../app/store/store";
 import StoredPlaylistsEditor from "./StoredPlaylistsEditor";
 import GlowTitle from "../shared/GlowTitle";
-import { epochSecondsToStringRelative } from "../../app/utils";
+import {
+    epochSecondsToStringRelative,
+    showErrorNotification,
+    showSuccessNotification,
+} from "../../app/utils";
 
 type PlaylistSelectItemProps = {
     label: string;
@@ -85,15 +88,22 @@ const PlaylistControls: FC = () => {
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();
     const [showEditor, setShowEditor] = useState<boolean>(false);
     const [showNameNewPlaylistDialog, setShowNameNewPlaylistDialog] = useState<boolean>(false);
-    const [newFormName, setNewFormName] = useState<string>("");
+    const [newPlaylistName, setNewPlaylistName] = useState<string>("");
 
     const newPlaylistForm = useForm({
         initialValues: {
             name: "",
         },
         validate: {
-            name: isNotEmpty(),
+            // Returns true on error, to prevent awkward element repositioning when the error is
+            // displayed. This comes at the expense of the error state not being explained to the
+            // user.
+            name: (value) =>
+                /^\s*$/.test(value) || storedPlaylists.map((playlist) => playlist.name).includes(value)
+                    ? true
+                    : null,
         },
+        validateInputOnChange: true,
     });
     
     useEffect(() => {
@@ -107,7 +117,7 @@ const PlaylistControls: FC = () => {
      */
     useEffect(() => {
         if (activatePlaylistStatus.isSuccess) {
-            showNotification({
+            showSuccessNotification({
                 title: "Playlist activated",
                 message:
                     storedPlaylists.find(
@@ -117,11 +127,9 @@ const PlaylistControls: FC = () => {
         } else if (activatePlaylistStatus.isError) {
             const { status, data } = activatePlaylistStatus.error as FetchBaseQueryError;
 
-            showNotification({
+            showErrorNotification({
                 title: "Error switching to Playlist",
                 message: `[${status}] ${JSON.stringify(data)}`,
-                color: "red",
-                autoClose: false,
             });
         }
     }, [activatePlaylistStatus.isSuccess, activatePlaylistStatus.isError]);
@@ -133,21 +141,19 @@ const PlaylistControls: FC = () => {
         const replacing = !!storePlaylistStatus.originalArgs?.replace;
 
         if (storePlaylistStatus.isSuccess) {
-            showNotification({
+            showSuccessNotification({
                 title: replacing ? "Playlist saved" : "New Playlist created",
-                message: replacing ? activeStoredPlaylistName : newFormName || "Unknown name",
+                message: replacing ? activeStoredPlaylistName : newPlaylistName || "Unknown name",
             });
         } else if (storePlaylistStatus.isError) {
             const { status, data } = activatePlaylistStatus.error as FetchBaseQueryError;
 
-            showNotification({
+            showErrorNotification({
                 title: `Error ${replacing ? "saving" : "creating new"} Playlist`,
                 message: `[${status}] ${JSON.stringify(data)}`,
-                color: "red",
-                autoClose: false,
             });
         }
-    }, [storePlaylistStatus.isSuccess, storePlaylistStatus.isError, newFormName]);
+    }, [storePlaylistStatus.isSuccess, storePlaylistStatus.isError, newPlaylistName]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -302,7 +308,7 @@ const PlaylistControls: FC = () => {
                 <Box
                     component="form"
                     onSubmit={newPlaylistForm.onSubmit((formValues) => {
-                        setNewFormName(formValues.name);
+                        setNewPlaylistName(formValues.name);
                         storePlaylist({ name: formValues.name, replace: false });
                         setShowNameNewPlaylistDialog(false);
                     })}
@@ -313,7 +319,7 @@ const PlaylistControls: FC = () => {
                             placeholder="Enter Playlist name"
                             {...newPlaylistForm.getInputProps("name")}
                         />
-                        <Button type="submit">Save</Button>
+                        <Button type="submit" maw="6rem">Save</Button>
                     </Flex>
                 </Box>
             </Modal>

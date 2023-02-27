@@ -6,6 +6,7 @@ import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons";
 import { Album, Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { showSuccessNotification } from "../../app/utils";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
@@ -34,8 +35,8 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 id: notificationId,
                 title: `${itemType} appended to Playlist`,
                 message: item.title,
-                color: "teal",
                 icon: <IconCheck size={16} />,
+                loading: false,
             });
         } else if (addStatus.isError) {
             // TODO: Centralize API error handling somewhere.
@@ -47,8 +48,9 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 id: notificationId,
                 title: "Error updating Playlist",
                 message: `${item.title}: [${status}] ${issue}`,
-                color: "red",
                 icon: <IconExclamationMark size={16} />,
+                color: "red",
+                loading: false,
                 autoClose: false,
             });
         }
@@ -64,11 +66,12 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                         // TODO: Remove item.id check once Tracks no longer have an optional id
                         item.id && addMediaToPlaylist({ mediaId: item.id, action: "APPEND" });
 
-                        showNotification({
+                        showSuccessNotification({
                             id: notificationId,
-                            loading: true,
                             title: `Appending ${itemType} to Playlist`,
                             message: item.title,
+                            icon: undefined,
+                            loading: true,
                             autoClose: false,
                         });
                     }}

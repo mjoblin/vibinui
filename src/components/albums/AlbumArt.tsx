@@ -1,14 +1,14 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Flex, Image } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
+import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import MediaActionsButton, { ActionCategory } from "../shared/MediaActionsButton";
-import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
+import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 
 const useStyles = createStyles((theme) => ({
     albumArtContainer: {
@@ -85,10 +85,9 @@ const AlbumArt: FC<AlbumArtProps> = ({
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
-            showNotification({
+            showErrorNotification({
                 title: "Error replacing Playlist",
                 message: `[${status}] ${data}`,
-                autoClose: false,
             });
         }
     }, [addStatus]);
@@ -123,8 +122,8 @@ const AlbumArt: FC<AlbumArtProps> = ({
                         onClick={() => {
                             addMediaToPlaylist({ mediaId: album.id, action: "REPLACE" });
 
-                            showNotification({
-                                title: `Replaced Playlist with Album`,
+                            showSuccessNotification({
+                                title: "Replaced Playlist with Album",
                                 message: album.title,
                             });
                         }}

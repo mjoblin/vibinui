@@ -18,7 +18,9 @@ const ArtistCard: FC<ArtistCardProps> = ({ artist }) => {
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
-    const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.artistCard);
+    const latestVisibleRenderSize = useAppSelector(
+        (state: RootState) => state.internal.artists.artistCard
+    );
     const { colors } = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);

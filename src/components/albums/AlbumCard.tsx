@@ -19,7 +19,9 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
-    const latestVisibleRenderSize = useAppSelector((state: RootState) => state.internal.albumCard);
+    const latestVisibleRenderSize = useAppSelector(
+        (state: RootState) => state.internal.albums.albumCard
+    );
     const { colors } = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
@@ -109,8 +111,15 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
                                         albumYear ? `${album.artist ? " • " : ""}${albumYear}` : ""
                                     }`}
                                 </Text>
-                                <Text size={11} color="grey" weight="bold" sx={{ lineHeight: 1.25 }}>
-                                    {album.genre === "Unknown" ? "" : album.genre.toLocaleUpperCase()}
+                                <Text
+                                    size={11}
+                                    color="grey"
+                                    weight="bold"
+                                    sx={{ lineHeight: 1.25 }}
+                                >
+                                    {album.genre === "Unknown"
+                                        ? ""
+                                        : album.genre.toLocaleUpperCase()}
                                 </Text>
                             </Stack>
                         )}

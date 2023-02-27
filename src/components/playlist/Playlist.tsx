@@ -10,12 +10,16 @@ import {
     Text,
     useMantineTheme,
 } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { PlaylistEntry } from "../../app/types";
-import { getTextWidth, yearFromDate } from "../../app/utils";
+import {
+    getTextWidth,
+    showErrorNotification,
+    showSuccessNotification,
+    yearFromDate,
+} from "../../app/utils";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
@@ -158,11 +162,9 @@ const Playlist: FC = () => {
         if (deleteStatus.isError) {
             const { status, data } = deleteStatus.error as FetchBaseQueryError;
 
-            showNotification({
+            showErrorNotification({
                 title: "Error removing Entry from Playlist",
                 message: `[${status}] ${JSON.stringify(data)}`,
-                color: "red",
-                autoClose: false,
             });
         }
     }, [deleteStatus]);
@@ -360,8 +362,8 @@ const Playlist: FC = () => {
                                         onClick={() => {
                                             deletePlaylistId({ playlistId: entry.id });
 
-                                            showNotification({
-                                                title: `Entry removed from Playlist`,
+                                            showSuccessNotification({
+                                                title: "Entry removed from Playlist",
                                                 message: entry.title,
                                             });
                                         }}
