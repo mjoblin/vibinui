@@ -7,7 +7,7 @@ import { MediaId } from "../types";
 // TODO: Consider refactoring these multiple API slices (Albums, Playlist, etc) into a single slice.
 //  https://redux-toolkit.js.org/rtk-query/api/createApi
 
-type BackendAlbum = {
+export type BackendAlbum = {
     id: MediaId;
     title: string;
     creator: string;
@@ -17,8 +17,9 @@ type BackendAlbum = {
     album_art_uri: string;
 };
 
-type BackendTrack = {
+export type BackendTrack = {
     id: string;
+    parentId: string;
     title: string;
     creator: string;
     date: string;
@@ -29,6 +30,19 @@ type BackendTrack = {
     album_art_uri: string;
     original_track_number: string;
 };
+
+export const trackTransformer = (track: BackendTrack): Track => ({
+    id: track.id,
+    parentId: track.parentId,
+    track_number: parseInt(track.original_track_number, 10),
+    duration: hmsToSecs(track.duration),
+    album: track.album,
+    artist: track.artist,
+    title: track.title,
+    art_url: track.album_art_uri,
+    album_art_uri: track.album_art_uri,
+    genre: track.genre,
+});
 
 export const vibinAlbumsApi = createApi({
     reducerPath: "vibinAlbumsApi",
@@ -49,16 +63,7 @@ export const vibinAlbumsApi = createApi({
                 // TODO: Figure out how to handle different-but-similar types, such as playlist
                 //  entry, track, upnp browsable item, etc, and how those types differ between
                 //  backend and frontend.
-                return tracks.map((track: BackendTrack) => ({
-                    id: track.id,
-                    track_number: parseInt(track.original_track_number, 10),
-                    duration: hmsToSecs(track.duration),
-                    album: track.album,
-                    artist: track.artist,
-                    title: track.title,
-                    art_url: track.album_art_uri,
-                    genre: track.genre,
-                }));
+                return tracks.map(trackTransformer);
             },
         }),
     }),

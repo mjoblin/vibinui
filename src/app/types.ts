@@ -31,6 +31,7 @@ export type Artist = {
 // Music track details.
 export type Track = {
     id: MediaId;
+    parentId: MediaId;
     track_number: number;
     duration: number;
     album: string;

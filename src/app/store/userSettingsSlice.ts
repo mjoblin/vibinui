@@ -58,9 +58,9 @@ export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
 export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
 export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
 
+export type MediaViewMode = "art_focused" | "compact";
 export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
-export type ArtistsViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "updated";
 export type AlbumCollection = "all" | "new";
 
@@ -80,7 +80,7 @@ export interface UserSettingsState {
         cardSize: number;
         filterText: string;
         showDetails: boolean;
-        viewMode: ArtistsViewMode;
+        viewMode: MediaViewMode;
     };
     tracks: {
         cardGap: number;
@@ -215,7 +215,7 @@ export const userSettingsSlice = createSlice({
         setArtistsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.artists.showDetails = action.payload;
         },
-        setArtistsViewMode: (state, action: PayloadAction<ArtistsViewMode>) => {
+        setArtistsViewMode: (state, action: PayloadAction<MediaViewMode>) => {
             state.artists.viewMode = action.payload;
         },
         setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {

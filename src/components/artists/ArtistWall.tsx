@@ -10,11 +10,12 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 
-import { Artist } from "../../app/types";
+import { Album, Artist, Track } from "../../app/types";
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { setFilteredArtistCount } from "../../app/store/internalSlice";
+import AlbumCard from "../albums/AlbumCard";
 import ArtistCard from "./ArtistCard";
 import SadLabel from "../shared/SadLabel";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
@@ -27,8 +28,9 @@ const ArtistWall: FC = () => {
         (state: RootState) => state.userSettings.artists
     );
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
-    const [selectedArtist, setSelectedArtist] = useState<string>("");
-    const { allAlbumsByArtist, allTracksByArtist } = useMediaGroupings();
+    const [selectedArtist, setSelectedArtist] = useState<Artist | undefined>(undefined);
+    const [selectedAlbum, setSelectedAlbum] = useState<Album | undefined>(undefined);
+    const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName } = useMediaGroupings();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         artistWall: {
@@ -86,12 +88,12 @@ const ArtistWall: FC = () => {
         );
     }
 
-    return viewMode === "simple" ? (
+    return viewMode === "art_focused" ? (
         <Box className={dynamicClasses.artistWall}>
             {artistsToDisplay
                 .filter((artist) => artist.title.startsWith("H"))
                 .map((artist) => (
-                    <ArtistCard key={artist.id} type="simple" artist={artist} />
+                    <ArtistCard key={artist.id} type="art_focused" artist={artist} />
                 ))}
         </Box>
     ) : (
@@ -100,15 +102,18 @@ const ArtistWall: FC = () => {
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Artist
                 </Text>
-                <Stack>
+                <Stack spacing="xs">
                     {artistsToDisplay.map((artist) => (
                         <ArtistCard
                             key={artist.id}
-                            type="detailed"
+                            type="compact"
                             artist={artist}
-                            albums={allAlbumsByArtist(artist.title)}
-                            tracks={allTracksByArtist(artist.title)}
-                            onClick={(artist: Artist) => setSelectedArtist(artist.title)}
+                            albums={allAlbumsByArtistName(artist.title)}
+                            tracks={allTracksByArtistName(artist.title)}
+                            onClick={(artist: Artist) => {
+                                setSelectedArtist(artist);
+                                setSelectedAlbum(undefined);
+                            }}
                         />
                     ))}
                 </Stack>
@@ -118,10 +123,16 @@ const ArtistWall: FC = () => {
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Albums
                 </Text>
-                <Stack>
+                <Stack spacing="xs">
                     {selectedArtist &&
-                        allAlbumsByArtist(selectedArtist).map((album) => (
-                            <Text>{album.title}</Text>
+                        allAlbumsByArtistName(selectedArtist.title).map((album) => (
+                            <AlbumCard
+                                key={album.id}
+                                type="compact"
+                                album={album}
+                                tracks={allTracksByAlbumId(album.id)}
+                                onClick={(album: Album) => setSelectedAlbum(album)}
+                            />
                         ))}
                 </Stack>
             </Stack>
@@ -130,7 +141,12 @@ const ArtistWall: FC = () => {
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Tracks
                 </Text>
-                <Stack>{}</Stack>
+                <Stack spacing="xs">
+                    {selectedAlbum &&
+                        allTracksByAlbumId(selectedAlbum.id).map((track: Track) => (
+                            <Text>{track.title}</Text>
+                        ))}
+                </Stack>
             </Stack>
         </Flex>
     );

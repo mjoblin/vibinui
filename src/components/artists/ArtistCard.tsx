@@ -6,8 +6,7 @@ import { Album, Artist, Track } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { setArtistCardRenderDimensions } from "../../app/store/internalSlice";
-import { ArtistsViewMode } from "../../app/store/userSettingsSlice";
-import MediaActionsButton from "../shared/MediaActionsButton";
+import { MediaViewMode } from "../../app/store/userSettingsSlice";
 import CompactArtCard from "../shared/CompactArtCard";
 
 // ------------------------------------------------------------------------------------------------
@@ -49,13 +48,6 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     return (
         <CompactArtCard
             artUrl={artist.album_art_uri}
-            actions={
-                <MediaActionsButton
-                    mediaType="track"
-                    media={tracks && tracks[0]}
-                    position="bottom"
-                />
-            }
             onClick={() => onClick && onClick(artist)}
         >
             <Text size={14} weight="bold" sx={{ lineHeight: 1.0 }}>
@@ -114,7 +106,7 @@ const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks,
 // ------------------------------------------------------------------------------------------------
 
 type ArtistCardProps = {
-    type: ArtistsViewMode;
+    type: MediaViewMode;
     artist: Artist;
     albums?: Album[];
     tracks?: Track[];
@@ -162,7 +154,7 @@ const ArtistCard: FC<ArtistCardProps> = ({ type, artist, albums, tracks, onClick
         latestVisibleRenderSize.renderHeight,
     ]);
 
-    const visibilityOffset = type === "simple" ? -1000 : -200;
+    const visibilityOffset = type === "art_focused" ? -1000 : -200;
 
     return (
         // The visibility offset top/bottom is somewhat arbitrary. The goal is to pre-load enough
@@ -176,7 +168,7 @@ const ArtistCard: FC<ArtistCardProps> = ({ type, artist, albums, tracks, onClick
         >
             {/* @ts-ignore */}
             {({ isVisible }) =>
-                type === "simple" ? (
+                type === "art_focused" ? (
                     isVisible ? (
                         // @ts-ignore
                         <Box ref={cardRef}>

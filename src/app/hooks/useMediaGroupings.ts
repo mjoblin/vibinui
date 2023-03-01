@@ -9,8 +9,12 @@ import { useGetTracksQuery } from "../services/vibinTracks";
 // This hook exists as an attempt to improve performance. The goal is to provide information about
 // grouped media items (Artists, Albums, Tracks) quickly enough to enable a somewhat responsive UI.
 //
+// The approach taken here is to take the entire/flat list of Albums, Tracks, etc, and group them
+// by some sort of index (Artist Name, Album Id, etc). The initial flat lists are not expected to
+// change much, so the reduces performed here are unlikely to be called more than once per session.
+//
 // There are other ways to retrieve this information which might otherwise be more appropriate. For
-// example, an artist's tracks could be retrieved (in a component that wants it) like this:
+// example, an artist's tracks could be retrieved (in a component that wants it) like this instead:
 //
 // const { artistTracks } = useGetTracksQuery(undefined, {
 //     selectFromResult: ({ data }) => ({
@@ -27,8 +31,9 @@ export const useMediaGroupings = () => {
     const { data: allAlbums, error: albumsError, isSuccess: albumsIsSuccess } = useGetAlbumsQuery();
     const { data: allTracks, error: tracksError, isSuccess: tracksIsSuccess } = useGetTracksQuery();
 
-    const [albumsByArtist, setAlbumsByArtist] = useState<Record<string, Album[]>>({});
-    const [tracksByArtist, setTracksByArtist] = useState<Record<string, Track[]>>({});
+    const [albumsByArtistName, setAlbumsByArtistName] = useState<Record<string, Album[]>>({});
+    const [tracksByAlbumId, setTracksByAlbumId] = useState<Record<string, Track[]>>({});
+    const [tracksByArtistName, setTracksByArtistName] = useState<Record<string, Track[]>>({});
 
     /**
      *
@@ -53,7 +58,7 @@ export const useMediaGroupings = () => {
             {}
         );
 
-        setAlbumsByArtist(results);
+        setAlbumsByArtistName(results);
     }, [allAlbums]);
 
     /**
@@ -64,7 +69,7 @@ export const useMediaGroupings = () => {
             return;
         }
 
-        const results: Record<string, Track[]> = allTracks.reduce(
+        const byArtist: Record<string, Track[]> = allTracks.reduce(
             // @ts-ignore
             (computedTracksByArtist, track) => {
                 const thisArtist = (track as Track).artist;
@@ -79,13 +84,30 @@ export const useMediaGroupings = () => {
             {}
         );
 
-        setTracksByArtist(results);
+        const byAlbum: Record<string, Track[]> = allTracks.reduce(
+            // @ts-ignore
+            (computedTracksByAlbum, track) => {
+                const thisAlbumId = (track as Track).parentId;
+                // @ts-ignore
+                const currTracks = computedTracksByAlbum[thisAlbumId] ?? [];
+
+                return {
+                    ...computedTracksByAlbum,
+                    [thisAlbumId]: [...currTracks, track],
+                };
+            },
+            {}
+        );
+
+        setTracksByArtistName(byArtist);
+        setTracksByAlbumId(byAlbum);
     }, [allTracks]);
 
     // --------------------------------------------------------------------------------------------
 
     return {
-        allAlbumsByArtist: (artist: string) => albumsByArtist[artist] || [],
-        allTracksByArtist: (artist: string) => tracksByArtist[artist] || [],
+        allAlbumsByArtistName: (artist: string) => albumsByArtistName[artist] || [],
+        allTracksByAlbumId: (album: string) => tracksByAlbumId[album] || [],
+        allTracksByArtistName: (artist: string) => tracksByArtistName[artist] || [],
     };
 };

@@ -15,7 +15,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-    ArtistsViewMode,
+    MediaViewMode,
     minCardGap,
     maxCardGap,
     minCardSize,
@@ -59,7 +59,7 @@ const ArtistsControls: FC = () => {
                 value={viewMode}
                 radius={5}
                 onChange={(value) =>
-                    value && dispatch(setArtistsViewMode(value as ArtistsViewMode))
+                    value && dispatch(setArtistsViewMode(value as MediaViewMode))
                 }
                 data={[
                     {
