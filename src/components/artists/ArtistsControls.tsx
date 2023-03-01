@@ -1,10 +1,10 @@
 import React, { FC } from "react";
 import {
     Box,
-    Button,
+    Button, Center,
     Checkbox,
     createStyles,
-    Flex,
+    Flex, SegmentedControl,
     Select,
     Slider,
     Stack,
@@ -15,6 +15,7 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
+    ArtistsViewMode,
     minCardGap,
     maxCardGap,
     minCardSize,
@@ -24,14 +25,17 @@ import {
     setArtistsCardSize,
     setArtistsFilterText,
     setArtistsShowDetails,
+    setArtistsViewMode,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import GlowTitle from "../shared/GlowTitle";
+import { IconListDetails, IconMenu2 } from "@tabler/icons";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
+    const { viewMode } = useAppSelector((state: RootState) => state.userSettings.artists);
     const { data: allArtists } = useGetArtistsQuery();
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.artists
@@ -48,6 +52,39 @@ const ArtistsControls: FC = () => {
                 label="Filter"
                 value={filterText}
                 onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
+            />
+
+            {/* Playlist display options (simple vs. detailed) */}
+            <SegmentedControl
+                value={viewMode}
+                radius={5}
+                onChange={(value) =>
+                    value && dispatch(setArtistsViewMode(value as ArtistsViewMode))
+                }
+                data={[
+                    {
+                        value: "simple",
+                        label: (
+                            <Center>
+                                <IconMenu2 size={14} />
+                                <Text size={14} ml={10}>
+                                    Simple
+                                </Text>
+                            </Center>
+                        ),
+                    },
+                    {
+                        value: "detailed",
+                        label: (
+                            <Center>
+                                <IconListDetails size={14} />
+                                <Text size={14} ml={10}>
+                                    Detailed
+                                </Text>
+                            </Center>
+                        ),
+                    },
+                ]}
             />
 
             {/* Cover size */}

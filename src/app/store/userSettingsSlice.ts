@@ -22,6 +22,7 @@ const DEFAULT_ARTISTS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_ARTISTS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_ARTISTS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_ARTISTS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
+const DEFAULT_ARTISTS_VIEWMODE = "detailed";
 const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_TRACKS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
@@ -45,6 +46,7 @@ export const LSKEY_ARTISTS_CARD_GAP = "artists.cardGap";
 export const LSKEY_ARTISTS_CARD_SIZE = "artists.cardSize";
 export const LSKEY_ARTISTS_FILTER_TEXT = "artists.filterText";
 export const LSKEY_ARTISTS_SHOW_DETAILS = "artists.showDetails";
+export const LSKEY_ARTISTS_VIEWMODE = "artists.viewMode";
 export const LSKEY_TRACKS_CARD_GAP = "tracks.cardGap";
 export const LSKEY_TRACKS_CARD_SIZE = "tracks.cardSize";
 export const LSKEY_TRACKS_FILTER_TEXT = "tracks.filterText";
@@ -58,6 +60,7 @@ export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
 
 export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
+export type ArtistsViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "updated";
 export type AlbumCollection = "all" | "new";
 
@@ -77,6 +80,7 @@ export interface UserSettingsState {
         cardSize: number;
         filterText: string;
         showDetails: boolean;
+        viewMode: ArtistsViewMode;
     };
     tracks: {
         cardGap: number;
@@ -133,6 +137,7 @@ const initialState: UserSettingsState = {
         cardSize: getLocalStorageValue(LSKEY_ARTISTS_CARD_SIZE, DEFAULT_ARTISTS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_ARTISTS_FILTER_TEXT, DEFAULT_ARTISTS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_ARTISTS_SHOW_DETAILS, DEFAULT_ARTISTS_SHOW_DETAILS),
+        viewMode: getLocalStorageValue(LSKEY_ARTISTS_VIEWMODE, DEFAULT_ARTISTS_VIEWMODE),
     },
     tracks: {
         cardGap: getLocalStorageValue(LSKEY_TRACKS_CARD_GAP, DEFAULT_TRACKS_CARD_GAP),
@@ -210,6 +215,9 @@ export const userSettingsSlice = createSlice({
         setArtistsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.artists.showDetails = action.payload;
         },
+        setArtistsViewMode: (state, action: PayloadAction<ArtistsViewMode>) => {
+            state.artists.viewMode = action.payload;
+        },
         setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
             state.application.theme = action.payload;
         },
@@ -261,6 +269,7 @@ export const {
     setArtistsCardSize,
     setArtistsFilterText,
     setArtistsShowDetails,
+    setArtistsViewMode,
     setApplicationTheme,
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
