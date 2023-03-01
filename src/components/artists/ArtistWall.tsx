@@ -17,6 +17,7 @@ import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { setFilteredArtistCount } from "../../app/store/internalSlice";
 import AlbumCard from "../albums/AlbumCard";
 import ArtistCard from "./ArtistCard";
+import TrackCard from "../tracks/TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 
@@ -30,6 +31,7 @@ const ArtistWall: FC = () => {
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
     const [selectedArtist, setSelectedArtist] = useState<Artist | undefined>(undefined);
     const [selectedAlbum, setSelectedAlbum] = useState<Album | undefined>(undefined);
+    const [selectedTrack, setSelectedTrack] = useState<Track | undefined>(undefined);
     const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName } = useMediaGroupings();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -98,6 +100,7 @@ const ArtistWall: FC = () => {
         </Box>
     ) : (
         <Flex gap={20}>
+            {/* Artists */}
             <Stack>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Artist
@@ -119,6 +122,7 @@ const ArtistWall: FC = () => {
                 </Stack>
             </Stack>
 
+            {/* Albums */}
             <Stack>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Albums
@@ -137,6 +141,7 @@ const ArtistWall: FC = () => {
                 </Stack>
             </Stack>
 
+            {/* Tracks */}
             <Stack>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Tracks
@@ -144,7 +149,12 @@ const ArtistWall: FC = () => {
                 <Stack spacing="xs">
                     {selectedAlbum &&
                         allTracksByAlbumId(selectedAlbum.id).map((track: Track) => (
-                            <Text>{track.title}</Text>
+                            <TrackCard
+                                key={track.id}
+                                type="compact"
+                                track={track}
+                                onClick={(track: Track) => setSelectedTrack(track)}
+                            />
                         ))}
                 </Stack>
             </Stack>

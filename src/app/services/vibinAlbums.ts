@@ -41,6 +41,7 @@ export const trackTransformer = (track: BackendTrack): Track => ({
     title: track.title,
     art_url: track.album_art_uri,
     album_art_uri: track.album_art_uri,
+    date: track.date,
     genre: track.genre,
 });
 
