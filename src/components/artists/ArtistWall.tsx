@@ -1,7 +1,16 @@
 import React, { FC, useState } from "react";
-import { Box, Center, createStyles, Flex, Loader, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+    Box,
+    Center,
+    createStyles,
+    Flex,
+    Loader,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 
-import { Artist} from "../../app/types";
+import { Artist } from "../../app/types";
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
@@ -77,28 +86,12 @@ const ArtistWall: FC = () => {
         );
     }
 
-    // @ts-ignore
     return viewMode === "simple" ? (
         <Box className={dynamicClasses.artistWall}>
             {artistsToDisplay
                 .filter((artist) => artist.title.startsWith("H"))
                 .map((artist) => (
-                    // <ArtistCard key={artist.id} artist={artist} />
-
-                    // <ArtistCardDetailed
-                    //     key={artist.id}
-                    //     artist={artist}
-                    //     albums={allAlbumsByArtist(artist.title)}
-                    //     tracks={allTracksByArtist(artist.title)}
-                    // />
-
-                    <ArtistCard
-                        key={artist.id}
-                        type="simple"
-                        artist={artist}
-                        // albums={allAlbumsByArtist(artist.title)}
-                        // tracks={allTracksByArtist(artist.title)}
-                    />
+                    <ArtistCard key={artist.id} type="simple" artist={artist} />
                 ))}
         </Box>
     ) : (
@@ -108,26 +101,16 @@ const ArtistWall: FC = () => {
                     Artist
                 </Text>
                 <Stack>
-                    {artistsToDisplay
-                        // .filter((artist) => artist.title.startsWith("H"))
-                        .map((artist) => (
-                            // <ArtistCardDetailed
-                            //     key={artist.id}
-                            //     artist={artist}
-                            //     albums={allAlbumsByArtist(artist.title)}
-                            //     tracks={allTracksByArtist(artist.title)}
-                            //     onClick={(artist: Artist) => setSelectedArtist(artist.title)}
-                            // />
-
-                            <ArtistCard
-                                key={artist.id}
-                                type="detailed"
-                                artist={artist}
-                                albums={allAlbumsByArtist(artist.title)}
-                                tracks={allTracksByArtist(artist.title)}
-                                onClick={(artist: Artist) => setSelectedArtist(artist.title)}
-                            />
-                        ))}
+                    {artistsToDisplay.map((artist) => (
+                        <ArtistCard
+                            key={artist.id}
+                            type="detailed"
+                            artist={artist}
+                            albums={allAlbumsByArtist(artist.title)}
+                            tracks={allTracksByArtist(artist.title)}
+                            onClick={(artist: Artist) => setSelectedArtist(artist.title)}
+                        />
+                    ))}
                 </Stack>
             </Stack>
 
