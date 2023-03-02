@@ -12,7 +12,7 @@ const BackgroundComputeIndicator: FC = () => {
         (state: RootState) => state.internal.application
     );
 
-    return <ColorSwatch size={15} color={isComputingInBackground ? SELECTED_COLOR : colors.dark[6]} />;
+    return <ColorSwatch size={20} color={isComputingInBackground ? SELECTED_COLOR : colors.dark[6]} />;
 };
 
 export default BackgroundComputeIndicator;
