@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {
     Box,
     Center,
@@ -10,11 +10,15 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 
-import { Album, Artist, Track } from "../../app/types";
+import { Album, Artist, MediaId, Track } from "../../app/types";
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { setFilteredArtistCount } from "../../app/store/internalSlice";
+import {
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
+} from "../../app/store/userSettingsSlice";
 import AlbumCard from "../albums/AlbumCard";
 import ArtistCard from "./ArtistCard";
 import TrackCard from "../tracks/TrackCard";
@@ -24,15 +28,16 @@ import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 const ArtistWall: FC = () => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
-    const { viewMode } = useAppSelector((state: RootState) => state.userSettings.artists);
+    const { activeCollection, selectedAlbum, selectedArtist, viewMode } = useAppSelector(
+        (state: RootState) => state.userSettings.artists
+    );
     const { cardSize, cardGap, filterText } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
-    const [selectedArtist, setSelectedArtist] = useState<Artist | undefined>(undefined);
-    const [selectedAlbum, setSelectedAlbum] = useState<Album | undefined>(undefined);
-    const [selectedTrack, setSelectedTrack] = useState<Track | undefined>(undefined);
-    const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName } = useMediaGroupings();
+    const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName, isComputing } =
+        useMediaGroupings();
+    const [artistIdsWithAlbums, setArtistIdsWithAlbums] = useState<MediaId[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         artistWall: {
@@ -42,6 +47,23 @@ const ArtistWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+
+    useEffect(() => {
+        if (!allArtists || artistIdsWithAlbums.length > 0) {
+            return;
+        }
+
+        // @ts-ignore
+        const withAlbums: MediaId[] = allArtists.reduce((accum, artist) => {
+            if (allAlbumsByArtistName(artist.title).length > 0) {
+                return [...accum, artist.id];
+            }
+
+            return accum;
+        }, []);
+
+        setArtistIdsWithAlbums(withAlbums);
+    }, [allArtists, allAlbumsByArtistName, artistIdsWithAlbums]);
 
     if (isLoading) {
         return (
@@ -70,22 +92,26 @@ const ArtistWall: FC = () => {
         );
     }
 
-    const artistsToDisplay = allArtists.filter((artist) => {
-        if (filterText === "") {
-            return true;
-        }
+    const artistsToDisplay: Artist[] = allArtists
+        .filter((artist: Artist) => {
+            return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
+        })
+        .filter((artist: Artist) => {
+            if (filterText === "") {
+                return true;
+            }
 
-        const filterValueLower = filterText.toLowerCase();
+            const filterValueLower = filterText.toLowerCase();
 
-        return artist.title.toLowerCase().includes(filterValueLower);
-    });
+            return artist.title.toLowerCase().includes(filterValueLower);
+        });
 
     dispatch(setFilteredArtistCount(artistsToDisplay.length));
 
     if (artistsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label="No matching Tracks" />
+                <SadLabel label="No matching Artists" />
             </Center>
         );
     }
@@ -113,9 +139,10 @@ const ArtistWall: FC = () => {
                             artist={artist}
                             albums={allAlbumsByArtistName(artist.title)}
                             tracks={allTracksByArtistName(artist.title)}
+                            selected={artist.id === selectedArtist?.id}
                             onClick={(artist: Artist) => {
-                                setSelectedArtist(artist);
-                                setSelectedAlbum(undefined);
+                                dispatch(setArtistsSelectedArtist(artist));
+                                dispatch(setArtistsSelectedAlbum(undefined));
                             }}
                         />
                     ))}
@@ -135,7 +162,8 @@ const ArtistWall: FC = () => {
                                 type="compact"
                                 album={album}
                                 tracks={allTracksByAlbumId(album.id)}
-                                onClick={(album: Album) => setSelectedAlbum(album)}
+                                selected={album.id === selectedAlbum?.id}
+                                onClick={(album: Album) => dispatch(setArtistsSelectedAlbum(album))}
                             />
                         ))}
                 </Stack>
@@ -149,12 +177,7 @@ const ArtistWall: FC = () => {
                 <Stack spacing="xs">
                     {selectedAlbum &&
                         allTracksByAlbumId(selectedAlbum.id).map((track: Track) => (
-                            <TrackCard
-                                key={track.id}
-                                type="compact"
-                                track={track}
-                                onClick={(track: Track) => setSelectedTrack(track)}
-                            />
+                            <TrackCard key={track.id} type="compact" track={track} />
                         ))}
                 </Stack>
             </Stack>

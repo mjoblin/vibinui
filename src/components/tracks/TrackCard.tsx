@@ -20,15 +20,15 @@ const trackDetails = (track: Track) => (
     <Flex gap={5}>
         {track.date && (
             <>
-                <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+                <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
                     {yearFromDate(track.date || "")}
                 </Text>
-                <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+                <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
                     •
                 </Text>
             </>
         )}
-        <Text size={14} color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
             {`${secstoHms(track.duration)}s`}
         </Text>
     </Flex>
@@ -47,9 +47,14 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, onClick }) => {
             actions={<MediaActionsButton mediaType="track" media={track} position="bottom" />}
             onClick={() => onClick && onClick(track)}
         >
-            <Text size={14} weight="bold" sx={{ lineHeight: 1.0 }}>
-                {track.title}
-            </Text>
+            <Flex gap={5}>
+                <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
+                    {`${track.track_number}.`}
+                </Text>
+                <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
+                    {track.title}
+                </Text>
+            </Flex>
 
             {trackDetails(track)}
         </CompactArtCard>

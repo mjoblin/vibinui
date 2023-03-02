@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+import { Album, Artist } from "../types";
 import { NowPlayingTab } from "../../components/layout/NowPlayingScreen";
 
 export const minCardGap = 0;
@@ -18,6 +19,7 @@ const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_CARD_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
+const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
 const DEFAULT_ARTISTS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_ARTISTS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_ARTISTS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
@@ -42,6 +44,7 @@ export const LSKEY_ALBUMS_CARD_GAP = "albums.cardGap";
 export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
+export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
 export const LSKEY_ARTISTS_CARD_GAP = "artists.cardGap";
 export const LSKEY_ARTISTS_CARD_SIZE = "artists.cardSize";
 export const LSKEY_ARTISTS_FILTER_TEXT = "artists.filterText";
@@ -63,6 +66,7 @@ export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "updated";
 export type AlbumCollection = "all" | "new";
+export type ArtistCollection = "all" | "with_albums";
 
 export interface UserSettingsState {
     application: {
@@ -76,9 +80,12 @@ export interface UserSettingsState {
         showDetails: boolean;
     };
     artists: {
+        activeCollection: ArtistCollection;
         cardGap: number;
         cardSize: number;
         filterText: string;
+        selectedAlbum: Album | undefined;
+        selectedArtist: Artist | undefined;
         showDetails: boolean;
         viewMode: MediaViewMode;
     };
@@ -133,9 +140,15 @@ const initialState: UserSettingsState = {
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
     },
     artists: {
+        activeCollection: getLocalStorageValue(
+            LSKEY_ARTISTS_ACTIVE_COLLECTION,
+            DEFAULT_ARTISTS_ACTIVE_COLLECTION
+        ),
         cardGap: getLocalStorageValue(LSKEY_ARTISTS_CARD_GAP, DEFAULT_ARTISTS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_ARTISTS_CARD_SIZE, DEFAULT_ARTISTS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_ARTISTS_FILTER_TEXT, DEFAULT_ARTISTS_FILTER_TEXT),
+        selectedAlbum: undefined,
+        selectedArtist: undefined,
         showDetails: getLocalStorageValue(LSKEY_ARTISTS_SHOW_DETAILS, DEFAULT_ARTISTS_SHOW_DETAILS),
         viewMode: getLocalStorageValue(LSKEY_ARTISTS_VIEWMODE, DEFAULT_ARTISTS_VIEWMODE),
     },
@@ -203,6 +216,9 @@ export const userSettingsSlice = createSlice({
         setAlbumsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.albums.showDetails = action.payload;
         },
+        setArtistsActiveCollection: (state, action: PayloadAction<ArtistCollection>) => {
+            state.artists.activeCollection = action.payload;
+        },
         setArtistsCardGap: (state, action: PayloadAction<number>) => {
             state.artists.cardGap = action.payload;
         },
@@ -211,6 +227,12 @@ export const userSettingsSlice = createSlice({
         },
         setArtistsFilterText: (state, action: PayloadAction<string>) => {
             state.artists.filterText = action.payload;
+        },
+        setArtistsSelectedAlbum: (state, action: PayloadAction<Album | undefined>) => {
+            state.artists.selectedAlbum = action.payload;
+        },
+        setArtistsSelectedArtist: (state, action: PayloadAction<Artist | undefined>) => {
+            state.artists.selectedArtist = action.payload;
         },
         setArtistsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.artists.showDetails = action.payload;
@@ -265,10 +287,13 @@ export const {
     setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
+    setArtistsActiveCollection,
     setArtistsCardGap,
     setArtistsCardSize,
     setArtistsFilterText,
     setArtistsShowDetails,
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
     setArtistsViewMode,
     setApplicationTheme,
     setNowPlayingActiveTab,

@@ -1,13 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
     Box,
-    Button, Center,
+    Button,
     Checkbox,
-    createStyles,
-    Flex, SegmentedControl,
+    Flex,
     Select,
-    Slider,
-    Stack,
     Text,
     TextInput,
     useMantineTheme,
@@ -15,29 +12,22 @@ import {
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-    MediaViewMode,
-    minCardGap,
-    maxCardGap,
-    minCardSize,
-    maxCardSize,
+    ArtistCollection,
     resetArtistsToDefaults,
-    setArtistsCardGap,
-    setArtistsCardSize,
+    setArtistsActiveCollection,
     setArtistsFilterText,
     setArtistsShowDetails,
-    setArtistsViewMode,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import GlowTitle from "../shared/GlowTitle";
-import { IconListDetails, IconMenu2 } from "@tabler/icons";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const { viewMode } = useAppSelector((state: RootState) => state.userSettings.artists);
+    const { activeCollection } = useAppSelector((state: RootState) => state.userSettings.artists);
     const { data: allArtists } = useGetArtistsQuery();
-    const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
+    const { filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
     const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
@@ -54,71 +44,19 @@ const ArtistsControls: FC = () => {
                 onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
             />
 
-            {/* Playlist display options (simple vs. detailed) */}
-            <SegmentedControl
-                value={viewMode}
-                radius={5}
-                onChange={(value) =>
-                    value && dispatch(setArtistsViewMode(value as MediaViewMode))
-                }
+            {/* Show all or just artists with albums */}
+            <Select
+                label="Show"
+                miw="11rem"
+                value={activeCollection}
                 data={[
-                    {
-                        value: "simple",
-                        label: (
-                            <Center>
-                                <IconMenu2 size={14} />
-                                <Text size={14} ml={10}>
-                                    Simple
-                                </Text>
-                            </Center>
-                        ),
-                    },
-                    {
-                        value: "detailed",
-                        label: (
-                            <Center>
-                                <IconListDetails size={14} />
-                                <Text size={14} ml={10}>
-                                    Detailed
-                                </Text>
-                            </Center>
-                        ),
-                    },
+                    { value: "all", label: "All Artists" },
+                    { value: "with_albums", label: "Artists with Albums" },
                 ]}
+                onChange={(value) =>
+                    value && dispatch(setArtistsActiveCollection(value as ArtistCollection))
+                }
             />
-
-            {/* Cover size */}
-            <Stack spacing={5} pt={1}>
-                {/* TODO: Figure out how to properly get <Text> to match the <TextInput> label */}
-                <Text size="sm" sx={{ fontWeight: 500 }}>
-                    Art size
-                </Text>
-                <Slider
-                    label={null}
-                    min={minCardSize}
-                    max={maxCardSize}
-                    size={5}
-                    sx={{ width: 200 }}
-                    value={cardSize}
-                    onChange={(value) => dispatch(setArtistsCardSize(value))}
-                />
-            </Stack>
-
-            {/* Cover gap */}
-            <Stack spacing={5} pt={1}>
-                <Text size="sm" sx={{ fontWeight: 500 }}>
-                    Separation
-                </Text>
-                <Slider
-                    label={null}
-                    min={minCardGap}
-                    max={maxCardGap}
-                    size={5}
-                    sx={{ width: 200 }}
-                    value={cardGap}
-                    onChange={(value) => dispatch(setArtistsCardGap(value))}
-                />
-            </Stack>
 
             <Box pt={8} sx={{ alignSelf: "center" }}>
                 <Checkbox
@@ -140,25 +78,9 @@ const ArtistsControls: FC = () => {
                         Reset
                     </Button>
                 </Box>
-
-                {/* Show a "tiny wall" preset */}
-                <Box sx={{ alignSelf: "center" }}>
-                    <Button
-                        compact
-                        variant="outline"
-                        size="xs"
-                        onClick={() => {
-                            dispatch(setArtistsCardGap(minCardGap));
-                            dispatch(setArtistsCardSize(minCardSize));
-                            dispatch(setArtistsShowDetails(false));
-                        }}
-                    >
-                        Tiny Wall
-                    </Button>
-                </Box>
             </Flex>
 
-            {/* "Showing x of y albums" */}
+            {/* "Showing x of y artists" */}
             <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 <Text size="xs" color={colors.gray[6]}>
                     Showing

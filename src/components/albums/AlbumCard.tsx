@@ -6,7 +6,7 @@ import { Album, Track } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../app/store/internalSlice";
-import { MediaViewMode} from "../../app/store/userSettingsSlice";
+import { MediaViewMode } from "../../app/store/userSettingsSlice";
 import { yearFromDate } from "../../app/utils";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
@@ -20,22 +20,22 @@ import { secstoHms } from "../../app/utils";
 
 const albumDetails = (album: Album, trackCount: number, duration: number) => (
     <Flex gap={5}>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             {yearFromDate(album.date)}
         </Text>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             •
         </Text>
-        <Text size={14} color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
             {trackCount}
         </Text>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             track{trackCount === 1 ? "" : "s"}
         </Text>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             •
         </Text>
-        <Text size={14} color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
             {`${secstoHms(duration)}s`}
         </Text>
     </Flex>
@@ -47,7 +47,7 @@ const albumDetails = (album: Album, trackCount: number, duration: number) => (
 
 type AlbumCardTypeProps = Omit<AlbumCardProps, "type">;
 
-const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, onClick }) => {
+const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onClick }) => {
     const albumDuration = tracks?.reduce((duration, track) => duration + track.duration, 0) || 0;
 
     return (
@@ -61,9 +61,10 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, onClick }) =>
                     position="bottom"
                 />
             }
+            selected={selected}
             onClick={() => onClick && onClick(album)}
         >
-            <Text size={14} weight="bold" sx={{ lineHeight: 1.0 }}>
+            <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
                 {album.title}
             </Text>
 
@@ -138,10 +139,17 @@ type AlbumCardProps = {
     type?: MediaViewMode;
     album: Album;
     tracks?: Track[];
+    selected?: boolean;
     onClick?: (album: Album) => void;
 };
 
-const AlbumCard: FC<AlbumCardProps> = ({ type = "art_focused", album, tracks, onClick }) => {
+const AlbumCard: FC<AlbumCardProps> = ({
+    type = "art_focused",
+    album,
+    tracks,
+    selected = false,
+    onClick,
+}) => {
     const dispatch = useAppDispatch();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
@@ -211,7 +219,12 @@ const AlbumCard: FC<AlbumCardProps> = ({ type = "art_focused", album, tracks, on
                 ) : isVisible ? (
                     // @ts-ignore
                     <Box ref={cardRef}>
-                        <AlbumCardCompact album={album} tracks={tracks} onClick={onClick} />
+                        <AlbumCardCompact
+                            album={album}
+                            tracks={tracks}
+                            selected={selected}
+                            onClick={onClick}
+                        />
                     </Box>
                 ) : (
                     <div

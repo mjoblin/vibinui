@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useReducer, useState } from "react";
 
 import { Album, Track } from "../types";
+import { useAppDispatch } from "../hooks";
+import { setIsComputingInBackground } from "../store/internalSlice";
 import { useGetAlbumsQuery } from "../services/vibinAlbums";
 import { useGetTracksQuery } from "../services/vibinTracks";
 
@@ -27,13 +29,62 @@ import { useGetTracksQuery } from "../services/vibinTracks";
 //
 // ================================================================================================
 
+interface LocalState {
+    computing: string[];
+}
+
+interface LocalAction {
+    type: "add_compute_label" | "remove_compute_label";
+    payload: string;
+}
+
+const localReducer = (state: LocalState, action: LocalAction): LocalState => {
+    // console.log("STATE", state);
+    if (action.type === "add_compute_label") {
+        return {
+            ...state,
+            computing: [...state.computing, action.payload],
+        };
+    } else if (action.type === "remove_compute_label") {
+        return {
+            ...state,
+            computing: state.computing.filter((label) => label !== action.payload),
+        };
+    } else {
+        // This could throw an unknown action type error, but for now we just ignore.
+        return state;
+    }
+};
+
 export const useMediaGroupings = () => {
+    const [state, localDispatch] = useReducer(localReducer, { computing: [] });
+    const dispatch = useAppDispatch();
     const { data: allAlbums, error: albumsError, isSuccess: albumsIsSuccess } = useGetAlbumsQuery();
     const { data: allTracks, error: tracksError, isSuccess: tracksIsSuccess } = useGetTracksQuery();
-
     const [albumsByArtistName, setAlbumsByArtistName] = useState<Record<string, Album[]>>({});
     const [tracksByAlbumId, setTracksByAlbumId] = useState<Record<string, Track[]>>({});
     const [tracksByArtistName, setTracksByArtistName] = useState<Record<string, Track[]>>({});
+    const mediaGrouperWorker: Worker = useMemo(
+        () => new Worker(new URL("../workers/mediaGrouperWorker.ts", import.meta.url)),
+        []
+    );
+
+    mediaGrouperWorker.onmessage = (e) => {
+        const { type, result } = e.data;
+
+        type === "allAlbumsByArtistName" && setAlbumsByArtistName(result);
+        type === "allTracksByArtistName" && setTracksByArtistName(result);
+        type === "allTracksByAlbumId" && setTracksByAlbumId(result);
+
+        localDispatch({ type: "remove_compute_label", payload: e.data.type });
+    }
+
+    /**
+     *
+     */
+    useEffect(() => {
+        dispatch(setIsComputingInBackground(state.computing.length > 0));
+    }, [state, dispatch]);
 
     /**
      *
@@ -43,23 +94,10 @@ export const useMediaGroupings = () => {
             return;
         }
 
-        const results: Record<string, Album[]> = allAlbums.reduce(
-            // @ts-ignore
-            (computedAlbumsByArtist, album) => {
-                const thisArtist = (album as Album).artist;
-                // @ts-ignore
-                const currAlbums = computedAlbumsByArtist[thisArtist] ?? [];
-
-                return {
-                    ...computedAlbumsByArtist,
-                    [thisArtist]: [...currAlbums, album],
-                };
-            },
-            {}
-        );
-
-        setAlbumsByArtistName(results);
-    }, [allAlbums]);
+        const computeLabel = "allAlbumsByArtistName";
+        localDispatch({ type: "add_compute_label", payload: computeLabel });
+        mediaGrouperWorker.postMessage({ type: computeLabel, payload: allAlbums });
+    }, [allAlbums, mediaGrouperWorker]);
 
     /**
      *
@@ -69,45 +107,23 @@ export const useMediaGroupings = () => {
             return;
         }
 
-        const byArtist: Record<string, Track[]> = allTracks.reduce(
-            // @ts-ignore
-            (computedTracksByArtist, track) => {
-                const thisArtist = (track as Track).artist;
-                // @ts-ignore
-                const currTracks = computedTracksByArtist[thisArtist] ?? [];
+        let computeLabel = "allTracksByArtistName";
+        localDispatch({ type: "add_compute_label", payload: computeLabel });
+        mediaGrouperWorker.postMessage({ type: computeLabel, payload: allTracks });
 
-                return {
-                    ...computedTracksByArtist,
-                    [thisArtist]: [...currTracks, track],
-                };
-            },
-            {}
-        );
-
-        const byAlbum: Record<string, Track[]> = allTracks.reduce(
-            // @ts-ignore
-            (computedTracksByAlbum, track) => {
-                const thisAlbumId = (track as Track).parentId;
-                // @ts-ignore
-                const currTracks = computedTracksByAlbum[thisAlbumId] ?? [];
-
-                return {
-                    ...computedTracksByAlbum,
-                    [thisAlbumId]: [...currTracks, track],
-                };
-            },
-            {}
-        );
-
-        setTracksByArtistName(byArtist);
-        setTracksByAlbumId(byAlbum);
-    }, [allTracks]);
+        computeLabel = "allTracksByAlbumId";
+        localDispatch({ type: "add_compute_label", payload: computeLabel });
+        mediaGrouperWorker.postMessage({ type: computeLabel, payload: allTracks });
+    }, [allTracks, mediaGrouperWorker]);
 
     // --------------------------------------------------------------------------------------------
+
+    // TODO: Investigate changing from "ByName" to "ById".
 
     return {
         allAlbumsByArtistName: (artist: string) => albumsByArtistName[artist] || [],
         allTracksByAlbumId: (album: string) => tracksByAlbumId[album] || [],
         allTracksByArtistName: (artist: string) => tracksByArtistName[artist] || [],
+        isComputing: state.computing.length > 0,
     };
 };

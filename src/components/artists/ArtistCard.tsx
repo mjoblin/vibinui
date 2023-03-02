@@ -15,19 +15,19 @@ import CompactArtCard from "../shared/CompactArtCard";
 
 const albumAndTrackCount = (albumCount: number, trackCount: number) => (
     <Flex gap={5}>
-        <Text size={14} color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
             {albumCount}
         </Text>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             album{albumCount === 1 ? "" : "s"}
         </Text>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             •
         </Text>
-        <Text size={14} color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
             {trackCount}
         </Text>
-        <Text size={14} color="grey" sx={{ lineHeight: 1.0 }}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
             track{trackCount === 1 ? "" : "s"}
         </Text>
     </Flex>
@@ -43,20 +43,22 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     artist,
     albums = [],
     tracks = [],
+    selected,
     onClick,
 }) => {
     return (
         <CompactArtCard
             artUrl={artist.album_art_uri}
+            selected={selected}
             onClick={() => onClick && onClick(artist)}
         >
-            <Text size={14} weight="bold" sx={{ lineHeight: 1.0 }}>
+            <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
                 {artist.title}
             </Text>
 
             {albumAndTrackCount(albums.length, tracks.length)}
 
-            <Text size={12} color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+            <Text size="xs" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
                 {artist.genre.toLowerCase() === "unknown" ? "" : artist.genre.toLocaleUpperCase()}
             </Text>
         </CompactArtCard>
@@ -110,10 +112,18 @@ type ArtistCardProps = {
     artist: Artist;
     albums?: Album[];
     tracks?: Track[];
+    selected?: boolean;
     onClick?: (artist: Artist) => void;
 };
 
-const ArtistCard: FC<ArtistCardProps> = ({ type, artist, albums, tracks, onClick }) => {
+const ArtistCard: FC<ArtistCardProps> = ({
+    type,
+    artist,
+    albums,
+    tracks,
+    selected = false,
+    onClick,
+}) => {
     const dispatch = useAppDispatch();
     const latestVisibleRenderSize = useAppSelector(
         (state: RootState) => state.internal.artists.artistCard
@@ -190,6 +200,7 @@ const ArtistCard: FC<ArtistCardProps> = ({ type, artist, albums, tracks, onClick
                             artist={artist}
                             albums={albums}
                             tracks={tracks}
+                            selected={selected}
                             onClick={onClick}
                         />
                     </Box>
