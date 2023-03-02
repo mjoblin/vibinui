@@ -3,7 +3,6 @@ import {
     Box,
     Button,
     Checkbox,
-    createStyles,
     Flex,
     Select,
     Slider,
@@ -39,6 +38,9 @@ const AlbumsControls: FC = () => {
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
     const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.albums);
 
     // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
@@ -55,6 +57,7 @@ const AlbumsControls: FC = () => {
                 data={[
                     { value: "all", label: "All Albums" },
                     { value: "new", label: "New Albums" },
+                    { value: "current", label: "Currently Playing" },
                 ]}
                 onChange={(value) =>
                     value && dispatch(setAlbumsActiveCollection(value as AlbumCollection))
@@ -153,7 +156,11 @@ const AlbumsControls: FC = () => {
                     of
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {activeCollection === "all" ? allAlbums?.length || 0 : newAlbums?.length || 0}
+                    {activeCollection === "all"
+                        ? allAlbums?.length || 0
+                        : activeCollection === "new"
+                        ? newAlbums?.length || 0
+                        : allAlbums?.find((album) => album.id === currentAlbumMediaId) ? 1 : 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     albums

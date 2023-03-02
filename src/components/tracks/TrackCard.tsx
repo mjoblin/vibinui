@@ -11,6 +11,7 @@ import TrackArt from "./TrackArt";
 import CompactArtCard from "../shared/CompactArtCard";
 import MediaActionsButton from "../shared/MediaActionsButton";
 import { MediaViewMode } from "../../app/store/userSettingsSlice";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 // ------------------------------------------------------------------------------------------------
 // Helpers
@@ -40,10 +41,10 @@ const trackDetails = (track: Track) => (
 
 type TrackCardTypeProps = Omit<TrackCardProps, "type">;
 
-const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, onClick }) => {
+const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, onClick }) => {
     return (
         <CompactArtCard
-            artUrl={track.album_art_uri || ""}
+            artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
             actions={<MediaActionsButton mediaType="track" media={track} position="bottom" />}
             onClick={() => onClick && onClick(track)}
         >
@@ -61,7 +62,8 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, onClick }) => {
     );
 };
 
-const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, onClick }) => {
+const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick }) => {
+    const { SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
@@ -70,7 +72,9 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, onClick }) => {
     const { classes: dynamicClasses } = createStyles((theme) => ({
         trackCard: {
             width: cardSize,
-            border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            border: selected
+                ? `${borderSize}px solid ${SELECTED_COLOR}`
+                : `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();
 
@@ -114,10 +118,19 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, onClick }) => {
 type TrackCardProps = {
     type?: MediaViewMode;
     track: Track;
+    showArt?: boolean;
+    selected?: boolean;
+
     onClick?: (track: Track) => void;
 };
 
-const TrackCard: FC<TrackCardProps> = ({ type = "art_focused", track, onClick }) => {
+const TrackCard: FC<TrackCardProps> = ({
+    type = "art_focused",
+    track,
+    showArt = true,
+    selected = false,
+    onClick,
+}) => {
     const dispatch = useAppDispatch();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
@@ -173,7 +186,7 @@ const TrackCard: FC<TrackCardProps> = ({ type = "art_focused", track, onClick })
                     isVisible ? (
                         // @ts-ignore
                         <Box ref={cardRef}>
-                            <TrackCardArtFocused track={track} />
+                            <TrackCardArtFocused track={track} selected={selected} />
                         </Box>
                     ) : (
                         <div
@@ -187,7 +200,7 @@ const TrackCard: FC<TrackCardProps> = ({ type = "art_focused", track, onClick })
                 ) : isVisible ? (
                     // @ts-ignore
                     <Box ref={cardRef}>
-                        <TrackCardCompact track={track} onClick={onClick} />
+                        <TrackCardCompact track={track} showArt={showArt} onClick={onClick} />
                     </Box>
                 ) : (
                     <div

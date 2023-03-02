@@ -1,8 +1,5 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import {
-    Box,
-    Button,
-    Checkbox,
     Flex,
     Select,
     Text,
@@ -10,15 +7,19 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 
+import { Album, Artist } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     ArtistCollection,
-    resetArtistsToDefaults,
     setArtistsActiveCollection,
     setArtistsFilterText,
-    setArtistsShowDetails,
+} from "../../app/store/userSettingsSlice";
+import {
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
+import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import GlowTitle from "../shared/GlowTitle";
 
@@ -26,10 +27,12 @@ const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
     const { activeCollection } = useAppSelector((state: RootState) => state.userSettings.artists);
-    const { data: allArtists } = useGetArtistsQuery();
-    const { filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.artists
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
     );
+    const { data: allAlbums } = useGetAlbumsQuery();
+    const { data: allArtists } = useGetArtistsQuery();
+    const { filterText } = useAppSelector((state: RootState) => state.userSettings.artists);
     const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
 
     return (
@@ -52,33 +55,34 @@ const ArtistsControls: FC = () => {
                 data={[
                     { value: "all", label: "All Artists" },
                     { value: "with_albums", label: "Artists with Albums" },
+                    { value: "current", label: "Currently Playing" },
                 ]}
-                onChange={(value) =>
-                    value && dispatch(setArtistsActiveCollection(value as ArtistCollection))
-                }
+                onChange={(value) => {
+                    console.log(value);
+                    value && dispatch(setArtistsActiveCollection(value as ArtistCollection));
+
+                    if (value !== "current") {
+                        dispatch(setArtistsSelectedArtist(undefined));
+                        dispatch(setArtistsSelectedAlbum(undefined));
+                        return;
+                    }
+
+                    // Select the artist and album for the currently-playing album.
+                    const currentAlbum = allAlbums?.find(
+                        (album: Album) => album.id === currentAlbumMediaId
+                    );
+
+                    const currentArtist = allArtists?.find(
+                        (artist: Artist) => artist.title === currentAlbum?.artist
+                    );
+
+                    if (currentArtist && currentAlbum) {
+                        dispatch(setArtistsFilterText(""));
+                        dispatch(setArtistsSelectedArtist(currentArtist));
+                        dispatch(setArtistsSelectedAlbum(currentAlbum));
+                    }
+                }}
             />
-
-            <Box pt={8} sx={{ alignSelf: "center" }}>
-                <Checkbox
-                    label="Show details"
-                    checked={showDetails}
-                    onChange={(event) => dispatch(setArtistsShowDetails(!showDetails))}
-                />
-            </Box>
-
-            <Flex gap={10}>
-                {/* Reset to defaults */}
-                <Box sx={{ alignSelf: "center" }}>
-                    <Button
-                        compact
-                        variant="outline"
-                        size="xs"
-                        onClick={() => dispatch(resetArtistsToDefaults())}
-                    >
-                        Reset
-                    </Button>
-                </Box>
-            </Flex>
 
             {/* "Showing x of y artists" */}
             <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>

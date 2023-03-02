@@ -13,6 +13,7 @@ import AlbumTracksModal from "../tracks/AlbumTracksModal";
 import CompactArtCard from "../shared/CompactArtCard";
 import MediaActionsButton from "../shared/MediaActionsButton";
 import { secstoHms } from "../../app/utils";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 // ------------------------------------------------------------------------------------------------
 // Helpers
@@ -73,7 +74,8 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onC
     );
 };
 
-const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, onClick }) => {
+const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick }) => {
+    const { SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
@@ -85,7 +87,9 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, onClick }) => {
     const { classes: dynamicClasses } = createStyles((theme) => ({
         albumCard: {
             width: cardSize,
-            border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            border: selected
+                ? `${borderSize}px solid ${SELECTED_COLOR}`
+                : `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();
 
@@ -205,7 +209,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
                     isVisible ? (
                         // @ts-ignore
                         <Box ref={cardRef}>
-                            <AlbumCardArtFocused album={album} />
+                            <AlbumCardArtFocused album={album} selected={selected} />
                         </Box>
                     ) : (
                         <div

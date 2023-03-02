@@ -35,7 +35,7 @@ const ArtistWall: FC = () => {
         (state: RootState) => state.userSettings.artists
     );
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
-    const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName, isComputing } =
+    const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName } =
         useMediaGroupings();
     const [artistIdsWithAlbums, setArtistIdsWithAlbums] = useState<MediaId[]>([]);
 
@@ -48,6 +48,10 @@ const ArtistWall: FC = () => {
         },
     }))();
 
+
+    /**
+     *
+     */
     useEffect(() => {
         if (!allArtists || artistIdsWithAlbums.length > 0) {
             return;
@@ -64,6 +68,8 @@ const ArtistWall: FC = () => {
 
         setArtistIdsWithAlbums(withAlbums);
     }, [allArtists, allAlbumsByArtistName, artistIdsWithAlbums]);
+
+    // --------------------------------------------------------------------------------------------
 
     if (isLoading) {
         return (
@@ -92,19 +98,31 @@ const ArtistWall: FC = () => {
         );
     }
 
-    const artistsToDisplay: Artist[] = allArtists
-        .filter((artist: Artist) => {
-            return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
-        })
-        .filter((artist: Artist) => {
-            if (filterText === "") {
-                return true;
-            }
+    // Determine which artists to display. This is triggered by the "Show" dropdown in the
+    // <ArtistsControls> component, and will be one of:
+    //
+    // 1. What's currently playing, in which case limit the artist list to the selected artist
+    //      (the ArtistsControls will have set this artist in application state).
+    // 2. All artists.
+    // 3. Only artists with 1 or more albums.
+    const artistsToDisplay: Artist[] =
+        activeCollection === "current"
+            ? selectedArtist
+                ? [selectedArtist]
+                : []
+            : allArtists
+                  .filter((artist: Artist) => {
+                      return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
+                  })
+                  .filter((artist: Artist) => {
+                      if (filterText === "") {
+                          return true;
+                      }
 
-            const filterValueLower = filterText.toLowerCase();
+                      const filterValueLower = filterText.toLowerCase();
 
-            return artist.title.toLowerCase().includes(filterValueLower);
-        });
+                      return artist.title.toLowerCase().includes(filterValueLower);
+                  });
 
     dispatch(setFilteredArtistCount(artistsToDisplay.length));
 
@@ -115,6 +133,10 @@ const ArtistWall: FC = () => {
             </Center>
         );
     }
+
+    // --------------------------------------------------------------------------------------------
+    // Main render
+    // --------------------------------------------------------------------------------------------
 
     return viewMode === "art_focused" ? (
         <Box className={dynamicClasses.artistWall}>
@@ -177,7 +199,7 @@ const ArtistWall: FC = () => {
                 <Stack spacing="xs">
                     {selectedAlbum &&
                         allTracksByAlbumId(selectedAlbum.id).map((track: Track) => (
-                            <TrackCard key={track.id} type="compact" track={track} />
+                            <TrackCard key={track.id} type="compact" track={track} showArt={false} />
                         ))}
                 </Stack>
             </Stack>

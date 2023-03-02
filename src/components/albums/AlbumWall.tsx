@@ -1,6 +1,7 @@
 import React, { FC } from "react";
 import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
 
+import { Album } from "../../app/types";
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
@@ -13,6 +14,9 @@ const AlbumWall: FC = () => {
     const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
     const { activeCollection, cardSize, cardGap } = useAppSelector(
         (state: RootState) => state.userSettings.albums
+    );
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
     );
     const { data: allAlbums, error: allError, isLoading: allIsLoading } = useGetAlbumsQuery();
     const { data: newAlbums, error: newError, isLoading: newIsLoading } = useGetNewAlbumsQuery();
@@ -45,7 +49,14 @@ const AlbumWall: FC = () => {
         );
     }
 
-    const collection = activeCollection === "all" ? allAlbums : newAlbums;
+    // Decide which collection to show. This will either be all albums; new albums; or just the
+    // album currently playing.
+    const collection =
+        activeCollection === "all"
+            ? allAlbums
+            : activeCollection === "new"
+            ? newAlbums
+            : ([allAlbums?.find((album) => album.id === currentAlbumMediaId)] || []) as Album[];
 
     if (!collection || collection.length <= 0) {
         return (
@@ -84,7 +95,11 @@ const AlbumWall: FC = () => {
     return (
         <Box className={dynamicClasses.albumWall}>
             {albumsToDisplay.map((album) => (
-                <AlbumCard key={album.id} album={album} />
+                <AlbumCard
+                    key={album.id}
+                    album={album}
+                    selected={album.id === currentAlbumMediaId}
+                />
             ))}
         </Box>
     );

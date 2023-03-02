@@ -4,7 +4,7 @@ import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 type CompactArtCardProps = {
-    artUrl: string;
+    artUrl?: string;
     actions?: ReactNode;
     selected?: boolean;
     onClick?: () => void;
@@ -43,9 +43,11 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
             onClick={() => onClick && onClick()}
         >
             <Flex align="center" justify="space-between" gap={10} w="100%">
-                <Flex align="center" gap={10}>
-                    <Image src={artUrl} width={70} height={70} radius={5} fit="cover" />
-                    <Stack spacing={5}>{children}</Stack>
+                <Flex align="center">
+                    {artUrl &&
+                        <Image src={artUrl} width={70} height={70} radius={5} fit="cover" />
+                    }
+                    <Stack spacing={5} p={10}>{children}</Stack>
                 </Flex>
 
                 <Box sx={{ alignSelf: "right" }}>{actions}</Box>
