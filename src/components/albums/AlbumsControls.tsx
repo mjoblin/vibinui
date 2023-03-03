@@ -61,17 +61,6 @@ const AlbumsControls: FC = () => {
             />
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
-                {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setAlbumsCardSize}
-                    cardGapSetter={setAlbumsCardGap}
-                    showDetailsSetter={setAlbumsShowDetails}
-                    resetter={resetAlbumsToDefaults}
-                />
-
                 {/* "Showing x of y albums" */}
                 <Flex gap={3} align="flex-end">
                     <Text size="xs" color={colors.gray[6]}>
@@ -96,6 +85,17 @@ const AlbumsControls: FC = () => {
                         albums
                     </Text>
                 </Flex>
+
+                {/* Card display settings */}
+                <CardControls
+                    cardSize={cardSize}
+                    cardGap={cardGap}
+                    showDetails={showDetails}
+                    cardSizeSetter={setAlbumsCardSize}
+                    cardGapSetter={setAlbumsCardGap}
+                    showDetailsSetter={setAlbumsShowDetails}
+                    resetter={resetAlbumsToDefaults}
+                />
             </Flex>
         </Flex>
     );

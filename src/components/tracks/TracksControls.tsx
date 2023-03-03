@@ -38,17 +38,6 @@ const TracksControls: FC = () => {
             />
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
-                {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setTracksCardSize}
-                    cardGapSetter={setTracksCardGap}
-                    showDetailsSetter={setTracksShowDetails}
-                    resetter={resetTracksToDefaults}
-                />
-
                 {/* "Showing x of y tracks" */}
                 <Flex gap={3} align="flex-end">
                     <Text size="xs" color={colors.gray[6]}>
@@ -67,6 +56,17 @@ const TracksControls: FC = () => {
                         tracks
                     </Text>
                 </Flex>
+
+                {/* Card display settings */}
+                <CardControls
+                    cardSize={cardSize}
+                    cardGap={cardGap}
+                    showDetails={showDetails}
+                    cardSizeSetter={setTracksCardSize}
+                    cardGapSetter={setTracksCardGap}
+                    showDetailsSetter={setTracksShowDetails}
+                    resetter={resetTracksToDefaults}
+                />
             </Flex>
         </Flex>
     );
