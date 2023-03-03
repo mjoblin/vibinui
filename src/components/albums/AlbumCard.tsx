@@ -59,6 +59,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onC
                     mediaType="album"
                     media={album}
                     categories={["Playlist"]}
+                    size="sm"
                     position="bottom"
                 />
             }

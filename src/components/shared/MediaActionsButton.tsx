@@ -19,10 +19,11 @@ import { showErrorNotification, showSuccessNotification } from "../../app/utils"
 export type MediaType = "album" | "track";
 export type ActionCategory = "Tracks" | "Playlist";
 
+const sizeMd = 15;
+const sizeSm = 10;
+
 const useStyles = createStyles((theme) => ({
     actionsButtonContainer: {
-        width: 30,
-        height: 30,
         borderRadius: 15,
         backgroundColor: "rgb(255, 255, 255, 0.2)",
         transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
@@ -52,6 +53,7 @@ type MediaActionsButtonProps = {
     media: Album | Track;
     categories?: ActionCategory[];
     position?: FloatingPosition;
+    size?: "md" | "sm";
     onOpen?: () => void;
     onClose?: () => void;
 };
@@ -65,6 +67,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     media,
     categories = ["Tracks", "Playlist"],
     position = "top",
+    size = "md",
     onOpen = undefined,
     onClose = undefined,
 }) => {
@@ -119,9 +122,11 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                             className={`${classes.actionsButtonContainer} ${
                                 isActionsMenuOpen && classes.buttonActive
                             }`}
+                            w={size === "md" ? sizeMd * 2 : sizeSm * 2}
+                            h={size === "md" ? sizeMd * 2 : sizeSm * 2}
                         >
-                            <Box pt={2}>
-                                <IconDotsVertical size={15} />
+                            <Box pt={size === "md" ? 3 : 0}>
+                                <IconDotsVertical size={size === "md" ? sizeMd : sizeSm} />
                             </Box>
                         </Center>
                     </Tooltip>

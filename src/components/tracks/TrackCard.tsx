@@ -45,7 +45,9 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, onClick }) =
     return (
         <CompactArtCard
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
-            actions={<MediaActionsButton mediaType="track" media={track} position="bottom" />}
+            actions={
+                <MediaActionsButton mediaType="track" media={track} position="bottom" size="sm" />
+            }
             onClick={() => onClick && onClick(track)}
         >
             <Flex gap={5}>
