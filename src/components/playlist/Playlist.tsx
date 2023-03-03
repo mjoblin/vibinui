@@ -33,6 +33,7 @@ import VibinIconButton from "../shared/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../shared/SadLabel";
 import StandbyMode from "../shared/StandbyMode";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 // TODO: Make these part of the theme.
 const DIMMED = "#808080";
@@ -65,6 +66,7 @@ const useStyles = createStyles((theme) => ({
         borderCollapse: "collapse",
         thead: {
             fontWeight: "bold",
+            borderBottom: "1px solid rgb(0, 0, 0, 0)",
         },
         "tbody > tr:not(:first-of-type)": {
             borderTop: `1px solid ${theme.colors.gray[8]}`,
@@ -96,10 +98,6 @@ const useStyles = createStyles((theme) => ({
             paddingTop: 3,
             paddingBottom: 3,
         },
-    },
-    currentlyPlaying: {
-        color: theme.white,
-        backgroundColor: theme.colors.dark[5],
     },
     highlight: {
         backgroundColor: HIGHLIGHT_COLOR,
@@ -143,6 +141,7 @@ const useStyles = createStyles((theme) => ({
 
 const Playlist: FC = () => {
     const { colors } = useMantineTheme();
+    const { SELECTED_COLOR } = useAppConstants();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -157,6 +156,58 @@ const Playlist: FC = () => {
     const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
 
     const { classes } = useStyles();
+
+    // Define some CSS to ensure that the currently-playing playlist entry has an active/highlighted
+    // border around it.
+    //
+    // Note:
+    //  * A table row border is made up of the left/right/bottom borders of the row itself, and the
+    //    bottom border of the row above it. This is due to 'borderCollapse: "collapse"' on the
+    //    table itself.
+    //  * This means the first table body's row has its top border defined by the bottom border of
+    //    the table head.
+    //  * Table rows start at 1, whereas the playlist index starts at 0.
+    //  * When a row isn't being highlighted, it still renders a transparent border of the same
+    //    thickness. This is to prevent rows slightly moving up/down when the highlighted border is
+    //    enabled (see the table's CSS defined earlier).
+
+    const { classes: dynamicClasses } = createStyles((theme) => {
+        if (
+            typeof playlist.current_track_index === "undefined" ||
+            isNaN(playlist.current_track_index)
+        ) {
+            return {
+                table: {},
+            };
+        }
+
+        const previousRowCSS = {
+            borderBottom: `1px solid ${SELECTED_COLOR} !important`,
+        };
+
+        const currentlyPlayingRowCSS = {
+            color: theme.white,
+            backgroundColor: theme.colors.dark[5],
+            border: `1px solid ${SELECTED_COLOR} !important`,
+        };
+
+        if (playlist.current_track_index === 0) {
+            return {
+                table: {
+                    "thead > tr": previousRowCSS,
+                    "tbody > tr:nth-of-type(1)": currentlyPlayingRowCSS,
+                },
+            };
+        } else {
+            return {
+                table: {
+                    [`tbody > tr:nth-of-type(${playlist.current_track_index})`]: previousRowCSS,
+                    [`tbody > tr:nth-of-type(${playlist.current_track_index + 1})`]:
+                        currentlyPlayingRowCSS,
+                },
+            };
+        }
+    })();
 
     useEffect(() => {
         if (deleteStatus.isError) {
@@ -218,8 +269,6 @@ const Playlist: FC = () => {
         ...playlistEntries.map((elem) => getTextWidth(elem.album))
     );
 
-    // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
-
     /**
      * Find the album year for the first album matching the given title & artist. This is a little
      * flaky as it's taking a playlist title/artist and assuming it will match an album in the
@@ -253,6 +302,7 @@ const Playlist: FC = () => {
             // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
             const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre.toLocaleUpperCase();
 
+            // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
             const albumSubtitle =
                 year && genre
                     ? `${year} • ${genre}`
@@ -269,15 +319,15 @@ const Playlist: FC = () => {
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             key={entry.id.toString()}
-                            className={
-                                index === playlist.current_track_index
-                                    ? classes.currentlyPlaying
-                                    : actionsMenuOpenFor
+                            className={`${
+                                index !== playlist.current_track_index && actionsMenuOpenFor
+                                    // ? classes.currentlyPlaying
+                                    // : actionsMenuOpenFor
                                     ? actionsMenuOpenFor === entry.id
                                         ? classes.highlight
                                         : ""
                                     : classes.highlightOnHover
-                            }
+                            }`}
                         >
                             <td
                                 className={`${classes.alignRight} ${classes.dimmed}`}
@@ -425,7 +475,7 @@ const Playlist: FC = () => {
                 }}
             >
                 <table
-                    className={`${classes.table} ${
+                    className={`${classes.table} ${dynamicClasses.table} ${
                         viewMode === "simple" ? classes.tableSimple : ""
                     }`}
                 >

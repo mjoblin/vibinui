@@ -38,6 +38,7 @@ const Debug: FC = () => {
     const { classes } = useStyles();
     const system = useAppSelector((state: RootState) => state.system);
     const playback = useAppSelector((state: RootState) => state.playback);
+    const playlist = useAppSelector((state: RootState) => state.playlist);
     const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
     const { showDebugPanel } = useAppSelector((state: RootState) => state.internal.application);
 
@@ -89,6 +90,22 @@ const Debug: FC = () => {
                                     playback.current_audio_source?.name || "undefined",
                                 currentTrackMediaId: playback.current_track_media_id || "<none>",
                                 currentAlbumMediaId: playback.current_album_media_id || "<none>",
+                            }}
+                            keySize={fontSize}
+                            valueSize={fontSize}
+                        />
+                    </Stack>
+
+                    {/* Playlist */}
+                    <Stack spacing={0}>
+                        <Title size={fontSize}>CURRENT PLAYLIST</Title>
+                        <FieldValueList
+                            fieldValues={{
+                                entryCount: playlist.entries?.length || 0,
+                                currentTrackIndex:
+                                    typeof playlist.current_track_index === "undefined"
+                                        ? "undefined"
+                                        : playlist.current_track_index,
                             }}
                             keySize={fontSize}
                             valueSize={fontSize}
