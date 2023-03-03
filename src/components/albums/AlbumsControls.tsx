@@ -55,6 +55,7 @@ const AlbumsControls: FC = () => {
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
+                miw="20rem"
                 value={filterText}
                 onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
             />

@@ -87,15 +87,6 @@ const ArtistsControls: FC = () => {
         <Flex gap={25} align="center">
             <GlowTitle>Artists</GlowTitle>
 
-            {/* Filter text */}
-            <TextInput
-                placeholder="Filter text"
-                label="Filter"
-                value={filterText}
-                disabled={activeCollection === "current"}
-                onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
-            />
-
             {/* Show all or just artists with albums */}
             <Select
                 label="Show"
@@ -107,6 +98,16 @@ const ArtistsControls: FC = () => {
                     { value: "current", label: "Currently Playing" },
                 ]}
                 onChange={onArtistCollectionChange}
+            />
+
+            {/* Filter text */}
+            <TextInput
+                placeholder="Filter text"
+                label="Filter"
+                miw="20rem"
+                value={filterText}
+                disabled={activeCollection === "current"}
+                onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
             />
 
             {/* "Showing x of y artists" */}
