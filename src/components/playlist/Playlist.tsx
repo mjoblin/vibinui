@@ -321,8 +321,6 @@ const Playlist: FC = () => {
                             key={entry.id.toString()}
                             className={`${
                                 index !== playlist.current_track_index && actionsMenuOpenFor
-                                    // ? classes.currentlyPlaying
-                                    // : actionsMenuOpenFor
                                     ? actionsMenuOpenFor === entry.id
                                         ? classes.highlight
                                         : ""
