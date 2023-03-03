@@ -32,6 +32,7 @@ const TracksControls: FC = () => {
             <TextInput
                 placeholder="Filter text"
                 label="Filter"
+                miw="20rem"
                 value={filterText}
                 onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
             />
