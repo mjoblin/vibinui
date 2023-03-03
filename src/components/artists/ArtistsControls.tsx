@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, SyntheticEvent, useCallback, useEffect } from "react";
 import {
     Flex,
     Select,
@@ -35,6 +35,54 @@ const ArtistsControls: FC = () => {
     const { filterText } = useAppSelector((state: RootState) => state.userSettings.artists);
     const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
 
+    // --------------------------------------------------------------------------------------------
+
+    /**
+     * Determine the album and artist associated with the currently-playing album, set that artist
+     * and album to be selected.
+     */
+    const emitNewSelection = () => {
+        // Select the artist and album for the currently-playing album.
+        const currentAlbum = allAlbums?.find((album: Album) => album.id === currentAlbumMediaId);
+
+        const currentArtist = allArtists?.find(
+            (artist: Artist) => artist.title === currentAlbum?.artist
+        );
+
+        if (currentArtist && currentAlbum) {
+            dispatch(setArtistsFilterText(""));
+            dispatch(setArtistsSelectedArtist(currentArtist));
+            dispatch(setArtistsSelectedAlbum(currentAlbum));
+        }
+    }
+
+    const onArtistCollectionChange = useCallback((value: unknown) => {
+        value && dispatch(setArtistsActiveCollection(value as ArtistCollection));
+
+        if (value !== "current") {
+            dispatch(setArtistsSelectedArtist(undefined));
+            dispatch(setArtistsSelectedAlbum(undefined));
+            return;
+        }
+
+        emitNewSelection();
+    }, [allAlbums, allArtists, currentAlbumMediaId, dispatch]);
+
+    /**
+     * If the currently-playing Album id changes and the Artists screen is in "current" mode, then
+     * automatically select the new album and artist.
+     *
+     * Reasoning: An album, track, etc, can be played from the Artists screen. When this happens,
+     * it seems reasonable to want to reflect the newly-playing media by selecting it in the UI.
+     */
+    useEffect(() => {
+        if (activeCollection === "current") {
+            emitNewSelection();
+        }
+    }, [currentAlbumMediaId, activeCollection]);
+
+    // --------------------------------------------------------------------------------------------
+
     return (
         <Flex gap={25} align="center">
             <GlowTitle>Artists</GlowTitle>
@@ -44,6 +92,7 @@ const ArtistsControls: FC = () => {
                 placeholder="Filter text"
                 label="Filter"
                 value={filterText}
+                disabled={activeCollection === "current"}
                 onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
             />
 
@@ -57,31 +106,7 @@ const ArtistsControls: FC = () => {
                     { value: "with_albums", label: "Artists with Albums" },
                     { value: "current", label: "Currently Playing" },
                 ]}
-                onChange={(value) => {
-                    console.log(value);
-                    value && dispatch(setArtistsActiveCollection(value as ArtistCollection));
-
-                    if (value !== "current") {
-                        dispatch(setArtistsSelectedArtist(undefined));
-                        dispatch(setArtistsSelectedAlbum(undefined));
-                        return;
-                    }
-
-                    // Select the artist and album for the currently-playing album.
-                    const currentAlbum = allAlbums?.find(
-                        (album: Album) => album.id === currentAlbumMediaId
-                    );
-
-                    const currentArtist = allArtists?.find(
-                        (artist: Artist) => artist.title === currentAlbum?.artist
-                    );
-
-                    if (currentArtist && currentAlbum) {
-                        dispatch(setArtistsFilterText(""));
-                        dispatch(setArtistsSelectedArtist(currentArtist));
-                        dispatch(setArtistsSelectedAlbum(currentAlbum));
-                    }
-                }}
+                onChange={onArtistCollectionChange}
             />
 
             {/* "Showing x of y artists" */}
