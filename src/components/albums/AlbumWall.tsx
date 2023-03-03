@@ -51,12 +51,17 @@ const AlbumWall: FC = () => {
 
     // Decide which collection to show. This will either be all albums; new albums; or just the
     // album currently playing.
+    
+    const albumMatchingCurrentlyPlaying = allAlbums?.find(
+        (album) => album.id === currentAlbumMediaId
+    );
+    
     const collection =
         activeCollection === "all"
             ? allAlbums
             : activeCollection === "new"
             ? newAlbums
-            : ([allAlbums?.find((album) => album.id === currentAlbumMediaId)] || []) as Album[];
+            : (albumMatchingCurrentlyPlaying ? [albumMatchingCurrentlyPlaying] : []) as Album[];
 
     if (!collection || collection.length <= 0) {
         return (
