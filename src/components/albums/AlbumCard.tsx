@@ -1,20 +1,160 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Card, createStyles, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Box, Card, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
-import { Album } from "../../app/types";
+import { Album, Track } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../app/store/internalSlice";
+import { MediaViewMode } from "../../app/store/userSettingsSlice";
 import { yearFromDate } from "../../app/utils";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
+import CompactArtCard from "../shared/CompactArtCard";
+import MediaActionsButton from "../shared/MediaActionsButton";
+import { secstoHms } from "../../app/utils";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
-type AlbumCardProps = {
-    album: Album;
+// ------------------------------------------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------------------------------------------
+
+const albumDetails = (album: Album, trackCount: number, duration: number) => (
+    <Flex gap={5}>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
+            {yearFromDate(album.date)}
+        </Text>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
+            •
+        </Text>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+            {trackCount}
+        </Text>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
+            track{trackCount === 1 ? "" : "s"}
+        </Text>
+        <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
+            •
+        </Text>
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+            {`${secstoHms(duration)}s`}
+        </Text>
+    </Flex>
+);
+
+// ------------------------------------------------------------------------------------------------
+// Album card types: AlbumCardCompact, AlbumCardArtFocused
+// ------------------------------------------------------------------------------------------------
+
+type AlbumCardTypeProps = Omit<AlbumCardProps, "type">;
+
+const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onClick }) => {
+    const albumDuration = tracks?.reduce((duration, track) => duration + track.duration, 0) || 0;
+
+    return (
+        <CompactArtCard
+            artUrl={album.album_art_uri}
+            actions={
+                <MediaActionsButton
+                    mediaType="album"
+                    media={album}
+                    categories={["Playlist"]}
+                    size="sm"
+                    position="bottom"
+                />
+            }
+            selected={selected}
+            onClick={() => onClick && onClick(album)}
+        >
+            <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
+                {album.title}
+            </Text>
+
+            {albumDetails(album, tracks?.length || 0, albumDuration)}
+        </CompactArtCard>
+    );
 };
 
-const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
+const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick }) => {
+    const { SELECTED_COLOR } = useAppConstants();
+    const { cardSize, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
+    );
+    const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
+    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
+
+    const borderSize = 2;
+
+    const { classes: dynamicClasses } = createStyles((theme) => ({
+        albumCard: {
+            width: cardSize,
+            border: selected
+                ? `${borderSize}px solid ${SELECTED_COLOR}`
+                : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+        },
+    }))();
+
+    const albumYear = yearFromDate(album.date);
+
+    return (
+        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.albumCard}>
+            {/* Album art with play/action controls */}
+            <Card.Section onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
+                <AlbumArt
+                    album={album}
+                    actionCategories={["Tracks", "Playlist"]}
+                    size={cardSize - borderSize * 2}
+                    radius={5}
+                    onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
+                    onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
+                />
+            </Card.Section>
+
+            {/* Album title, artist, year, genre */}
+            {showDetails && (
+                <Stack spacing={0} pt={7}>
+                    <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {album.title}
+                    </Text>
+                    <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
+                        {`${album.artist}${
+                            albumYear ? `${album.artist ? " • " : ""}${albumYear}` : ""
+                        }`}
+                    </Text>
+                    <Text size={11} color="grey" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {album.genre === "Unknown" ? "" : album.genre.toLocaleUpperCase()}
+                    </Text>
+                </Stack>
+            )}
+
+            <AlbumTracksModal
+                album={album}
+                opened={showTracksModal}
+                onClose={() => setShowTracksModal(false)}
+            />
+        </Card>
+    );
+};
+
+// ------------------------------------------------------------------------------------------------
+// AlbumCard
+// ------------------------------------------------------------------------------------------------
+
+type AlbumCardProps = {
+    type?: MediaViewMode;
+    album: Album;
+    tracks?: Track[];
+    selected?: boolean;
+    onClick?: (album: Album) => void;
+};
+
+const AlbumCard: FC<AlbumCardProps> = ({
+    type = "art_focused",
+    album,
+    tracks,
+    selected = false,
+    onClick,
+}) => {
     const dispatch = useAppDispatch();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
@@ -24,18 +164,7 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
     );
     const { colors } = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
-    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const cardRef = useRef<HTMLDivElement>();
-
-    const borderSize = 2;
-
-    const { classes: dynamicClasses } = createStyles((theme) => ({
-        albumCard: {
-            width: cardSize,
-            border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
-        },
-    }))();
 
     /**
      * For visible AlbumCards, we want to store their width and height in application state. We do
@@ -63,7 +192,7 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
         }
     }, [cardRef, isVisible, cardSize, showDetails]);
 
-    const albumYear = yearFromDate(album.date);
+    const visibilityOffset = type === "art_focused" ? -1000 : -200;
 
     return (
         // The visibility offset top/bottom is somewhat arbitrary. The goal is to pre-load enough
@@ -73,63 +202,35 @@ const AlbumCard: FC<AlbumCardProps> = ({ album }) => {
         <VisibilitySensor
             onChange={setIsVisible}
             partialVisibility={true}
-            offset={{ top: -1000, bottom: -1000 }}
+            offset={{ top: visibilityOffset, bottom: visibilityOffset }}
         >
             {/* @ts-ignore */}
             {({ isVisible }) =>
-                isVisible ? (
-                    <Card
+                type === "art_focused" ? (
+                    isVisible ? (
                         // @ts-ignore
-                        ref={cardRef}
-                        radius="sm"
-                        p={7}
-                        pb={showDetails ? 7 : 0}
-                        className={dynamicClasses.albumCard}
-                    >
-                        {/* Album art with play/action controls */}
-                        <Card.Section
-                            onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}
-                        >
-                            <AlbumArt
-                                album={album}
-                                actionCategories={["Tracks", "Playlist"]}
-                                size={cardSize - borderSize * 2}
-                                radius={5}
-                                onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
-                                onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
-                            />
-                        </Card.Section>
-
-                        {/* Album title, artist, year, genre */}
-                        {showDetails && (
-                            <Stack spacing={0} pt={7}>
-                                <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
-                                    {album.title}
-                                </Text>
-                                <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
-                                    {`${album.artist}${
-                                        albumYear ? `${album.artist ? " • " : ""}${albumYear}` : ""
-                                    }`}
-                                </Text>
-                                <Text
-                                    size={11}
-                                    color="grey"
-                                    weight="bold"
-                                    sx={{ lineHeight: 1.25 }}
-                                >
-                                    {album.genre === "Unknown"
-                                        ? ""
-                                        : album.genre.toLocaleUpperCase()}
-                                </Text>
-                            </Stack>
-                        )}
-
-                        <AlbumTracksModal
+                        <Box ref={cardRef}>
+                            <AlbumCardArtFocused album={album} selected={selected} />
+                        </Box>
+                    ) : (
+                        <div
+                            style={{
+                                width: latestVisibleRenderSize.renderWidth,
+                                height: latestVisibleRenderSize.renderHeight,
+                                backgroundColor: colors.dark[6],
+                            }}
+                        ></div>
+                    )
+                ) : isVisible ? (
+                    // @ts-ignore
+                    <Box ref={cardRef}>
+                        <AlbumCardCompact
                             album={album}
-                            opened={showTracksModal}
-                            onClose={() => setShowTracksModal(false)}
+                            tracks={tracks}
+                            selected={selected}
+                            onClick={onClick}
                         />
-                    </Card>
+                    </Box>
                 ) : (
                     <div
                         style={{

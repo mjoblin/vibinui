@@ -5,6 +5,8 @@ import { Box, createStyles, Group, Header, Text } from "@mantine/core";
 import VibinLogo from "./VibinLogo";
 import MiniController from "../currentlyPlaying/MiniController";
 import Settings from "./Settings";
+import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
+import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
 
 const NAV_HEIGHT = 60;
 
@@ -97,6 +99,8 @@ const NavigationBar: FC = () => {
                     </Group>
 
                     <Group>
+                        <WaitingOnAPIIndicator />
+                        <BackgroundComputeIndicator />
                         <Settings />
                     </Group>
                 </Group>

@@ -1,19 +1,138 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Card, createStyles, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Box, Card, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Track } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { setTrackCardRenderDimensions } from "../../app/store/internalSlice";
-import { yearFromDate } from "../../app/utils";
+import { secstoHms, yearFromDate } from "../../app/utils";
 import TrackArt from "./TrackArt";
+import CompactArtCard from "../shared/CompactArtCard";
+import MediaActionsButton from "../shared/MediaActionsButton";
+import { MediaViewMode } from "../../app/store/userSettingsSlice";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
-type TrackCardProps = {
-    track: Track;
+// ------------------------------------------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------------------------------------------
+
+const trackDetails = (track: Track) => (
+    <Flex gap={5}>
+        {track.date && (
+            <>
+                <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
+                    {yearFromDate(track.date || "")}
+                </Text>
+                <Text size="sm" color="grey" sx={{ lineHeight: 1.0 }}>
+                    •
+                </Text>
+            </>
+        )}
+        <Text size="sm" color="grey" weight="bold" sx={{ lineHeight: 1.0 }}>
+            {`${secstoHms(track.duration)}s`}
+        </Text>
+    </Flex>
+);
+
+// ------------------------------------------------------------------------------------------------
+// Track card types: TrackCardCompact, TrackCardArtFocused
+// ------------------------------------------------------------------------------------------------
+
+type TrackCardTypeProps = Omit<TrackCardProps, "type">;
+
+const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, onClick }) => {
+    return (
+        <CompactArtCard
+            artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
+            actions={
+                <MediaActionsButton mediaType="track" media={track} position="bottom" size="sm" />
+            }
+            onClick={() => onClick && onClick(track)}
+        >
+            <Flex gap={5}>
+                <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
+                    {`${track.track_number}.`}
+                </Text>
+                <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
+                    {track.title}
+                </Text>
+            </Flex>
+
+            {trackDetails(track)}
+        </CompactArtCard>
+    );
 };
 
-const TrackCard: FC<TrackCardProps> = ({ track }) => {
+const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick }) => {
+    const { SELECTED_COLOR } = useAppConstants();
+    const { cardSize, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.tracks
+    );
+    const borderSize = 2;
+
+    const { classes: dynamicClasses } = createStyles((theme) => ({
+        trackCard: {
+            width: cardSize,
+            border: selected
+                ? `${borderSize}px solid ${SELECTED_COLOR}`
+                : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+        },
+    }))();
+
+    const trackYear = track.date && yearFromDate(track.date);
+
+    return (
+        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.trackCard}>
+            {/* Track art with play/action controls */}
+            <Card.Section>
+                <TrackArt track={track} size={cardSize - borderSize * 2} radius={5} />
+            </Card.Section>
+
+            {/* Track title, artist, year, genre */}
+            {showDetails && (
+                <Stack spacing={0} pt={7}>
+                    <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {track.title}
+                    </Text>
+                    <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
+                        {`${track.artist}${
+                            trackYear ? `${track.artist ? " • " : ""}${trackYear}` : ""
+                        }`}
+                    </Text>
+                    <Text size={11} color="grey" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {track.genre === "Unknown" ||
+                        track.genre === "(Unknown Genre)" ||
+                        !track.genre
+                            ? ""
+                            : track.genre.toLocaleUpperCase()}
+                    </Text>
+                </Stack>
+            )}
+        </Card>
+    );
+};
+
+// ------------------------------------------------------------------------------------------------
+// TrackCard
+// ------------------------------------------------------------------------------------------------
+
+type TrackCardProps = {
+    type?: MediaViewMode;
+    track: Track;
+    showArt?: boolean;
+    selected?: boolean;
+
+    onClick?: (track: Track) => void;
+};
+
+const TrackCard: FC<TrackCardProps> = ({
+    type = "art_focused",
+    track,
+    showArt = true,
+    selected = false,
+    onClick,
+}) => {
     const dispatch = useAppDispatch();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
@@ -23,18 +142,7 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
     );
     const { colors } = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
-    const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
-    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const cardRef = useRef<HTMLDivElement>();
-
-    const borderSize = 2;
-
-    const { classes: dynamicClasses } = createStyles((theme) => ({
-        trackCard: {
-            width: cardSize,
-            border: `${borderSize}px solid rgb(0, 0, 0, 0)`,
-        },
-    }))();
 
     /**
      * For visible TrackCards, we want to store their width and height in application state. We do
@@ -62,7 +170,7 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
         }
     }, [cardRef, isVisible, cardSize, showDetails]);
 
-    const trackYear = track.date && yearFromDate(track.date);
+    const visibilityOffset = type === "art_focused" ? -1000 : -200;
 
     return (
         // The visibility offset top/bottom is somewhat arbitrary. The goal is to pre-load enough
@@ -72,59 +180,30 @@ const TrackCard: FC<TrackCardProps> = ({ track }) => {
         <VisibilitySensor
             onChange={setIsVisible}
             partialVisibility={true}
-            offset={{ top: -1000, bottom: -1000 }}
+            offset={{ top: visibilityOffset, bottom: visibilityOffset }}
         >
             {/* @ts-ignore */}
             {({ isVisible }) =>
-                isVisible ? (
-                    <Card
+                type === "art_focused" ? (
+                    isVisible ? (
                         // @ts-ignore
-                        ref={cardRef}
-                        radius="sm"
-                        p={7}
-                        pb={showDetails ? 7 : 0}
-                        className={dynamicClasses.trackCard}
-                    >
-                        {/* Track art with play/action controls */}
-                        <Card.Section
-                            onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}
-                        >
-                            <TrackArt
-                                track={track}
-                                // actionCategories={["Tracks", "Playlist"]}
-                                size={cardSize - borderSize * 2}
-                                radius={5}
-                                onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
-                                onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
-                            />
-                        </Card.Section>
-
-                        {/* Track title, artist, year, genre */}
-                        {showDetails && (
-                            <Stack spacing={0} pt={7}>
-                                <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
-                                    {track.title}
-                                </Text>
-                                <Text size="xs" color="grey" sx={{ lineHeight: 1.25 }}>
-                                    {`${track.artist}${
-                                        trackYear ? `${track.artist ? " • " : ""}${trackYear}` : ""
-                                    }`}
-                                </Text>
-                                <Text
-                                    size={11}
-                                    color="grey"
-                                    weight="bold"
-                                    sx={{ lineHeight: 1.25 }}
-                                >
-                                    {track.genre === "Unknown" ||
-                                    track.genre === "(Unknown Genre)" ||
-                                    !track.genre
-                                        ? ""
-                                        : track.genre.toLocaleUpperCase()}
-                                </Text>
-                            </Stack>
-                        )}
-                    </Card>
+                        <Box ref={cardRef}>
+                            <TrackCardArtFocused track={track} selected={selected} />
+                        </Box>
+                    ) : (
+                        <div
+                            style={{
+                                width: latestVisibleRenderSize.renderWidth,
+                                height: latestVisibleRenderSize.renderHeight,
+                                backgroundColor: colors.dark[6],
+                            }}
+                        ></div>
+                    )
+                ) : isVisible ? (
+                    // @ts-ignore
+                    <Box ref={cardRef}>
+                        <TrackCardCompact track={track} showArt={showArt} onClick={onClick} />
+                    </Box>
                 ) : (
                     <div
                         style={{

@@ -1,19 +1,43 @@
-import React, { FC } from "react";
-import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
+import React, { FC, useEffect, useState } from "react";
+import {
+    Box,
+    Center,
+    createStyles,
+    Flex,
+    Loader,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 
+import { Album, Artist, MediaId, Track } from "../../app/types";
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { setFilteredArtistCount } from "../../app/store/internalSlice";
+import {
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
+} from "../../app/store/userSettingsSlice";
+import AlbumCard from "../albums/AlbumCard";
 import ArtistCard from "./ArtistCard";
+import TrackCard from "../tracks/TrackCard";
 import SadLabel from "../shared/SadLabel";
+import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 
 const ArtistWall: FC = () => {
+    const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
+    const { activeCollection, selectedAlbum, selectedArtist, viewMode } = useAppSelector(
+        (state: RootState) => state.userSettings.artists
+    );
     const { cardSize, cardGap, filterText } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
+    const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName } =
+        useMediaGroupings();
+    const [artistIdsWithAlbums, setArtistIdsWithAlbums] = useState<MediaId[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         artistWall: {
@@ -23,6 +47,29 @@ const ArtistWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+
+
+    /**
+     *
+     */
+    useEffect(() => {
+        if (!allArtists || artistIdsWithAlbums.length > 0) {
+            return;
+        }
+
+        // @ts-ignore
+        const withAlbums: MediaId[] = allArtists.reduce((accum, artist) => {
+            if (allAlbumsByArtistName(artist.title).length > 0) {
+                return [...accum, artist.id];
+            }
+
+            return accum;
+        }, []);
+
+        setArtistIdsWithAlbums(withAlbums);
+    }, [allArtists, allAlbumsByArtistName, artistIdsWithAlbums]);
+
+    // --------------------------------------------------------------------------------------------
 
     if (isLoading) {
         return (
@@ -51,34 +98,112 @@ const ArtistWall: FC = () => {
         );
     }
 
-    const artistsToDisplay = allArtists.filter((artist) => {
-        if (filterText === "") {
-            return true;
-        }
+    // Determine which artists to display. This is triggered by the "Show" dropdown in the
+    // <ArtistsControls> component, and will be one of:
+    //
+    // 1. What's currently playing, in which case limit the artist list to the selected artist
+    //      (the ArtistsControls will have set this artist in application state).
+    // 2. All artists.
+    // 3. Only artists with 1 or more albums.
+    const artistsToDisplay: Artist[] =
+        activeCollection === "current"
+            ? selectedArtist
+                ? [selectedArtist]
+                : []
+            : allArtists
+                  .filter((artist: Artist) => {
+                      return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
+                  })
+                  .filter((artist: Artist) => {
+                      if (filterText === "") {
+                          return true;
+                      }
 
-        const filterValueLower = filterText.toLowerCase();
+                      const filterValueLower = filterText.toLowerCase();
 
-        return (
-            artist.title.toLowerCase().includes(filterValueLower)
-        );
-    });
+                      return artist.title.toLowerCase().includes(filterValueLower);
+                  });
 
     dispatch(setFilteredArtistCount(artistsToDisplay.length));
 
     if (artistsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label="No matching Tracks" />
+                <SadLabel label="No matching Artists" />
             </Center>
         );
     }
 
-    return (
+    // --------------------------------------------------------------------------------------------
+    // Main render
+    // --------------------------------------------------------------------------------------------
+
+    return viewMode === "art_focused" ? (
         <Box className={dynamicClasses.artistWall}>
-            {artistsToDisplay.map((artist) => (
-                <ArtistCard key={artist.id} artist={artist} />
-            ))}
+            {artistsToDisplay
+                .filter((artist) => artist.title.startsWith("H"))
+                .map((artist) => (
+                    <ArtistCard key={artist.id} type="art_focused" artist={artist} />
+                ))}
         </Box>
+    ) : (
+        <Flex gap={20}>
+            {/* Artists */}
+            <Stack>
+                <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
+                    Artist
+                </Text>
+                <Stack spacing="xs">
+                    {artistsToDisplay.map((artist) => (
+                        <ArtistCard
+                            key={artist.id}
+                            type="compact"
+                            artist={artist}
+                            albums={allAlbumsByArtistName(artist.title)}
+                            tracks={allTracksByArtistName(artist.title)}
+                            selected={artist.id === selectedArtist?.id}
+                            onClick={(artist: Artist) => {
+                                dispatch(setArtistsSelectedArtist(artist));
+                                dispatch(setArtistsSelectedAlbum(undefined));
+                            }}
+                        />
+                    ))}
+                </Stack>
+            </Stack>
+
+            {/* Albums */}
+            <Stack>
+                <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
+                    Albums
+                </Text>
+                <Stack spacing="xs">
+                    {selectedArtist &&
+                        allAlbumsByArtistName(selectedArtist.title).map((album) => (
+                            <AlbumCard
+                                key={album.id}
+                                type="compact"
+                                album={album}
+                                tracks={allTracksByAlbumId(album.id)}
+                                selected={album.id === selectedAlbum?.id}
+                                onClick={(album: Album) => dispatch(setArtistsSelectedAlbum(album))}
+                            />
+                        ))}
+                </Stack>
+            </Stack>
+
+            {/* Tracks */}
+            <Stack>
+                <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
+                    Tracks
+                </Text>
+                <Stack spacing="xs">
+                    {selectedAlbum &&
+                        allTracksByAlbumId(selectedAlbum.id).map((track: Track) => (
+                            <TrackCard key={track.id} type="compact" track={track} showArt={false} />
+                        ))}
+                </Stack>
+            </Stack>
+        </Flex>
     );
 };
 

@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface InternalState {
     application: {
+        isComputingInBackground: boolean;
         showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
     };
@@ -32,6 +33,7 @@ export interface InternalState {
 
 const initialState: InternalState = {
     application: {
+        isComputingInBackground: false,
         showKeyboardShortcuts: false,
         showDebugPanel: false,
     },
@@ -82,6 +84,14 @@ export const internalSlice = createSlice({
             state.artists.artistCard.renderWidth = action.payload.width;
             state.artists.artistCard.renderHeight = action.payload.height;
         },
+        setIsComputingInBackground: (state, action: PayloadAction<boolean>) => {
+            // TODO: This currently allows any one background worker to state that the app is
+            //  computing in the background. This will break if there's more than one background
+            //  worker (as of writing, there's just one: mediaGrouperWorker). In the future, if
+            //  more workers are added then isComputingInBackground will need to allow workers to
+            //  individually state when they start and stop working.
+            state.application.isComputingInBackground = action.payload;
+        },
         setFilteredAlbumCount: (state, action: PayloadAction<number>) => {
             state.albums.filteredAlbumCount = action.payload;
         },
@@ -111,6 +121,7 @@ export const internalSlice = createSlice({
 export const {
     setAlbumCardRenderDimensions,
     setArtistCardRenderDimensions,
+    setIsComputingInBackground,
     setFilteredAlbumCount,
     setFilteredArtistCount,
     setFilteredTrackCount,

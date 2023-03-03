@@ -16,6 +16,7 @@ import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { IconPlayerPlay } from "@tabler/icons";
 import { useLazyPlayPresetIdQuery } from "../../app/services/vibinPresets";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const useStyles = createStyles((theme) => ({
     playPreset: {
@@ -45,6 +46,7 @@ type PresetCardProps = {
 const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
+    const { SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );
@@ -98,7 +100,7 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
         presetCard: {
             width: cardSize,
             border: presetIsActive
-                ? `${borderSize}px solid ${colors.yellow[4]}`
+                ? `${borderSize}px solid ${SELECTED_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();

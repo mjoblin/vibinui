@@ -18,7 +18,7 @@ import {
     TextInput,
     useMantineTheme,
 } from "@mantine/core";
-import { isNotEmpty, useForm } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import {
     IconDotsCircleHorizontal,
     IconFile,
