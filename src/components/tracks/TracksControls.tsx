@@ -1,22 +1,8 @@
 import React, { FC } from "react";
-import {
-    Box,
-    Button,
-    Checkbox,
-    Flex,
-    Slider,
-    Stack,
-    Text,
-    TextInput,
-    useMantineTheme,
-} from "@mantine/core";
+import { Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-    minCardGap,
-    maxCardGap,
-    minCardSize,
-    maxCardSize,
     resetTracksToDefaults,
     setTracksCardGap,
     setTracksCardSize,
@@ -26,6 +12,7 @@ import {
 import { RootState } from "../../app/store/store";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import GlowTitle from "../shared/GlowTitle";
+import CardControls from "../shared/CardControls";
 
 const TracksControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -49,94 +36,36 @@ const TracksControls: FC = () => {
                 onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
             />
 
-            {/* Cover size */}
-            <Stack spacing={5} pt={1}>
-                {/* TODO: Figure out how to properly get <Text> to match the <TextInput> label */}
-                <Text size="sm" sx={{ fontWeight: 500 }}>
-                    Art size
-                </Text>
-                <Slider
-                    label={null}
-                    min={minCardSize}
-                    max={maxCardSize}
-                    size={5}
-                    sx={{ width: 200 }}
-                    value={cardSize}
-                    onChange={(value) => dispatch(setTracksCardSize(value))}
+            <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+                {/* Card display settings */}
+                <CardControls
+                    cardSize={cardSize}
+                    cardGap={cardGap}
+                    showDetails={showDetails}
+                    cardSizeSetter={setTracksCardSize}
+                    cardGapSetter={setTracksCardGap}
+                    showDetailsSetter={setTracksShowDetails}
+                    resetter={resetTracksToDefaults}
                 />
-            </Stack>
 
-            {/* Cover gap */}
-            <Stack spacing={5} pt={1}>
-                <Text size="sm" sx={{ fontWeight: 500 }}>
-                    Separation
-                </Text>
-                <Slider
-                    label={null}
-                    min={minCardGap}
-                    max={maxCardGap}
-                    size={5}
-                    sx={{ width: 200 }}
-                    value={cardGap}
-                    onChange={(value) => dispatch(setTracksCardGap(value))}
-                />
-            </Stack>
-
-            <Box pt={8} sx={{ alignSelf: "center" }}>
-                <Checkbox
-                    label="Show details"
-                    checked={showDetails}
-                    onChange={(event) => dispatch(setTracksShowDetails(!showDetails))}
-                />
-            </Box>
-
-            <Flex gap={10}>
-                {/* Reset to defaults */}
-                <Box sx={{ alignSelf: "center" }}>
-                    <Button
-                        compact
-                        variant="outline"
-                        size="xs"
-                        onClick={() => dispatch(resetTracksToDefaults())}
-                    >
-                        Reset
-                    </Button>
-                </Box>
-
-                {/* Show a "tiny wall" preset */}
-                <Box sx={{ alignSelf: "center" }}>
-                    <Button
-                        compact
-                        variant="outline"
-                        size="xs"
-                        onClick={() => {
-                            dispatch(setTracksCardGap(minCardGap));
-                            dispatch(setTracksCardSize(minCardSize));
-                            dispatch(setTracksShowDetails(false));
-                        }}
-                    >
-                        Tiny Wall
-                    </Button>
-                </Box>
-            </Flex>
-
-            {/* "Showing x of y tracks" */}
-            <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
-                <Text size="xs" color={colors.gray[6]}>
-                    Showing
-                </Text>
-                <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {filteredTrackCount}
-                </Text>
-                <Text size="xs" color={colors.gray[6]}>
-                    of
-                </Text>
-                <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {allTracks?.length || 0}
-                </Text>
-                <Text size="xs" color={colors.gray[6]}>
-                    tracks
-                </Text>
+                {/* "Showing x of y tracks" */}
+                <Flex gap={3} align="flex-end">
+                    <Text size="xs" color={colors.gray[6]}>
+                        Showing
+                    </Text>
+                    <Text size="xs" color={colors.gray[6]} weight="bold">
+                        {filteredTrackCount}
+                    </Text>
+                    <Text size="xs" color={colors.gray[6]}>
+                        of
+                    </Text>
+                    <Text size="xs" color={colors.gray[6]} weight="bold">
+                        {allTracks?.length || 0}
+                    </Text>
+                    <Text size="xs" color={colors.gray[6]}>
+                        tracks
+                    </Text>
+                </Flex>
             </Flex>
         </Flex>
     );
