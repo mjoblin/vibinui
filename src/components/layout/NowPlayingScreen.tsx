@@ -141,8 +141,6 @@ const NowPlayingScreen: FC = () => {
         <Flex gap={30} pt={7}>
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth}>
-                <GlowTitle>Now Playing</GlowTitle>
-
                 <Stack spacing="xs">
                     <Flex justify="space-between">
                         <MediaSourceBadge />
@@ -169,7 +167,7 @@ const NowPlayingScreen: FC = () => {
 
             {/* RHS stack: Track name, album, artist, and tabs */}
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
-                <Stack spacing={5}>
+                <Stack spacing={15}>
                     <GlowTitle color="#ff7f00">{currentTrack.title || "-"}</GlowTitle>
                     <FieldValueList
                         fieldValues={{

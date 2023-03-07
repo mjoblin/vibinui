@@ -9,7 +9,6 @@ import {
     setPresetsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import GlowTitle from "../shared/GlowTitle";
 import CardControls from "../shared/CardControls";
 
 const PresetsControls: FC = () => {
@@ -18,21 +17,17 @@ const PresetsControls: FC = () => {
     );
 
     return (
-        <Flex gap={25} pt={7}>
-            <GlowTitle>Presets</GlowTitle>
-
-            <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
-                {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setPresetsCardSize}
-                    cardGapSetter={setPresetsCardGap}
-                    showDetailsSetter={setPresetsShowDetails}
-                    resetter={resetPresetsToDefaults}
-                />
-            </Flex>
+        <Flex pt={7} gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+            {/* Card display settings */}
+            <CardControls
+                cardSize={cardSize}
+                cardGap={cardGap}
+                showDetails={showDetails}
+                cardSizeSetter={setPresetsCardSize}
+                cardGapSetter={setPresetsCardGap}
+                showDetailsSetter={setPresetsShowDetails}
+                resetter={resetPresetsToDefaults}
+            />
         </Flex>
     );
 };

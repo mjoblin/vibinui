@@ -13,7 +13,6 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
-import GlowTitle from "../shared/GlowTitle";
 import CardControls from "../shared/CardControls";
 
 const AlbumsControls: FC = () => {
@@ -34,8 +33,6 @@ const AlbumsControls: FC = () => {
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Albums</GlowTitle>
-
             {/* Active collection */}
             <Select
                 label="Show"
@@ -53,7 +50,7 @@ const AlbumsControls: FC = () => {
             {/* Filter text */}
             {/* TODO: Consider debouncing setAlbumsFilterText() if performance is an issue */}
             <TextInput
-                placeholder="Filter text"
+                placeholder="Filter by Album name"
                 label="Filter"
                 miw="20rem"
                 value={filterText}
@@ -74,9 +71,9 @@ const AlbumsControls: FC = () => {
                     </Text>
                     <Text size="xs" color={colors.gray[6]} weight="bold">
                         {activeCollection === "all"
-                            ? allAlbums?.length || 0
+                            ? allAlbums?.length.toLocaleString() || 0
                             : activeCollection === "new"
-                            ? newAlbums?.length || 0
+                            ? newAlbums?.length.toLocaleString() || 0
                             : allAlbums?.find((album) => album.id === currentAlbumMediaId)
                             ? 1
                             : 0}

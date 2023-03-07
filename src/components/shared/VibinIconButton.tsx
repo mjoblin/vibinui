@@ -1,5 +1,5 @@
 import React, { FC, ReactNode, SyntheticEvent } from "react";
-import { Center, createStyles, Tooltip } from "@mantine/core";
+import { Center, createStyles, getStylesRef, Tooltip } from "@mantine/core";
 import { TablerIcon } from "@tabler/icons";
 
 // TODO: Deprecate this and replace it with Mantine's ActionButton.
@@ -27,7 +27,7 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
     tooltipLabel = "",
     onClick,
 }) => {
-    const { classes: dynamicClasses } = createStyles((theme, _params, getRef) => ({
+    const { classes: dynamicClasses } = createStyles((theme, _params) => ({
         playButtonContainer: {
             width: size * 2,
             height: size * 2,
@@ -38,13 +38,13 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
                 cursor: "pointer",
                 backgroundColor: theme.colors.blue,
             },
-            [`&:hover .${getRef("button")}`]: {
+            [`&:hover .${getStylesRef("button")}`]: {
                 color: theme.colors.gray[1],
                 fill: fill ? theme.colors.gray[1] : undefined,
             },
         },
         button: {
-            ref: getRef("button"),
+            ref: getStylesRef("button"),
             color: color ? color : theme.colors.gray[5],
             fill: fill ? theme.colors.gray[5] : undefined,
             transition: "color .2s ease-in-out, fill .2s ease-in-out",

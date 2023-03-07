@@ -45,7 +45,7 @@ const KeyboardShortcutsManager: FC = () => {
             opened={showKeyboardShortcuts}
             centered
             title="Keyboard Shortcuts"
-            overlayBlur={1}
+            overlayProps={{ blur: 1 }}
             onClose={() => dispatch(setShowKeyboardShortcuts(false))}
         >
             <Stack spacing="md">

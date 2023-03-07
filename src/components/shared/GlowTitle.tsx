@@ -11,6 +11,7 @@ const GlowTitle: FC<GlowTitleProps> = ({ color, children }) => {
         glow: {
             color: colors.gray[5],
             textTransform: "uppercase",
+            lineHeight: 1,
             textShadow: `0 0 1px ${colors.gray[4]}, 0 0 3px ${color || "#15A015"}, 0 0 80px #D4D4D4`,
         },
     }))();

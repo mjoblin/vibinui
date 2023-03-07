@@ -11,7 +11,6 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import GlowTitle from "../shared/GlowTitle";
 import CardControls from "../shared/CardControls";
 
 const TracksControls: FC = () => {
@@ -25,12 +24,10 @@ const TracksControls: FC = () => {
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Tracks</GlowTitle>
-
             {/* Filter text */}
             {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
             <TextInput
-                placeholder="Filter text"
+                placeholder="Filter by Track title"
                 label="Filter"
                 miw="20rem"
                 value={filterText}
@@ -50,7 +47,7 @@ const TracksControls: FC = () => {
                         of
                     </Text>
                     <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {allTracks?.length || 0}
+                        {allTracks?.length.toLocaleString() || 0}
                     </Text>
                     <Text size="xs" color={colors.gray[6]}>
                         tracks

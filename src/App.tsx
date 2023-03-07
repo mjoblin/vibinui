@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
-import { NotificationsProvider } from "@mantine/notifications";
+import { Notifications } from "@mantine/notifications";
 
 import { RootState } from "./app/store/store";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
+import { useAppConstants } from "./app/hooks/useAppConstants";
 import RootLayout from "./components/layout/RootLayout";
 import AlbumsScreen from "./components/layout/AlbumsScreen";
 import ArtistsScreen from "./components/layout/ArtistsScreen";
@@ -15,10 +16,12 @@ import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
 import TracksScreen from "./components/layout/TracksScreen";
 import WebsocketManager from "./components/managers/WebsocketManager";
+import ErrorBoundary from "./components/shared/ErrorBoundary";
 
 export default function App() {
     const dispatch = useAppDispatch();
     const { theme } = useAppSelector((state: RootState) => state.userSettings.application);
+    const { APP_URL_PREFIX } = useAppConstants();
     const [colorScheme, setColorScheme] = useState<ColorScheme>(theme);
 
     const toggleColorScheme = (value?: ColorScheme) => {
@@ -30,9 +33,22 @@ export default function App() {
 
     const router = createBrowserRouter([
         {
-            path: "/",
+            path: APP_URL_PREFIX,
             element: <RootLayout />,
+            errorElement: <ErrorBoundary />,
             children: [
+                {
+                    path: "current",
+                    element: <NowPlayingScreen />,
+                },
+                {
+                    path: "playlists",
+                    element: <PlaylistScreen />,
+                },
+                {
+                    path: "artists",
+                    element: <ArtistsScreen />,
+                },
                 {
                     path: "albums",
                     element: <AlbumsScreen />,
@@ -42,24 +58,12 @@ export default function App() {
                     element: <TracksScreen />,
                 },
                 {
-                    path: "artists",
-                    element: <ArtistsScreen />,
-                },
-                {
-                    path: "playlist",
-                    element: <PlaylistScreen />,
-                },
-                {
                     path: "presets",
                     element: <PresetsScreen />,
                 },
                 {
-                    path: "playing",
-                    element: <NowPlayingScreen />,
-                },
-                {
                     index: true,
-                    element: <Navigate to="/albums" replace />,
+                    element: <Navigate to="/ui/albums" replace />,
                 },
             ],
         },
@@ -94,13 +98,12 @@ export default function App() {
                     },
                 }}
             >
-                <NotificationsProvider limit={5} autoClose={3000}>
-                    <WebsocketManager />
-                    <PlayheadManager />
+                <Notifications limit={5} autoClose={3000} />
+                <WebsocketManager />
+                <PlayheadManager />
 
-                    {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
-                    <RouterProvider router={router} />
-                </NotificationsProvider>
+                {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
+                <RouterProvider router={router} />
             </MantineProvider>
         </ColorSchemeProvider>
     );

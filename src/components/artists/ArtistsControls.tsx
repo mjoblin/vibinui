@@ -21,7 +21,6 @@ import {
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
-import GlowTitle from "../shared/GlowTitle";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -85,8 +84,6 @@ const ArtistsControls: FC = () => {
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Artists</GlowTitle>
-
             {/* Show all or just artists with albums */}
             <Select
                 label="Show"
@@ -102,7 +99,7 @@ const ArtistsControls: FC = () => {
 
             {/* Filter text */}
             <TextInput
-                placeholder="Filter text"
+                placeholder="Filter by Artist name"
                 label="Filter"
                 miw="20rem"
                 value={filterText}
@@ -122,7 +119,7 @@ const ArtistsControls: FC = () => {
                     of
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {allArtists?.length || 0}
+                    {allArtists?.length.toLocaleString() || 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     artists

@@ -35,7 +35,6 @@ import {
 } from "../../app/services/vibinStoredPlaylists";
 import { RootState } from "../../app/store/store";
 import StoredPlaylistsEditor from "./StoredPlaylistsEditor";
-import GlowTitle from "../shared/GlowTitle";
 import {
     epochSecondsToStringRelative,
     showErrorNotification,
@@ -175,8 +174,6 @@ const PlaylistControls: FC = () => {
 
     return (
         <Flex gap={25} pt={7} align="center">
-            <GlowTitle>Playlists</GlowTitle>
-
             <Flex gap={5} w={275} align="center">
                 {activatingStoredPlaylist && (
                     <Flex gap={10} align="center">
