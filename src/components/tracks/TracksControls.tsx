@@ -30,7 +30,7 @@ const TracksControls: FC = () => {
             {/* Filter text */}
             {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
             <TextInput
-                placeholder="Filter text"
+                placeholder="Filter by Track title"
                 label="Filter"
                 miw="20rem"
                 value={filterText}
@@ -50,7 +50,7 @@ const TracksControls: FC = () => {
                         of
                     </Text>
                     <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {allTracks?.length || 0}
+                        {allTracks?.length.toLocaleString() || 0}
                     </Text>
                     <Text size="xs" color={colors.gray[6]}>
                         tracks

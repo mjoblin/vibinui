@@ -42,7 +42,7 @@ const Settings: FC = () => {
     }, [streamer.power]);
 
     return (
-        <Menu shadow="md" width={200}>
+        <Menu shadow="md" width={200} position="top-start" withArrow arrowPosition="center">
             <Menu.Target>
                 <ActionIcon variant="default" size="lg">
                     <IconSettings size={18} stroke={1.5} />

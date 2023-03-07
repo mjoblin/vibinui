@@ -1,14 +1,21 @@
 import React, { FC } from "react";
-import { Stack } from "@mantine/core";
+import { Box, Stack } from "@mantine/core";
 
-import PresetWall from "../presets/PresetWall";
 import PresetsControls from "../presets/PresetsControls";
+import PresetWall from "../presets/PresetWall";
+import ScreenHeader from "./ScreenHeader";
 
 const PresetsScreen: FC = () => {
+    const screenHeaderHeight = 90;
+
     return (
-        <Stack spacing="xl">
-            <PresetsControls />
-            <PresetWall />
+        <Stack spacing={0}>
+            <ScreenHeader height={screenHeaderHeight}>
+                <PresetsControls />
+            </ScreenHeader>
+            <Box pt={screenHeaderHeight}>
+                <PresetWall />
+            </Box>
         </Stack>
     );
 };

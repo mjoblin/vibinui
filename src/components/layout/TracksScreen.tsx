@@ -1,14 +1,21 @@
 import React, { FC } from "react";
-import { Stack } from "@mantine/core";
+import { Box, Stack } from "@mantine/core";
 
-import TrackWall from "../tracks/TrackWall";
 import TracksControls from "../tracks/TracksControls";
+import TrackWall from "../tracks/TrackWall";
+import ScreenHeader from "./ScreenHeader";
 
 const TracksScreen: FC = () => {
+    const screenHeaderHeight = 90;
+
     return (
-        <Stack spacing="xl">
-            <TracksControls />
-            <TrackWall />
+        <Stack spacing={0}>
+            <ScreenHeader height={screenHeaderHeight}>
+                <TracksControls />
+            </ScreenHeader>
+            <Box pt={screenHeaderHeight}>
+                <TrackWall />
+            </Box>
         </Stack>
     );
 };

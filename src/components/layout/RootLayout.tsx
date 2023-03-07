@@ -1,35 +1,47 @@
 import React, { FC } from "react";
 import { Outlet, ScrollRestoration } from "react-router-dom";
-import { Box } from "@mantine/core";
+import { AppShell, Box, Stack } from "@mantine/core";
 
+import AppHeader from "./AppHeader";
+import AppNav from "./AppNav";
 import Debug from "./Debug";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
-import NavigationBar from "./NavigationBar";
-
-// TODO: Look into using mantine theme constants for things like padding.
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const RootLayout: FC = () => {
-    return (
-        <Box
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                height: "100vh",
-                overflowY: "hidden",
-            }}
-        >
-            <NavigationBar />
+    const { NAVBAR_PADDING } = useAppConstants();
 
-            <Box sx={{ overflowY: "auto" }}>
-                <Box sx={{ paddingLeft: 15, paddingRight: 15, paddingTop: 10, paddingBottom: 20 }}>
-                    <Outlet />
-                </Box>
-            </Box>
+    return (
+        <AppShell
+            padding="md"
+            navbar={<AppNav />}
+            header={<AppHeader />}
+            styles={(theme) => ({
+                main: {
+                    backgroundColor:
+                        theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
+                },
+            })}
+        >
+            <Stack pr={NAVBAR_PADDING}>
+                <Outlet />
+            </Stack>
 
             <ScrollRestoration />
             <KeyboardShortcutsManager />
-            <Debug />
-        </Box>
+            <Box
+                sx={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    width: "100vw",
+                    height: "100vh",
+                    pointerEvents: "none",
+                }}
+            >
+                <Debug />
+            </Box>
+        </AppShell>
     );
 };
 

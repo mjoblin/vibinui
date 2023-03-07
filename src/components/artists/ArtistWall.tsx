@@ -24,6 +24,7 @@ import ArtistCard from "./ArtistCard";
 import TrackCard from "../tracks/TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
+import { min } from "lodash";
 
 const ArtistWall: FC = () => {
     const { colors } = useMantineTheme();
@@ -138,6 +139,8 @@ const ArtistWall: FC = () => {
     // Main render
     // --------------------------------------------------------------------------------------------
 
+    const minWidth = "25%";
+
     return viewMode === "art_focused" ? (
         <Box className={dynamicClasses.artistWall}>
             {artistsToDisplay
@@ -149,7 +152,7 @@ const ArtistWall: FC = () => {
     ) : (
         <Flex gap={20}>
             {/* Artists */}
-            <Stack>
+            <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Artist
                 </Text>
@@ -172,12 +175,12 @@ const ArtistWall: FC = () => {
             </Stack>
 
             {/* Albums */}
-            <Stack>
+            <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Albums
                 </Text>
                 <Stack spacing="xs">
-                    {selectedArtist &&
+                    {selectedArtist ? (
                         allAlbumsByArtistName(selectedArtist.title).map((album) => (
                             <AlbumCard
                                 key={album.id}
@@ -187,20 +190,35 @@ const ArtistWall: FC = () => {
                                 selected={album.id === selectedAlbum?.id}
                                 onClick={(album: Album) => dispatch(setArtistsSelectedAlbum(album))}
                             />
-                        ))}
+                        ))
+                    ) : (
+                        <Text size="sm" transform="uppercase" weight="bold" color={colors.dark[3]}>
+                            No artist selected
+                        </Text>
+                    )}
                 </Stack>
             </Stack>
 
             {/* Tracks */}
-            <Stack>
+            <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Tracks
                 </Text>
                 <Stack spacing="xs">
-                    {selectedAlbum &&
+                    {selectedAlbum ? (
                         allTracksByAlbumId(selectedAlbum.id).map((track: Track) => (
-                            <TrackCard key={track.id} type="compact" track={track} showArt={false} />
-                        ))}
+                            <TrackCard
+                                key={track.id}
+                                type="compact"
+                                track={track}
+                                showArt={false}
+                            />
+                        ))
+                    ) : (
+                        <Text size="sm" transform="uppercase" weight="bold" color={colors.dark[3]}>
+                            No album selected
+                        </Text>
+                    )}
                 </Stack>
             </Stack>
         </Flex>

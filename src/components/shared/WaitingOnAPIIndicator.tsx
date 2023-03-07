@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ColorSwatch, Text, useMantineTheme } from "@mantine/core";
+import { ColorSwatch, Text, Tooltip, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -36,13 +36,15 @@ const WaitingOnAPIIndicator: FC = () => {
     });
 
     return (
-        <ColorSwatch size={20} color={apiCallsInProgress ? SELECTED_COLOR : colors.dark[6]}>
-            {apiCallsInProgress ? (
-                <Text weight="bold" size={12} color={colors.dark[7]}>
-                    {apiCallsInProgress}
-                </Text>
-            ) : null}
-        </ColorSwatch>
+        <Tooltip label="Lit when API calls are pending">
+            <ColorSwatch size={20} color={apiCallsInProgress ? SELECTED_COLOR : colors.dark[6]}>
+                {apiCallsInProgress ? (
+                    <Text weight="bold" size={12} color={colors.dark[7]}>
+                        {apiCallsInProgress}
+                    </Text>
+                ) : null}
+            </ColorSwatch>
+        </Tooltip>
     );
 };
 

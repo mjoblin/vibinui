@@ -102,7 +102,7 @@ const ArtistsControls: FC = () => {
 
             {/* Filter text */}
             <TextInput
-                placeholder="Filter text"
+                placeholder="Filter by Artist name"
                 label="Filter"
                 miw="20rem"
                 value={filterText}
@@ -122,7 +122,7 @@ const ArtistsControls: FC = () => {
                     of
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {allArtists?.length || 0}
+                    {allArtists?.length.toLocaleString() || 0}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     artists

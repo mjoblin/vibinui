@@ -141,7 +141,7 @@ const NowPlayingScreen: FC = () => {
         <Flex gap={30} pt={7}>
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth}>
-                <GlowTitle>Now Playing</GlowTitle>
+                <GlowTitle>Current Track</GlowTitle>
 
                 <Stack spacing="xs">
                     <Flex justify="space-between">

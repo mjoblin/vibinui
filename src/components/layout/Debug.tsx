@@ -10,7 +10,8 @@ import FieldValueList from "../fieldValueList/FieldValueList";
 
 const useStyles = createStyles((theme) => ({
     debugContainer: {
-        zIndex: 9999,
+        pointerEvents: "all",
+        zIndex: 999,
         backgroundColor: "rgb(0.15, 0.15, 0.15, 0.85)",
         position: "absolute",
         bottom: 10,

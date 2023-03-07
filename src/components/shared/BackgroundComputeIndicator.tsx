@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ColorSwatch, useMantineTheme } from "@mantine/core";
+import { ColorSwatch, Tooltip, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -12,7 +12,14 @@ const BackgroundComputeIndicator: FC = () => {
         (state: RootState) => state.internal.application
     );
 
-    return <ColorSwatch size={20} color={isComputingInBackground ? SELECTED_COLOR : colors.dark[6]} />;
+    return (
+        <Tooltip label="Lit when background compute is active" width={140} multiline={true}>
+            <ColorSwatch
+                size={20}
+                color={isComputingInBackground ? SELECTED_COLOR : colors.dark[6]}
+            />
+        </Tooltip>
+    );
 };
 
 export default BackgroundComputeIndicator;
