@@ -21,7 +21,6 @@ import {
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
-import GlowTitle from "../shared/GlowTitle";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -85,8 +84,6 @@ const ArtistsControls: FC = () => {
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Artists</GlowTitle>
-
             {/* Show all or just artists with albums */}
             <Select
                 label="Show"

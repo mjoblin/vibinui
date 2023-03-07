@@ -1,15 +1,24 @@
-import React, { FC } from "react";
-import { Outlet, ScrollRestoration } from "react-router-dom";
+import React, { FC, useEffect } from "react";
+import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import { AppShell, Box, Stack } from "@mantine/core";
 
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
 import Debug from "./Debug";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
+import { useAppDispatch } from "../../app/hooks";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { setCurrentScreen } from "../../app/store/internalSlice";
 
 const RootLayout: FC = () => {
-    const { NAVBAR_PADDING } = useAppConstants();
+    const dispatch = useAppDispatch();
+    const location = useLocation();
+    const { APP_URL_PREFIX, NAVBAR_PADDING } = useAppConstants();
+
+    useEffect(() => {
+        const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}\/([^\/]+)`));
+        screenNameMatch && dispatch(setCurrentScreen(screenNameMatch[1] || ""));
+    }, [location, dispatch]);
 
     return (
         <AppShell

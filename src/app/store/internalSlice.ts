@@ -3,6 +3,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 export interface InternalState {
     application: {
+        currentScreen: string;
         isComputingInBackground: boolean;
         showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
@@ -33,6 +34,7 @@ export interface InternalState {
 
 const initialState: InternalState = {
     application: {
+        currentScreen: "",
         isComputingInBackground: false,
         showKeyboardShortcuts: false,
         showDebugPanel: false,
@@ -84,6 +86,9 @@ export const internalSlice = createSlice({
             state.artists.artistCard.renderWidth = action.payload.width;
             state.artists.artistCard.renderHeight = action.payload.height;
         },
+        setCurrentScreen: (state, action: PayloadAction<string>) => {
+            state.application.currentScreen = action.payload;
+        },
         setIsComputingInBackground: (state, action: PayloadAction<boolean>) => {
             // TODO: This currently allows any one background worker to state that the app is
             //  computing in the background. This will break if there's more than one background
@@ -121,6 +126,7 @@ export const internalSlice = createSlice({
 export const {
     setAlbumCardRenderDimensions,
     setArtistCardRenderDimensions,
+    setCurrentScreen,
     setIsComputingInBackground,
     setFilteredAlbumCount,
     setFilteredArtistCount,

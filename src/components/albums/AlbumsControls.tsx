@@ -13,7 +13,6 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
-import GlowTitle from "../shared/GlowTitle";
 import CardControls from "../shared/CardControls";
 
 const AlbumsControls: FC = () => {
@@ -34,8 +33,6 @@ const AlbumsControls: FC = () => {
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Albums</GlowTitle>
-
             {/* Active collection */}
             <Select
                 label="Show"

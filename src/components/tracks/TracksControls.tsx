@@ -11,7 +11,6 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import GlowTitle from "../shared/GlowTitle";
 import CardControls from "../shared/CardControls";
 
 const TracksControls: FC = () => {
@@ -25,8 +24,6 @@ const TracksControls: FC = () => {
 
     return (
         <Flex gap={25} align="center">
-            <GlowTitle>Tracks</GlowTitle>
-
             {/* Filter text */}
             {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
             <TextInput
