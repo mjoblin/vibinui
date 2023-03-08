@@ -40,6 +40,7 @@ import {
     showErrorNotification,
     showSuccessNotification,
 } from "../../app/utils";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 type PlaylistSelectItemProps = {
     label: string;
@@ -73,6 +74,7 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
 );
 
 const PlaylistControls: FC = () => {
+    const { APP_MODAL_BLUR } = useAppConstants();
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
@@ -288,6 +290,7 @@ const PlaylistControls: FC = () => {
                 opened={showEditor}
                 centered={true}
                 size="auto"
+                overlayProps={{ blur: APP_MODAL_BLUR }}
                 title="Playlists Manager"
                 onClose={() => setShowEditor(false)}
             >
@@ -299,6 +302,7 @@ const PlaylistControls: FC = () => {
                 opened={showNameNewPlaylistDialog}
                 centered={true}
                 size="auto"
+                overlayProps={{ blur: APP_MODAL_BLUR }}
                 title="Create new Playlist"
                 onClose={() => setShowNameNewPlaylistDialog(false)}
             >

@@ -21,7 +21,7 @@ import ErrorBoundary from "./components/shared/ErrorBoundary";
 export default function App() {
     const dispatch = useAppDispatch();
     const { theme } = useAppSelector((state: RootState) => state.userSettings.application);
-    const { APP_URL_PREFIX } = useAppConstants();
+    const { APP_ALT_FONTFACE, APP_URL_PREFIX } = useAppConstants();
     const [colorScheme, setColorScheme] = useState<ColorScheme>(theme);
 
     const toggleColorScheme = (value?: ColorScheme) => {
@@ -90,7 +90,7 @@ export default function App() {
                             styles: {
                                 header: {
                                     fontWeight: "bold",
-                                    fontSize: 14,
+                                    fontFamily: APP_ALT_FONTFACE,
                                     textTransform: "uppercase",
                                 },
                             },

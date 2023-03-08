@@ -8,9 +8,11 @@ import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibi
 import { setFilteredAlbumCount } from "../../app/store/internalSlice";
 import AlbumCard from "./AlbumCard";
 import SadLabel from "../shared/SadLabel";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const AlbumWall: FC = () => {
     const dispatch = useAppDispatch();
+    const { SCREEN_LOADING_PT } = useAppConstants();
     const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
     const { activeCollection, cardSize, cardGap } = useAppSelector(
         (state: RootState) => state.userSettings.albums
@@ -32,7 +34,7 @@ const AlbumWall: FC = () => {
 
     if ((activeCollection === "all" && allIsLoading) || (activeCollection === "new" && newIsLoading)) {
         return (
-            <Center>
+            <Center pt={SCREEN_LOADING_PT}>
                 <Loader size="sm" />
                 <Text size={14} weight="bold" pl={10}>
                     Retrieving albums...

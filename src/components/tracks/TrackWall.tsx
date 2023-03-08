@@ -12,6 +12,7 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const TrackWall: FC = () => {
     const dispatch = useAppDispatch();
+    const { SCREEN_LOADING_PT } = useAppConstants();
     const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.tracks);
@@ -31,7 +32,7 @@ const TrackWall: FC = () => {
 
     if (isLoading) {
         return (
-            <Center>
+            <Center pt={SCREEN_LOADING_PT}>
                 <Loader size="sm" />
                 <Text size={14} weight="bold" pl={10}>
                     Retrieving tracks...

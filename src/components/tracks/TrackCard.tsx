@@ -83,7 +83,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick 
     const trackYear = track.date && yearFromDate(track.date);
 
     return (
-        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.trackCard}>
+        <Card radius="sm" pb={showDetails ? 7 : 0} className={dynamicClasses.trackCard}>
             {/* Track art with play/action controls */}
             <Card.Section>
                 <TrackArt track={track} size={cardSize - borderSize * 2} radius={5} />

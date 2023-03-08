@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import {
     ActionIcon,
-    Box,
     Center,
     createStyles,
     Flex,
@@ -9,6 +8,7 @@ import {
     Stack,
     Tabs,
     Text,
+    useMantineTheme,
 } from "@mantine/core";
 import { IconPlayerPlay } from "@tabler/icons";
 
@@ -20,7 +20,6 @@ import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
 import AlbumArt from "../albums/AlbumArt";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import NowPlaying from "../currentlyPlaying/NowPlaying";
-import PlayheadRing from "../currentlyPlaying/PlayheadRing";
 import TrackLinks from "../nowPlaying/TrackLinks";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
 import Waveform from "../nowPlaying/Waveform";
@@ -28,13 +27,14 @@ import SadLabel from "../shared/SadLabel";
 import StandbyMode from "../shared/StandbyMode";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
 import { yearFromDate } from "../../app/utils";
-import { Track } from "../../app/types";
-import GlowTitle from "../shared/GlowTitle";
+import { MediaSourceClass, Track } from "../../app/types";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 export type NowPlayingTab = "links" | "lyrics" | "waveform";
 
-const sourcesSupportingDetailsTabs: Record<string, NowPlayingTab[]> = {
+const sourcesSupportingDetailsTabs: Partial<Record<MediaSourceClass, NowPlayingTab[]>> = {
     "stream.media": ["links", "lyrics", "waveform"],
+    "stream.service.airplay": ["links", "lyrics"],
 };
 
 const albumArtWidth = 300;
@@ -81,6 +81,8 @@ const PlaybackPaused: FC = () => {
 
 const NowPlayingScreen: FC = () => {
     const dispatch = useAppDispatch();
+    const { colors } = useMantineTheme();
+    const { APP_ALT_FONTFACE } = useAppConstants();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
@@ -91,13 +93,20 @@ const NowPlayingScreen: FC = () => {
     const [getTrack, getTrackResult] = useLazyGetTrackByIdQuery();
     const [trackYearAndGenre, setTrackYearAndGenre] = useState<string | undefined>(undefined);
 
+    const { classes: dynamicClasses } = createStyles((theme) => ({
+        currentTrackTitle: {
+            fontFamily: APP_ALT_FONTFACE,
+            lineHeight: 0.9,
+            height: "1.7rem",
+        },
+    }))();
+
     /**
      *
      */
     useEffect(() => {
         setTrackYearAndGenre(undefined);
         currentTrackId && getTrack(currentTrackId);
-
     }, [currentTrackId, getTrack]);
 
     /**
@@ -112,7 +121,7 @@ const NowPlayingScreen: FC = () => {
                     ? track.genre?.toLocaleUpperCase()
                     : undefined;
 
-            let result = [year, genre].filter(value => value !== undefined).join(" • ");
+            let result = [year, genre].filter((value) => value !== undefined).join(" • ");
 
             setTrackYearAndGenre(result);
         }
@@ -136,14 +145,13 @@ const NowPlayingScreen: FC = () => {
         ? sourcesSupportingDetailsTabs[currentSource.class]
         : undefined;
 
-    // @ts-ignore
     return (
         <Flex gap={30} pt={7}>
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth}>
                 <Stack spacing="xs">
                     <Flex justify="space-between">
-                        <MediaSourceBadge />
+                        <MediaSourceBadge showSource={true} />
 
                         {trackYearAndGenre && (
                             <Text size="xs" color="grey" weight="bold">
@@ -158,78 +166,105 @@ const NowPlayingScreen: FC = () => {
                     </Stack>
 
                     <NowPlaying showAlbumDetails={false} />
-
-                    <Flex gap={15} justify="flex-start" align="center">
-                        <PlayheadRing />
-                    </Flex>
                 </Stack>
             </Stack>
 
             {/* RHS stack: Track name, album, artist, and tabs */}
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
                 <Stack spacing={15}>
-                    <GlowTitle color="#ff7f00">{currentTrack.title || "-"}</GlowTitle>
+                    <Text size={34} weight="bold" className={dynamicClasses.currentTrackTitle}>
+                        {currentTrack.title || " "}
+                    </Text>
                     <FieldValueList
                         fieldValues={{
                             Artist: currentTrack.artist,
                             Album: currentTrack.album,
                         }}
+                        keySize={16}
+                        valueSize={16}
+                        keyFontFamily={APP_ALT_FONTFACE}
+                        valueFontFamily={APP_ALT_FONTFACE}
+                        valueColor={colors.dark[2]}
                     />
                 </Stack>
 
                 {/* Tabs */}
 
-                {tabsToDisplay && currentTrackId && (
-                    <Tabs
-                        value={activeTab}
-                        onTabChange={(tabName) =>
-                            dispatch(setNowPlayingActiveTab(tabName as NowPlayingTab))
-                        }
-                        variant="outline"
-                    >
-                        <Tabs.List mb={20}>
+                {tabsToDisplay &&
+                    (currentTrackId || (currentTrack.artist && currentTrack.title)) && (
+                        <Tabs
+                            value={activeTab}
+                            onTabChange={(tabName) =>
+                                dispatch(setNowPlayingActiveTab(tabName as NowPlayingTab))
+                            }
+                            variant="pills"
+                            styles={(theme) => ({
+                                tabLabel: {
+                                    fontWeight: "bold",
+                                    color: theme.colors.gray[4],
+                                    fontSize: 13,
+                                    letterSpacing: 0.4,
+                                }
+                            })}
+                        >
+                            <Tabs.List mb={20}>
+                                {tabsToDisplay.includes("lyrics") && (
+                                    <Tabs.Tab value="lyrics">LYRICS</Tabs.Tab>
+                                )}
+                                {tabsToDisplay.includes("waveform") && (
+                                    <Tabs.Tab value="waveform">WAVEFORM</Tabs.Tab>
+                                )}
+                                {tabsToDisplay.includes("links") && (
+                                    <Tabs.Tab value="links">LINKS</Tabs.Tab>
+                                )}
+                            </Tabs.List>
+
                             {tabsToDisplay.includes("lyrics") && (
-                                <Tabs.Tab value="lyrics">Lyrics</Tabs.Tab>
+                                <Tabs.Panel value="lyrics">
+                                    <ScrollArea>
+                                        {(currentTrackId ||
+                                            (currentTrack.artist && currentTrack.title)) && (
+                                            <TrackLyrics
+                                                trackId={currentTrackId}
+                                                artist={currentTrack.artist}
+                                                title={currentTrack.title}
+                                            />
+                                        )}
+                                    </ScrollArea>
+                                </Tabs.Panel>
                             )}
+
                             {tabsToDisplay.includes("waveform") && (
-                                <Tabs.Tab value="waveform">Waveform</Tabs.Tab>
+                                <Tabs.Panel value="waveform">
+                                    <ScrollArea>
+                                        {currentTrackId && (
+                                            <Waveform
+                                                trackId={currentTrackId}
+                                                width={2048}
+                                                height={700}
+                                            />
+                                        )}
+                                    </ScrollArea>
+                                </Tabs.Panel>
                             )}
+
                             {tabsToDisplay.includes("links") && (
-                                <Tabs.Tab value="links">Links</Tabs.Tab>
+                                <Tabs.Panel value="links">
+                                    <ScrollArea>
+                                        {(currentTrackId ||
+                                            (currentTrack.artist && currentTrack.title)) && (
+                                            <TrackLinks
+                                                trackId={currentTrackId}
+                                                artist={currentTrack.artist}
+                                                album={currentTrack.album}
+                                                title={currentTrack.title}
+                                            />
+                                        )}
+                                    </ScrollArea>
+                                </Tabs.Panel>
                             )}
-                        </Tabs.List>
-
-                        {tabsToDisplay.includes("lyrics") && (
-                            <Tabs.Panel value="lyrics">
-                                <ScrollArea>
-                                    {currentTrackId && <TrackLyrics trackId={currentTrackId} />}
-                                </ScrollArea>
-                            </Tabs.Panel>
-                        )}
-
-                        {tabsToDisplay.includes("waveform") && (
-                            <Tabs.Panel value="waveform">
-                                <ScrollArea>
-                                    {currentTrackId && (
-                                        <Waveform
-                                            trackId={currentTrackId}
-                                            width={2048}
-                                            height={700}
-                                        />
-                                    )}
-                                </ScrollArea>
-                            </Tabs.Panel>
-                        )}
-
-                        {tabsToDisplay.includes("links") && (
-                            <Tabs.Panel value="links">
-                                <ScrollArea>
-                                    {currentTrackId && <TrackLinks trackId={currentTrackId} />}
-                                </ScrollArea>
-                            </Tabs.Panel>
-                        )}
-                    </Tabs>
-                )}
+                        </Tabs>
+                    )}
             </Stack>
         </Flex>
     );

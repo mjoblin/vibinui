@@ -50,7 +50,7 @@ const CardControls: FC<CardSettingsProps> = ({
                     variant="light"
                     leftIcon={<IconSettings size={18} stroke={1.5} />}
                 >
-                    Card Display
+                    Cards
                 </Button>
             </Popover.Target>
             <Popover.Dropdown pb={15}>
