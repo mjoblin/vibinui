@@ -9,6 +9,10 @@ import DiscogsLogoImage from "../../assets/images/discogs_logo.svg";
 import GeniusLogoImage from "../../assets/images/genius_logo.png";
 import RateYourMusicImage from "../../assets/images/rateyourmusic_logo.png";
 
+// TODO: This component should take a track, but the current_track in Redux doesn't contain the
+//  trackId. So instead the component expects *either* a trackId *or* artist and title.
+
+
 const DiscogsLogo: FC = () => {
     return <Image src={DiscogsLogoImage} width="fit-content" height={20} radius={3} />;
 };
@@ -64,11 +68,14 @@ const services: Services = {
 };
 
 type TrackLinksProps = {
-    trackId: string;
+    trackId?: string;
+    artist?: string;
+    album?: string;
+    title?: string;
 };
 
-const TrackLinks: FC<TrackLinksProps> = ({ trackId }) => {
-    const { data, error, isFetching } = useGetLinksQuery({ trackId: trackId, allTypes: true });
+const TrackLinks: FC<TrackLinksProps> = ({ trackId, artist, album, title }) => {
+    const { data, error, isFetching } = useGetLinksQuery({ trackId, artist, album, title, allTypes: true });
 
     if (isFetching) {
         return <SimpleLoader label="Retrieving links..." />;
@@ -81,6 +88,7 @@ const TrackLinks: FC<TrackLinksProps> = ({ trackId }) => {
     return (
         <Stack spacing="xl" align="flex-start">
             {Object.entries(data)
+                .filter(([service, links]) => links.length > 0)
                 .sort(([serviceA], [serviceB]) =>
                     // Sort alphabetically by service name
                     serviceA < serviceB ? -1 : serviceA > serviceB ? 1 : 0

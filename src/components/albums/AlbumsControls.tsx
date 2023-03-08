@@ -64,7 +64,7 @@ const AlbumsControls: FC = () => {
                         Showing
                     </Text>
                     <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {filteredAlbumCount}
+                        {filteredAlbumCount.toLocaleString()}
                     </Text>
                     <Text size="xs" color={colors.gray[6]}>
                         of

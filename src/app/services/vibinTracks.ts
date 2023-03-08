@@ -26,12 +26,19 @@ export const vibinTracksApi = createApi({
     reducerPath: "vibinTracksApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/tracks" }),
     endpoints: (builder) => ({
-        getLyrics: builder.query<Lyrics, string>({
-            query: (trackId) => ({ url: `${trackId}/lyrics` }),
+        getLyrics: builder.query<Lyrics, { trackId?: string; artist?: string; title?: string }>({
+            query: ({ trackId, artist, title }) => ({
+                url: trackId ? `${trackId}/lyrics` : "lyrics",
+                params: trackId ? {} : { artist, title },
+            }),
         }),
-        getLinks: builder.query<MediaLinks, { trackId: string; allTypes?: boolean }>({
-            query: ({ trackId, allTypes = false }) => ({
-                url: `${trackId}/links?all_types=${allTypes}`,
+        getLinks: builder.query<
+            MediaLinks,
+            { trackId?: string; artist?: string; album?: string; title?: string; allTypes?: boolean }
+        >({
+            query: ({ trackId, artist, album, title, allTypes = false }) => ({
+                url: trackId ? `${trackId}/links?all_types=${allTypes}` : "links",
+                params: trackId ? {} : { artist, album, title },
             }),
         }),
         getTrackById: builder.query<Track, MediaId>({

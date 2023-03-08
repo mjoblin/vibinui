@@ -97,7 +97,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick 
     const albumYear = yearFromDate(album.date);
 
     return (
-        <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.albumCard}>
+        <Card radius="sm" pb={showDetails ? 7 : 0} className={dynamicClasses.albumCard}>
             {/* Album art with play/action controls */}
             <Card.Section onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
                 <AlbumArt

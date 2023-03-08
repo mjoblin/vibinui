@@ -34,6 +34,7 @@ const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
 const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
+const DEFAULT_PRESETS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_PRESETS_SHOW_DETAILS = true;
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
@@ -59,6 +60,7 @@ export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
 export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
 export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
+export const LSKEY_PRESETS_FILTER_TEXT = "presets.filterText";
 export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
 
 export type MediaViewMode = "art_focused" | "compact";
@@ -107,6 +109,7 @@ export interface UserSettingsState {
     presets: {
         cardGap: number;
         cardSize: number;
+        filterText: string;
         showDetails: boolean;
     };
 }
@@ -173,6 +176,7 @@ const initialState: UserSettingsState = {
     presets: {
         cardGap: getLocalStorageValue(LSKEY_PRESETS_CARD_GAP, DEFAULT_PRESETS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_PRESETS_CARD_SIZE, DEFAULT_PRESETS_CARD_SIZE),
+        filterText: getLocalStorageValue(LSKEY_PRESETS_FILTER_TEXT, DEFAULT_PRESETS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_PRESETS_SHOW_DETAILS, DEFAULT_PRESETS_SHOW_DETAILS),
     },
 };
@@ -270,6 +274,9 @@ export const userSettingsSlice = createSlice({
         setPresetsCardSize: (state, action: PayloadAction<number>) => {
             state.presets.cardSize = action.payload;
         },
+        setPresetsFilterText: (state, action: PayloadAction<string>) => {
+            state.presets.filterText = action.payload;
+        },
         setPresetsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.presets.showDetails = action.payload;
         },
@@ -301,6 +308,7 @@ export const {
     setPlaylistViewMode,
     setPresetsCardGap,
     setPresetsCardSize,
+    setPresetsFilterText,
     setPresetsShowDetails,
     setTracksCardGap,
     setTracksCardSize,

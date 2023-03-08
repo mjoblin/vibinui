@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Flex, Image } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Image, Text, useMantineTheme } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconPlayerPlay } from "@tabler/icons";
 
@@ -77,6 +77,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
     onActionsMenuOpen,
     onActionsMenuClosed,
 }) => {
+    const { colors } = useMantineTheme();
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
@@ -92,15 +93,25 @@ const AlbumArt: FC<AlbumArtProps> = ({
         }
     }, [addStatus]);
 
+    const artUrl = artUri ? artUri : album ? album.album_art_uri : undefined;
+
     return (
         <Box className={classes.albumArtContainer}>
             <Image
-                src={artUri ? artUri : album ? album.album_art_uri : ""}
-                alt={alt ? alt : album ? `${album.artist} / ${album.title}` : "unknown"}
+                src={artUrl}
+                alt={alt ? alt : album ? `${album.artist} / ${album.title}` : undefined}
                 fit="cover"
                 radius={radius}
                 width={size}
                 height={size}
+                withPlaceholder={true}
+                placeholder={
+                    <Box w="100%" h="100%" bg={colors.dark[6]}>
+                        <Center w="100%" h="100%">
+                            <Text transform="uppercase" weight="bold" size={11}>no art</Text>
+                        </Center>
+                    </Box>
+                }
             />
 
             {album && showControls && (

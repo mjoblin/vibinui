@@ -92,6 +92,7 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
         preset.class === "stream.radio"
             ? preset.is_playing && playState === "play" && !waitingForConnection
             : preset.is_playing;
+
     const borderSize = 3;
     const overlayWidth = cardSize - borderSize * 2;
     const overlayHeight = cardSize - borderSize * 2;
@@ -106,7 +107,7 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     }))();
 
     return (
-        <Card radius="sm" p={7} className={dynamicClasses.presetCard}>
+        <Card radius="sm" className={dynamicClasses.presetCard}>
             <Card.Section>
                 <Image src={preset.art_url} fit="cover" radius={5} />
 

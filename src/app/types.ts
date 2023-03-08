@@ -79,3 +79,15 @@ export type PlaylistEntry = {
     albumMediaId: MediaId;
     trackMediaId: MediaId;
 }
+
+export type MediaSourceClass =
+    "stream.radio" |
+    "digital.usb" |
+    "digital.coax" |
+    "digital.toslink" |
+    "stream.media" |
+    "stream.service.airplay" |
+    "stream.service.spotify" |
+    "stream.service.cast" |
+    "stream.service.roon" |
+    "stream.service.tidal";

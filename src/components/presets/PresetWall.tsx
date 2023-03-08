@@ -1,13 +1,16 @@
 import React, { FC } from "react";
 import { Box, createStyles } from "@mantine/core";
 
-import PresetCard from "./PresetCard";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import { setFilteredPresetCount } from "../../app/store/internalSlice";
+import PresetCard from "./PresetCard";
 
 const PresetWall: FC = () => {
+    const dispatch = useAppDispatch();
     const { presets } = useAppSelector((state: RootState) => state.presets);
     const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.presets);
+    const filterText = useAppSelector((state: RootState) => state.userSettings.presets.filterText);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         presetsWall: {
@@ -16,14 +19,21 @@ const PresetWall: FC = () => {
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
             paddingBottom: 15,
         },
-        isPlaying: {
-            border: "2px solid yellow",
-        },
     }))();
+
+    const presetsToDisplay = presets.filter((preset) => {
+        const filterValueLower = filterText.toLowerCase();
+
+        return (
+            preset.name.toLowerCase().includes(filterValueLower)
+        );
+    });
+
+    dispatch(setFilteredPresetCount(presetsToDisplay.length));
 
     return (
         <Box className={dynamicClasses.presetsWall}>
-            {presets.map((preset) => (
+            {presetsToDisplay.map((preset) => (
                 <PresetCard key={preset.id} preset={preset} />
             ))}
         </Box>

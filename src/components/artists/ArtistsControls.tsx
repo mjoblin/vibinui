@@ -113,7 +113,7 @@ const ArtistsControls: FC = () => {
                     Showing
                 </Text>
                 <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {filteredArtistCount}
+                    {filteredArtistCount.toLocaleString()}
                 </Text>
                 <Text size="xs" color={colors.gray[6]}>
                     of

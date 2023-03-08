@@ -10,6 +10,7 @@ interface FieldValueListProps {
     keyColor?: string;
     keyWeight?: React.CSSProperties["fontWeight"];
     valueSize?: number;
+    valueFontFamily?: string;
     valueColor?: string;
     valueWeight?: React.CSSProperties["fontWeight"];
     columnGap?: number;
@@ -24,6 +25,7 @@ const FieldValueList: FC<FieldValueListProps> = ({
     keyWeight = "normal",
     valueSize = 14,
     valueColor,
+    valueFontFamily = "",
     valueWeight = "bold",
     columnGap = 5,
     rowHeight = 1.1,
@@ -42,6 +44,7 @@ const FieldValueList: FC<FieldValueListProps> = ({
                 paddingRight: columnGap,
             },
             "td:last-of-type": {
+                fontFamily: valueFontFamily,
                 lineHeight: rowHeight,
                 color: valueColor || theme.colors.dark[1],
                 fontSize: valueSize,

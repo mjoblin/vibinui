@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Format, MediaId, Stream, Track } from "../types";
+import { Format, MediaId, MediaSourceClass, Stream, Track } from "../types";
 
 /**
  * The Playback slice is intended to contain information about the current playback status of the
@@ -24,13 +24,34 @@ export type AudioSource = {
     id: string;
     name: string;
     default_name: string;
-    class: string;
+    class: MediaSourceClass;
     nameable: boolean;
     ui_selectable: boolean;
     description: string;
     description_locale: string;
     preferred_order: number;
 };
+
+// DeviceDisplay is vaguely defined here, to allow for any arbitrary key/value pairs. This is due
+// to the shape being potentially very different between streamer types; although in a world where
+// this app is specific to CXNv2/StreamMagic, the following shape can be somewhat assumed:
+//
+// {
+//     "line1": "Sooner",
+//     "line2": "slowthai",
+//     "line3": "UGLY",
+//     "format": "44.1kHz/16bit AAC",
+//     "mqa": "none",
+//     "playback_source": "punnet",
+//     "class": "stream.service.airplay",
+//     "art_file": "/tmp/current/AlbumArtFile-20969-20",
+//     "art_url": "http://192.168.1.13:80/album-art-4356?id=1:36",
+//     "progress": {
+//         "position": 0,
+//         "duration": 174
+//     }
+// }
+export type DeviceDisplay = Record<string, any>;
 
 export type RepeatState = "off" | "all";
 
@@ -51,6 +72,7 @@ export interface PlaybackState {
     current_album_media_id: MediaId | undefined;
     current_format: Format | undefined;
     current_stream: Stream | undefined;
+    device_display: DeviceDisplay | undefined;
     repeat: RepeatState | undefined;
     shuffle: ShuffleState | undefined;
     playhead: {
@@ -69,6 +91,7 @@ const initialState: PlaybackState = {
     current_album_media_id: undefined,
     current_format: undefined,
     current_stream: undefined,
+    device_display: undefined,
     repeat: undefined,
     shuffle: undefined,
     playhead: {
@@ -109,6 +132,9 @@ export const playbackSlice = createSlice({
         setCurrentAlbumMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
             state.current_album_media_id = action.payload;
         },
+        setDeviceDisplay: (state, action: PayloadAction<DeviceDisplay>) => {
+            state.device_display = action.payload;
+        },
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {
             state.play_status = action.payload;
         },
@@ -138,6 +164,7 @@ export const {
     setCurrentTrack,
     setCurrentTrackMediaId,
     setCurrentAlbumMediaId,
+    setDeviceDisplay,
     setPlayStatus,
     setPlayheadPosition,
     setPlayheadPositionNormalized,

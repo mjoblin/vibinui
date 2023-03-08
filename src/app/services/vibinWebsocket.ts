@@ -2,9 +2,9 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 import { Draft } from "immer";
 
-// import { isMessage } from "./schemaValidators";
 import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
 import {
+    DeviceDisplay,
     setActiveTransportActions,
     setAudioSources,
     setCurrentAudioSource,
@@ -13,17 +13,18 @@ import {
     setCurrentTrack,
     setCurrentTrackMediaId,
     setCurrentAlbumMediaId,
+    setDeviceDisplay,
     setPlayStatus,
     setPlayheadPosition,
     setRepeat,
     setShuffle,
     RepeatState,
-    ShuffleState, TransportAction,
+    ShuffleState,
+    TransportAction,
 } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
-import { RootState } from "../store/store";
 
 const MAX_MESSAGE_COUNT = 10;
 
@@ -33,6 +34,7 @@ type SimpleObject = { [key: string | number]: any };
 
 type MessageType =
     | "ActiveTransportControls"
+    | "DeviceDisplay"
     | "PlayState"
     | "Position"
     | "Presets"
@@ -41,6 +43,8 @@ type MessageType =
     | "System";
 
 type ActiveTransportControlsPayload = TransportAction[];
+
+type DeviceDisplayPayload = DeviceDisplay;
 
 type SystemPayload = {
     streamer: {
@@ -111,6 +115,7 @@ export type VibinMessage = {
     type: MessageType;
     payload:
         | ActiveTransportControlsPayload
+        | DeviceDisplayPayload
         | PlayStatePayload
         | PositionPayload
         | PresetsPayload
@@ -383,6 +388,12 @@ function messageHandler(
             updateAppStateIfChanged(
                 setActiveTransportActions.type,
                 data.payload as ActiveTransportControlsPayload
+            );
+        }
+        else if (data.type === "DeviceDisplay") {
+            updateAppStateIfChanged(
+                setDeviceDisplay.type,
+                data.payload as DeviceDisplayPayload
             );
         }
         else if (data.type === "Presets") {

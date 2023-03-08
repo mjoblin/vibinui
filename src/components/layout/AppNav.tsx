@@ -25,6 +25,7 @@ import Settings from "./Settings";
 import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
 import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import MediaSourceBadge from "../shared/MediaSourceBadge";
 
 // Taken from: https://ui.mantine.dev/category/navbars
 
@@ -135,6 +136,13 @@ const AppNav: FC = () => {
                         <Box>{getLinks("Browse")}</Box>
                     </Stack>
                 </Stack>
+            </Navbar.Section>
+
+            <Navbar.Section>
+                <Flex gap={10}>
+                    <Text size="xs" color={colors.gray[5]}>source</Text>
+                    <MediaSourceBadge />
+                </Flex>
             </Navbar.Section>
 
             <Navbar.Section className={classes.footer}>

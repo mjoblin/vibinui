@@ -23,6 +23,10 @@ export interface InternalState {
         };
     };
 
+    presets: {
+        filteredPresetCount: number;
+    };
+
     tracks: {
         filteredTrackCount: number;
         trackCard: {
@@ -56,6 +60,10 @@ const initialState: InternalState = {
             renderWidth: 200,
             renderHeight: 200,
         },
+    },
+    presets: {
+        // Number of presets currently displayed in the Presets screen.
+        filteredPresetCount: 0,
     },
     tracks: {
         // Number of tracks currently displayed in the Tracks screen.
@@ -103,6 +111,9 @@ export const internalSlice = createSlice({
         setFilteredArtistCount: (state, action: PayloadAction<number>) => {
             state.artists.filteredArtistCount = action.payload;
         },
+        setFilteredPresetCount: (state, action: PayloadAction<number>) => {
+            state.presets.filteredPresetCount = action.payload;
+        },
         setFilteredTrackCount: (state, action: PayloadAction<number>) => {
             state.tracks.filteredTrackCount = action.payload;
         },
@@ -130,6 +141,7 @@ export const {
     setIsComputingInBackground,
     setFilteredAlbumCount,
     setFilteredArtistCount,
+    setFilteredPresetCount,
     setFilteredTrackCount,
     setShowDebugPanel,
     setShowKeyboardShortcuts,

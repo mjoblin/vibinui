@@ -5,20 +5,35 @@ import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
 import SadLabel from "../shared/SadLabel";
 import SimpleLoader from "../shared/SimpleLoader";
 import { getTextWidth } from "../../app/utils";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
+
+// TODO: This component should take a track, but the current_track in Redux doesn't contain the
+//  trackId. So instead the component expects *either* a trackId *or* artist and title.
 
 type TrackLyricsProps = {
-    trackId: string;
+    trackId?: string;
+    artist?: string;
+    title?: string;
 };
 
-const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
+const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
+    const { APP_ALT_FONTFACE } = useAppConstants();
     const [maxLineWidth, setMaxLineWidth] = useState<number>(0);
-    const { data, error, isFetching } = useGetLyricsQuery(trackId);
+    const { data, error, isFetching } = useGetLyricsQuery({ trackId, artist, title });
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         lyricsContainer: {
             columnCount: "auto",
             columnWidth: maxLineWidth,
             columnFill: "auto",
+        },
+        chunkHeader: {
+            fontFamily: APP_ALT_FONTFACE,
+            fontWeight: "bold",
+        },
+        chunkBody: {
+            fontFamily: APP_ALT_FONTFACE,
+            color: theme.colors.dark[1],
         },
     }))();
 
@@ -61,10 +76,13 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId }) => {
     const chunkRender = (chunk: LyricChunk, chunkIndex: number) => {
         return (
             <Box key={`chunk_${chunkIndex}`}>
-                {chunk.header && <Text weight="bold">{chunk.header}</Text>}
+                {chunk.header && <Text className={dynamicClasses.chunkHeader}>{chunk.header}</Text>}
                 <Box pb={15}>
                     {chunk.body.map((line, lineIndex) => (
-                        <Text key={`line_${chunkIndex}_${lineIndex}`} weight="normal">
+                        <Text
+                            key={`line_${chunkIndex}_${lineIndex}`}
+                            className={dynamicClasses.chunkBody}
+                        >
                             {line}
                         </Text>
                     ))}

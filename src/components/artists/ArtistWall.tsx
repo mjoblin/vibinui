@@ -24,11 +24,12 @@ import ArtistCard from "./ArtistCard";
 import TrackCard from "../tracks/TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
-import { min } from "lodash";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const ArtistWall: FC = () => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
+    const { SCREEN_LOADING_PT } = useAppConstants();
     const { activeCollection, selectedAlbum, selectedArtist, viewMode } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
@@ -48,7 +49,6 @@ const ArtistWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
-
 
     /**
      *
@@ -74,7 +74,7 @@ const ArtistWall: FC = () => {
 
     if (isLoading) {
         return (
-            <Center>
+            <Center pt={SCREEN_LOADING_PT}>
                 <Loader size="sm" />
                 <Text size={14} weight="bold" pl={10}>
                     Retrieving artists...

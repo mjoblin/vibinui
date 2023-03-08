@@ -7,20 +7,19 @@ import { useAppSelector } from "../../app/hooks";
 import MiniController from "../currentlyPlaying/MiniController";
 import VibinLogo from "./VibinLogo";
 
-const useStyles = createStyles(({ colors }) => ({
-    screenName: {
-        fontFamily: "Kanit",
-        textTransform: "lowercase",
-    },
-}));
-
 const AppHeader: FC = () => {
     const { colors } = useMantineTheme();
-    const { classes } = useStyles();
-    const { HEADER_HEIGHT, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
+    const { APP_ALT_FONTFACE, HEADER_HEIGHT, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );
+
+    const { classes: dynamicClasses } = createStyles(({ colors }) => ({
+        screenName: {
+            fontFamily: APP_ALT_FONTFACE,
+            textTransform: "lowercase",
+        },
+    }))();
 
     return (
         <Header height={HEADER_HEIGHT} bg={colors.dark[6]}>
@@ -28,9 +27,9 @@ const AppHeader: FC = () => {
                 <Box pl={NAVBAR_PADDING} miw={NAVBAR_WIDTH} maw={NAVBAR_WIDTH}>
                     <VibinLogo />
                 </Box>
-                <Flex pl={NAVBAR_PADDING} gap={20}>
+                <Flex pl={NAVBAR_PADDING} gap={20} align="center">
                     <Box miw={150} maw={150}>
-                        <Text size={30} weight="bold" className={classes.screenName}>
+                        <Text size={30} weight="bold" className={dynamicClasses.screenName}>
                             {currentScreen}
                         </Text>
                     </Box>
