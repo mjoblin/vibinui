@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Card, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Box, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Album, Track } from "../../app/types";
@@ -86,20 +86,22 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick 
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        albumCard: {
+        card: {
             width: cardSize,
             border: selected
                 ? `${borderSize}px solid ${SELECTED_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            borderRadius: 5,
+            backgroundColor: theme.colors.dark[6],
         },
     }))();
 
     const albumYear = yearFromDate(album.date);
 
     return (
-        <Card radius="sm" pb={showDetails ? 7 : 0} className={dynamicClasses.albumCard}>
+        <Box className={dynamicClasses.card}>
             {/* Album art with play/action controls */}
-            <Card.Section onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
+            <Box onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
                 <AlbumArt
                     album={album}
                     actionCategories={["Tracks", "Playlist"]}
@@ -108,11 +110,11 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick 
                     onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                     onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
                 />
-            </Card.Section>
+            </Box>
 
             {/* Album title, artist, year, genre */}
             {showDetails && (
-                <Stack spacing={0} pt={7}>
+                <Stack spacing={0} p={7}>
                     <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                         {album.title}
                     </Text>
@@ -132,7 +134,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick 
                 opened={showTracksModal}
                 onClose={() => setShowTracksModal(false)}
             />
-        </Card>
+        </Box>
     );
 };
 

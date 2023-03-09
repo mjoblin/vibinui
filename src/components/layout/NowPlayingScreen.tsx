@@ -203,7 +203,7 @@ const NowPlayingScreen: FC = () => {
                                     fontWeight: "bold",
                                     color: theme.colors.gray[4],
                                     fontSize: 13,
-                                    letterSpacing: 0.4,
+                                    letterSpacing: 0.3,
                                 }
                             })}
                         >

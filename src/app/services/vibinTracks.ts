@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { MediaId, Track } from "../types";
+import { API_REFRESH_INTERVAL } from "../constants";
 import { BackendTrack, trackTransformer } from "./vibinAlbums";
 
 export type LyricChunk = {
@@ -25,6 +26,7 @@ export type WaveformFormat = "dat" | "json" | "png";
 export const vibinTracksApi = createApi({
     reducerPath: "vibinTracksApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/tracks" }),
+    keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getLyrics: builder.query<Lyrics, { trackId?: string; artist?: string; title?: string }>({
             query: ({ trackId, artist, title }) => ({

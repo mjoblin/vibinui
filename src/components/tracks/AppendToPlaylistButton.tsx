@@ -36,6 +36,7 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
                 title: `${itemType} appended to Playlist`,
                 message: item.title,
                 icon: <IconCheck size={16} />,
+                color: "teal",
                 loading: false,
             });
         } else if (addStatus.isError) {
