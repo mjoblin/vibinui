@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import type { MediaId } from "../types";
+import { API_REFRESH_INTERVAL } from "../constants";
 
 /**
  * NOTE: Changes made to the playlist should result in the streamer re-announcing the new playlist
@@ -26,6 +27,7 @@ type PlaylistEntryIndex = number;
 export const vibinPlaylistApi = createApi({
     reducerPath: "vibinPlaylistApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/playlist" }),
+    keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         addMediaToPlaylist: builder.mutation<
             void,

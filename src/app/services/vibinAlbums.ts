@@ -3,6 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Album, Track } from "../types";
 import { hmsToSecs } from "../utils";
 import { MediaId } from "../types";
+import { API_REFRESH_INTERVAL } from "../constants";
 
 // TODO: Consider refactoring these multiple API slices (Albums, Playlist, etc) into a single slice.
 //  https://redux-toolkit.js.org/rtk-query/api/createApi
@@ -48,6 +49,7 @@ export const trackTransformer = (track: BackendTrack): Track => ({
 export const vibinAlbumsApi = createApi({
     reducerPath: "vibinAlbumsApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/albums" }),
+    keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getAlbumById: builder.query<Album, MediaId>({
             query: (albumId) => albumId,

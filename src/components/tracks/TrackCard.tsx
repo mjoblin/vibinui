@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Card, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Box, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Track } from "../../app/types";
@@ -72,26 +72,28 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick 
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        trackCard: {
+        card: {
             width: cardSize,
             border: selected
                 ? `${borderSize}px solid ${SELECTED_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            borderRadius: 5,
+            backgroundColor: theme.colors.dark[6],
         },
     }))();
 
     const trackYear = track.date && yearFromDate(track.date);
 
     return (
-        <Card radius="sm" pb={showDetails ? 7 : 0} className={dynamicClasses.trackCard}>
+        <Box className={dynamicClasses.card}>
             {/* Track art with play/action controls */}
-            <Card.Section>
+            <Box>
                 <TrackArt track={track} size={cardSize - borderSize * 2} radius={5} />
-            </Card.Section>
+            </Box>
 
             {/* Track title, artist, year, genre */}
             {showDetails && (
-                <Stack spacing={0} pt={7}>
+                <Stack spacing={0} p={7}>
                     <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                         {track.title}
                     </Text>
@@ -109,7 +111,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick 
                     </Text>
                 </Stack>
             )}
-        </Card>
+        </Box>
     );
 };
 

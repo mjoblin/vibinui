@@ -18,7 +18,7 @@ const DiscogsLogo: FC = () => {
 };
 
 const GeniusLogo: FC = () => {
-    return <Image src={GeniusLogoImage} width="fit-content" height={20} radius={3} />;
+    return <Image src={GeniusLogoImage} width="fit-content" height={25} radius={3} />;
 };
 
 const RateYourMusicLogo: FC = () => {

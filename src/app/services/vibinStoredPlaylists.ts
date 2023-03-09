@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { MediaId } from "../types";
+import { API_REFRESH_INTERVAL } from "../constants";
 
 export type StoredPlaylistId = string;
 
@@ -15,6 +16,7 @@ export type StoredPlaylist = {
 export const vibinStoredPlaylistsApi = createApi({
     reducerPath: "vibinStoredPlaylistsApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/playlists" }),
+    keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getStoredPlaylists: builder.query<StoredPlaylist[], void>({
             query: () => ({

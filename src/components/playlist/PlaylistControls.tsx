@@ -2,6 +2,7 @@ import React, { FC, forwardRef, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import {
     ActionIcon,
+    Alert,
     Box,
     Button,
     Center,
@@ -20,6 +21,7 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import {
+    IconInfoCircle,
     IconDotsCircleHorizontal,
     IconFile,
     IconFilePlus,
@@ -100,13 +102,14 @@ const PlaylistControls: FC = () => {
             // displayed. This comes at the expense of the error state not being explained to the
             // user.
             name: (value) =>
-                /^\s*$/.test(value) || storedPlaylists.map((playlist) => playlist.name).includes(value)
+                /^\s*$/.test(value) ||
+                storedPlaylists.map((playlist) => playlist.name).includes(value)
                     ? true
                     : null,
         },
         validateInputOnChange: true,
     });
-    
+
     useEffect(() => {
         setActiveStoredPlaylistName(
             storedPlaylists.find((playlist) => playlist.id === activeStoredPlaylistId)?.name
@@ -175,115 +178,143 @@ const PlaylistControls: FC = () => {
     // --------------------------------------------------------------------------------------------
 
     return (
-        <Flex gap={25} pt={7} align="center">
-            <Flex gap={5} w={275} align="center">
-                {activatingStoredPlaylist && (
-                    <Flex gap={10} align="center">
-                        <Loader size="sm" />
-                        <Text size="xs" weight="bold">
-                            Activating...
-                        </Text>
-                    </Flex>
-                )}
+        <Flex h="100%" align="center" justify="space-between">
+            <Flex gap={25}>
+                <Flex gap={5} w={275} align="center">
+                    {activatingStoredPlaylist && (
+                        <Flex gap={10} align="center">
+                            <Loader size="sm" />
+                            <Text size="xs" weight="bold">
+                                Activating...
+                            </Text>
+                        </Flex>
+                    )}
 
-                {!activatingStoredPlaylist && (
-                    <>
-                        {/* Playlist names (selecting a Playlist name will activate it) */}
-                        <Indicator
-                            size={7}
-                            disabled={!activeStoredPlaylistId || activeSyncedWithStore}
-                        >
-                            <Select
-                                placeholder="Select a Playlist"
-                                itemComponent={PlaylistSelectItem}
-                                withinPortal={true}
-                                data={playlistDetails}
-                                limit={10}
-                                value={activeStoredPlaylistId}
-                                w={250}
-                                maxDropdownHeight={700}
-                                onChange={(value) => value && activateStoredPlaylistId(value)}
-                            />
-                        </Indicator>
+                    {!activatingStoredPlaylist && (
+                        <>
+                            {/* Playlist names (selecting a Playlist name will activate it) */}
+                            <Indicator
+                                size={7}
+                                disabled={!activeStoredPlaylistId || activeSyncedWithStore}
+                            >
+                                <Select
+                                    placeholder="Select a Playlist"
+                                    itemComponent={PlaylistSelectItem}
+                                    withinPortal={true}
+                                    data={playlistDetails}
+                                    limit={10}
+                                    value={activeStoredPlaylistId}
+                                    w={250}
+                                    maxDropdownHeight={700}
+                                    onChange={(value) => value && activateStoredPlaylistId(value)}
+                                />
+                            </Indicator>
 
-                        {/* Playlist save options */}
-                        <Menu shadow="md" position="bottom-start">
-                            <Menu.Target>
-                                <ActionIcon variant="transparent">
-                                    <IconDotsCircleHorizontal size={20} color={colors.gray[6]} />
-                                </ActionIcon>
-                            </Menu.Target>
+                            {/* Playlist save options */}
+                            <Menu
+                                shadow="md"
+                                position="bottom-start"
+                                withArrow
+                                arrowPosition="center"
+                            >
+                                <Menu.Target>
+                                    <ActionIcon variant="transparent">
+                                        <IconDotsCircleHorizontal
+                                            size={20}
+                                            color={colors.gray[6]}
+                                        />
+                                    </ActionIcon>
+                                </Menu.Target>
 
-                            <Menu.Dropdown>
-                                <Menu.Label>Save</Menu.Label>
-                                <Menu.Item
-                                    disabled={!activeStoredPlaylistId || activeSyncedWithStore}
-                                    icon={
-                                        <Indicator
-                                            size={7}
-                                            disabled={
-                                                !activeStoredPlaylistId || activeSyncedWithStore
-                                            }
-                                        >
-                                            <IconFile size={14} />
-                                        </Indicator>
-                                    }
-                                    onClick={() => storePlaylist({ replace: true })}
-                                >
-                                    Save Playlist
-                                </Menu.Item>
-                                <Menu.Item
-                                    icon={<IconFilePlus size={14} />}
-                                    onClick={() => setShowNameNewPlaylistDialog(true)}
-                                >
-                                    Save Playlist as New...
-                                </Menu.Item>
+                                <Menu.Dropdown>
+                                    <Menu.Label>Save</Menu.Label>
+                                    <Menu.Item
+                                        disabled={!activeStoredPlaylistId || activeSyncedWithStore}
+                                        icon={
+                                            <Indicator
+                                                size={7}
+                                                disabled={
+                                                    !activeStoredPlaylistId || activeSyncedWithStore
+                                                }
+                                            >
+                                                <IconFile size={14} />
+                                            </Indicator>
+                                        }
+                                        onClick={() => storePlaylist({ replace: true })}
+                                    >
+                                        Save Playlist
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        icon={<IconFilePlus size={14} />}
+                                        onClick={() => setShowNameNewPlaylistDialog(true)}
+                                    >
+                                        Save Playlist as New...
+                                    </Menu.Item>
 
-                                <Menu.Label>Management</Menu.Label>
-                                <Menu.Item
-                                    icon={<IconListDetails size={14} />}
-                                    onClick={() => setShowEditor(true)}
-                                >
-                                    Playlists Manager...
-                                </Menu.Item>
-                            </Menu.Dropdown>
-                        </Menu>
-                    </>
-                )}
+                                    <Menu.Label>Management</Menu.Label>
+                                    <Menu.Item
+                                        icon={<IconListDetails size={14} />}
+                                        onClick={() => setShowEditor(true)}
+                                    >
+                                        Playlists Manager...
+                                    </Menu.Item>
+                                </Menu.Dropdown>
+                            </Menu>
+                        </>
+                    )}
+                </Flex>
+
+                {/* Playlist display options (simple vs. detailed) */}
+                <SegmentedControl
+                    value={viewMode}
+                    radius={5}
+                    onChange={(value) =>
+                        value && dispatch(setPlaylistViewMode(value as PlaylistViewMode))
+                    }
+                    data={[
+                        {
+                            value: "simple",
+                            label: (
+                                <Center>
+                                    <IconMenu2 size={14} />
+                                    <Text size={14} ml={10}>
+                                        Simple
+                                    </Text>
+                                </Center>
+                            ),
+                        },
+                        {
+                            value: "detailed",
+                            label: (
+                                <Center>
+                                    <IconListDetails size={14} />
+                                    <Text size={14} ml={10}>
+                                        Detailed
+                                    </Text>
+                                </Center>
+                            ),
+                        },
+                    ]}
+                />
             </Flex>
 
-            {/* Playlist display options (simple vs. detailed) */}
-            <SegmentedControl
-                value={viewMode}
-                radius={5}
-                onChange={(value) =>
-                    value && dispatch(setPlaylistViewMode(value as PlaylistViewMode))
-                }
-                data={[
-                    {
-                        value: "simple",
-                        label: (
-                            <Center>
-                                <IconMenu2 size={14} />
-                                <Text size={14} ml={10}>
-                                    Simple
-                                </Text>
-                            </Center>
-                        ),
-                    },
-                    {
-                        value: "detailed",
-                        label: (
-                            <Center>
-                                <IconListDetails size={14} />
-                                <Text size={14} ml={10}>
-                                    Detailed
-                                </Text>
-                            </Center>
-                        ),
-                    },
-                ]}
-            />
+            {!activeStoredPlaylistId && (
+                <Alert
+                    icon={<IconInfoCircle size="1.3rem" />}
+                    color="yellow"
+                    radius={5}
+                    styles={{
+                        title: {
+                            marginBottom: 2,
+                        },
+                        message: {
+                            paddingRight: 5,
+                        },
+                    }}
+                >
+                    <Text color={colors.gray[4]}>Current Playlist is unsaved</Text>
+                </Alert>
+            )}
 
             {/* Stored Playlist editor modal (change playlist names, delete playlists, etc) */}
             <Modal
@@ -320,7 +351,9 @@ const PlaylistControls: FC = () => {
                             placeholder="Enter Playlist name"
                             {...newPlaylistForm.getInputProps("name")}
                         />
-                        <Button type="submit" maw="6rem">Save</Button>
+                        <Button type="submit" maw="6rem">
+                            Save
+                        </Button>
                     </Flex>
                 </Box>
             </Modal>

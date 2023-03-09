@@ -26,6 +26,7 @@ import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
 import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
+import StandbyMode from "../shared/StandbyMode";
 
 // Taken from: https://ui.mantine.dev/category/navbars
 
@@ -148,9 +149,10 @@ const AppNav: FC = () => {
             <Navbar.Section className={classes.footer}>
                 <Flex justify="space-between" align="center">
                     <Settings />
-                    <Flex gap={10}>
+                    <Flex gap={10} align="center">
                         <BackgroundComputeIndicator />
                         <WaitingOnAPIIndicator />
+                        <StandbyMode type="compact" />
                     </Flex>
                 </Flex>
             </Navbar.Section>

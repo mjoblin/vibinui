@@ -1,5 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+import { API_REFRESH_INTERVAL } from "../constants";
+
 export type PresetId = number;
 
 export type PresetType = "Radio" | "UPnP";
@@ -17,6 +19,7 @@ export type Preset = {
 export const vibinPresetsApi = createApi({
     reducerPath: "vibinPresetsApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/presets" }),
+    keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getPresets: builder.query<Preset[], void>({
             query: () => ({ url: "" }),
