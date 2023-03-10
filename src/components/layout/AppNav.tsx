@@ -8,7 +8,6 @@ import {
     Navbar,
     rem,
     Stack,
-    Table,
     Text,
     useMantineTheme,
 } from "@mantine/core";
@@ -91,7 +90,6 @@ const useStyles = createStyles((theme) => ({
 
     statusTable: {
         tableLayout: "fixed",
-        minWidth: "100%",
         "td:first-of-type": {
             width: 70,
             textAlign: "end",
@@ -159,28 +157,30 @@ const AppNav: FC = () => {
 
             <Navbar.Section>
                 <Stack spacing="sm">
-                    <Table className={classes.statusTable}>
-                        <tr>
-                            <td>
-                                <Text size="xs" color={colors.dark[3]}>
-                                    play state
-                                </Text>
-                            </td>
-                            <td>
-                                <PlayStateIndicator />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <Text size="xs" color={colors.dark[3]}>
-                                    source
-                                </Text>
-                            </td>
-                            <td>
-                                <MediaSourceBadge />
-                            </td>
-                        </tr>
-                    </Table>
+                    <table className={classes.statusTable}>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <Text size="xs" color={colors.dark[3]}>
+                                        play state
+                                    </Text>
+                                </td>
+                                <td>
+                                    <PlayStateIndicator />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <Text size="xs" color={colors.dark[3]}>
+                                        source
+                                    </Text>
+                                </td>
+                                <td>
+                                    <MediaSourceBadge />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </Stack>
             </Navbar.Section>
 
