@@ -5,6 +5,7 @@ import {
     Center,
     Menu,
     SegmentedControl,
+    Select,
     Switch,
     useMantineColorScheme,
 } from "@mantine/core";
@@ -13,15 +14,21 @@ import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useLazyPowerToggleQuery } from "../../app/services/vibinSystem";
+import { useLazyPowerToggleQuery, useLazySetSourceQuery } from "../../app/services/vibinSystem";
 import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { PowerStatus } from "../../app/store/systemSlice";
+import { AudioSource } from "../../app/store/playbackSlice";
 
 const Settings: FC = () => {
     const dispatch = useAppDispatch();
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const [togglePower] = useLazyPowerToggleQuery();
+    const [setSource] = useLazySetSourceQuery();
     const streamer = useAppSelector((state: RootState) => state.system.streamer);
+    const audioSources = useAppSelector((state: RootState) => state.playback.audio_sources);
+    const currentAudioSource = useAppSelector(
+        (state: RootState) => state.playback.current_audio_source
+    );
     const previousPowerState = useRef<PowerStatus>(streamer.power);
 
     useEffect(() => {
@@ -51,6 +58,8 @@ const Settings: FC = () => {
 
             <Menu.Dropdown>
                 <Menu.Label>Streamer</Menu.Label>
+
+                {/* Streamer power toggle */}
                 <Menu.Item>
                     <Switch
                         label="Power"
@@ -58,6 +67,20 @@ const Settings: FC = () => {
                         onChange={(event) => togglePower()}
                         onLabel="on"
                         offLabel="off"
+                    />
+                </Menu.Item>
+
+                {/* Source selector */}
+                <Menu.Item closeMenuOnClick={false}>
+                    <Select
+                        value={currentAudioSource?.id}
+                        dropdownPosition="top"
+                        maxDropdownHeight={500}
+                        onChange={(value) => value && setSource(value)}
+                        data={Object.values(audioSources).map((source: AudioSource) => ({
+                            value: source.id,
+                            label: source.name,
+                        }))}
                     />
                 </Menu.Item>
 

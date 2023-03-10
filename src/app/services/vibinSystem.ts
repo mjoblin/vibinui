@@ -10,7 +10,10 @@ export const vibinSystemApi = createApi({
         powerToggle: builder.query<void, void>({
             query: () => ({ url: "power/toggle", method: "POST" }),
         }),
+        setSource: builder.query<void, string>({
+            query: (source) => ({ url: "source", method: "POST", params: { source } }),
+        }),
     }),
 });
 
-export const { useLazyPowerToggleQuery } = vibinSystemApi;
+export const { useLazyPowerToggleQuery, useLazySetSourceQuery } = vibinSystemApi;

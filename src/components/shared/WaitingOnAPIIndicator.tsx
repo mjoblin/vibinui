@@ -37,7 +37,6 @@ const WaitingOnAPIIndicator: FC = () => {
     });
 
     const pendingQueryCount = pendingQueries.length;
-    pendingQueries.map(console.log);
 
     return (
         <Popover
@@ -71,8 +70,8 @@ const WaitingOnAPIIndicator: FC = () => {
                     {pendingQueries
                         .sort((queryA, queryB) => queryA.startedTimeStamp - queryB.startedTimeStamp)
                         .map((query) => (
-                            <List.Item>
-                                <Text key={query.requestId} size="sm" sx={{ fontFamily: "monospace"}}>
+                            <List.Item key={query.requestId}>
+                                <Text size="sm" sx={{ fontFamily: "monospace"}}>
                                     {query.endpointName}
                                 </Text>
                             </List.Item>
