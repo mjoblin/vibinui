@@ -14,6 +14,7 @@ import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
+import MediaSourceManager from "./components/managers/MediaSourceManager";
 import TracksScreen from "./components/layout/TracksScreen";
 import WebsocketManager from "./components/managers/WebsocketManager";
 import ErrorBoundary from "./components/shared/ErrorBoundary";
@@ -101,6 +102,7 @@ export default function App() {
                 <Notifications limit={5} autoClose={3000} />
                 <WebsocketManager />
                 <PlayheadManager />
+                <MediaSourceManager />
 
                 {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
                 <RouterProvider router={router} />

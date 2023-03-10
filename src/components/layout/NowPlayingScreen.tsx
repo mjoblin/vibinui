@@ -175,17 +175,19 @@ const NowPlayingScreen: FC = () => {
                     <Text size={34} weight="bold" className={dynamicClasses.currentTrackTitle}>
                         {currentTrack.title || " "}
                     </Text>
-                    <FieldValueList
-                        fieldValues={{
-                            Artist: currentTrack.artist,
-                            Album: currentTrack.album,
-                        }}
-                        keySize={16}
-                        valueSize={16}
-                        keyFontFamily={APP_ALT_FONTFACE}
-                        valueFontFamily={APP_ALT_FONTFACE}
-                        valueColor={colors.dark[2]}
-                    />
+                    {(currentTrack.artist || currentTrack.album) && (
+                        <FieldValueList
+                            fieldValues={{
+                                Artist: currentTrack.artist,
+                                Album: currentTrack.album,
+                            }}
+                            keySize={16}
+                            valueSize={16}
+                            keyFontFamily={APP_ALT_FONTFACE}
+                            valueFontFamily={APP_ALT_FONTFACE}
+                            valueColor={colors.dark[2]}
+                        />
+                    )}
                 </Stack>
 
                 {/* Tabs */}
@@ -204,7 +206,7 @@ const NowPlayingScreen: FC = () => {
                                     color: theme.colors.gray[4],
                                     fontSize: 13,
                                     letterSpacing: 0.3,
-                                }
+                                },
                             })}
                         >
                             <Tabs.List mb={20}>

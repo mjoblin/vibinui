@@ -8,6 +8,7 @@ import {
     Navbar,
     rem,
     Stack,
+    Table,
     Text,
     useMantineTheme,
 } from "@mantine/core";
@@ -26,6 +27,7 @@ import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
 import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
+import PlayStateIndicator from "../shared/PlayStateIndicator";
 import StandbyMode from "../shared/StandbyMode";
 
 // Taken from: https://ui.mantine.dev/category/navbars
@@ -86,6 +88,22 @@ const useStyles = createStyles((theme) => ({
             },
         },
     },
+
+    statusTable: {
+        tableLayout: "fixed",
+        minWidth: "100%",
+        "td:first-of-type": {
+            width: 70,
+            textAlign: "end",
+            paddingRight: 10,
+        },
+        "td:last-of-type": {
+            textAlign: "start",
+        },
+        tr: {
+            verticalAlign: "center",
+        },
+    }
 }));
 
 const AppNav: FC = () => {
@@ -93,7 +111,7 @@ const AppNav: FC = () => {
     const { pathname } = useLocation();
     const { classes, cx } = useStyles();
     const { APP_URL_PREFIX, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
-    
+
     const routeInfo: Record<string, { link: string; label: string; icon: TablerIcon }[]> = {
         "Now Playing": [
             { link: `${APP_URL_PREFIX}/current`, label: "Current Track", icon: IconDeviceSpeaker },
@@ -140,10 +158,30 @@ const AppNav: FC = () => {
             </Navbar.Section>
 
             <Navbar.Section>
-                <Flex gap={10}>
-                    <Text size="xs" color={colors.gray[5]}>source</Text>
-                    <MediaSourceBadge />
-                </Flex>
+                <Stack spacing="sm">
+                    <Table className={classes.statusTable}>
+                        <tr>
+                            <td>
+                                <Text size="xs" color={colors.dark[3]}>
+                                    play state
+                                </Text>
+                            </td>
+                            <td>
+                                <PlayStateIndicator />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <Text size="xs" color={colors.dark[3]}>
+                                    source
+                                </Text>
+                            </td>
+                            <td>
+                                <MediaSourceBadge />
+                            </td>
+                        </tr>
+                    </Table>
+                </Stack>
             </Navbar.Section>
 
             <Navbar.Section className={classes.footer}>
