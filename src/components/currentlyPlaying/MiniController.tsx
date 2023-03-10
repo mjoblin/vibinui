@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Flex } from "@mantine/core";
+import { Box, Flex, Text, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -10,17 +10,29 @@ import NowPlaying from "./NowPlaying";
 //  be more intuitive.
 
 const MiniController: FC = () => {
+    const { colors } = useMantineTheme();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const transportActions = useAppSelector(
+        (state: RootState) => state.playback.active_transport_actions
+    );
+    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
 
     const componentHeight = 40;
 
-    return ["play", "pause", "buffering"].includes(playStatus || "") ? (
+    return transportActions.length > 0 &&
+        ["play", "pause", "buffering"].includes(playStatus || "") ? (
         <Flex gap={10} mih={componentHeight} mah={componentHeight} sx={{ flexGrow: 1 }}>
             <TransportControls />
             <NowPlaying playheadWidth={300} />
         </Flex>
     ) : (
-        <Box mih={componentHeight} mah={componentHeight} />
+        <Flex mih={componentHeight} mah={componentHeight} align="center">
+            <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
+                {`Media controls unavailable ${
+                    currentSource && `for ${currentSource.name}`
+                }`}
+            </Text>
+        </Flex>
     );
 };
 
