@@ -23,18 +23,22 @@ const PlayStateIndicator: FC = () => {
                 </Flex>
             ),
         },
-        play: {
-            label: "Playing",
+        connecting: {
+            label: "Connecting to remote source",
             component: (
-                <Flex align="center">
-                    <IconPlayerPlay
-                        size={16}
-                        stroke={1}
-                        color={colors.dark[1]}
-                        fill={colors.dark[0]}
-                    />
+                <Flex gap={10} align="center">
+                    <Loader size={14} variant="bars" />
+                    <Text size="xs">connecting</Text>
                 </Flex>
             ),
+        },
+        no_signal: {
+            label: "No signal",
+            component: <Text size="xs">no signal</Text>,
+        },
+        not_ready: {
+            label: "Powered off",
+            component: <Text size="xs">standby</Text>,
         },
         pause: {
             label: "Paused",
@@ -49,22 +53,26 @@ const PlayStateIndicator: FC = () => {
                 </Flex>
             ),
         },
+        play: {
+            label: "Playing",
+            component: (
+                <Flex align="center">
+                    <IconPlayerPlay
+                        size={16}
+                        stroke={1}
+                        color={colors.dark[1]}
+                        fill={colors.dark[0]}
+                    />
+                </Flex>
+            ),
+        },
         ready: {
             label: "Powered on, not playing",
             component: <Text size="xs">powered on</Text>,
         },
-        not_ready: {
-            label: "Powered off",
-            component: <Text size="xs">standby</Text>,
-        },
-        connecting: {
-            label: "Connecting to remote source",
-            component: (
-                <Flex gap={10} align="center">
-                    <Loader size={14} variant="bars" />
-                    <Text size="xs">connecting</Text>
-                </Flex>
-            ),
+        stop: {
+            label: "Stopped",
+            component: <Text size="xs">stopped</Text>,
         },
     };
 

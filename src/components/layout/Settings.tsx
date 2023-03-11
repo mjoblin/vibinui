@@ -9,13 +9,13 @@ import {
     Switch,
     useMantineColorScheme,
 } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
 import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useLazyPowerToggleQuery, useLazySetSourceQuery } from "../../app/services/vibinSystem";
 import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
+import { showSuccessNotification } from "../../app/utils";
 import { PowerStatus } from "../../app/store/systemSlice";
 import { AudioSource } from "../../app/store/playbackSlice";
 
@@ -37,9 +37,9 @@ const Settings: FC = () => {
             return;
         }
 
-        showNotification({
+        showSuccessNotification({
             title: "Streamer Power",
-            color: streamer.power === "on" ? "green" : "yellow",
+            color: streamer.power === "on" ? "teal" : "yellow",
             message: streamer.power
                 ? `Streamer has been powered ${streamer.power}`
                 : "Unknown streamer power state",

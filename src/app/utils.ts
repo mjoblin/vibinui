@@ -85,6 +85,7 @@ interface VibinNotification {
     id?: string;
     title?: string;
     message?: string;
+    color?: string;
     icon?: ReactNode;
     loading?: boolean;
     autoClose?: boolean;
@@ -96,6 +97,7 @@ export const showSuccessNotification = ({
     id,
     title,
     message,
+    color,
     icon,
     loading = false,
     autoClose = true,
@@ -104,7 +106,7 @@ export const showSuccessNotification = ({
         id,
         title,
         message,
-        color: "teal",
+        color: color || "teal",
         icon: icon || IconCheck({ size: 18 }),
         loading,
         autoClose,
@@ -116,6 +118,7 @@ export const showErrorNotification = ({
     id,
     title,
     message,
+    color,
     icon,
     loading = false,
     autoClose = false,
@@ -124,7 +127,7 @@ export const showErrorNotification = ({
         id,
         title,
         message,
-        color: "red",
+        color: color || "red",
         icon: icon || IconX({ size: 18 }),
         loading,
         autoClose,
