@@ -9,7 +9,15 @@ import { updateIfDifferent } from "./helpers";
  * streamer. e.g. Whether it's playing or not; what the current track is; etc.
  */
 
-export type PlayStatus = "buffering" | "play" | "pause" | "ready" | "not_ready" | "connecting"; // TODO: not_ready === standby?
+export type PlayStatus =
+    | "buffering"
+    | "connecting"
+    | "no_signal"
+    | "not_ready"
+    | "pause"
+    | "play"
+    | "ready"
+    | "stop";
 
 export type TransportAction =
     | "next"
