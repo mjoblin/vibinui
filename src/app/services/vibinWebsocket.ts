@@ -5,6 +5,8 @@ import { Draft } from "immer";
 import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
 import {
     DeviceDisplay,
+    PlayStatus,
+    RepeatState,
     setActiveTransportActions,
     setAudioSources,
     setCurrentAudioSource,
@@ -18,7 +20,6 @@ import {
     setPlayheadPosition,
     setRepeat,
     setShuffle,
-    RepeatState,
     ShuffleState,
     TransportAction,
 } from "../store/playbackSlice";
@@ -50,26 +51,24 @@ type SystemPayload = {
     streamer: {
         name: string;
         power: "on" | "off";
-    },
+    };
     media_device: {
         name: string;
-    }
-}
+    };
+};
 
 type StateVarsPayload = {
-    streamer_name: string;  // TODO: Should streamer_name and media_source_name be on VibinMessage?
+    streamer_name: string; // TODO: Should streamer_name and media_source_name be on VibinMessage?
     media_source_name: string;
     streamer: SimpleObject;
     vibin: SimpleObject;
-}
-
-type PlayerState = "buffering" | "ready" | "play" | "pause" | "stop" | "no_signal";
+};
 
 // TODO: Figure out if any of these are not optional. Making them all optional makes usage a little
 //  awkward (having to always allow for their optionality on reference). Also investigate
 //  formalizing some of these types, and find a suitable place fro those types to live.
 type PlayStatePayload = {
-    state?: PlayerState;
+    state?: PlayStatus;
     position?: number;
     presettable?: boolean;
     queue_index?: number;
@@ -102,7 +101,7 @@ type PlayStatePayload = {
 
 type PositionPayload = {
     position: number;
-}
+};
 
 type PresetsPayload = PresetsState;
 
@@ -124,21 +123,6 @@ export type VibinMessage = {
         | SystemPayload;
 };
 
-type ComparableMessageChunk = Draft<{ [key: number | string]: string }> | Map<any, any>;
-
-/**
- * Compare the provided Draft object o1 with the provided o2. Return true if they appear to be
- * identical.
- *
- * Warning: This uses JSON.stringify() on the two inputs to determine equivalence, which can in
- * some situations return false negatives (say if the object key order has changed).
- *
- * @param o1
- * @param o2
- */
-const quickObjectMatch = (o1: ComparableMessageChunk, o2: ComparableMessageChunk): boolean =>
-    JSON.stringify(o1) === JSON.stringify(o2);
-
 /**
  * Take some arbitrary input (scalar or SimpleObject) and purify it. Purify in this context means
  * checking if the input has any keys which contain a "-" (replaced with "_") or a "@" (removed).
@@ -151,12 +135,12 @@ const quickObjectMatch = (o1: ComparableMessageChunk, o2: ComparableMessageChunk
 const purifyData = (
     input: SimpleObject | any[] | string | number | undefined | null
 ): SimpleObject | any[] | string | number | undefined | null => {
-    if ((typeof input !== "object") || input === null) {
+    if (typeof input !== "object" || input === null) {
         return input;
     }
 
     if (input instanceof Array) {
-        const purified: any[] = input.map(value => purifyData(value));
+        const purified: any[] = input.map((value) => purifyData(value));
         return purified;
     } else {
         const purified: SimpleObject = {};
@@ -226,46 +210,19 @@ function messageHandler(
         // exceeding MAX_MESSAGE_COUNT to minimize the likelihood of memory issues and/or Redux
         // warning us about state size.
         updateCachedData((draft: VibinMessage[]) => {
-            (draft.length >= MAX_MESSAGE_COUNT) && draft.shift();
+            draft.length >= MAX_MESSAGE_COUNT && draft.shift();
             draft.push(data);
         });
 
         const appState = getState();
 
-        /**
-         * Update application state to newValue if newValue is different from the current state for
-         * the given stateType. If newValue is undefined then set the application state to the
-         * given defaultValue.
-         *
-         * @param stateType
-         * @param newValue
-         * @param defaultValue
-         */
-        const updateAppStateIfChanged = (
-            stateType: string,
-            newValue: any,
-            defaultValue: any = undefined
-        ): void => {
-            // TODO: Not sure how to keep TS happy here if appState is explicitly of type RootState
-            //  (which is why the return type of getState() is defined above as "any").
-            const existingStateValue = appState[stateType];
-
-            if (!quickObjectMatch(existingStateValue, newValue)) {
-                dispatch({
-                    type: stateType,
-                    payload: newValue === undefined ? defaultValue : newValue,
-                });
-            }
-        };
-
         if (data.type === "System") {
             const system = data.payload as SystemPayload;
 
-            updateAppStateIfChanged(setMediaDeviceName.type, system.media_device?.name);
-            updateAppStateIfChanged(setStreamerName.type, system.streamer?.name);
-            updateAppStateIfChanged(setStreamerPower.type, system.streamer?.power);
-        }
-        else if (data.type === "StateVars") {
+            dispatch(setMediaDeviceName(system.media_device?.name));
+            dispatch(setStreamerName(system.streamer?.name));
+            dispatch(setStreamerPower(system.streamer?.power));
+        } else if (data.type === "StateVars") {
             const stateVars = data.payload as StateVarsPayload;
             const streamerName = stateVars.streamer_name;
 
@@ -274,24 +231,20 @@ function messageHandler(
             }
 
             // Set list of audio sources, and currently-set audio source.
-            updateAppStateIfChanged(setAudioSources.type, stateVars.vibin[streamerName]?.audio_sources, {});
-
-            updateAppStateIfChanged(
-                setCurrentAudioSource.type,
-                stateVars.vibin[streamerName]?.current_audio_source
-            );
+            dispatch(setAudioSources(stateVars.vibin[streamerName]?.audio_sources || {}));
+            dispatch(setCurrentAudioSource(stateVars.vibin[streamerName]?.current_audio_source));
 
             // Set stream information.
             const streamInfo = stateVars.vibin[streamerName]?.current_playback_details?.stream;
 
-            streamInfo && updateAppStateIfChanged(
-                setCurrentStream.type,
-                {
-                    type: streamInfo.type,
-                    source_name: streamInfo.source_name,
-                    url: streamInfo.url,
-                }
-            );
+            streamInfo &&
+                dispatch(
+                    setCurrentStream({
+                        type: streamInfo.type,
+                        source_name: streamInfo.source_name,
+                        url: streamInfo.url,
+                    })
+                );
 
             // Extract track genre, checking to ensure that the message's track matches the track
             // in application state.
@@ -301,7 +254,7 @@ function messageHandler(
             const stateVarsTrack =
                 stateVars.vibin[streamerName]?.current_playback_details?.playlist_entry;
             const appStateTrack = appState[setCurrentTrack.type];
-            
+
             if (
                 stateVarsTrack &&
                 appStateTrack &&
@@ -310,103 +263,81 @@ function messageHandler(
                 appStateTrack.album === stateVarsTrack.album &&
                 appStateTrack.artist === stateVarsTrack.artist
             ) {
-                updateAppStateIfChanged(setCurrentTrack.type, {
-                    ...appState[setCurrentTrack.type],
-                    genre: stateVarsTrack.genre,
-                });
+                dispatch(
+                    setCurrentTrack({
+                        ...appState[setCurrentTrack.type],
+                        genre: stateVarsTrack.genre,
+                    })
+                );
             }
 
             // Set current playlist track index and entries.
-            updateAppStateIfChanged(
-                setCurrentTrackIndex.type,
-                stateVars.vibin[streamerName]?.current_playlist_track_index
+            dispatch(
+                setCurrentTrackIndex(stateVars.vibin[streamerName]?.current_playlist_track_index)
             );
-            updateAppStateIfChanged(
-                setEntries.type,
-                stateVars.vibin[streamerName]?.current_playlist
-            );
-        }
-        else if (data.type === "Position") {
+            dispatch(setEntries(stateVars.vibin[streamerName]?.current_playlist));
+        } else if (data.type === "Position") {
             dispatch({
                 type: setPlayheadPosition.type,
                 payload: (data.payload as PositionPayload).position,
             });
-        }
-        else if (data.type === "PlayState") {
+        } else if (data.type === "PlayState") {
             const metadata = (data.payload as PlayStatePayload).metadata;
 
             // Set current play status ("play", "pause", etc).
-            updateAppStateIfChanged(setPlayStatus.type, (data.payload as PlayStatePayload).state);
+            dispatch(setPlayStatus((data.payload as PlayStatePayload).state));
 
             // Set current Track and Album Media IDs.
-            updateAppStateIfChanged(
-                setCurrentTrackMediaId.type,
-                (data.payload as PlayStatePayload).metadata?.current_track_media_id
+            dispatch(
+                setCurrentTrackMediaId(
+                    (data.payload as PlayStatePayload).metadata?.current_track_media_id
+                )
             );
-            updateAppStateIfChanged(
-                setCurrentAlbumMediaId.type,
-                (data.payload as PlayStatePayload).metadata?.current_album_media_id
+            dispatch(
+                setCurrentAlbumMediaId(
+                    (data.payload as PlayStatePayload).metadata?.current_album_media_id
+                )
             );
 
             // Set track information.
             // NOTE: genre comes later from a StateVars message.
-            updateAppStateIfChanged(
-                setCurrentTrack.type,
-                {
-                    track_number: metadata?.track_number,
-                    duration: metadata?.duration,
-                    album: metadata?.album,
-                    artist: metadata?.artist,
-                    title: metadata?.title,
-                    art_url: metadata?.art_url,
-                }
-            );
+            metadata &&
+                dispatch(
+                    setCurrentTrack({
+                        track_number: metadata.track_number,
+                        duration: metadata.duration,
+                        album: metadata.album,
+                        artist: metadata.artist,
+                        title: metadata.title,
+                        art_url: metadata.art_url,
+                    })
+                );
 
             // Set format information.
-            updateAppStateIfChanged(
-                setCurrentFormat.type,
-                {
-                    sample_format: metadata?.sample_format,
-                    mqa: metadata?.mqa,
-                    codec: metadata?.codec,
-                    lossless: metadata?.lossless,
-                    sample_rate: metadata?.sample_rate,
-                    bit_depth: metadata?.bit_depth,
-                    encoding: metadata?.encoding,
-                }
-            );
+            metadata &&
+                dispatch(
+                    setCurrentFormat({
+                        sample_format: metadata.sample_format,
+                        mqa: metadata.mqa,
+                        codec: metadata.codec,
+                        lossless: metadata.lossless,
+                        sample_rate: metadata.sample_rate,
+                        bit_depth: metadata.bit_depth,
+                        encoding: metadata.encoding,
+                    })
+                );
 
             // Set repeat and shuffle.
-            updateAppStateIfChanged(setRepeat.type, (data.payload as PlayStatePayload).mode_repeat);
-
-            updateAppStateIfChanged(
-                setShuffle.type,
-                (data.payload as PlayStatePayload).mode_shuffle
-            );
-        }
-        else if (data.type === "ActiveTransportControls") {
-            updateAppStateIfChanged(
-                setActiveTransportActions.type,
-                data.payload as ActiveTransportControlsPayload
-            );
-        }
-        else if (data.type === "DeviceDisplay") {
-            updateAppStateIfChanged(
-                setDeviceDisplay.type,
-                data.payload as DeviceDisplayPayload
-            );
-        }
-        else if (data.type === "Presets") {
-            updateAppStateIfChanged(
-                setPresetsState.type,
-                data.payload as PresetsState
-            );
-        }
-        else if (data.type === "StoredPlaylists") {
-            updateAppStateIfChanged(
-                setStoredPlaylistsState.type,
-                data.payload as StoredPlaylistsPayload
-            );
+            dispatch(setRepeat((data.payload as PlayStatePayload).mode_repeat));
+            dispatch(setShuffle((data.payload as PlayStatePayload).mode_shuffle));
+        } else if (data.type === "ActiveTransportControls") {
+            dispatch(setActiveTransportActions(data.payload as ActiveTransportControlsPayload));
+        } else if (data.type === "DeviceDisplay") {
+            dispatch(setDeviceDisplay(data.payload as DeviceDisplayPayload));
+        } else if (data.type === "Presets") {
+            dispatch(setPresetsState(data.payload as PresetsState));
+        } else if (data.type === "StoredPlaylists") {
+            dispatch(setStoredPlaylistsState(data.payload as StoredPlaylistsPayload));
         }
     };
 }

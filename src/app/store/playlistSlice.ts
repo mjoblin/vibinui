@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Playlist } from "../types";
+import { updateIfDifferent } from "./helpers";
 
 /**
  * TODO: Determine whether both store/playlistSlice and services/vibinPlaylist should coexists.
@@ -23,10 +24,10 @@ export const playlistSlice = createSlice({
     initialState,
     reducers: {
         setCurrentTrackIndex: (state, action: PayloadAction<number | undefined>) => {
-            state.current_track_index = action.payload;
+            updateIfDifferent(state, "current_track_index", action.payload);
         },
         setEntries: (state, action: PayloadAction<Playlist | undefined>) => {
-            state.entries = action.payload;
+            updateIfDifferent(state, "entries", action.payload);
         },
     },
 });

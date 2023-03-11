@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+import { updateIfDifferent } from "./helpers";
+
 export type PowerStatus = "on" | "off" | undefined;
 
 export interface SystemState {
@@ -34,13 +36,13 @@ export const systemSlice = createSlice({
     initialState,
     reducers: {
         setMediaDeviceName: (state, action: PayloadAction<string>) => {
-            state.media_device.name = action.payload;
+            updateIfDifferent(state, "media_device.name", action.payload);
         },
         setStreamerName: (state, action: PayloadAction<string>) => {
-            state.streamer.name = action.payload;
+            updateIfDifferent(state, "streamer.name", action.payload);
         },
         setStreamerPower: (state, action: PayloadAction<PowerStatus>) => {
-            state.streamer.power = action.payload;
+            updateIfDifferent(state, "streamer.power", action.payload);
         },
     },
 });

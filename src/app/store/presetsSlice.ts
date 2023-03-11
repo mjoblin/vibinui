@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Preset } from "../services/vibinPresets";
+import { updateIfDifferent } from "./helpers";
 
 export interface PresetsState {
     start: number;
@@ -22,10 +23,10 @@ export const presetsSlice = createSlice({
     initialState,
     reducers: {
         setPresetsState: (state, action: PayloadAction<PresetsState>) => {
-            state.start = action.payload.start;
-            state.end = action.payload.end;
-            state.max_presets = action.payload.max_presets;
-            state.presets = action.payload.presets;
+            updateIfDifferent(state, "start", action.payload.start);
+            updateIfDifferent(state, "end", action.payload.end);
+            updateIfDifferent(state, "max_presets", action.payload.max_presets);
+            updateIfDifferent(state, "presets", action.payload.presets);
         },
     },
 });
