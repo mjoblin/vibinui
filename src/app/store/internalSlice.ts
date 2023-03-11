@@ -7,6 +7,7 @@ export interface InternalState {
         isComputingInBackground: boolean;
         showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
+        websocketStatus: string | undefined;
     };
     albums: {
         filteredAlbumCount: number;
@@ -42,6 +43,7 @@ const initialState: InternalState = {
         isComputingInBackground: false,
         showKeyboardShortcuts: false,
         showDebugPanel: false,
+        websocketStatus: undefined,
     },
     albums: {
         // Number of albums currently displayed in the Albums screen.
@@ -131,6 +133,9 @@ export const internalSlice = createSlice({
             state.tracks.trackCard.renderWidth = action.payload.width;
             state.tracks.trackCard.renderHeight = action.payload.height;
         },
+        setWebsocketStatus: (state, action: PayloadAction<string | undefined>) => {
+            state.application.websocketStatus = action.payload;
+        },
     },
 });
 
@@ -146,6 +151,7 @@ export const {
     setShowDebugPanel,
     setShowKeyboardShortcuts,
     setTrackCardRenderDimensions,
+    setWebsocketStatus,
 } = internalSlice.actions;
 
 export default internalSlice.reducer;

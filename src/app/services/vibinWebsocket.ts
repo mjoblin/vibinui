@@ -345,6 +345,7 @@ function messageHandler(
 // ------------------------------------------------------------------------------------------------
 
 export const vibinWebsocket = createApi({
+    reducerPath: "vibinWebsocket",
     baseQuery: fetchBaseQuery({ baseUrl: "/" }),
     endpoints: (build) => ({
         getMessages: build.query<VibinMessage[], void>({

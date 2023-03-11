@@ -27,6 +27,7 @@ import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
 import PlayStateIndicator from "../shared/PlayStateIndicator";
+import WebsocketIndicator from "../shared/WebsocketIndicator";
 import StandbyMode from "../shared/StandbyMode";
 
 // Taken from: https://ui.mantine.dev/category/navbars
@@ -190,6 +191,7 @@ const AppNav: FC = () => {
                     <Flex gap={10} align="center">
                         <BackgroundComputeIndicator />
                         <WaitingOnAPIIndicator />
+                        <WebsocketIndicator />
                         <StandbyMode type="compact" />
                     </Flex>
                 </Flex>
