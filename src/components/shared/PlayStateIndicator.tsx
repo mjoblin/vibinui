@@ -50,8 +50,8 @@ const PlayStateIndicator: FC = () => {
             ),
         },
         ready: {
-            label: "Ready",
-            component: <Text size="xs">ready</Text>,
+            label: "Powered on, not playing",
+            component: <Text size="xs">powered on</Text>,
         },
         not_ready: {
             label: "Powered off",

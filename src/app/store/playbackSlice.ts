@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Format, MediaId, MediaSourceClass, Stream, Track } from "../types";
+import { updateIfDifferent } from "./helpers";
 
 /**
  * The Playback slice is intended to contain information about the current playback status of the
@@ -109,34 +110,34 @@ export const playbackSlice = createSlice({
             state.playhead.position_normalized = 0;
         },
         setActiveTransportActions: (state, action: PayloadAction<TransportAction[]>) => {
-            state.active_transport_actions = action.payload;
+            updateIfDifferent(state, "active_transport_actions", action.payload);
         },
         setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource }>) => {
-            state.audio_sources = action.payload;
+            updateIfDifferent(state, "audio_sources", action.payload);
         },
         setCurrentAudioSource: (state, action: PayloadAction<AudioSource | undefined>) => {
-            state.current_audio_source = action.payload;
+            updateIfDifferent(state, "current_audio_source", action.payload);
         },
-        setCurrentFormat: (state, action: PayloadAction<Format | undefined>) => {
-            state.current_format = action.payload;
+        setCurrentFormat: (state, action: PayloadAction<Partial<Format> | undefined>) => {
+            updateIfDifferent(state, "current_format", action.payload);
         },
         setCurrentStream: (state, action: PayloadAction<Stream | undefined>) => {
-            state.current_stream = action.payload;
+            updateIfDifferent(state, "current_stream", action.payload);
         },
-        setCurrentTrack: (state, action: PayloadAction<Track | undefined>) => {
-            state.current_track = action.payload;
+        setCurrentTrack: (state, action: PayloadAction<Partial<Track> | undefined>) => {
+            updateIfDifferent(state, "current_track", action.payload);
         },
         setCurrentTrackMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
-            state.current_track_media_id = action.payload;
+            updateIfDifferent(state, "current_track_media_id", action.payload);
         },
         setCurrentAlbumMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
-            state.current_album_media_id = action.payload;
+            updateIfDifferent(state, "current_album_media_id", action.payload);
         },
         setDeviceDisplay: (state, action: PayloadAction<DeviceDisplay>) => {
-            state.device_display = action.payload;
+            updateIfDifferent(state, "device_display", action.payload);
         },
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {
-            state.play_status = action.payload;
+            updateIfDifferent(state, "play_status", action.payload);
         },
         setPlayheadPosition: (state, action: PayloadAction<number>) => {
             state.playhead.position = action.payload;
@@ -145,10 +146,10 @@ export const playbackSlice = createSlice({
             state.playhead.position_normalized = action.payload;
         },
         setRepeat: (state, action: PayloadAction<RepeatState | undefined>) => {
-            state.repeat = action.payload;
+            updateIfDifferent(state, "repeat", action.payload);
         },
         setShuffle: (state, action: PayloadAction<ShuffleState | undefined>) => {
-            state.shuffle = action.payload;
+            updateIfDifferent(state, "shuffle", action.payload);
         },
     },
 });

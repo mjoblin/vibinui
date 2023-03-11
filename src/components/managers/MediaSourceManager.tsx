@@ -29,16 +29,15 @@ const MediaSourceManager: FC = () => {
 
         // Announce the new media source; but not the very first time a media source is known (to
         // prevent the announcement always appearing when the app is first loaded).
-        // TODO: Re-enable this once the identical state update issue has been fixed
-        // if (haveIgnoredInitialState) {
-        //     currentSource && showSuccessNotification({
-        //         title: "Media Source set",
-        //         message: `Media source set to ${currentSource.name}`,
-        //     })
-        // }
-        // else {
-        //     currentSource?.name && setHaveIgnoredInitialState(true);
-        // }
+        if (haveIgnoredInitialState) {
+            currentSource && showSuccessNotification({
+                title: "Media Source changed",
+                message: `Media source set to ${currentSource.name}`,
+            })
+        }
+        else {
+            currentSource?.name && setHaveIgnoredInitialState(true);
+        }
     }, [dispatch, currentSource]);
 
     return null;
