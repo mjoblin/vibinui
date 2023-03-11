@@ -41,7 +41,9 @@ const Debug: FC = () => {
     const playback = useAppSelector((state: RootState) => state.playback);
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
-    const { showDebugPanel } = useAppSelector((state: RootState) => state.internal.application);
+    const { showDebugPanel, websocketStatus } = useAppSelector(
+        (state: RootState) => state.internal.application
+    );
 
     useHotkeys([["D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
 
@@ -56,16 +58,29 @@ const Debug: FC = () => {
                         color={colors.dark[1]}
                         w="100%"
                         className={`dragHandle ${classes.dragHandle}`}
+                        transform="uppercase"
                     >
-                        DEBUG
+                        Debug
                     </Title>
                     <CloseButton size="md" onClick={() => dispatch(setShowDebugPanel(false))} />
                 </Flex>
 
                 <Stack>
+                    {/* Application */}
+                    <Stack spacing={0}>
+                        <Title size={fontSize} transform="uppercase">Application</Title>
+                        <FieldValueList
+                            fieldValues={{
+                                websocketStatus: websocketStatus || "undefined",
+                            }}
+                            keySize={fontSize}
+                            valueSize={fontSize}
+                        />
+                    </Stack>
+
                     {/* System */}
                     <Stack spacing={0}>
-                        <Title size={fontSize}>SYSTEM</Title>
+                        <Title size={fontSize} transform="uppercase">System</Title>
                         <FieldValueList
                             fieldValues={{
                                 streamerName: system.streamer.name || "undefined",
@@ -79,7 +94,7 @@ const Debug: FC = () => {
 
                     {/* Playback */}
                     <Stack spacing={0}>
-                        <Title size={fontSize}>PLAYBACK</Title>
+                        <Title size={fontSize} transform="uppercase">Playback</Title>
                         <FieldValueList
                             fieldValues={{
                                 playStatus: playback.play_status || "undefined",
@@ -99,7 +114,7 @@ const Debug: FC = () => {
 
                     {/* Playlist */}
                     <Stack spacing={0}>
-                        <Title size={fontSize}>CURRENT PLAYLIST</Title>
+                        <Title size={fontSize} transform="uppercase">Current Playlist</Title>
                         <FieldValueList
                             fieldValues={{
                                 entryCount: playlist.entries?.length || 0,
@@ -115,7 +130,7 @@ const Debug: FC = () => {
 
                     {/* Stored Playlists */}
                     <Stack spacing={0}>
-                        <Title size={fontSize}>STORED PLAYLISTS</Title>
+                        <Title size={fontSize} transform="uppercase">Stored Playlists</Title>
                         <FieldValueList
                             fieldValues={{
                                 activeStoredPlaylistId:
