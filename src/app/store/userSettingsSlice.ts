@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Album, Artist } from "../types";
+import { Album, Artist, Track } from "../types";
 import { NowPlayingTab } from "../../components/layout/NowPlayingScreen";
 
 export const minCardGap = 0;
@@ -88,6 +88,7 @@ export interface UserSettingsState {
         filterText: string;
         selectedAlbum: Album | undefined;
         selectedArtist: Artist | undefined;
+        selectedTrack: Track | undefined;
         showDetails: boolean;
         viewMode: MediaViewMode;
     };
@@ -152,6 +153,7 @@ const initialState: UserSettingsState = {
         filterText: getLocalStorageValue(LSKEY_ARTISTS_FILTER_TEXT, DEFAULT_ARTISTS_FILTER_TEXT),
         selectedAlbum: undefined,
         selectedArtist: undefined,
+        selectedTrack: undefined,
         showDetails: getLocalStorageValue(LSKEY_ARTISTS_SHOW_DETAILS, DEFAULT_ARTISTS_SHOW_DETAILS),
         viewMode: getLocalStorageValue(LSKEY_ARTISTS_VIEWMODE, DEFAULT_ARTISTS_VIEWMODE),
     },
@@ -238,6 +240,9 @@ export const userSettingsSlice = createSlice({
         setArtistsSelectedArtist: (state, action: PayloadAction<Artist | undefined>) => {
             state.artists.selectedArtist = action.payload;
         },
+        setArtistsSelectedTrack: (state, action: PayloadAction<Track | undefined>) => {
+            state.artists.selectedTrack = action.payload;
+        },
         setArtistsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.artists.showDetails = action.payload;
         },
@@ -301,6 +306,7 @@ export const {
     setArtistsShowDetails,
     setArtistsSelectedAlbum,
     setArtistsSelectedArtist,
+    setArtistsSelectedTrack,
     setArtistsViewMode,
     setApplicationTheme,
     setNowPlayingActiveTab,

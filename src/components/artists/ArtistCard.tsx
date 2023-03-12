@@ -44,12 +44,14 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     albums = [],
     tracks = [],
     selected,
+    isCurrentlyPlaying,
     onClick,
 }) => {
     return (
         <CompactArtCard
             artUrl={artist.album_art_uri}
             selected={selected}
+            isCurrentlyPlaying={isCurrentlyPlaying}
             onClick={() => onClick && onClick(artist)}
         >
             <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
@@ -113,6 +115,7 @@ type ArtistCardProps = {
     albums?: Album[];
     tracks?: Track[];
     selected?: boolean;
+    isCurrentlyPlaying?: boolean;
     onClick?: (artist: Artist) => void;
 };
 
@@ -122,6 +125,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
     albums,
     tracks,
     selected = false,
+    isCurrentlyPlaying = false,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -201,6 +205,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
                             albums={albums}
                             tracks={tracks}
                             selected={selected}
+                            isCurrentlyPlaying={isCurrentlyPlaying}
                             onClick={onClick}
                         />
                     </Box>

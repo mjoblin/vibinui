@@ -46,7 +46,7 @@ type PresetCardProps = {
 const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
-    const { SELECTED_COLOR } = useAppConstants();
+    const { CURRENTLY_PLAYING_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );
@@ -88,7 +88,7 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
 
     // --------------------------------------------------------------------------------------------
 
-    const presetIsActive =
+    const presetIsCurrentlyPlaying =
         preset.class === "stream.radio"
             ? preset.is_playing && playState === "play" && !waitingForConnection
             : preset.is_playing;
@@ -100,8 +100,8 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     const { classes: dynamicClasses } = createStyles((theme) => ({
         presetCard: {
             width: cardSize,
-            border: presetIsActive
-                ? `${borderSize}px solid ${SELECTED_COLOR}`
+            border: presetIsCurrentlyPlaying
+                ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
         },
     }))();
@@ -118,7 +118,7 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
                             <Text>Connecting...</Text>
                         </Stack>
                     </Center>
-                ) : !presetIsActive ? (
+                ) : !presetIsCurrentlyPlaying ? (
                     <Center w={overlayWidth} h={overlayHeight} className={classes.playPreset}>
                         <ActionIcon
                             size={80}

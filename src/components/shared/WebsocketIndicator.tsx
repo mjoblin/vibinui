@@ -7,12 +7,12 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const WebsocketIndicator: FC = () => {
     const { colors } = useMantineTheme();
-    const { SELECTED_COLOR } = useAppConstants();
+    const { TEMPORARY_ACTIVITY_COLOR } = useAppConstants();
     const { websocketStatus } = useAppSelector((state: RootState) => state.internal.application);
 
     const statusColors: Record<string, MantineColor> = {
         fulfilled: colors.green[9],
-        pending: SELECTED_COLOR,
+        pending: TEMPORARY_ACTIVITY_COLOR,
     };
 
     return (

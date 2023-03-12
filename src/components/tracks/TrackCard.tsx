@@ -41,13 +41,21 @@ const trackDetails = (track: Track) => (
 
 type TrackCardTypeProps = Omit<TrackCardProps, "type">;
 
-const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, onClick }) => {
+const TrackCardCompact: FC<TrackCardTypeProps> = ({
+    track,
+    showArt,
+    selected,
+    isCurrentlyPlaying,
+    onClick,
+}) => {
     return (
         <CompactArtCard
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
             actions={
                 <MediaActionsButton mediaType="track" media={track} position="bottom" size="sm" />
             }
+            selected={selected}
+            isCurrentlyPlaying={isCurrentlyPlaying}
             onClick={() => onClick && onClick(track)}
         >
             <Flex gap={5}>
@@ -64,8 +72,8 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, onClick }) =
     );
 };
 
-const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick }) => {
-    const { SELECTED_COLOR } = useAppConstants();
+const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, isCurrentlyPlaying, onClick }) => {
+    const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
@@ -74,11 +82,11 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, onClick 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
             width: cardSize,
-            border: selected
-                ? `${borderSize}px solid ${SELECTED_COLOR}`
+            border: isCurrentlyPlaying
+                ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
             borderRadius: 5,
-            backgroundColor: theme.colors.dark[6],
+            backgroundColor: selected ? SELECTED_COLOR : theme.colors.dark[6],
         },
     }))();
 
@@ -124,7 +132,7 @@ type TrackCardProps = {
     track: Track;
     showArt?: boolean;
     selected?: boolean;
-
+    isCurrentlyPlaying?: boolean;
     onClick?: (track: Track) => void;
 };
 
@@ -133,6 +141,7 @@ const TrackCard: FC<TrackCardProps> = ({
     track,
     showArt = true,
     selected = false,
+    isCurrentlyPlaying = false,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -190,7 +199,11 @@ const TrackCard: FC<TrackCardProps> = ({
                     isVisible ? (
                         // @ts-ignore
                         <Box ref={cardRef}>
-                            <TrackCardArtFocused track={track} selected={selected} />
+                            <TrackCardArtFocused
+                                track={track}
+                                selected={selected}
+                                isCurrentlyPlaying={isCurrentlyPlaying}
+                            />
                         </Box>
                     ) : (
                         <div
@@ -204,7 +217,13 @@ const TrackCard: FC<TrackCardProps> = ({
                 ) : isVisible ? (
                     // @ts-ignore
                     <Box ref={cardRef}>
-                        <TrackCardCompact track={track} showArt={showArt} onClick={onClick} />
+                        <TrackCardCompact
+                            track={track}
+                            showArt={showArt}
+                            selected={selected}
+                            isCurrentlyPlaying={isCurrentlyPlaying}
+                            onClick={onClick}
+                        />
                     </Box>
                 ) : (
                     <div

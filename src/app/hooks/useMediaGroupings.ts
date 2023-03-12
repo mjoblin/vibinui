@@ -24,6 +24,11 @@ import { useGetTracksQuery } from "../services/vibinTracks";
 //     }),
 // });
 //
+// NOTE: Every component which uses this hook will have its own copy of this hooks' state. This
+//  means the hook shouldn't be used by many components (assuming memory is a concern, which it may
+//  not be); or a different singleton-style approach could be used instead -- perhaps exposing this
+//  hook's purpose via Redux.
+//
 // TODO: Examine the architecture of the app through a performance-focused lens, to see if there's
 //  more elegant ways to approach UI responsiveness.
 //

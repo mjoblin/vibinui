@@ -141,7 +141,7 @@ const useStyles = createStyles((theme) => ({
 
 const Playlist: FC = () => {
     const { colors } = useMantineTheme();
-    const { SELECTED_COLOR } = useAppConstants();
+    const { CURRENTLY_PLAYING_COLOR } = useAppConstants();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -182,13 +182,13 @@ const Playlist: FC = () => {
         }
 
         const previousRowCSS = {
-            borderBottom: `1px solid ${SELECTED_COLOR} !important`,
+            borderBottom: `1px solid ${CURRENTLY_PLAYING_COLOR} !important`,
         };
 
         const currentlyPlayingRowCSS = {
             color: theme.white,
             backgroundColor: theme.colors.dark[5],
-            border: `1px solid ${SELECTED_COLOR} !important`,
+            border: `1px solid ${CURRENTLY_PLAYING_COLOR} !important`,
         };
 
         if (playlist.current_track_index === 0) {

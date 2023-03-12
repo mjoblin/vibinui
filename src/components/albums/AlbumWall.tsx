@@ -92,7 +92,7 @@ const AlbumWall: FC = () => {
                 <AlbumCard
                     key={album.id}
                     album={album}
-                    selected={album.id === currentAlbumMediaId}
+                    isCurrentlyPlaying={album.id === currentAlbumMediaId}
                 />
             ))}
         </Box>
