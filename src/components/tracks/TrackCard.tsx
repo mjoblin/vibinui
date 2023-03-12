@@ -41,7 +41,13 @@ const trackDetails = (track: Track) => (
 
 type TrackCardTypeProps = Omit<TrackCardProps, "type">;
 
-const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, selected, onClick }) => {
+const TrackCardCompact: FC<TrackCardTypeProps> = ({
+    track,
+    showArt,
+    selected,
+    isCurrentlyPlaying,
+    onClick,
+}) => {
     return (
         <CompactArtCard
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
@@ -49,6 +55,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({ track, showArt, selected, on
                 <MediaActionsButton mediaType="track" media={track} position="bottom" size="sm" />
             }
             selected={selected}
+            isCurrentlyPlaying={isCurrentlyPlaying}
             onClick={() => onClick && onClick(track)}
         >
             <Flex gap={5}>
@@ -214,6 +221,7 @@ const TrackCard: FC<TrackCardProps> = ({
                             track={track}
                             showArt={showArt}
                             selected={selected}
+                            isCurrentlyPlaying={isCurrentlyPlaying}
                             onClick={onClick}
                         />
                     </Box>

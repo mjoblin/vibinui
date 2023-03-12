@@ -26,17 +26,25 @@ import TrackCard from "../tracks/TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useGetTracksQuery } from "../../app/services/vibinTracks";
 
 const ArtistWall: FC = () => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppConstants();
+    const { data: allArtists, error, isLoading } = useGetArtistsQuery();
+    const { data: allTracks } = useGetTracksQuery();
     const { activeCollection, selectedAlbum, selectedArtist, selectedTrack, viewMode } =
         useAppSelector((state: RootState) => state.userSettings.artists);
     const { cardSize, cardGap, filterText } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
-    const { data: allArtists, error, isLoading } = useGetArtistsQuery();
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
+    );
     const { allAlbumsByArtistName, allTracksByAlbumId, allTracksByArtistName } =
         useMediaGroupings();
     const [artistIdsWithAlbums, setArtistIdsWithAlbums] = useState<MediaId[]>([]);
@@ -107,10 +115,23 @@ const ArtistWall: FC = () => {
     // 3. What's currently playing, in which case limit the artist list to the selected artist
     //      (the ArtistsControls will have set this artist in application state).
 
+    //     const currentArtist = allArtists?.find(
+    //         (artist: Artist) => artist.title === currentAlbum?.artist
+    //     );
+
+    // --------------------------------------------------------------------------------------------
+    // Find the current artist based on the current track. This is a brittle comparison.
+    // TODO: Remove this once the app has a notion of a "current artist").
+
+    const currentTrack = allTracks?.find((track) => track.id === currentTrackMediaId);
+    const currentArtist: Artist | undefined =
+        currentTrack && allArtists.find((artist) => artist.title === currentTrack.artist);
+    // --------------------------------------------------------------------------------------------
+
     const artistsToDisplay: Artist[] =
         activeCollection === "current"
-            ? selectedArtist
-                ? [selectedArtist]
+            ? currentArtist
+                ? [currentArtist]
                 : []
             : allArtists
                   .filter((artist: Artist) => {
@@ -151,7 +172,7 @@ const ArtistWall: FC = () => {
                 ))}
         </Box>
     ) : (
-        <Flex gap={20}>
+        <Flex gap={20} pb={15}>
             {/* Artists */}
             <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
@@ -167,6 +188,7 @@ const ArtistWall: FC = () => {
                             albums={allAlbumsByArtistName(artist.title)}
                             tracks={allTracksByArtistName(artist.title)}
                             selected={artist.id === selectedArtist?.id}
+                            isCurrentlyPlaying={artist.id === currentArtist?.id}
                             onClick={(artist: Artist) => {
                                 dispatch(setArtistsSelectedArtist(artist));
                                 dispatch(setArtistsSelectedAlbum(undefined));
@@ -194,6 +216,7 @@ const ArtistWall: FC = () => {
                                         album={album}
                                         tracks={allTracksByAlbumId(album.id)}
                                         selected={album.id === selectedAlbum?.id}
+                                        isCurrentlyPlaying={album.id === currentAlbumMediaId}
                                         onClick={(album: Album) =>
                                             dispatch(setArtistsSelectedAlbum(album))
                                         }
@@ -234,6 +257,7 @@ const ArtistWall: FC = () => {
                                 track={track}
                                 showArt={false}
                                 selected={track.id === selectedTrack?.id}
+                                isCurrentlyPlaying={track.id === currentTrackMediaId}
                                 onClick={(track: Track) => dispatch(setArtistsSelectedTrack(track))}
                             />
                         ))
@@ -247,6 +271,7 @@ const ArtistWall: FC = () => {
                                 track={track}
                                 showArt={false}
                                 selected={track.id === selectedTrack?.id}
+                                isCurrentlyPlaying={track.id === currentTrackMediaId}
                                 onClick={(track: Track) => dispatch(setArtistsSelectedTrack(track))}
                             />
                         ))

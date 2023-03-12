@@ -72,13 +72,15 @@ const TrackWall: FC = () => {
 
     return (
         <Box className={dynamicClasses.trackWall}>
-            {tracksToDisplay.map((track) => (
-                <TrackCard
-                    key={track.id}
-                    track={track}
-                    isCurrentlyPlaying={track.id === currentTrackMediaId}
-                />
-            ))}
+            {[...tracksToDisplay]
+                .sort((trackA, trackB) => trackA.title.localeCompare(trackB.title))
+                .map((track) => (
+                    <TrackCard
+                        key={track.id}
+                        track={track}
+                        isCurrentlyPlaying={track.id === currentTrackMediaId}
+                    />
+                ))}
         </Box>
     );
 };

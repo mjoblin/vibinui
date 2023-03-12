@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Box, Center, Flex, Image, Notification, Text, useMantineTheme } from "@mantine/core";
+import { Box, Center, Flex, Image, Text, useMantineTheme } from "@mantine/core";
 
 import type { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
@@ -16,12 +16,12 @@ type NowPlayingProps = {
 
 const NowPlaying: FC<NowPlayingProps> = ({ showAlbumDetails = true, playheadWidth }) => {
     const { colors } = useMantineTheme();
-    const playback = useAppSelector((state: RootState) => state.playback);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentFormat = useAppSelector((state: RootState) => state.playback.current_format);
 
     // TODO: Consider what to render when there's nothing playing
-    if (playback.play_status === "not_ready" || !currentTrack) {
+    if (playStatus === "not_ready" || !currentTrack) {
         return null;
     }
 

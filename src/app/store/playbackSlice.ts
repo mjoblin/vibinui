@@ -77,6 +77,13 @@ export interface PlaybackState {
     };
     current_audio_source: AudioSource | undefined;
     current_track: Track | undefined;
+    // TODO: For the "current ids", consider adding Artist -- and also storing full
+    //  Artist/Album/Track objects rather than just ids (so the other information, like title, is
+    //  more easily accessible when required).
+    //
+    //  These will need to be distinct from artist/album/track information which is not associated
+    //  with local media (e.g. Airplay). These should probably be undefined when not playing from
+    //  local media.
     current_track_media_id: MediaId | undefined;
     current_album_media_id: MediaId | undefined;
     current_format: Format | undefined;

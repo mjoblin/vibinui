@@ -68,7 +68,9 @@ const Debug: FC = () => {
                 <Stack>
                     {/* Application */}
                     <Stack spacing={0}>
-                        <Title size={fontSize} transform="uppercase">Application</Title>
+                        <Title size={fontSize} transform="uppercase">
+                            Application
+                        </Title>
                         <FieldValueList
                             fieldValues={{
                                 websocketStatus: websocketStatus || "undefined",
@@ -80,7 +82,9 @@ const Debug: FC = () => {
 
                     {/* System */}
                     <Stack spacing={0}>
-                        <Title size={fontSize} transform="uppercase">System</Title>
+                        <Title size={fontSize} transform="uppercase">
+                            System
+                        </Title>
                         <FieldValueList
                             fieldValues={{
                                 streamerName: system.streamer.name || "undefined",
@@ -94,10 +98,13 @@ const Debug: FC = () => {
 
                     {/* Playback */}
                     <Stack spacing={0}>
-                        <Title size={fontSize} transform="uppercase">Playback</Title>
+                        <Title size={fontSize} transform="uppercase">
+                            Playback
+                        </Title>
                         <FieldValueList
                             fieldValues={{
                                 playStatus: playback.play_status || "undefined",
+                                playhead: `${playback.playhead.position} [${playback.playhead.position_normalized.toFixed(3)}]`,
                                 activeTransportActions:
                                     playback.active_transport_actions.length > 0
                                         ? playback.active_transport_actions.join(", ")
@@ -114,7 +121,9 @@ const Debug: FC = () => {
 
                     {/* Playlist */}
                     <Stack spacing={0}>
-                        <Title size={fontSize} transform="uppercase">Current Playlist</Title>
+                        <Title size={fontSize} transform="uppercase">
+                            Current Playlist
+                        </Title>
                         <FieldValueList
                             fieldValues={{
                                 entryCount: playlist.entries?.length || 0,
@@ -130,7 +139,9 @@ const Debug: FC = () => {
 
                     {/* Stored Playlists */}
                     <Stack spacing={0}>
-                        <Title size={fontSize} transform="uppercase">Stored Playlists</Title>
+                        <Title size={fontSize} transform="uppercase">
+                            Stored Playlists
+                        </Title>
                         <FieldValueList
                             fieldValues={{
                                 activeStoredPlaylistId:
