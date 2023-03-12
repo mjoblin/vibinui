@@ -10,10 +10,10 @@ import ScreenHeader from "./ScreenHeader";
 import StandbyMode from "../shared/StandbyMode";
 
 const PlaylistScreen: FC = () => {
-    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const { SCREEN_HEADER_HEIGHT } = useAppConstants();
 
-    return playStatus === "not_ready" ? (
+    return streamerPower === "off" ? (
         <StandbyMode />
     ) : (
         <Stack spacing={0}>

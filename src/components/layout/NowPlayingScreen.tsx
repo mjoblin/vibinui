@@ -84,6 +84,7 @@ const NowPlayingScreen: FC = () => {
     const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE } = useAppConstants();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const currentTrackId = useAppSelector(
@@ -129,7 +130,7 @@ const NowPlayingScreen: FC = () => {
 
     // --------------------------------------------------------------------------------------------
 
-    if (playStatus === "not_ready") {
+    if (streamerPower === "off") {
         return <StandbyMode />;
     }
 

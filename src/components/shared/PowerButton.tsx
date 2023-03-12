@@ -9,8 +9,7 @@ import { useLazyPowerToggleQuery } from "../../app/services/vibinSystem";
 import { showErrorNotification } from "../../app/utils";
 
 const PowerButton: FC = () => {
-    const streamerName = useAppSelector((state: RootState) => state.system.streamer.name);
-    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const { name: streamerName, power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [togglePower, togglePowerStatus] = useLazyPowerToggleQuery();
 
     useEffect(() => {
@@ -24,7 +23,7 @@ const PowerButton: FC = () => {
         }
     }, [togglePowerStatus]);
 
-    const isInStandbyMode = playStatus === "not_ready";
+    const isInStandbyMode = streamerPower === "off";
 
     return (
         <Tooltip
