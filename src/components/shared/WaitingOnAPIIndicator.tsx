@@ -12,7 +12,7 @@ const apiRegex = new RegExp("^vibin.*Api$");
 
 const WaitingOnAPIIndicator: FC = () => {
     const { colors } = useMantineTheme();
-    const { SELECTED_COLOR } = useAppConstants();
+    const { TEMPORARY_ACTIVITY_COLOR } = useAppConstants();
     const [queryPopoverOpened, { close: closeQueryPopover, open: openQueryPopover }] =
         useDisclosure(false);
     const pendingQueries = useAppSelector((state: RootState) => {
@@ -50,7 +50,7 @@ const WaitingOnAPIIndicator: FC = () => {
                 <Tooltip label="Lit when API calls are pending" disabled={pendingQueryCount > 0}>
                     <ColorSwatch
                         size={20}
-                        color={pendingQueryCount ? SELECTED_COLOR : colors.dark[6]}
+                        color={pendingQueryCount ? TEMPORARY_ACTIVITY_COLOR : colors.dark[6]}
                         onMouseEnter={openQueryPopover}
                         onMouseLeave={closeQueryPopover}
                     >

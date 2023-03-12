@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from "react";
-import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@mantine/core";
+import { Box, createStyles, Flex, Image, Paper, Stack } from "@mantine/core";
 
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 
@@ -7,6 +7,7 @@ type CompactArtCardProps = {
     artUrl?: string;
     actions?: ReactNode;
     selected?: boolean;
+    isCurrentlyPlaying?: boolean;
     onClick?: () => void;
     children: ReactNode;
 };
@@ -15,19 +16,20 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
     artUrl,
     actions = null,
     selected = false,
+    isCurrentlyPlaying = false,
     onClick,
     children,
 }) => {
-    const { colors } = useMantineTheme();
-    const { SELECTED_COLOR } = useAppConstants();
+    const { SELECTED_COLOR, CURRENTLY_PLAYING_COLOR } = useAppConstants();
     
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         compactArtCard: {
-            border: selected
-                ? `${borderSize}px solid ${SELECTED_COLOR}`
+            border: isCurrentlyPlaying
+                ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            backgroundColor: selected ? SELECTED_COLOR : theme.colors.dark[6],
             "&:hover": {
                 cursor: onClick ? "pointer" : "inherit",
             },
@@ -36,7 +38,6 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
 
     return (
         <Paper
-            bg={colors.dark[6]}
             radius={5}
             pr={10}
             className={dynamicClasses.compactArtCard}

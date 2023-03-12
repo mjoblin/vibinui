@@ -76,7 +76,7 @@ const TrackWall: FC = () => {
                 <TrackCard
                     key={track.id}
                     track={track}
-                    selected={track.id === currentTrackMediaId}
+                    isCurrentlyPlaying={track.id === currentTrackMediaId}
                 />
             ))}
         </Box>

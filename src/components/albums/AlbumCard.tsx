@@ -48,7 +48,13 @@ const albumDetails = (album: Album, trackCount: number, duration: number) => (
 
 type AlbumCardTypeProps = Omit<AlbumCardProps, "type">;
 
-const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onClick }) => {
+const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
+    album,
+    tracks,
+    selected,
+    isCurrentlyPlaying,
+    onClick,
+}) => {
     const albumDuration = tracks?.reduce((duration, track) => duration + track.duration, 0) || 0;
 
     return (
@@ -64,6 +70,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onC
                 />
             }
             selected={selected}
+            isCurrentlyPlaying={isCurrentlyPlaying}
             onClick={() => onClick && onClick(album)}
         >
             <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
@@ -75,8 +82,13 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({ album, tracks, selected, onC
     );
 };
 
-const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick }) => {
-    const { SELECTED_COLOR } = useAppConstants();
+const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
+    album,
+    selected,
+    isCurrentlyPlaying,
+    onClick,
+}) => {
+    const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
@@ -88,11 +100,11 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({ album, selected, onClick 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
             width: cardSize,
-            border: selected
-                ? `${borderSize}px solid ${SELECTED_COLOR}`
+            border: isCurrentlyPlaying
+                ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
             borderRadius: 5,
-            backgroundColor: theme.colors.dark[6],
+            backgroundColor: selected ? SELECTED_COLOR : theme.colors.dark[6],
         },
     }))();
 
@@ -147,6 +159,7 @@ type AlbumCardProps = {
     album: Album;
     tracks?: Track[];
     selected?: boolean;
+    isCurrentlyPlaying?: boolean;
     onClick?: (album: Album) => void;
 };
 
@@ -155,6 +168,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
     album,
     tracks,
     selected = false,
+    isCurrentlyPlaying = false,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -212,7 +226,11 @@ const AlbumCard: FC<AlbumCardProps> = ({
                     isVisible ? (
                         // @ts-ignore
                         <Box ref={cardRef}>
-                            <AlbumCardArtFocused album={album} selected={selected} />
+                            <AlbumCardArtFocused
+                                album={album}
+                                selected={selected}
+                                isCurrentlyPlaying={isCurrentlyPlaying}
+                            />
                         </Box>
                     ) : (
                         <div
@@ -230,6 +248,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
                             album={album}
                             tracks={tracks}
                             selected={selected}
+                            isCurrentlyPlaying={isCurrentlyPlaying}
                             onClick={onClick}
                         />
                     </Box>

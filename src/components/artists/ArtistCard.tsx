@@ -50,6 +50,7 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
         <CompactArtCard
             artUrl={artist.album_art_uri}
             selected={selected}
+            isCurrentlyPlaying={selected}
             onClick={() => onClick && onClick(artist)}
         >
             <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
