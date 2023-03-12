@@ -1,19 +1,20 @@
 import React, { FC } from "react";
 import { Box, Stack } from "@mantine/core";
 
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 import TracksControls from "../tracks/TracksControls";
 import TrackWall from "../tracks/TrackWall";
 import ScreenHeader from "./ScreenHeader";
 
 const TracksScreen: FC = () => {
-    const screenHeaderHeight = 90;
+    const { SCREEN_HEADER_HEIGHT } = useAppConstants();
 
     return (
         <Stack spacing={0}>
-            <ScreenHeader height={screenHeaderHeight}>
+            <ScreenHeader height={SCREEN_HEADER_HEIGHT}>
                 <TracksControls />
             </ScreenHeader>
-            <Box pt={screenHeaderHeight}>
+            <Box pt={SCREEN_HEADER_HEIGHT}>
                 <TrackWall />
             </Box>
         </Stack>

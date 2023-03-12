@@ -9,6 +9,7 @@ import { setFilteredTrackCount } from "../../app/store/internalSlice";
 import TrackCard from "./TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { collectionFilter } from "../../app/utils";
 
 const TrackWall: FC = () => {
     const dispatch = useAppDispatch();
@@ -57,18 +58,7 @@ const TrackWall: FC = () => {
         );
     }
 
-    const tracksToDisplay = allTracks.filter((track) => {
-        if (debouncedFilterText === "") {
-            return true;
-        }
-
-        const filterValueLower = debouncedFilterText.toLowerCase();
-
-        return (
-            // (track.artist || "Various").toLowerCase().includes(filterValueLower) ||
-            track.title.toLowerCase().includes(filterValueLower)
-        );
-    });
+    const tracksToDisplay = collectionFilter(allTracks, debouncedFilterText, "title");
 
     dispatch(setFilteredTrackCount(tracksToDisplay.length));
 

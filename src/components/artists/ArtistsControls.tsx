@@ -21,10 +21,12 @@ import {
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { activeCollection } = useAppSelector((state: RootState) => state.userSettings.artists);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
@@ -95,16 +97,22 @@ const ArtistsControls: FC = () => {
                     { value: "current", label: "Currently Playing" },
                 ]}
                 onChange={onArtistCollectionChange}
+                styles={STYLE_LABEL_BESIDE_COMPONENT}
             />
 
             {/* Filter text */}
             <TextInput
                 placeholder="Filter by Artist name"
                 label="Filter"
-                miw="20rem"
                 value={filterText}
                 disabled={activeCollection === "current"}
                 onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
+                styles={{
+                    ...STYLE_LABEL_BESIDE_COMPONENT,
+                    wrapper: {
+                        width: CARD_FILTER_WIDTH,
+                    },
+                }}
             />
 
             {/* "Showing x of y artists" */}

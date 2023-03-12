@@ -132,3 +132,68 @@ export const showErrorNotification = ({
         loading,
         autoClose,
     });
+
+
+const filterTokenizerRegex = /(\S+):(\([^)]+?\)|[^( ]+)/g;
+const parentStripperRegex = /^\(?(.*?)\)?$/;
+const emptyStringRegex = /^\s*$/;
+
+/**
+ *
+ * @param collection
+ * @param filterText
+ * @param defaultKey
+ */
+export function collectionFilter<T extends Object>(
+    collection: T[],
+    filterText: string,
+    defaultKey: string = ""
+): T[] {
+    if (collection.length <= 0 || filterText.match(emptyStringRegex)) {
+        return collection;
+    }
+
+    const matches = [...filterText.toLocaleLowerCase().matchAll(filterTokenizerRegex)];
+
+    // Ignore any "key:value" where the "key" is not a key in any of the items in the collection.
+    const validMatches = matches.filter((match) =>
+        collection.some((item) => Object.keys(item).includes(match[1]))
+    );
+
+    const foundKeys: string[] = [];
+
+    // Extract just the key/value pairs from the match groups. Strip parens from any values, so
+    // that "(multi-word search)" becomes "multi-word search".
+    const matchKeyValues = validMatches.map(([_, thisKey, thisValue]) => {
+        foundKeys.push(thisKey);
+
+        return [thisKey, thisValue.replace(parentStripperRegex, "$1")];
+    });
+
+    // Check for any text not associated with a key. If any such text is found, then associate it
+    // with the defaultKey. An explicit use of defaultKey in the filterText will override this.
+    //
+    // e.g. "some text key:value" will be interpreted as "defaultKey:(some text) key:value"; but
+    //      "some text defaultKey:value" will be interpreted as "defaultKey:value".
+    const unkewordedText = filterText
+        .replace(filterTokenizerRegex, "")
+        .toLocaleLowerCase()
+        .replace(emptyStringRegex, "");
+
+    if (unkewordedText !== "" && defaultKey !== "" && !foundKeys.includes(defaultKey)) {
+        matchKeyValues.push([defaultKey, unkewordedText.trim()]);
+    }
+
+    // Find any items in the collection which contain the searched-for key/value pairs. This is an
+    // "AND" search; and matching is a case-insensitive partial text match.
+    return collection.filter((item) => {
+        for (const [key, value] of matchKeyValues) {
+            // @ts-ignore
+            if (key in item && !item[key].toLocaleLowerCase().includes(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    });
+}

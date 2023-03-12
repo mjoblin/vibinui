@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { setFilteredPresetCount } from "../../app/store/internalSlice";
 import PresetCard from "./PresetCard";
+import { collectionFilter } from "../../app/utils";
 
 const PresetWall: FC = () => {
     const dispatch = useAppDispatch();
@@ -21,13 +22,7 @@ const PresetWall: FC = () => {
         },
     }))();
 
-    const presetsToDisplay = presets.filter((preset) => {
-        const filterValueLower = filterText.toLowerCase();
-
-        return (
-            preset.name.toLowerCase().includes(filterValueLower)
-        );
-    });
+    const presetsToDisplay = collectionFilter(presets, filterText, "name");
 
     dispatch(setFilteredPresetCount(presetsToDisplay.length));
 

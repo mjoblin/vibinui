@@ -14,10 +14,13 @@ import {
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import CardControls from "../shared/CardControls";
+import FilterInstructions from "../shared/FilterInstructions";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 const AlbumsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { data: allAlbums } = useGetAlbumsQuery();
     const { data: newAlbums } = useGetNewAlbumsQuery();
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
@@ -32,7 +35,7 @@ const AlbumsControls: FC = () => {
     //  the tops of components to get them to look OK.
 
     return (
-        <Flex gap={25} align="center">
+        <Flex gap={25} align="flex-end">
             {/* Active collection */}
             <Select
                 label="Show"
@@ -45,17 +48,31 @@ const AlbumsControls: FC = () => {
                 onChange={(value) =>
                     value && dispatch(setAlbumsActiveCollection(value as AlbumCollection))
                 }
+                styles={STYLE_LABEL_BESIDE_COMPONENT}
             />
 
             {/* Filter text */}
             {/* TODO: Consider debouncing setAlbumsFilterText() if performance is an issue */}
-            <TextInput
-                placeholder="Filter by Album name"
-                label="Filter"
-                miw="20rem"
-                value={filterText}
-                onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
-            />
+            <Flex gap={10} align="center">
+                <TextInput
+                    placeholder="Filter by Album title"
+                    label="Filter"
+                    value={filterText}
+                    onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
+                    styles={{
+                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        wrapper: {
+                            width: CARD_FILTER_WIDTH,
+                        },
+                    }}
+                />
+
+                <FilterInstructions
+                    defaultKey="title"
+                    supportedKeys={["title", "artist", "creator", "genre", "date"]}
+                    examples={["favorite album", "squirrels artist:(the rods) date:2004"]}
+                />
+            </Flex>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y albums" */}

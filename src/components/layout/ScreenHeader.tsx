@@ -21,8 +21,8 @@ const ScreenHeader: FC<ScreenHeaderProps> = ({ height, children }) => {
             right: 0,
             paddingLeft: theme.spacing.md,
             paddingRight: theme.spacing.md,
-            paddingTop: theme.spacing.xs,
-            paddingBottom: theme.spacing.xs,
+            paddingTop: theme.spacing.md,
+            paddingBottom: theme.spacing.md,
             background: theme.colors.dark[8],
             borderBottom: `${rem(1)} solid ${
                 theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2]
