@@ -9,6 +9,7 @@ import { setFilteredAlbumCount } from "../../app/store/internalSlice";
 import AlbumCard from "./AlbumCard";
 import SadLabel from "../shared/SadLabel";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { collectionFilter } from "../../app/utils";
 
 const AlbumWall: FC = () => {
     const dispatch = useAppDispatch();
@@ -73,21 +74,7 @@ const AlbumWall: FC = () => {
         );
     }
 
-    const albumsToDisplay = collection
-        .filter((album) => {
-            if (filterText === "") {
-                return true;
-            }
-
-            const filterValueLower = filterText.toLowerCase();
-
-            return (
-                (album.artist || "Various").toLowerCase().includes(filterValueLower) ||
-                album.title.toLowerCase().includes(filterValueLower)
-            );
-        })
-        // TODO: Fix "Various" (unknown artist)
-        // .sort((a, b) => (a.artist || "Various").localeCompare(b.artist || "Various"));
+    const albumsToDisplay = collectionFilter(collection, filterText, "title");
 
     dispatch(setFilteredAlbumCount(albumsToDisplay.length));
 

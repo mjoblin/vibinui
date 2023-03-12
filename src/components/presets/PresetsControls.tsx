@@ -10,11 +10,14 @@ import {
     setPresetsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 import CardControls from "../shared/CardControls";
+import FilterInstructions from "../shared/FilterInstructions";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { presets } = useAppSelector((state: RootState) => state.presets);
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
@@ -24,13 +27,26 @@ const PresetsControls: FC = () => {
     return (
         <Flex gap={25} align="center">
             {/* Filter text */}
-            <TextInput
-                placeholder="Filter by Preset title"
-                label="Filter"
-                miw="20rem"
-                value={filterText}
-                onChange={(event) => dispatch(setPresetsFilterText(event.target.value))}
-            />
+            <Flex gap={10} align="center">
+                <TextInput
+                    placeholder="Filter by Preset name"
+                    label="Filter"
+                    value={filterText}
+                    onChange={(event) => dispatch(setPresetsFilterText(event.target.value))}
+                    styles={{
+                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        wrapper: {
+                            width: CARD_FILTER_WIDTH,
+                        },
+                    }}
+                />
+
+                <FilterInstructions
+                    defaultKey="name"
+                    supportedKeys={["name", "type"]}
+                    examples={["favorite station", "type:radio", "easy type:radio"]}
+                />
+            </Flex>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y presets" */}

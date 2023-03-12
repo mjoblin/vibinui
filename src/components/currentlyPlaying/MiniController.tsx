@@ -29,7 +29,7 @@ const MiniController: FC = () => {
         <Flex mih={componentHeight} mah={componentHeight} align="center">
             <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
                 {`Media controls unavailable ${
-                    currentSource && `for ${currentSource.name}`
+                    currentSource ? `for ${currentSource.name}` : ""
                 }`}
             </Text>
         </Flex>

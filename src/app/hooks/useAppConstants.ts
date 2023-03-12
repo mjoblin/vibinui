@@ -13,5 +13,14 @@ export const useAppConstants = () => {
         NAVBAR_WIDTH: 230,
         SCREEN_LOADING_PT: 25,
         SELECTED_COLOR: colors.yellow[4],
+        SCREEN_HEADER_HEIGHT: 70,
+        CARD_FILTER_WIDTH: 275,
+        STYLE_LABEL_BESIDE_COMPONENT: {
+            root: {
+                display: "flex",
+                gap: 7,
+                alignItems: "center",
+            },
+        },
     };
 };

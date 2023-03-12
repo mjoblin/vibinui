@@ -11,11 +11,14 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 import CardControls from "../shared/CardControls";
+import FilterInstructions from "../shared/FilterInstructions";
 
 const TracksControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { data: allTracks } = useGetTracksQuery();
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
@@ -26,13 +29,26 @@ const TracksControls: FC = () => {
         <Flex gap={25} align="center">
             {/* Filter text */}
             {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
-            <TextInput
-                placeholder="Filter by Track title"
-                label="Filter"
-                miw="20rem"
-                value={filterText}
-                onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
-            />
+            <Flex gap={10} align="center">
+                <TextInput
+                    placeholder="Filter by Track title"
+                    label="Filter"
+                    value={filterText}
+                    onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
+                    styles={{
+                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        wrapper: {
+                            width: CARD_FILTER_WIDTH,
+                        },
+                    }}
+                />
+
+                <FilterInstructions
+                    defaultKey="title"
+                    supportedKeys={["title", "album", "artist", "genre", "date"]}
+                    examples={["favorite track", "brick artist:(the eager) date:2004"]}
+                />
+            </Flex>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y tracks" */}
