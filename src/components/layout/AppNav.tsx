@@ -14,6 +14,7 @@ import {
 import {
     IconDeviceSpeaker,
     IconDisc,
+    IconHeart,
     IconMicrophone2,
     IconPlaylist,
     IconRadio,
@@ -121,6 +122,7 @@ const AppNav: FC = () => {
             { link: `${APP_URL_PREFIX}/albums`, label: "Albums", icon: IconDisc },
             { link: `${APP_URL_PREFIX}/tracks`, label: "Tracks", icon: IconMicrophone2 },
             { link: `${APP_URL_PREFIX}/presets`, label: "Presets", icon: IconRadio },
+            { link: `${APP_URL_PREFIX}/favorites`, label: "Favorites", icon: IconHeart },
         ],
     };
 
