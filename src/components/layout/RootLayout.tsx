@@ -36,7 +36,13 @@ const RootLayout: FC = () => {
                 <Outlet />
             </Stack>
 
-            <ScrollRestoration />
+            {/* NOTE: Scroll restoration doesn't work screens which use components based on
+                <VisibilitySensor> (which is most screens, including Artists, Albums, Tracks). */}
+            <ScrollRestoration
+                getKey={(location, matches) => {
+                    return location.pathname;
+                }}
+            />
             <KeyboardShortcutsManager />
             <Box
                 sx={{
