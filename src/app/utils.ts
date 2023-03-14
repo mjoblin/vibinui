@@ -147,7 +147,7 @@ const emptyStringRegex = /^\s*$/;
 export function collectionFilter<T extends Object>(
     collection: T[],
     filterText: string,
-    defaultKey: string = ""
+    defaultKey: string = "",
 ): T[] {
     if (collection.length <= 0 || filterText.match(emptyStringRegex)) {
         return collection;

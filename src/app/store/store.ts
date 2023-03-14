@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import internalReducer from "./internalSlice";
 import systemReducer from "./systemSlice";
+import favoritesReducer from "./favoritesSlice";
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
 import presetsReducer from "./presetsSlice";
@@ -24,6 +25,7 @@ export const store = configureStore({
     reducer: {
         internal: internalReducer,
         system: systemReducer,
+        favorites: favoritesReducer,
         playback: playbackReducer,
         playlist: playlistReducer,
         presets: presetsReducer,

@@ -75,11 +75,7 @@ const TrackWall: FC = () => {
             {[...tracksToDisplay]
                 .sort((trackA, trackB) => trackA.title.localeCompare(trackB.title))
                 .map((track) => (
-                    <TrackCard
-                        key={track.id}
-                        track={track}
-                        isCurrentlyPlaying={track.id === currentTrackMediaId}
-                    />
+                    <TrackCard key={track.id} track={track} />
                 ))}
         </Box>
     );

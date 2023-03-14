@@ -89,11 +89,7 @@ const AlbumWall: FC = () => {
     return (
         <Box className={dynamicClasses.albumWall}>
             {albumsToDisplay.map((album) => (
-                <AlbumCard
-                    key={album.id}
-                    album={album}
-                    isCurrentlyPlaying={album.id === currentAlbumMediaId}
-                />
+                <AlbumCard key={album.id} album={album} />
             ))}
         </Box>
     );

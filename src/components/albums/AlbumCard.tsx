@@ -8,12 +8,12 @@ import { RootState } from "../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../app/store/internalSlice";
 import { MediaViewMode } from "../../app/store/userSettingsSlice";
 import { yearFromDate } from "../../app/utils";
+import { secstoHms } from "../../app/utils";
+import { useAppConstants } from "../../app/hooks/useAppConstants";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 import CompactArtCard from "../shared/CompactArtCard";
 import MediaActionsButton from "../shared/MediaActionsButton";
-import { secstoHms } from "../../app/utils";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 // ------------------------------------------------------------------------------------------------
 // Helpers
@@ -52,9 +52,14 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
     album,
     tracks,
     selected,
-    isCurrentlyPlaying,
+    highlightIfPlaying,
     onClick,
 }) => {
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
+
+    const isCurrentlyPlaying = currentAlbumMediaId === album.id;
     const albumDuration = tracks?.reduce((duration, track) => duration + track.duration, 0) || 0;
 
     return (
@@ -64,13 +69,13 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
                 <MediaActionsButton
                     mediaType="album"
                     media={album}
-                    categories={["Playlist"]}
+                    categories={["Playlist", "Favorites"]}
                     size="sm"
                     position="bottom"
                 />
             }
             selected={selected}
-            isCurrentlyPlaying={isCurrentlyPlaying}
+            isCurrentlyPlaying={highlightIfPlaying && isCurrentlyPlaying}
             onClick={() => onClick && onClick(album)}
         >
             <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
@@ -84,23 +89,29 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
 
 const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     album,
+    sizeOverride,
+    detailsOverride,
     selected,
-    isCurrentlyPlaying,
+    highlightIfPlaying,
     onClick,
 }) => {
     const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
 
+    const isCurrentlyPlaying = currentAlbumMediaId === album.id;
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
-            width: cardSize,
-            border: isCurrentlyPlaying
+            width: sizeOverride || cardSize,
+            border: highlightIfPlaying && isCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
             borderRadius: 5,
@@ -116,8 +127,8 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
             <Box onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
                 <AlbumArt
                     album={album}
-                    actionCategories={["Tracks", "Playlist"]}
-                    size={cardSize - borderSize * 2}
+                    actionCategories={["Tracks", "Playlist", "Favorites"]}
+                    size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}
                     radius={5}
                     onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                     onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
@@ -125,7 +136,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
             </Box>
 
             {/* Album title, artist, year, genre */}
-            {showDetails && (
+            {((detailsOverride === undefined && showDetails) || detailsOverride) && (
                 <Stack spacing={0} p={7}>
                     <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                         {album.title}
@@ -158,8 +169,13 @@ type AlbumCardProps = {
     type?: MediaViewMode;
     album: Album;
     tracks?: Track[];
+    // Allow callers to override the size and details settings which would otherwise be pulled from
+    // the users album display settings. This is intended for use by (for now) the favorites
+    // screen, so its use of AlbumCard (and TrackCard) can use independent card display settings.
+    sizeOverride?: number;
+    detailsOverride?: boolean;
     selected?: boolean;
-    isCurrentlyPlaying?: boolean;
+    highlightIfPlaying?: boolean;
     onClick?: (album: Album) => void;
 };
 
@@ -167,8 +183,10 @@ const AlbumCard: FC<AlbumCardProps> = ({
     type = "art_focused",
     album,
     tracks,
+    sizeOverride,
+    detailsOverride,
     selected = false,
-    isCurrentlyPlaying = false,
+    highlightIfPlaying = true,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -228,8 +246,10 @@ const AlbumCard: FC<AlbumCardProps> = ({
                         <Box ref={cardRef}>
                             <AlbumCardArtFocused
                                 album={album}
+                                sizeOverride={sizeOverride}
+                                detailsOverride={detailsOverride}
                                 selected={selected}
-                                isCurrentlyPlaying={isCurrentlyPlaying}
+                                highlightIfPlaying={highlightIfPlaying}
                             />
                         </Box>
                     ) : (
@@ -247,8 +267,10 @@ const AlbumCard: FC<AlbumCardProps> = ({
                         <AlbumCardCompact
                             album={album}
                             tracks={tracks}
+                            sizeOverride={sizeOverride}
+                            detailsOverride={detailsOverride}
                             selected={selected}
-                            isCurrentlyPlaying={isCurrentlyPlaying}
+                            highlightIfPlaying={highlightIfPlaying}
                             onClick={onClick}
                         />
                     </Box>

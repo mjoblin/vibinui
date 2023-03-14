@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ThunkDispatch } from "@reduxjs/toolkit";
-import { Draft } from "immer";
 
 import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
 import {
@@ -25,6 +24,7 @@ import {
 } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
+import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 
 const MAX_MESSAGE_COUNT = 10;
@@ -36,6 +36,7 @@ type SimpleObject = { [key: string | number]: any };
 type MessageType =
     | "ActiveTransportControls"
     | "DeviceDisplay"
+    | "Favorites"
     | "PlayState"
     | "Position"
     | "Presets"
@@ -105,6 +106,8 @@ type PositionPayload = {
 
 type PresetsPayload = PresetsState;
 
+type FavoritesPayload = FavoritesState;
+
 type StoredPlaylistsPayload = StoredPlaylistsState;
 
 // TODO: More clearly define the vibin backend message format.
@@ -115,6 +118,7 @@ export type VibinMessage = {
     payload:
         | ActiveTransportControlsPayload
         | DeviceDisplayPayload
+        | FavoritesPayload
         | PlayStatePayload
         | PositionPayload
         | PresetsPayload
@@ -334,6 +338,8 @@ function messageHandler(
             dispatch(setActiveTransportActions(data.payload as ActiveTransportControlsPayload));
         } else if (data.type === "DeviceDisplay") {
             dispatch(setDeviceDisplay(data.payload as DeviceDisplayPayload));
+        } else if (data.type === "Favorites") {
+            dispatch(setFavoritesState(data.payload as FavoritesPayload));
         } else if (data.type === "Presets") {
             dispatch(setPresetsState(data.payload as PresetsState));
         } else if (data.type === "StoredPlaylists") {

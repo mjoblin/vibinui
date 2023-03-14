@@ -1,25 +1,19 @@
 import React, { FC } from "react";
-import { Box, createStyles, Flex, Header, Text, useMantineTheme } from "@mantine/core";
+import { Box, Flex, Header, useMantineTheme } from "@mantine/core";
 
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import MiniController from "../currentlyPlaying/MiniController";
+import StylizedLabel from "../shared/StylizedLabel";
 import VibinLogo from "./VibinLogo";
 
 const AppHeader: FC = () => {
     const { colors } = useMantineTheme();
-    const { APP_ALT_FONTFACE, HEADER_HEIGHT, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
+    const { HEADER_HEIGHT, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );
-
-    const { classes: dynamicClasses } = createStyles(({ colors }) => ({
-        screenName: {
-            fontFamily: APP_ALT_FONTFACE,
-            textTransform: "lowercase",
-        },
-    }))();
 
     return (
         <Header height={HEADER_HEIGHT} bg={colors.dark[6]}>
@@ -29,9 +23,7 @@ const AppHeader: FC = () => {
                 </Box>
                 <Flex pl={NAVBAR_PADDING} gap={20} align="center">
                     <Box miw={150} maw={150}>
-                        <Text size={30} weight="bold" className={dynamicClasses.screenName}>
-                            {currentScreen}
-                        </Text>
+                        <StylizedLabel>{currentScreen}</StylizedLabel>
                     </Box>
                     <MiniController />
                 </Flex>
