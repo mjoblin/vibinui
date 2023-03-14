@@ -23,11 +23,16 @@ export interface InternalState {
             renderHeight: number;
         };
     };
-
+    favorites: {
+        filteredFavoriteCount: number;
+        favoriteCard: {
+            renderWidth: number;
+            renderHeight: number;
+        };
+    };
     presets: {
         filteredPresetCount: number;
     };
-
     tracks: {
         filteredTrackCount: number;
         trackCard: {
@@ -59,6 +64,15 @@ const initialState: InternalState = {
         filteredArtistCount: 0,
         artistCard: {
             // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
+            renderWidth: 200,
+            renderHeight: 200,
+        },
+    },
+    favorites: {
+        // Number of favorites currently displayed in the Favorites screen.
+        filteredFavoriteCount: 0,
+        favoriteCard: {
+            // Dimensions of the last-rendered FavoriteCard, to inform not-visible FavoriteCard container sizes.
             renderWidth: 200,
             renderHeight: 200,
         },
@@ -99,6 +113,13 @@ export const internalSlice = createSlice({
         setCurrentScreen: (state, action: PayloadAction<string>) => {
             state.application.currentScreen = action.payload;
         },
+        setFavoriteCardRenderDimensions: (
+            state,
+            action: PayloadAction<{ width: number; height: number }>
+        ) => {
+            state.favorites.favoriteCard.renderWidth = action.payload.width;
+            state.favorites.favoriteCard.renderHeight = action.payload.height;
+        },
         setIsComputingInBackground: (state, action: PayloadAction<boolean>) => {
             // TODO: This currently allows any one background worker to state that the app is
             //  computing in the background. This will break if there's more than one background
@@ -112,6 +133,9 @@ export const internalSlice = createSlice({
         },
         setFilteredArtistCount: (state, action: PayloadAction<number>) => {
             state.artists.filteredArtistCount = action.payload;
+        },
+        setFilteredFavoriteCount: (state, action: PayloadAction<number>) => {
+            state.favorites.filteredFavoriteCount = action.payload;
         },
         setFilteredPresetCount: (state, action: PayloadAction<number>) => {
             state.presets.filteredPresetCount = action.payload;
@@ -143,9 +167,11 @@ export const {
     setAlbumCardRenderDimensions,
     setArtistCardRenderDimensions,
     setCurrentScreen,
+    setFavoriteCardRenderDimensions    ,
     setIsComputingInBackground,
     setFilteredAlbumCount,
     setFilteredArtistCount,
+    setFilteredFavoriteCount,
     setFilteredPresetCount,
     setFilteredTrackCount,
     setShowDebugPanel,

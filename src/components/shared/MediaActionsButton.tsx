@@ -6,6 +6,8 @@ import {
     IconCornerDownRight,
     IconCornerDownRightDouble,
     IconDotsVertical,
+    IconHeart,
+    IconHeartOff,
     IconList,
     IconPlayerPlay,
     IconPlaylistAdd,
@@ -13,11 +15,17 @@ import {
 
 import { Album, Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
+import {
+    useAddFavoriteMutation,
+    useDeleteFavoriteMutation,
+} from "../../app/services/vibinFavorites";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 export type MediaType = "album" | "track";
-export type ActionCategory = "Tracks" | "Playlist";
+export type ActionCategory = "Tracks" | "Playlist" | "Favorites";
 
 const sizeMd = 15;
 const sizeSm = 10;
@@ -65,13 +73,16 @@ type MediaActionsButtonProps = {
 const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     mediaType,
     media,
-    categories = ["Tracks", "Playlist"],
+    categories = ["Tracks", "Playlist", "Favorites"],
     position = "top",
     size = "md",
     onOpen = undefined,
     onClose = undefined,
 }) => {
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
+    const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
+    const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
+    const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { colors } = useMantineTheme();
@@ -90,6 +101,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     }, [addStatus]);
 
     const mediaTypeDisplay = mediaType && mediaType[0].toUpperCase() + mediaType.slice(1);
+    const isFavorited = !!favorites.find((favorite) => favorite.media_id === media.id);
 
     return (
         <Box onClick={(event) => event.stopPropagation()}>
@@ -210,6 +222,41 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 }}
                             >
                                 Append to end
+                            </Menu.Item>
+                        </>
+                    )}
+
+                    {/* Favorites */}
+                    {categories.includes("Favorites") && (
+                        <>
+                            <Menu.Label>Favorites</Menu.Label>
+                            <Menu.Item
+                                icon={<IconHeart size={14} />}
+                                disabled={isFavorited}
+                                onClick={() => {
+                                    addFavorite({ type: mediaType, mediaId: media.id });
+
+                                    showSuccessNotification({
+                                        title: `${mediaTypeDisplay} added to Favorites`,
+                                        message: media.title,
+                                    });
+                                }}
+                            >
+                                Add to Favorites
+                            </Menu.Item>
+                            <Menu.Item
+                                icon={<IconHeartOff size={14} />}
+                                disabled={!isFavorited}
+                                onClick={() => {
+                                    deleteFavorite({ mediaId: media.id });
+
+                                    showSuccessNotification({
+                                        title: `${mediaTypeDisplay} removed from Favorites`,
+                                        message: media.title,
+                                    });
+                                }}
+                            >
+                                Remove from Favorites
                             </Menu.Item>
                         </>
                     )}

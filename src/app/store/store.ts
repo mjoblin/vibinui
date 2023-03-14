@@ -3,6 +3,7 @@ import { setupListeners } from "@reduxjs/toolkit/query";
 
 import internalReducer from "./internalSlice";
 import systemReducer from "./systemSlice";
+import favoritesReducer from "./favoritesSlice";
 import playbackReducer from "./playbackSlice";
 import playlistReducer from "./playlistSlice";
 import presetsReducer from "./presetsSlice";
@@ -11,6 +12,7 @@ import userSettingsReducer from "./userSettingsSlice";
 import { localStorageMiddleware } from "./localStorageMiddleware";
 import { vibinAlbumsApi } from "../services/vibinAlbums";
 import { vibinArtistsApi } from "../services/vibinArtists";
+import { vibinFavoritesApi } from "../services/vibinFavorites";
 import { vibinPlaylistApi } from "../services/vibinPlaylist";
 import { vibinPresetsApi } from "../services/vibinPresets";
 import { vibinStoredPlaylistsApi } from "../services/vibinStoredPlaylists";
@@ -23,6 +25,7 @@ export const store = configureStore({
     reducer: {
         internal: internalReducer,
         system: systemReducer,
+        favorites: favoritesReducer,
         playback: playbackReducer,
         playlist: playlistReducer,
         presets: presetsReducer,
@@ -30,6 +33,7 @@ export const store = configureStore({
         userSettings: userSettingsReducer,
         [vibinAlbumsApi.reducerPath]: vibinAlbumsApi.reducer,
         [vibinArtistsApi.reducerPath]: vibinArtistsApi.reducer,
+        [vibinFavoritesApi.reducerPath]: vibinFavoritesApi.reducer,
         [vibinPlaylistApi.reducerPath]: vibinPlaylistApi.reducer,
         [vibinPresetsApi.reducerPath]: vibinPresetsApi.reducer,
         [vibinStoredPlaylistsApi.reducerPath]: vibinStoredPlaylistsApi.reducer,
@@ -43,6 +47,7 @@ export const store = configureStore({
             localStorageMiddleware.middleware,
             vibinAlbumsApi.middleware,
             vibinArtistsApi.middleware,
+            vibinFavoritesApi.middleware,
             vibinPlaylistApi.middleware,
             vibinPresetsApi.middleware,
             vibinStoredPlaylistsApi.middleware,

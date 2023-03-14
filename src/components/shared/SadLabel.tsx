@@ -11,7 +11,7 @@ const SadLabel: FC<SadLabelProps> = ({ label, labelSize = 16, sadSize = 26 }) =>
     return (
         <Flex gap="0.8rem" align="center">
             <Text size={sadSize}>😔</Text>
-            <Text size={labelSize} weight="bold">{label}</Text>
+            <Text size={labelSize} weight="bold" miw="fit-content">{label}</Text>
         </Flex>
     );
 };

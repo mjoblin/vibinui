@@ -4,18 +4,23 @@ import get from "lodash/get";
 
 import type { RootState, AppDispatch } from "./store";
 import {
-    LSKEY_APPLICATION_THEME,
     LSKEY_ALBUMS_ACTIVE_COLLECTION,
     LSKEY_ALBUMS_CARD_GAP,
     LSKEY_ALBUMS_CARD_SIZE,
     LSKEY_ALBUMS_FILTER_TEXT,
     LSKEY_ALBUMS_SHOW_DETAILS,
+    LSKEY_APPLICATION_THEME,
     LSKEY_ARTISTS_ACTIVE_COLLECTION,
     LSKEY_ARTISTS_CARD_GAP,
     LSKEY_ARTISTS_CARD_SIZE,
     LSKEY_ARTISTS_FILTER_TEXT,
     LSKEY_ARTISTS_SHOW_DETAILS,
     LSKEY_ARTISTS_VIEWMODE,
+    LSKEY_FAVORITES_ACTIVE_COLLECTION,
+    LSKEY_FAVORITES_CARD_GAP,
+    LSKEY_FAVORITES_CARD_SIZE,
+    LSKEY_FAVORITES_FILTER_TEXT,
+    LSKEY_FAVORITES_SHOW_DETAILS,
     LSKEY_NOWPLAYING_ACTIVETAB,
     LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     LSKEY_PLAYLIST_VIEWMODE,
@@ -29,20 +34,26 @@ import {
     LSKEY_TRACKS_SHOW_DETAILS,
     resetAlbumsToDefaults,
     resetArtistsToDefaults,
+    resetFavoritesToDefaults,
     resetPresetsToDefaults,
     resetTracksToDefaults,
-    setApplicationTheme,
     setAlbumsActiveCollection,
     setAlbumsCardGap,
     setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
+    setApplicationTheme,
     setArtistsActiveCollection,
     setArtistsCardGap,
     setArtistsCardSize,
     setArtistsFilterText,
     setArtistsShowDetails,
     setArtistsViewMode,
+    setFavoritesActiveCollection,
+    setFavoritesCardGap,
+    setFavoritesCardSize,
+    setFavoritesFilterText,
+    setFavoritesShowDetails,
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
     setPlaylistViewMode,
@@ -74,18 +85,23 @@ export const localStorageMiddleware = createListenerMiddleware();
 // Map the redux action name to the redux state key (dot.delimited). The local storage key will
 // match the dot-delimited redux key.
 export const actionToLocalStorageKeyMapper: Record<string, string> = {
-    [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
     [setAlbumsActiveCollection.type]: LSKEY_ALBUMS_ACTIVE_COLLECTION,
     [setAlbumsCardGap.type]: LSKEY_ALBUMS_CARD_GAP,
     [setAlbumsCardSize.type]: LSKEY_ALBUMS_CARD_SIZE,
     [setAlbumsShowDetails.type]: LSKEY_ALBUMS_SHOW_DETAILS,
     [setAlbumsFilterText.type]: LSKEY_ALBUMS_FILTER_TEXT,
+    [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
     [setArtistsActiveCollection.type]: LSKEY_ARTISTS_ACTIVE_COLLECTION,
     [setArtistsCardGap.type]: LSKEY_ARTISTS_CARD_GAP,
     [setArtistsCardSize.type]: LSKEY_ARTISTS_CARD_SIZE,
     [setArtistsShowDetails.type]: LSKEY_ARTISTS_SHOW_DETAILS,
     [setArtistsFilterText.type]: LSKEY_ARTISTS_FILTER_TEXT,
     [setArtistsViewMode.type]: LSKEY_ARTISTS_VIEWMODE,
+    [setFavoritesActiveCollection.type]: LSKEY_FAVORITES_ACTIVE_COLLECTION,
+    [setFavoritesCardGap.type]: LSKEY_FAVORITES_CARD_GAP,
+    [setFavoritesCardSize.type]: LSKEY_FAVORITES_CARD_SIZE,
+    [setFavoritesFilterText.type]: LSKEY_FAVORITES_FILTER_TEXT,
+    [setFavoritesShowDetails.type]: LSKEY_FAVORITES_SHOW_DETAILS,
     [setNowPlayingActiveTab.type]: LSKEY_NOWPLAYING_ACTIVETAB,
     [setPlaylistEditorSortField.type]: LSKEY_PLAYLIST_EDITOR_SORTFIELD,
     [setPlaylistViewMode.type]: LSKEY_PLAYLIST_VIEWMODE,
@@ -103,17 +119,22 @@ localStorageMiddleware.startListening({
     matcher: isAnyOf(
         resetAlbumsToDefaults,
         resetArtistsToDefaults,
+        resetFavoritesToDefaults,
         resetPresetsToDefaults,
         resetTracksToDefaults,
-        setApplicationTheme,
         setAlbumsActiveCollection,
         setAlbumsCardGap,
         setAlbumsCardSize,
         setAlbumsShowDetails,
+        setApplicationTheme,
         setArtistsActiveCollection,
         setArtistsCardGap,
         setArtistsCardSize,
         setArtistsShowDetails,
+        setFavoritesActiveCollection,
+        setFavoritesCardGap,
+        setFavoritesCardSize,
+        setFavoritesShowDetails,
         setNowPlayingActiveTab,
         setPlaylistEditorSortField,
         setPlaylistViewMode,
@@ -146,6 +167,16 @@ localStorageMiddleware.startListening({
             localStorage.removeItem(actionToLocalStorageKeyMapper[setArtistsCardGap.type]);
             localStorage.removeItem(actionToLocalStorageKeyMapper[setArtistsCardSize.type]);
             localStorage.removeItem(actionToLocalStorageKeyMapper[setArtistsShowDetails.type]);
+
+            return;
+        }
+
+        if (action.type === resetFavoritesToDefaults.type) {
+            // Special-case resetPresetsToDefaults to delete the local storage keys associated with
+            // the resetPresetsToDefaults action.
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setFavoritesCardGap.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setFavoritesCardSize.type]);
+            localStorage.removeItem(actionToLocalStorageKeyMapper[setFavoritesShowDetails.type]);
 
             return;
         }

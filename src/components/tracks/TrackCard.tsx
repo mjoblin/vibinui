@@ -45,9 +45,15 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
     track,
     showArt,
     selected,
-    isCurrentlyPlaying,
+    highlightIfPlaying,
     onClick,
 }) => {
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
+
+    const isCurrentlyPlaying = currentTrackMediaId === track.id;
+
     return (
         <CompactArtCard
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
@@ -55,7 +61,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
                 <MediaActionsButton mediaType="track" media={track} position="bottom" size="sm" />
             }
             selected={selected}
-            isCurrentlyPlaying={isCurrentlyPlaying}
+            isCurrentlyPlaying={highlightIfPlaying && isCurrentlyPlaying}
             onClick={() => onClick && onClick(track)}
         >
             <Flex gap={5}>
@@ -72,17 +78,29 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
     );
 };
 
-const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, isCurrentlyPlaying, onClick }) => {
+const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
+    track,
+    sizeOverride,
+    detailsOverride,
+    selected,
+    highlightIfPlaying,
+    onClick,
+}) => {
     const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppConstants();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
+
+    const isCurrentlyPlaying = currentTrackMediaId === track.id;
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
-            width: cardSize,
-            border: isCurrentlyPlaying
+            width: sizeOverride || cardSize,
+            border: highlightIfPlaying && isCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
             borderRadius: 5,
@@ -96,11 +114,15 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({ track, selected, isCurren
         <Box className={dynamicClasses.card}>
             {/* Track art with play/action controls */}
             <Box>
-                <TrackArt track={track} size={cardSize - borderSize * 2} radius={5} />
+                <TrackArt
+                    track={track}
+                    size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}
+                    radius={5}
+                />
             </Box>
 
             {/* Track title, artist, year, genre */}
-            {showDetails && (
+            {((detailsOverride === undefined && showDetails) || detailsOverride) && (
                 <Stack spacing={0} p={7}>
                     <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                         {track.title}
@@ -131,8 +153,10 @@ type TrackCardProps = {
     type?: MediaViewMode;
     track: Track;
     showArt?: boolean;
+    sizeOverride?: number;
+    detailsOverride?: boolean;
     selected?: boolean;
-    isCurrentlyPlaying?: boolean;
+    highlightIfPlaying?: boolean;
     onClick?: (track: Track) => void;
 };
 
@@ -140,8 +164,10 @@ const TrackCard: FC<TrackCardProps> = ({
     type = "art_focused",
     track,
     showArt = true,
+    sizeOverride,
+    detailsOverride,
     selected = false,
-    isCurrentlyPlaying = false,
+    highlightIfPlaying = true,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -201,8 +227,10 @@ const TrackCard: FC<TrackCardProps> = ({
                         <Box ref={cardRef}>
                             <TrackCardArtFocused
                                 track={track}
+                                sizeOverride={sizeOverride}
+                                detailsOverride={detailsOverride}
                                 selected={selected}
-                                isCurrentlyPlaying={isCurrentlyPlaying}
+                                highlightIfPlaying={highlightIfPlaying}
                             />
                         </Box>
                     ) : (
@@ -221,7 +249,7 @@ const TrackCard: FC<TrackCardProps> = ({
                             track={track}
                             showArt={showArt}
                             selected={selected}
-                            isCurrentlyPlaying={isCurrentlyPlaying}
+                            highlightIfPlaying={highlightIfPlaying}
                             onClick={onClick}
                         />
                     </Box>

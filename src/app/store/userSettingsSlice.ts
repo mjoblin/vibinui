@@ -13,22 +13,23 @@ export const maxPresetCardGap = 50;
 export const minPresetCardSize = 100;
 export const maxPresetCardSize = 300;
 
-const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_ALBUMS_ACTIVE_COLLECTION = "all";
 const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_CARD_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
+const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
 const DEFAULT_ARTISTS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_ARTISTS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_ARTISTS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_ARTISTS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
 const DEFAULT_ARTISTS_VIEWMODE = "detailed";
-const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
-const DEFAULT_TRACKS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
-const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
-const DEFAULT_TRACKS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
+const DEFAULT_FAVORITES_ACTIVE_COLLECTION = "all";
+const DEFAULT_FAVORITES_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
+const DEFAULT_FAVORITES_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
+const DEFAULT_FAVORITES_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
+const DEFAULT_FAVORITES_SHOW_DETAILS = true;
 const DEFAULT_NOWPLAYING_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
@@ -36,25 +37,30 @@ const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_PRESETS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_PRESETS_SHOW_DETAILS = true;
+const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
+const DEFAULT_TRACKS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
+const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
+const DEFAULT_TRACKS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
 //  in the user settings state.
-export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_ALBUMS_ACTIVE_COLLECTION = "albums.activeCollection";
 export const LSKEY_ALBUMS_CARD_GAP = "albums.cardGap";
 export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
+export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
 export const LSKEY_ARTISTS_CARD_GAP = "artists.cardGap";
 export const LSKEY_ARTISTS_CARD_SIZE = "artists.cardSize";
 export const LSKEY_ARTISTS_FILTER_TEXT = "artists.filterText";
 export const LSKEY_ARTISTS_SHOW_DETAILS = "artists.showDetails";
 export const LSKEY_ARTISTS_VIEWMODE = "artists.viewMode";
-export const LSKEY_TRACKS_CARD_GAP = "tracks.cardGap";
-export const LSKEY_TRACKS_CARD_SIZE = "tracks.cardSize";
-export const LSKEY_TRACKS_FILTER_TEXT = "tracks.filterText";
-export const LSKEY_TRACKS_SHOW_DETAILS = "tracks.showDetails";
+export const LSKEY_FAVORITES_ACTIVE_COLLECTION = "favorites.activeCollection";
+export const LSKEY_FAVORITES_CARD_GAP = "favorites.cardGap";
+export const LSKEY_FAVORITES_CARD_SIZE = "favorites.cardSize";
+export const LSKEY_FAVORITES_FILTER_TEXT = "favorites.filterText";
+export const LSKEY_FAVORITES_SHOW_DETAILS = "favorites.showDetails";
 export const LSKEY_NOWPLAYING_ACTIVETAB = "nowPlaying.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
@@ -62,6 +68,10 @@ export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
 export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
 export const LSKEY_PRESETS_FILTER_TEXT = "presets.filterText";
 export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
+export const LSKEY_TRACKS_CARD_GAP = "tracks.cardGap";
+export const LSKEY_TRACKS_CARD_SIZE = "tracks.cardSize";
+export const LSKEY_TRACKS_FILTER_TEXT = "tracks.filterText";
+export const LSKEY_TRACKS_SHOW_DETAILS = "tracks.showDetails";
 
 export type MediaViewMode = "art_focused" | "compact";
 export type ApplicationTheme = "light" | "dark";
@@ -69,17 +79,18 @@ export type PlaylistViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "updated";
 export type AlbumCollection = "all" | "new" | "current";
 export type ArtistCollection = "all" | "with_albums" | "current";
+export type FavoriteCollection = "all" | "albums" | "tracks";
 
 export interface UserSettingsState {
-    application: {
-        theme: ApplicationTheme;
-    };
     albums: {
         activeCollection: AlbumCollection;
         cardGap: number;
         cardSize: number;
         filterText: string;
         showDetails: boolean;
+    };
+    application: {
+        theme: ApplicationTheme;
     };
     artists: {
         activeCollection: ArtistCollection;
@@ -92,7 +103,8 @@ export interface UserSettingsState {
         showDetails: boolean;
         viewMode: MediaViewMode;
     };
-    tracks: {
+    favorites: {
+        activeCollection: FavoriteCollection;
         cardGap: number;
         cardSize: number;
         filterText: string;
@@ -108,6 +120,12 @@ export interface UserSettingsState {
         viewMode: PlaylistViewMode;
     };
     presets: {
+        cardGap: number;
+        cardSize: number;
+        filterText: string;
+        showDetails: boolean;
+    };
+    tracks: {
         cardGap: number;
         cardSize: number;
         filterText: string;
@@ -130,9 +148,6 @@ const getLocalStorageValue = (key: string, defaultValue: any) => {
 };
 
 const initialState: UserSettingsState = {
-    application: {
-        theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
-    },
     albums: {
         activeCollection: getLocalStorageValue(
             LSKEY_ALBUMS_ACTIVE_COLLECTION,
@@ -142,6 +157,9 @@ const initialState: UserSettingsState = {
         cardSize: getLocalStorageValue(LSKEY_ALBUMS_CARD_SIZE, DEFAULT_ALBUMS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_ALBUMS_FILTER_TEXT, DEFAULT_ALBUMS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
+    },
+    application: {
+        theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
     },
     artists: {
         activeCollection: getLocalStorageValue(
@@ -157,11 +175,15 @@ const initialState: UserSettingsState = {
         showDetails: getLocalStorageValue(LSKEY_ARTISTS_SHOW_DETAILS, DEFAULT_ARTISTS_SHOW_DETAILS),
         viewMode: getLocalStorageValue(LSKEY_ARTISTS_VIEWMODE, DEFAULT_ARTISTS_VIEWMODE),
     },
-    tracks: {
-        cardGap: getLocalStorageValue(LSKEY_TRACKS_CARD_GAP, DEFAULT_TRACKS_CARD_GAP),
-        cardSize: getLocalStorageValue(LSKEY_TRACKS_CARD_SIZE, DEFAULT_TRACKS_CARD_SIZE),
-        filterText: getLocalStorageValue(LSKEY_TRACKS_FILTER_TEXT, DEFAULT_TRACKS_FILTER_TEXT),
-        showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
+    favorites: {
+        activeCollection: getLocalStorageValue(
+            LSKEY_FAVORITES_ACTIVE_COLLECTION,
+            DEFAULT_FAVORITES_ACTIVE_COLLECTION
+        ),
+        cardGap: getLocalStorageValue(LSKEY_FAVORITES_CARD_GAP, DEFAULT_FAVORITES_CARD_GAP),
+        cardSize: getLocalStorageValue(LSKEY_FAVORITES_CARD_SIZE, DEFAULT_FAVORITES_CARD_SIZE),
+        filterText: getLocalStorageValue(LSKEY_FAVORITES_FILTER_TEXT, DEFAULT_FAVORITES_FILTER_TEXT),
+        showDetails: getLocalStorageValue(LSKEY_FAVORITES_SHOW_DETAILS, DEFAULT_FAVORITES_SHOW_DETAILS),
     },
     nowPlaying: {
         activeTab: getLocalStorageValue(LSKEY_NOWPLAYING_ACTIVETAB, DEFAULT_NOWPLAYING_ACTIVETAB),
@@ -181,6 +203,12 @@ const initialState: UserSettingsState = {
         filterText: getLocalStorageValue(LSKEY_PRESETS_FILTER_TEXT, DEFAULT_PRESETS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_PRESETS_SHOW_DETAILS, DEFAULT_PRESETS_SHOW_DETAILS),
     },
+    tracks: {
+        cardGap: getLocalStorageValue(LSKEY_TRACKS_CARD_GAP, DEFAULT_TRACKS_CARD_GAP),
+        cardSize: getLocalStorageValue(LSKEY_TRACKS_CARD_SIZE, DEFAULT_TRACKS_CARD_SIZE),
+        filterText: getLocalStorageValue(LSKEY_TRACKS_FILTER_TEXT, DEFAULT_TRACKS_FILTER_TEXT),
+        showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
+    },
 };
 
 export const userSettingsSlice = createSlice({
@@ -196,6 +224,11 @@ export const userSettingsSlice = createSlice({
             state.artists.cardSize = DEFAULT_ARTISTS_CARD_SIZE;
             state.artists.cardGap = DEFAULT_ARTISTS_CARD_GAP;
             state.artists.showDetails = DEFAULT_ARTISTS_SHOW_DETAILS;
+        },
+        resetFavoritesToDefaults: (state) => {
+            state.favorites.cardSize = DEFAULT_FAVORITES_CARD_SIZE;
+            state.favorites.cardGap = DEFAULT_FAVORITES_CARD_GAP;
+            state.favorites.showDetails = DEFAULT_FAVORITES_SHOW_DETAILS;
         },
         resetPresetsToDefaults: (state) => {
             state.presets.cardSize = DEFAULT_PRESETS_CARD_SIZE;
@@ -221,6 +254,9 @@ export const userSettingsSlice = createSlice({
         },
         setAlbumsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.albums.showDetails = action.payload;
+        },
+        setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
+            state.application.theme = action.payload;
         },
         setArtistsActiveCollection: (state, action: PayloadAction<ArtistCollection>) => {
             state.artists.activeCollection = action.payload;
@@ -249,8 +285,20 @@ export const userSettingsSlice = createSlice({
         setArtistsViewMode: (state, action: PayloadAction<MediaViewMode>) => {
             state.artists.viewMode = action.payload;
         },
-        setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
-            state.application.theme = action.payload;
+        setFavoritesActiveCollection: (state, action: PayloadAction<FavoriteCollection>) => {
+            state.favorites.activeCollection = action.payload;
+        },
+        setFavoritesCardGap: (state, action: PayloadAction<number>) => {
+            state.favorites.cardGap = action.payload;
+        },
+        setFavoritesCardSize: (state, action: PayloadAction<number>) => {
+            state.favorites.cardSize = action.payload;
+        },
+        setFavoritesFilterText: (state, action: PayloadAction<string>) => {
+            state.favorites.filterText = action.payload;
+        },
+        setFavoritesShowDetails: (state, action: PayloadAction<boolean>) => {
+            state.favorites.showDetails = action.payload;
         },
         setNowPlayingActiveTab: (state, action: PayloadAction<NowPlayingTab>) => {
             state.nowPlaying.activeTab = action.payload;
@@ -260,18 +308,6 @@ export const userSettingsSlice = createSlice({
         },
         setPlaylistViewMode: (state, action: PayloadAction<PlaylistViewMode>) => {
             state.playlist.viewMode = action.payload;
-        },
-        setTracksCardGap: (state, action: PayloadAction<number>) => {
-            state.tracks.cardGap = action.payload;
-        },
-        setTracksCardSize: (state, action: PayloadAction<number>) => {
-            state.tracks.cardSize = action.payload;
-        },
-        setTracksFilterText: (state, action: PayloadAction<string>) => {
-            state.tracks.filterText = action.payload;
-        },
-        setTracksShowDetails: (state, action: PayloadAction<boolean>) => {
-            state.tracks.showDetails = action.payload;
         },
         setPresetsCardGap: (state, action: PayloadAction<number>) => {
             state.presets.cardGap = action.payload;
@@ -285,6 +321,18 @@ export const userSettingsSlice = createSlice({
         setPresetsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.presets.showDetails = action.payload;
         },
+        setTracksCardGap: (state, action: PayloadAction<number>) => {
+            state.tracks.cardGap = action.payload;
+        },
+        setTracksCardSize: (state, action: PayloadAction<number>) => {
+            state.tracks.cardSize = action.payload;
+        },
+        setTracksFilterText: (state, action: PayloadAction<string>) => {
+            state.tracks.filterText = action.payload;
+        },
+        setTracksShowDetails: (state, action: PayloadAction<boolean>) => {
+            state.tracks.showDetails = action.payload;
+        },
     },
 });
 
@@ -292,6 +340,7 @@ export const userSettingsSlice = createSlice({
 export const {
     resetAlbumsToDefaults,
     resetArtistsToDefaults,
+    resetFavoritesToDefaults,
     resetPresetsToDefaults,
     resetTracksToDefaults,
     setAlbumsActiveCollection,
@@ -299,6 +348,7 @@ export const {
     setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
+    setApplicationTheme,
     setArtistsActiveCollection,
     setArtistsCardGap,
     setArtistsCardSize,
@@ -308,7 +358,11 @@ export const {
     setArtistsSelectedArtist,
     setArtistsSelectedTrack,
     setArtistsViewMode,
-    setApplicationTheme,
+    setFavoritesActiveCollection,
+    setFavoritesCardGap,
+    setFavoritesCardSize,
+    setFavoritesFilterText,
+    setFavoritesShowDetails,
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
     setPlaylistViewMode,

@@ -45,13 +45,19 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     tracks = [],
     selected,
     isCurrentlyPlaying,
+    highlightIfPlaying,
     onClick,
 }) => {
+    // TODO: Determination of isCurrentlyPlaying should be done here rather than being passed in
+    //  by the caller. It's currently *not* determined here to prevent every artist card from
+    //  having to reference the full artist list and determine the current track. This should be
+    //  re-done once the app has formal support for "current artist".
+
     return (
         <CompactArtCard
             artUrl={artist.album_art_uri}
             selected={selected}
-            isCurrentlyPlaying={isCurrentlyPlaying}
+            isCurrentlyPlaying={highlightIfPlaying && isCurrentlyPlaying}
             onClick={() => onClick && onClick(artist)}
         >
             <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
@@ -116,6 +122,7 @@ type ArtistCardProps = {
     tracks?: Track[];
     selected?: boolean;
     isCurrentlyPlaying?: boolean;
+    highlightIfPlaying?: boolean;
     onClick?: (artist: Artist) => void;
 };
 
@@ -126,6 +133,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
     tracks,
     selected = false,
     isCurrentlyPlaying = false,
+    highlightIfPlaying = true,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -206,6 +214,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
                             tracks={tracks}
                             selected={selected}
                             isCurrentlyPlaying={isCurrentlyPlaying}
+                            highlightIfPlaying={highlightIfPlaying}
                             onClick={onClick}
                         />
                     </Box>

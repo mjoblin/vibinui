@@ -10,6 +10,7 @@ import { useAppConstants } from "./app/hooks/useAppConstants";
 import RootLayout from "./components/layout/RootLayout";
 import AlbumsScreen from "./components/layout/AlbumsScreen";
 import ArtistsScreen from "./components/layout/ArtistsScreen";
+import FavoritesScreen from "./components/layout/FavoritesScreen";
 import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
@@ -61,6 +62,10 @@ export default function App() {
                 {
                     path: "presets",
                     element: <PresetsScreen />,
+                },
+                {
+                    path: "favorites",
+                    element: <FavoritesScreen />,
                 },
                 {
                     index: true,

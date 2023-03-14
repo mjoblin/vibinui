@@ -188,6 +188,8 @@ const ArtistWall: FC = () => {
                             albums={allAlbumsByArtistName(artist.title)}
                             tracks={allTracksByArtistName(artist.title)}
                             selected={artist.id === selectedArtist?.id}
+                            // TODO: Remove isCurentlyPlaying (it's replaced by highlightIfPlaying)
+                            //  once the "current artist" notion is properly handled.
                             isCurrentlyPlaying={artist.id === currentArtist?.id}
                             onClick={(artist: Artist) => {
                                 dispatch(setArtistsSelectedArtist(artist));
@@ -216,7 +218,6 @@ const ArtistWall: FC = () => {
                                         album={album}
                                         tracks={allTracksByAlbumId(album.id)}
                                         selected={album.id === selectedAlbum?.id}
-                                        isCurrentlyPlaying={album.id === currentAlbumMediaId}
                                         onClick={(album: Album) =>
                                             dispatch(setArtistsSelectedAlbum(album))
                                         }
@@ -257,7 +258,6 @@ const ArtistWall: FC = () => {
                                 track={track}
                                 showArt={false}
                                 selected={track.id === selectedTrack?.id}
-                                isCurrentlyPlaying={track.id === currentTrackMediaId}
                                 onClick={(track: Track) => dispatch(setArtistsSelectedTrack(track))}
                             />
                         ))
@@ -271,7 +271,6 @@ const ArtistWall: FC = () => {
                                 track={track}
                                 showArt={false}
                                 selected={track.id === selectedTrack?.id}
-                                isCurrentlyPlaying={track.id === currentTrackMediaId}
                                 onClick={(track: Track) => dispatch(setArtistsSelectedTrack(track))}
                             />
                         ))
