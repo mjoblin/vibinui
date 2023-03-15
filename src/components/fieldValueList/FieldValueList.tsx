@@ -1,9 +1,9 @@
-import React, { FC } from "react";
+import React, { FC, ReactNode } from "react";
 import { createStyles } from "@mantine/core";
 
 interface FieldValueListProps {
     fieldValues: {
-        [key: string]: string | number | boolean;
+        [key: string]: string | number | boolean | ReactNode;
     };
     keySize?: number;
     keyFontFamily?: string;

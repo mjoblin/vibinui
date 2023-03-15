@@ -14,6 +14,7 @@ const ScreenHeader: FC<ScreenHeaderProps> = ({ height, children }) => {
     const { classes: dynamicClasses } = createStyles((theme) => ({
         header: {
             position: "fixed",
+            background: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
             height,
             zIndex: 100,
             top: HEADER_HEIGHT,
@@ -23,7 +24,6 @@ const ScreenHeader: FC<ScreenHeaderProps> = ({ height, children }) => {
             paddingRight: theme.spacing.md,
             paddingTop: theme.spacing.md,
             paddingBottom: theme.spacing.md,
-            background: theme.colors.dark[8],
             borderBottom: `${rem(1)} solid ${
                 theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2]
             }`,

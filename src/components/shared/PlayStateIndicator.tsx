@@ -19,7 +19,7 @@ const PlayStateIndicator: FC = () => {
             component: (
                 <Flex gap={10} align="center">
                     <Loader size={14} variant="oval" />
-                    <Text size="xs">buffering</Text>
+                    <Text size="sm">buffering</Text>
                 </Flex>
             ),
         },
@@ -28,17 +28,17 @@ const PlayStateIndicator: FC = () => {
             component: (
                 <Flex gap={10} align="center">
                     <Loader size={14} variant="bars" />
-                    <Text size="xs">connecting</Text>
+                    <Text size="sm">connecting</Text>
                 </Flex>
             ),
         },
         no_signal: {
             label: "No signal",
-            component: <Text size="xs">no signal</Text>,
+            component: <Text size="sm">no signal</Text>,
         },
         not_ready: {
             label: "Powered off",
-            component: <Text size="xs">standby</Text>,
+            component: <Text size="sm">standby</Text>,
         },
         pause: {
             label: "Paused",
@@ -68,11 +68,11 @@ const PlayStateIndicator: FC = () => {
         },
         ready: {
             label: "Powered on, not playing",
-            component: <Text size="xs">powered on</Text>,
+            component: <Text size="sm">powered on</Text>,
         },
         stop: {
             label: "Stopped",
-            component: <Text size="xs">stopped</Text>,
+            component: <Text size="sm">stopped</Text>,
         },
     };
 

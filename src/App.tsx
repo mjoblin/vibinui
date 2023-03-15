@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core";
 import { Notifications } from "@mantine/notifications";
@@ -19,6 +19,7 @@ import MediaSourceManager from "./components/managers/MediaSourceManager";
 import TracksScreen from "./components/layout/TracksScreen";
 import WebsocketManager from "./components/managers/WebsocketManager";
 import ErrorBoundary from "./components/shared/ErrorBoundary";
+import StatusScreen from "./components/layout/StatusScreen";
 
 export default function App() {
     const dispatch = useAppDispatch();
@@ -68,6 +69,10 @@ export default function App() {
                     element: <FavoritesScreen />,
                 },
                 {
+                    path: "status",
+                    element: <StatusScreen />,
+                },
+                {
                     index: true,
                     element: <Navigate to="/ui/albums" replace />,
                 },
@@ -108,8 +113,6 @@ export default function App() {
                 <WebsocketManager />
                 <PlayheadManager />
                 <MediaSourceManager />
-
-                {/* TODO: Fix this; prevent constant <style> tags being added to <head> */}
                 <RouterProvider router={router} />
             </MantineProvider>
         </ColorSchemeProvider>
