@@ -35,9 +35,7 @@ import SadLabel from "../shared/SadLabel";
 import StandbyMode from "../shared/StandbyMode";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 
-// TODO: Make these part of the theme.
 const DIMMED = "#808080";
-const HIGHLIGHT_COLOR = "#252525";
 const TITLE_AND_ALBUM_COLUMN_GAP = 40;
 
 /**
@@ -100,11 +98,11 @@ const useStyles = createStyles((theme) => ({
         },
     },
     highlight: {
-        backgroundColor: HIGHLIGHT_COLOR,
+        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
     },
     highlightOnHover: {
         "&:hover": {
-            backgroundColor: HIGHLIGHT_COLOR,
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
         },
     },
     pointerOnHover: {
@@ -187,7 +185,8 @@ const Playlist: FC = () => {
 
         const currentlyPlayingRowCSS = {
             color: theme.white,
-            backgroundColor: theme.colors.dark[5],
+            backgroundColor:
+                theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.yellow[6],
             border: `1px solid ${CURRENTLY_PLAYING_COLOR} !important`,
         };
 

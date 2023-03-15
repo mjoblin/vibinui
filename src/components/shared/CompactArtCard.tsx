@@ -29,7 +29,11 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
             border: isCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
-            backgroundColor: selected ? SELECTED_COLOR : theme.colors.dark[6],
+            backgroundColor: selected
+                ? SELECTED_COLOR
+                : theme.colorScheme === "dark"
+                ? theme.colors.dark[6]
+                : theme.colors.gray[3],
             "&:hover": {
                 cursor: onClick ? "pointer" : "inherit",
             },

@@ -22,7 +22,7 @@ import { RootState } from "../../app/store/store";
 import { TransportAction } from "../../app/store/playbackSlice";
 
 const TransportControls: FC = () => {
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const activeTransportActions = useAppSelector(
         (state: RootState) => state.playback.active_transport_actions
@@ -44,8 +44,8 @@ const TransportControls: FC = () => {
         },
     };
 
-    const colorStandard = colors.dark[1];
-    const colorActive = colors.blue[5];
+    const colorStandard = theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[3];
+    const colorActive = theme.colorScheme === "dark" ? theme.colors.blue[5] : theme.colors.blue[8];
 
     return (
         <Flex gap={3} align="center">

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, createStyles, Text } from "@mantine/core";
+import { Box, createStyles, Text, useMantineTheme } from "@mantine/core";
 
 import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
 import SadLabel from "../shared/SadLabel";
@@ -33,7 +33,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
         },
         chunkBody: {
             fontFamily: APP_ALT_FONTFACE,
-            color: theme.colors.dark[1],
+            color: theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[5],
         },
     }))();
 

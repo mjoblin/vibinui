@@ -9,9 +9,7 @@ import AlbumArt from "../albums/AlbumArt";
 import AppendToPlaylistButton from "./AppendToPlaylistButton";
 import TrackActionsButton from "./TrackActionsButton";
 
-// TODO: Make these part of the theme.
 const DIMMED = "#808080";
-const HIGHLIGHT_COLOR = "#252525";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
@@ -20,11 +18,13 @@ const useStyles = createStyles((theme) => ({
         },
     },
     highlight: {
-        backgroundColor: HIGHLIGHT_COLOR,
+        backgroundColor:
+            theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
     },
     highlightOnHover: {
         "&:hover": {
-            backgroundColor: HIGHLIGHT_COLOR,
+            backgroundColor:
+                theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
         },
     },
 }));
@@ -83,7 +83,6 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                 {data.map((track: Track) => (
                     <Paper
                         key={track.id}
-                        shadow="xs"
                         pr={5}
                         // Highlight the track on hover. But if the actions menu is open, then keep
                         // the selected track highlighted but don't highlight any other tracks

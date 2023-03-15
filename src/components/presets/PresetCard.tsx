@@ -103,6 +103,8 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
             border: presetIsCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            backgroundColor:
+                theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[3],
         },
     }))();
 

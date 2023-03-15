@@ -15,7 +15,6 @@ const MiniController: FC = () => {
     const transportActions = useAppSelector(
         (state: RootState) => state.playback.active_transport_actions
     );
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
 
     const componentHeight = 40;
 
@@ -28,9 +27,7 @@ const MiniController: FC = () => {
     ) : (
         <Flex mih={componentHeight} mah={componentHeight} align="center">
             <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
-                {`Media controls unavailable ${
-                    currentSource ? `for ${currentSource.name}` : ""
-                }`}
+                Media controls currently unavailable
             </Text>
         </Flex>
     );

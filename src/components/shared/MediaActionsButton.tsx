@@ -85,7 +85,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
@@ -163,7 +163,21 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         <>
                             <Menu.Label>Playlist</Menu.Label>
                             <Menu.Item
-                                icon={<IconPlayerPlay size={14} fill={colors.gray[5]} />}
+                                icon={
+                                    <IconPlayerPlay
+                                        size={14}
+                                        color={
+                                            theme.colorScheme === "dark"
+                                                ? theme.colors.gray[5]
+                                                : theme.colors.dark[6]
+                                        }
+                                        fill={
+                                            theme.colorScheme === "dark"
+                                                ? theme.colors.gray[5]
+                                                : theme.colors.dark[6]
+                                        }
+                                    />
+                                }
                                 onClick={() => {
                                     addMediaToPlaylist({
                                         mediaId: media.id,

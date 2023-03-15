@@ -77,7 +77,7 @@ const Playhead: FC = () => {
                     thumb: {
                         height: 8,
                         width: 3,
-                        backgroundColor: theme.white,
+                        backgroundColor: theme.colorScheme === "dark" ? theme.white : theme.black,
                         borderWidth: 1,
                         boxShadow: theme.shadows.sm,
                     },
