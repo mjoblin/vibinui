@@ -10,8 +10,12 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 // named "vibin<Something>Api".
 const apiRegex = new RegExp("^vibin.*Api$");
 
-const WaitingOnAPIIndicator: FC = () => {
-    const { colors } = useMantineTheme();
+type WaitingOnAPIIndicatorProps = {
+    stealth?: boolean;
+}
+
+const WaitingOnAPIIndicator: FC<WaitingOnAPIIndicatorProps> = ({ stealth = false }) => {
+    const theme = useMantineTheme();
     const { TEMPORARY_ACTIVITY_COLOR } = useAppConstants();
     const [queryPopoverOpened, { close: closeQueryPopover, open: openQueryPopover }] =
         useDisclosure(false);
@@ -47,15 +51,29 @@ const WaitingOnAPIIndicator: FC = () => {
             opened={queryPopoverOpened}
         >
             <Popover.Target>
-                <Tooltip label="Lit when API calls are pending" disabled={pendingQueryCount > 0}>
+                <Tooltip
+                    label="Lit when API calls are pending"
+                    disabled={stealth || pendingQueryCount > 0}
+                >
                     <ColorSwatch
                         size={20}
-                        color={pendingQueryCount ? TEMPORARY_ACTIVITY_COLOR : colors.dark[6]}
+                        color={
+                            pendingQueryCount
+                                ? TEMPORARY_ACTIVITY_COLOR
+                                : stealth
+                                ? theme.colorScheme === "dark"
+                                    ? theme.colors.dark[7]
+                                    : theme.white
+                                : theme.colorScheme === "dark"
+                                ? theme.colors.dark[6]
+                                : theme.colors.gray[2]
+                        }
+                        sx={{ boxShadow: theme.colorScheme === "dark" ? undefined : "none" }}
                         onMouseEnter={openQueryPopover}
                         onMouseLeave={closeQueryPopover}
                     >
                         {pendingQueryCount ? (
-                            <Text weight="bold" size={12} color={colors.dark[7]}>
+                            <Text weight="bold" size={12} color={theme.colors.dark[7]}>
                                 {pendingQueryCount}
                             </Text>
                         ) : null}
@@ -71,7 +89,7 @@ const WaitingOnAPIIndicator: FC = () => {
                         .sort((queryA, queryB) => queryA.startedTimeStamp - queryB.startedTimeStamp)
                         .map((query) => (
                             <List.Item key={query.requestId}>
-                                <Text size="sm" sx={{ fontFamily: "monospace"}}>
+                                <Text size="sm" sx={{ fontFamily: "monospace" }}>
                                     {query.endpointName}
                                 </Text>
                             </List.Item>

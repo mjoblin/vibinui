@@ -15,6 +15,7 @@ import {
     IconDeviceSpeaker,
     IconDisc,
     IconHeart,
+    IconListDetails,
     IconMicrophone2,
     IconPlaylist,
     IconRadio,
@@ -124,6 +125,9 @@ const AppNav: FC = () => {
             { link: `${APP_URL_PREFIX}/presets`, label: "Presets", icon: IconRadio },
             { link: `${APP_URL_PREFIX}/favorites`, label: "Favorites", icon: IconHeart },
         ],
+        Application: [
+            { link: `${APP_URL_PREFIX}/status`, label: "Status", icon: IconListDetails },
+        ],
     };
 
     const getLinks = (key: string) =>
@@ -155,35 +159,12 @@ const AppNav: FC = () => {
                         </Text>
                         <Box>{getLinks("Browse")}</Box>
                     </Stack>
-                </Stack>
-            </Navbar.Section>
-
-            <Navbar.Section>
-                <Stack spacing="sm">
-                    <table className={classes.statusTable}>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <Text size="xs" color={colors.dark[3]}>
-                                        play state
-                                    </Text>
-                                </td>
-                                <td>
-                                    <PlayStateIndicator />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <Text size="xs" color={colors.dark[3]}>
-                                        source
-                                    </Text>
-                                </td>
-                                <td>
-                                    <MediaSourceBadge />
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <Stack spacing={10}>
+                        <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
+                            Application
+                        </Text>
+                        <Box>{getLinks("Application")}</Box>
+                    </Stack>
                 </Stack>
             </Navbar.Section>
 
@@ -191,9 +172,7 @@ const AppNav: FC = () => {
                 <Flex justify="space-between" align="center">
                     <Settings />
                     <Flex gap={10} align="center">
-                        <BackgroundComputeIndicator />
-                        <WaitingOnAPIIndicator />
-                        <WebsocketIndicator />
+                        <WaitingOnAPIIndicator stealth />
                         <StandbyMode type="compact" />
                     </Flex>
                 </Flex>

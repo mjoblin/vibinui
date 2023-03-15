@@ -9,6 +9,7 @@ import playlistReducer from "./playlistSlice";
 import presetsReducer from "./presetsSlice";
 import storedPlaylistsReducer from "./storedPlaylistsSlice";
 import userSettingsReducer from "./userSettingsSlice";
+import vibinStatusReducer from "./vibinStatusSlice";
 import { localStorageMiddleware } from "./localStorageMiddleware";
 import { vibinAlbumsApi } from "../services/vibinAlbums";
 import { vibinArtistsApi } from "../services/vibinArtists";
@@ -31,6 +32,7 @@ export const store = configureStore({
         presets: presetsReducer,
         storedPlaylists: storedPlaylistsReducer,
         userSettings: userSettingsReducer,
+        vibinStatus: vibinStatusReducer,
         [vibinAlbumsApi.reducerPath]: vibinAlbumsApi.reducer,
         [vibinArtistsApi.reducerPath]: vibinArtistsApi.reducer,
         [vibinFavoritesApi.reducerPath]: vibinFavoritesApi.reducer,

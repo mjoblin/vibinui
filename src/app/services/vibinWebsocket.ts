@@ -26,6 +26,7 @@ import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
+import { setVibinStatusState, VibinStatusState } from "../store/vibinStatusSlice";
 
 const MAX_MESSAGE_COUNT = 10;
 
@@ -42,7 +43,8 @@ type MessageType =
     | "Presets"
     | "StateVars"
     | "StoredPlaylists"
-    | "System";
+    | "System"
+    | "VibinStatus";
 
 type ActiveTransportControlsPayload = TransportAction[];
 
@@ -53,7 +55,7 @@ type SystemPayload = {
         name: string;
         power: "on" | "off";
     };
-    media_device: {
+    media: {
         name: string;
     };
 };
@@ -110,6 +112,8 @@ type FavoritesPayload = FavoritesState;
 
 type StoredPlaylistsPayload = StoredPlaylistsState;
 
+type VibinStatusPayload = VibinStatusState;
+
 // TODO: More clearly define the vibin backend message format.
 export type VibinMessage = {
     id: string;
@@ -124,7 +128,8 @@ export type VibinMessage = {
         | PresetsPayload
         | StateVarsPayload
         | StoredPlaylistsPayload
-        | SystemPayload;
+        | SystemPayload
+        | VibinStatusPayload;
 };
 
 /**
@@ -223,7 +228,7 @@ function messageHandler(
         if (data.type === "System") {
             const system = data.payload as SystemPayload;
 
-            dispatch(setMediaDeviceName(system.media_device?.name));
+            dispatch(setMediaDeviceName(system.media?.name));
             dispatch(setStreamerName(system.streamer?.name));
             dispatch(setStreamerPower(system.streamer?.power));
         } else if (data.type === "StateVars") {
@@ -344,6 +349,8 @@ function messageHandler(
             dispatch(setPresetsState(data.payload as PresetsState));
         } else if (data.type === "StoredPlaylists") {
             dispatch(setStoredPlaylistsState(data.payload as StoredPlaylistsPayload));
+        } else if (data.type === "VibinStatus") {
+            dispatch(setVibinStatusState(data.payload as VibinStatusPayload));
         }
     };
 }
