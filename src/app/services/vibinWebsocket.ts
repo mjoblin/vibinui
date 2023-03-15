@@ -22,6 +22,8 @@ import {
     ShuffleState,
     TransportAction,
 } from "../store/playbackSlice";
+import { WEBSOCKET_RECONNECT_DELAY } from "../constants";
+import { setWebsocketStatus } from "../store/internalSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
@@ -362,36 +364,49 @@ export const vibinWebsocket = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: "/" }),
     endpoints: (build) => ({
         getMessages: build.query<VibinMessage[], void>({
-            // The vibin backend currently doesn't have an endpoint to retrieve the initial state
-            // for the message stream data (this information is instead sent in the first message
-            // immediately on connection). We instead just initialize with an empty Message array.
+            // The vibin backend does not have an endpoint to retrieve the initial state of the
+            // message stream data. This information is instead sent in messages received by the
+            // client immediately on connection. As a result, we initialize with an empty Message
+            // array.
+            //
+            // Additionally, this means we do not use RTK Query's "cacheDataLoaded" feature. So
+            // cacheDataLoaded is not awaited after establishing the connection.
             queryFn: () => ({ data: [] }),
             async onCacheEntryAdded(
                 arg,
                 { updateCachedData, cacheDataLoaded, cacheEntryRemoved, getState, dispatch }
             ) {
-                // create a websocket connection when the cache subscription starts
-                const ws = new WebSocket(`ws://${window.location.hostname}:7669/ws`);
-
-                try {
-                    // Wait for the initial query to resolve before proceeding.
-                    await cacheDataLoaded;
+                const connectToVibinServer = async () => {
+                    dispatch(setWebsocketStatus("connecting"));
+                    const ws = new WebSocket(`ws://${window.location.hostname}:7669/ws`);
 
                     const listener = messageHandler(updateCachedData, getState, dispatch);
-                    ws.addEventListener("message", listener);
-                } catch {
-                    // no-op in case `cacheEntryRemoved` resolves before `cacheDataLoaded`,
-                    // in which case `cacheDataLoaded` will throw
-                }
 
+                    const onConnected = () => {
+                        dispatch(setWebsocketStatus("connected"));
+                    };
+
+                    const onDisconnected = () => {
+                        dispatch(setWebsocketStatus("waiting_to_reconnect"));
+                        setTimeout(connectToVibinServer, WEBSOCKET_RECONNECT_DELAY);
+                    };
+
+                    ws.addEventListener("open", onConnected);
+                    ws.addEventListener("message", listener);
+                    ws.addEventListener("close", onDisconnected);
+
+                    // perform cleanup steps once the `cacheEntryRemoved` promise resolves
+                    await cacheEntryRemoved;
+                    ws.close();
+                };
+
+                await connectToVibinServer();
+                
                 // cacheEntryRemoved will resolve when the cache subscription is no longer active
                 await cacheEntryRemoved;
-
-                // perform cleanup steps once the `cacheEntryRemoved` promise resolves
-                ws.close();
             },
         }),
     }),
 });
 
-export const { useGetMessagesQuery } = vibinWebsocket;
+export const { useGetMessagesQuery, useLazyGetMessagesQuery } = vibinWebsocket;
