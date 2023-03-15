@@ -140,7 +140,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
     const latestVisibleRenderSize = useAppSelector(
         (state: RootState) => state.internal.artists.artistCard
     );
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const cardRef = useRef<HTMLDivElement>();
 
@@ -201,7 +201,10 @@ const ArtistCard: FC<ArtistCardProps> = ({
                             style={{
                                 width: latestVisibleRenderSize.renderWidth,
                                 height: latestVisibleRenderSize.renderHeight,
-                                backgroundColor: colors.dark[6],
+                                backgroundColor:
+                                    theme.colorScheme === "dark"
+                                        ? theme.colors.dark[6]
+                                        : theme.colors.gray[3],
                             }}
                         ></div>
                     )
@@ -223,7 +226,10 @@ const ArtistCard: FC<ArtistCardProps> = ({
                         style={{
                             width: latestVisibleRenderSize.renderWidth,
                             height: latestVisibleRenderSize.renderHeight,
-                            backgroundColor: colors.dark[6],
+                            backgroundColor:
+                                theme.colorScheme === "dark"
+                                    ? theme.colors.dark[6]
+                                    : theme.colors.gray[3],
                         }}
                     ></div>
                 )

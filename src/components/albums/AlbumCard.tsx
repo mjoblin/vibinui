@@ -111,11 +111,16 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
             width: sizeOverride || cardSize,
-            border: highlightIfPlaying && isCurrentlyPlaying
-                ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
-                : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            border:
+                highlightIfPlaying && isCurrentlyPlaying
+                    ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
+                    : `${borderSize}px solid rgb(0, 0, 0, 0)`,
             borderRadius: 5,
-            backgroundColor: selected ? SELECTED_COLOR : theme.colors.dark[6],
+            backgroundColor: selected
+                ? SELECTED_COLOR
+                : theme.colorScheme === "dark"
+                ? theme.colors.dark[6]
+                : theme.colors.gray[3],
         },
     }))();
 
@@ -196,7 +201,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
     const latestVisibleRenderSize = useAppSelector(
         (state: RootState) => state.internal.albums.albumCard
     );
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
     const cardRef = useRef<HTMLDivElement>();
 
@@ -257,7 +262,10 @@ const AlbumCard: FC<AlbumCardProps> = ({
                             style={{
                                 width: latestVisibleRenderSize.renderWidth,
                                 height: latestVisibleRenderSize.renderHeight,
-                                backgroundColor: colors.dark[6],
+                                backgroundColor:
+                                    theme.colorScheme === "dark"
+                                        ? theme.colors.dark[6]
+                                        : theme.colors.gray[3],
                             }}
                         ></div>
                     )
@@ -279,7 +287,10 @@ const AlbumCard: FC<AlbumCardProps> = ({
                         style={{
                             width: latestVisibleRenderSize.renderWidth,
                             height: latestVisibleRenderSize.renderHeight,
-                            backgroundColor: colors.dark[6],
+                            backgroundColor:
+                                theme.colorScheme === "dark"
+                                    ? theme.colors.dark[6]
+                                    : theme.colors.gray[3],
                         }}
                     ></div>
                 )

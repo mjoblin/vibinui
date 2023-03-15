@@ -204,7 +204,6 @@ const NowPlayingScreen: FC = () => {
                             styles={(theme) => ({
                                 tabLabel: {
                                     fontWeight: "bold",
-                                    color: theme.colors.gray[4],
                                     fontSize: 13,
                                     letterSpacing: 0.3,
                                 },
