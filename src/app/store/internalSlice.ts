@@ -1,13 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+export type WebsocketStatus = "disconnected" | "connecting" | "connected" | "waiting_to_reconnect";
+
 export interface InternalState {
     application: {
         currentScreen: string;
         isComputingInBackground: boolean;
         showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
-        websocketStatus: string | undefined;
+        websocketStatus: WebsocketStatus;
     };
     albums: {
         filteredAlbumCount: number;
@@ -48,7 +50,7 @@ const initialState: InternalState = {
         isComputingInBackground: false,
         showKeyboardShortcuts: false,
         showDebugPanel: false,
-        websocketStatus: undefined,
+        websocketStatus: "disconnected",
     },
     albums: {
         // Number of albums currently displayed in the Albums screen.
@@ -157,7 +159,7 @@ export const internalSlice = createSlice({
             state.tracks.trackCard.renderWidth = action.payload.width;
             state.tracks.trackCard.renderHeight = action.payload.height;
         },
-        setWebsocketStatus: (state, action: PayloadAction<string | undefined>) => {
+        setWebsocketStatus: (state, action: PayloadAction<WebsocketStatus>) => {
             state.application.websocketStatus = action.payload;
         },
     },
@@ -167,7 +169,7 @@ export const {
     setAlbumCardRenderDimensions,
     setArtistCardRenderDimensions,
     setCurrentScreen,
-    setFavoriteCardRenderDimensions    ,
+    setFavoriteCardRenderDimensions,
     setIsComputingInBackground,
     setFilteredAlbumCount,
     setFilteredArtistCount,

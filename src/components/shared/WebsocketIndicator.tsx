@@ -4,15 +4,18 @@ import { ColorSwatch, MantineColor, Tooltip, useMantineTheme } from "@mantine/co
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { WebsocketStatus } from "../../app/store/internalSlice";
 
 const WebsocketIndicator: FC = () => {
     const { colors } = useMantineTheme();
     const { TEMPORARY_ACTIVITY_COLOR } = useAppConstants();
     const { websocketStatus } = useAppSelector((state: RootState) => state.internal.application);
 
-    const statusColors: Record<string, MantineColor> = {
-        fulfilled: colors.green[9],
-        pending: TEMPORARY_ACTIVITY_COLOR,
+    const statusColors: Record<WebsocketStatus, MantineColor> = {
+        connected: colors.green[9],
+        connecting: TEMPORARY_ACTIVITY_COLOR,
+        disconnected: colors.red[9],
+        waiting_to_reconnect: colors.yellow[2],
     };
 
     return (

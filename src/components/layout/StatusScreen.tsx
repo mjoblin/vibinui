@@ -18,6 +18,7 @@ const StatusScreen: FC = () => {
     const { streamer, media_device: mediaDevice } = useAppSelector(
         (state: RootState) => state.system
     );
+    const { websocketStatus } = useAppSelector((state: RootState) => state.internal.application);
     const {
         start_time: startTime,
         system_node: systemNode,
@@ -40,6 +41,9 @@ const StatusScreen: FC = () => {
                                 <WebsocketIndicator />
                                 <Text size="sm" weight="bold" color={colors.dark[1]}>
                                     Connection to server
+                                </Text>
+                                <Text size="sm" weight="bold" color={colors.dark[3]}>
+                                    [{websocketStatus}]
                                 </Text>
                             </Flex>
                             <Flex gap={10}>
