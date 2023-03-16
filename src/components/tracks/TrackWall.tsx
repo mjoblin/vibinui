@@ -1,10 +1,10 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useGetTracksQuery } from "../../app/services/vibinTracks";
+import { useGetTracksQuery, useSearchLyricsMutation } from "../../app/services/vibinTracks";
 import { setFilteredTrackCount } from "../../app/store/internalSlice";
 import TrackCard from "./TrackCard";
 import SadLabel from "../shared/SadLabel";
@@ -16,11 +16,14 @@ const TrackWall: FC = () => {
     const { SCREEN_LOADING_PT } = useAppConstants();
     const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
-    const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.tracks);
+    const { cardSize, cardGap, lyricsSearchText } = useAppSelector(
+        (state: RootState) => state.userSettings.tracks
+    );
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
     const { data: allTracks, error, isLoading } = useGetTracksQuery();
+    const [searchLyrics, { data: tracksMatchingLyrics }] = useSearchLyricsMutation();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         trackWall: {
@@ -30,6 +33,12 @@ const TrackWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+
+    useEffect(() => {
+        if (lyricsSearchText !== "") {
+            searchLyrics({ query: lyricsSearchText });
+        }
+    }, [lyricsSearchText, searchLyrics]);
 
     if (isLoading) {
         return (
@@ -58,7 +67,12 @@ const TrackWall: FC = () => {
         );
     }
 
-    const tracksToDisplay = collectionFilter(allTracks, debouncedFilterText, "title");
+    const tracksToFilter =
+        lyricsSearchText !== "" && tracksMatchingLyrics
+            ? allTracks.filter((track) => tracksMatchingLyrics.matches.includes(track.id))
+            : allTracks;
+
+    const tracksToDisplay = collectionFilter(tracksToFilter, debouncedFilterText, "title");
 
     dispatch(setFilteredTrackCount(tracksToDisplay.length));
 

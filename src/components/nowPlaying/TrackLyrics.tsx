@@ -1,11 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, createStyles, Text, useMantineTheme } from "@mantine/core";
+import { Box, createStyles, Highlight, Text } from "@mantine/core";
 
 import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
 import SadLabel from "../shared/SadLabel";
 import SimpleLoader from "../shared/SimpleLoader";
 import { getTextWidth } from "../../app/utils";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 // TODO: This component should take a track, but the current_track in Redux doesn't contain the
 //  trackId. So instead the component expects *either* a trackId *or* artist and title.
@@ -19,6 +21,7 @@ type TrackLyricsProps = {
 const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     const { APP_ALT_FONTFACE } = useAppConstants();
     const [maxLineWidth, setMaxLineWidth] = useState<number>(0);
+    const { lyricsSearchText } = useAppSelector((state: RootState) => state.userSettings.tracks);
     const { data, error, isFetching } = useGetLyricsQuery({ trackId, artist, title });
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -79,12 +82,13 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
                 {chunk.header && <Text className={dynamicClasses.chunkHeader}>{chunk.header}</Text>}
                 <Box pb={15}>
                     {chunk.body.map((line, lineIndex) => (
-                        <Text
+                        <Highlight
                             key={`line_${chunkIndex}_${lineIndex}`}
                             className={dynamicClasses.chunkBody}
+                            highlight={lyricsSearchText}
                         >
                             {line}
-                        </Text>
+                        </Highlight>
                     ))}
                 </Box>
             </Box>

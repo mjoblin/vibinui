@@ -129,6 +129,7 @@ export interface UserSettingsState {
         cardGap: number;
         cardSize: number;
         filterText: string;
+        lyricsSearchText: string;
         showDetails: boolean;
     };
 }
@@ -207,6 +208,7 @@ const initialState: UserSettingsState = {
         cardGap: getLocalStorageValue(LSKEY_TRACKS_CARD_GAP, DEFAULT_TRACKS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_TRACKS_CARD_SIZE, DEFAULT_TRACKS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_TRACKS_FILTER_TEXT, DEFAULT_TRACKS_FILTER_TEXT),
+        lyricsSearchText: "",
         showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
     },
 };
@@ -330,6 +332,9 @@ export const userSettingsSlice = createSlice({
         setTracksFilterText: (state, action: PayloadAction<string>) => {
             state.tracks.filterText = action.payload;
         },
+        setTracksLyricsSearchText: (state, action: PayloadAction<string>) => {
+            state.tracks.lyricsSearchText = action.payload;
+        },
         setTracksShowDetails: (state, action: PayloadAction<boolean>) => {
             state.tracks.showDetails = action.payload;
         },
@@ -373,6 +378,7 @@ export const {
     setTracksCardGap,
     setTracksCardSize,
     setTracksFilterText,
+    setTracksLyricsSearchText,
     setTracksShowDetails,
 } = userSettingsSlice.actions;
 

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -7,6 +7,7 @@ import {
     setTracksCardGap,
     setTracksCardSize,
     setTracksFilterText,
+    setTracksLyricsSearchText,
     setTracksShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
@@ -14,6 +15,9 @@ import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
+import { useDebouncedValue } from "@mantine/hooks";
+
+const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 
 const TracksControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -24,6 +28,19 @@ const TracksControls: FC = () => {
         (state: RootState) => state.userSettings.tracks
     );
     const { filteredTrackCount } = useAppSelector((state: RootState) => state.internal.tracks);
+    const [debouncedFilterText] = useDebouncedValue(filterText, 250);
+
+    // If the filter text includes something like "lyric:(some lyric search)" then store
+    // "some lyric search" in application state.
+    useEffect(() => {
+        const lyricSearch = debouncedFilterText.toLocaleLowerCase().match(lyricsSearchFinder);
+
+        if (lyricSearch) {
+            dispatch(setTracksLyricsSearchText(lyricSearch[2]));
+        } else {
+            dispatch(setTracksLyricsSearchText(""));
+        }
+    }, [debouncedFilterText, dispatch]);
 
     return (
         <Flex gap={25} align="center">
