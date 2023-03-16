@@ -24,7 +24,7 @@ const SelfUpdatingRelativeDate: FC<UpdatingRelativeDateProps> = ({
     useEffect(() => {
         updater.start();
         return updater.stop;
-    }, []);
+    }, [updater]);
 
     return <Text>{dateString}</Text>;
 };
