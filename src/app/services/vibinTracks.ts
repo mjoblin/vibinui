@@ -75,6 +75,15 @@ export const vibinTracksApi = createApi({
                 responseHandler: "content-type",
             }),
         }),
+        searchLyrics: builder.mutation<{ query: string, matches: MediaId[] }, { query: string }>({
+            query: ({ query }) => ({
+                url: "lyrics/search",
+                method: "POST",
+                body: {
+                    query,
+                },
+            }),
+        }),
     }),
 });
 
@@ -85,4 +94,5 @@ export const {
     useGetTracksQuery,
     useGetWaveformQuery,
     useLazyGetTrackByIdQuery,
+    useSearchLyricsMutation,
 } = vibinTracksApi;
