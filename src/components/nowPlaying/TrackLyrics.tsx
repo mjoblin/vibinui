@@ -28,7 +28,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
         lyricsContainer: {
             columnCount: "auto",
             columnWidth: maxLineWidth,
-            columnFill: "auto",
+            columnFill: "balance",
         },
         chunkHeader: {
             fontFamily: APP_ALT_FONTFACE,
@@ -79,7 +79,12 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     const chunkRender = (chunk: LyricChunk, chunkIndex: number) => {
         return (
             <Box key={`chunk_${chunkIndex}`}>
-                {chunk.header && <Text className={dynamicClasses.chunkHeader}>{chunk.header}</Text>}
+                {chunk.header && (
+                    <Highlight className={dynamicClasses.chunkHeader} highlight={lyricsSearchText}>
+                        {chunk.header}
+                    </Highlight>
+                )}
+
                 <Box pb={15}>
                     {chunk.body.map((line, lineIndex) => (
                         <Highlight
