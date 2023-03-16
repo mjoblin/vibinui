@@ -1,9 +1,9 @@
 import React, { FC } from "react";
-import { Flex, Paper, Stack, Table, Text, useMantineTheme } from "@mantine/core";
+import { Center, Flex, Paper, Stack, Table, Text, Tooltip, useMantineTheme } from "@mantine/core";
+import { IconMoodSmile } from "@tabler/icons";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { epochSecondsToStringRelative } from "../../app/utils";
 import StylizedLabel from "../shared/StylizedLabel";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
@@ -18,7 +18,9 @@ const StatusScreen: FC = () => {
     const { streamer, media_device: mediaDevice } = useAppSelector(
         (state: RootState) => state.system
     );
-    const { websocketStatus } = useAppSelector((state: RootState) => state.internal.application);
+    const { websocketClientId, websocketStatus } = useAppSelector(
+        (state: RootState) => state.internal.application
+    );
     const {
         start_time: startTime,
         system_node: systemNode,
@@ -106,12 +108,13 @@ const StatusScreen: FC = () => {
                             Client Connections
                         </Text>
 
-                        <Table striped highlightOnHover>
+                        <Table striped highlightOnHover w="fit-content" horizontalSpacing={50}>
                             <thead>
                                 <tr>
                                     <th>IP</th>
                                     <th>Port</th>
                                     <th>Connection time</th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -128,13 +131,22 @@ const StatusScreen: FC = () => {
                                             )
                                     )
                                     .map((client) => (
-                                        <tr>
+                                        <tr key={client.id}>
                                             <td>{client.ip}</td>
                                             <td>{client.port}</td>
                                             <td>
                                                 <SelfUpdatingRelativeDate
                                                     epochSeconds={client.when_connected}
                                                 />
+                                            </td>
+                                            <td>
+                                                {client.id === websocketClientId && (
+                                                    <Tooltip label="This is you">
+                                                        <Center w="fit-content">
+                                                            <IconMoodSmile />
+                                                        </Center>
+                                                    </Tooltip>
+                                                )}
                                             </td>
                                         </tr>
                                     ))}

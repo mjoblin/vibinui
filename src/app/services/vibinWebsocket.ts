@@ -23,7 +23,7 @@ import {
     TransportAction,
 } from "../store/playbackSlice";
 import { WEBSOCKET_RECONNECT_DELAY } from "../constants";
-import { setWebsocketStatus } from "../store/internalSlice";
+import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
@@ -119,6 +119,7 @@ type VibinStatusPayload = VibinStatusState;
 // TODO: More clearly define the vibin backend message format.
 export type VibinMessage = {
     id: string;
+    client_id: string;
     time: number;
     type: MessageType;
     payload:
@@ -353,6 +354,11 @@ function messageHandler(
             dispatch(setStoredPlaylistsState(data.payload as StoredPlaylistsPayload));
         } else if (data.type === "VibinStatus") {
             dispatch(setVibinStatusState(data.payload as VibinStatusPayload));
+
+            // Every incoming message has a client_id. Rather than storing this client_id in
+            // application state based on every incoming message, limit it to just VibinStatus
+            // messages.
+            dispatch(setWebsocketClientId(data.client_id));
         }
     };
 }

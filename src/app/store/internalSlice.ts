@@ -9,6 +9,7 @@ export interface InternalState {
         isComputingInBackground: boolean;
         showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
+        websocketClientId: string | undefined;
         websocketStatus: WebsocketStatus;
     };
     albums: {
@@ -50,6 +51,7 @@ const initialState: InternalState = {
         isComputingInBackground: false,
         showKeyboardShortcuts: false,
         showDebugPanel: false,
+        websocketClientId: undefined,
         websocketStatus: "disconnected",
     },
     albums: {
@@ -159,6 +161,9 @@ export const internalSlice = createSlice({
             state.tracks.trackCard.renderWidth = action.payload.width;
             state.tracks.trackCard.renderHeight = action.payload.height;
         },
+        setWebsocketClientId: (state, action: PayloadAction<string>) => {
+            state.application.websocketClientId = action.payload;
+        },
         setWebsocketStatus: (state, action: PayloadAction<WebsocketStatus>) => {
             state.application.websocketStatus = action.payload;
         },
@@ -179,6 +184,7 @@ export const {
     setShowDebugPanel,
     setShowKeyboardShortcuts,
     setTrackCardRenderDimensions,
+    setWebsocketClientId,
     setWebsocketStatus,
 } = internalSlice.actions;
 

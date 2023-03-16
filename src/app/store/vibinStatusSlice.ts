@@ -4,6 +4,7 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { updateIfDifferent } from "./helpers";
 
 export type ClientWebsocketClient = {
+    id: string;
     when_connected: number;
     ip: string;
     port: number;
