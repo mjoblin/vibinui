@@ -7,6 +7,7 @@ import {
     Select,
     Text,
     TextInput,
+    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
 import { IconDisc, IconMicrophone2, IconPlayerPlay } from "@tabler/icons";
@@ -95,43 +96,49 @@ const FavoritesControls: FC = () => {
             </Flex>
 
             {/* Replace playlist with favorites */}
-            <Box sx={{ alignSelf: "center" }}>
-                <Menu withArrow arrowPosition="center" position="top-start">
-                    <Menu.Target>
-                        <ActionIcon variant="filled" color={theme.primaryColor}>
-                            <IconPlayerPlay size="1rem" color={theme.white} fill={theme.white} />
-                        </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                        <Menu.Item
-                            disabled={isStreamerOff || !haveFavoriteAlbums}
-                            icon={<IconDisc size={14} />}
-                            onClick={() => {
-                                playFavoriteAlbums();
+            <Tooltip label="Play favorite Albums or Tracks" position="bottom">
+                <Box sx={{ alignSelf: "center" }}>
+                    <Menu withArrow arrowPosition="center" position="top-start" withinPortal={true}>
+                        <Menu.Target>
+                            <ActionIcon variant="filled" color={theme.primaryColor}>
+                                <IconPlayerPlay
+                                    size="1rem"
+                                    color={theme.white}
+                                    fill={theme.white}
+                                />
+                            </ActionIcon>
+                        </Menu.Target>
+                        <Menu.Dropdown>
+                            <Menu.Item
+                                disabled={isStreamerOff || !haveFavoriteAlbums}
+                                icon={<IconDisc size={14} />}
+                                onClick={() => {
+                                    playFavoriteAlbums();
 
-                                showSuccessNotification({
-                                    message: "Playlist replaced with all favorite Albums"
-                                });
-                            }}
-                        >
-                            Play all Favorite Albums
-                        </Menu.Item>
-                        <Menu.Item
-                            disabled={isStreamerOff || !haveFavoriteTracks}
-                            icon={<IconMicrophone2 size={14} />}
-                            onClick={() => {
-                                playFavoriteTracks();
+                                    showSuccessNotification({
+                                        message: "Playlist replaced with all favorite Albums",
+                                    });
+                                }}
+                            >
+                                Play all Favorite Albums
+                            </Menu.Item>
+                            <Menu.Item
+                                disabled={isStreamerOff || !haveFavoriteTracks}
+                                icon={<IconMicrophone2 size={14} />}
+                                onClick={() => {
+                                    playFavoriteTracks();
 
-                                showSuccessNotification({
-                                    message: "Playlist replaced with all favorite Tracks"
-                                });
-                            }}
-                        >
-                            Play all Favorite Tracks
-                        </Menu.Item>
-                    </Menu.Dropdown>
-                </Menu>
-            </Box>
+                                    showSuccessNotification({
+                                        message: "Playlist replaced with all favorite Tracks",
+                                    });
+                                }}
+                            >
+                                Play all Favorite Tracks
+                            </Menu.Item>
+                        </Menu.Dropdown>
+                    </Menu>
+                </Box>
+            </Tooltip>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y albums" */}

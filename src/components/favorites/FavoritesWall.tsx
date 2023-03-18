@@ -119,7 +119,7 @@ const FavoritesWall: FC = () => {
 
     return (
         <Stack spacing="xs">
-            <StylizedLabel color={colors.gray[7]}>albums</StylizedLabel>
+            <StylizedLabel color={colors.gray[7]}>favorite albums</StylizedLabel>
 
             <Box className={dynamicClasses.favoritesWall}>
                 {filteredAlbumFavorites.length > 0 ? (
@@ -142,7 +142,7 @@ const FavoritesWall: FC = () => {
                 )}
             </Box>
 
-            <StylizedLabel color={colors.gray[7]}>tracks</StylizedLabel>
+            <StylizedLabel color={colors.gray[7]}>favorite tracks</StylizedLabel>
 
             <Box className={dynamicClasses.favoritesWall}>
                 {filteredTrackFavorites.length > 0 ? (

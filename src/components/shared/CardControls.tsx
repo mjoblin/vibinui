@@ -1,7 +1,6 @@
 import React, { FC } from "react";
 import { ActionCreator } from "@reduxjs/toolkit";
 import {
-    ActionIcon,
     Box,
     Button,
     Checkbox,
@@ -10,6 +9,7 @@ import {
     Slider,
     Stack,
     Text,
+    Tooltip,
 } from "@mantine/core";
 import {
     maxCardGap,
@@ -45,14 +45,21 @@ const CardControls: FC<CardSettingsProps> = ({
     return (
         <Popover width={200} position="bottom-end" withArrow arrowPosition="center">
             <Popover.Target>
-                <Button
-                    size="xs"
-                    variant="light"
-                    leftIcon={<IconSettings size={18} stroke={1.5} />}
+                <Tooltip
+                    label="Configure card display"
+                    position="bottom-end"
+                    arrowPosition="center"
                 >
-                    Cards
-                </Button>
+                    <Button
+                        size="xs"
+                        variant="light"
+                        leftIcon={<IconSettings size={18} stroke={1.5} />}
+                    >
+                        Cards
+                    </Button>
+                </Tooltip>
             </Popover.Target>
+
             <Popover.Dropdown pb={15}>
                 <Stack spacing={15} align="flex-start">
                     {/* Cover size */}
