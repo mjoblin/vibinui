@@ -1,9 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, createStyles, Highlight, Text } from "@mantine/core";
+import { Box, createStyles, Highlight } from "@mantine/core";
 
 import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
+import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
-import SimpleLoader from "../shared/SimpleLoader";
 import { getTextWidth } from "../../app/utils";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { useAppSelector } from "../../app/hooks";
@@ -64,7 +64,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     }, [data]);
 
     if (isFetching) {
-        return <SimpleLoader label="Retrieving lyrics..." />;
+        return <LoadingDataMessage message="Retrieving lyrics..." />;
     }
 
     if (!data || data.length <= 0) {

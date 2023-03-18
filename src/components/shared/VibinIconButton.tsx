@@ -7,6 +7,7 @@ import { TablerIcon } from "@tabler/icons";
 type VibinIconButtonProps = {
     icon: TablerIcon;
     size?: number;
+    disabled?: boolean;
     container?: boolean;
     fill?: boolean;
     stroke?: number;
@@ -19,6 +20,7 @@ type VibinIconButtonProps = {
 const VibinIconButton: FC<VibinIconButtonProps> = ({
     icon,
     size = 15,
+    disabled = false,
     container = true,
     fill = false,
     stroke = 1,
@@ -34,11 +36,11 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
             borderRadius: size,
             backgroundColor: "rgb(255, 255, 255, 0.2)",
             transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
-            "&:hover": {
+            "&:hover": !disabled && {
                 cursor: "pointer",
                 backgroundColor: theme.colors.blue,
             },
-            [`&:hover .${getStylesRef("button")}`]: {
+            [`&:hover .${getStylesRef("button")}`]: !disabled && {
                 color: theme.colors.gray[1],
                 fill: fill ? theme.colors.gray[1] : undefined,
             },
@@ -48,7 +50,7 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
             color: color ? color : theme.colors.gray[5],
             fill: fill ? theme.colors.gray[5] : undefined,
             transition: "color .2s ease-in-out, fill .2s ease-in-out",
-            "&:hover": {
+            "&:hover": !disabled && {
                 cursor: "pointer",
                 color: hoverColor ? hoverColor : theme.colors.gray[1],
                 fill: fill ? theme.colors.gray[1] : undefined,
@@ -58,7 +60,7 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
 
     const clickHandler = (event: SyntheticEvent) => {
         event.stopPropagation();
-        onClick && onClick();
+        onClick && !disabled && onClick();
     };
 
     // TODO: Is there a way to keep TS happy here.
@@ -71,13 +73,13 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
     });
 
     return container ? (
-        <Tooltip label={tooltipLabel} disabled={!tooltipLabel}>
+        <Tooltip label={tooltipLabel} disabled={!tooltipLabel || disabled}>
             <Center onClick={clickHandler} className={dynamicClasses.playButtonContainer}>
                 {iconComponent}
             </Center>
         </Tooltip>
     ) : (
-        <Tooltip label={tooltipLabel} disabled={!tooltipLabel}>
+        <Tooltip label={tooltipLabel} disabled={!tooltipLabel || disabled}>
             {iconComponent}
         </Tooltip>
     );

@@ -12,7 +12,7 @@ export const useAppConstants = () => {
         CURRENTLY_PLAYING_COLOR: colors.yellow[4],
         HEADER_HEIGHT: 60,
         NAVBAR_PADDING: "md",
-        NAVBAR_WIDTH: 230,
+        NAVBAR_WIDTH: 210,
         SCREEN_LOADING_PT: 25,
         SCREEN_HEADER_HEIGHT: 70,
         SELECTED_COLOR: "rgba(25, 113, 194, 0.2)",

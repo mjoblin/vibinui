@@ -24,12 +24,8 @@ import {
 } from "@tabler/icons";
 
 import Settings from "./Settings";
-import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
 import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
-import MediaSourceBadge from "../shared/MediaSourceBadge";
-import PlayStateIndicator from "../shared/PlayStateIndicator";
-import WebsocketIndicator from "../shared/WebsocketIndicator";
 import StandbyMode from "../shared/StandbyMode";
 
 // Taken from: https://ui.mantine.dev/category/navbars

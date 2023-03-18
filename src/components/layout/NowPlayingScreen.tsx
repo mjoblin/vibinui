@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import {
     ActionIcon,
+    Box,
     Center,
     createStyles,
     Flex,
@@ -172,11 +173,16 @@ const NowPlayingScreen: FC = () => {
 
             {/* RHS stack: Track name, album, artist, and tabs */}
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
-                <Stack spacing={15}>
-                    <Text size={34} weight="bold" className={dynamicClasses.currentTrackTitle}>
-                        {currentTrack.title || " "}
-                    </Text>
-                    {(currentTrack.artist || currentTrack.album) && (
+                <Stack spacing={5}>
+                    <Box mih={40} w="fit-content">
+                        <Text size={34} weight="bold" className={dynamicClasses.currentTrackTitle}>
+                            {currentTrack.title || " "}
+                        </Text>
+                    </Box>
+
+                    {(currentSource?.class === "stream.media" ||
+                        currentTrack.artist ||
+                        currentTrack.album) && (
                         <FieldValueList
                             fieldValues={{
                                 Artist: currentTrack.artist,

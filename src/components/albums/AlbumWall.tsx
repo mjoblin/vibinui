@@ -1,13 +1,14 @@
 import React, { FC } from "react";
-import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
+import { Box, Center, createStyles, Loader, Stack, Text } from "@mantine/core";
 
 import { Album } from "../../app/types";
 import type { RootState } from "../../app/store/store";
+import AlbumCard from "./AlbumCard";
+import LoadingDataMessage from "../shared/LoadingDataMessage";
+import SadLabel from "../shared/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import { setFilteredAlbumCount } from "../../app/store/internalSlice";
-import AlbumCard from "./AlbumCard";
-import SadLabel from "../shared/SadLabel";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { collectionFilter } from "../../app/utils";
 
@@ -36,10 +37,7 @@ const AlbumWall: FC = () => {
     if ((activeCollection === "all" && allIsLoading) || (activeCollection === "new" && newIsLoading)) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
-                <Loader size="sm" />
-                <Text size={14} weight="bold" pl={10}>
-                    Retrieving albums...
-                </Text>
+                <LoadingDataMessage message="Retrieving albums..." />
             </Center>
         );
     }
@@ -54,11 +52,11 @@ const AlbumWall: FC = () => {
 
     // Decide which collection to show. This will either be all albums; new albums; or just the
     // album currently playing.
-    
+
     const albumMatchingCurrentlyPlaying = allAlbums?.find(
         (album) => album.id === currentAlbumMediaId
     );
-    
+
     const collection =
         activeCollection === "all"
             ? allAlbums
