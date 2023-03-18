@@ -7,12 +7,14 @@ type FilterInstructionsProps = {
     defaultKey: string;
     supportedKeys?: string[];
     examples?: string[];
+    note?: string;
 };
 
 const FilterInstructions: FC<FilterInstructionsProps> = ({
     defaultKey,
     supportedKeys = [],
     examples = [],
+    note,
 }) => {
     const { colors } = useMantineTheme();
     const [opened, { close, open }] = useDisclosure(false);
@@ -46,6 +48,7 @@ const FilterInstructions: FC<FilterInstructionsProps> = ({
                                     <Stack spacing={0}>
                                         {examples.map((example) => (
                                             <Text
+                                                key={example}
                                                 size={12}
                                                 sx={{ fontFamily: "monospace" }}
                                             >{`> ${example}`}</Text>
@@ -60,12 +63,25 @@ const FilterInstructions: FC<FilterInstructionsProps> = ({
                                         Supported Keys
                                     </Text>
                                     <Stack spacing={0}>
-                                        {supportedKeys.map((example) => (
-                                            <Text size={12} sx={{ fontFamily: "monospace" }}>
-                                                {example}
+                                        {supportedKeys.map((keyName) => (
+                                            <Text
+                                                key={keyName}
+                                                size={12}
+                                                sx={{ fontFamily: "monospace" }}
+                                            >
+                                                {keyName}
                                             </Text>
                                         ))}
                                     </Stack>
+                                </>
+                            )}
+
+                            {note && (
+                                <>
+                                    <Text size="xs" weight="bold" transform="uppercase">
+                                        Note
+                                    </Text>
+                                    <Text size={12}>{note}</Text>
                                 </>
                             )}
                         </Stack>

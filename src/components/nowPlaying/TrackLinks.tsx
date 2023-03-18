@@ -3,8 +3,8 @@ import { Anchor, Button, Flex, Image, Stack, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons";
 
 import { useGetLinksQuery } from "../../app/services/vibinTracks";
+import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
-import SimpleLoader from "../shared/SimpleLoader";
 import DiscogsLogoImage from "../../assets/images/discogs_logo.svg";
 import GeniusLogoImage from "../../assets/images/genius_logo.png";
 import RateYourMusicImage from "../../assets/images/rateyourmusic_logo.png";
@@ -78,7 +78,7 @@ const TrackLinks: FC<TrackLinksProps> = ({ trackId, artist, album, title }) => {
     const { data, error, isFetching } = useGetLinksQuery({ trackId, artist, album, title, allTypes: true });
 
     if (isFetching) {
-        return <SimpleLoader label="Retrieving links..." />;
+        return <LoadingDataMessage message="Retrieving links..." />;
     }
 
     if (!data || Object.keys(data).length <= 0) {

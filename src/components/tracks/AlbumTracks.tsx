@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Box, Paper, Flex, Stack, Text, createStyles } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Loader, Paper, Stack, Text } from "@mantine/core";
 
 import { useGetAlbumTracksQuery } from "../../app/services/vibinAlbums";
 import { Album, Track } from "../../app/types";
@@ -8,6 +8,8 @@ import MediaActionsButton from "../shared/MediaActionsButton";
 import AlbumArt from "../albums/AlbumArt";
 import AppendToPlaylistButton from "./AppendToPlaylistButton";
 import TrackActionsButton from "./TrackActionsButton";
+import LoadingDataMessage from "../shared/LoadingDataMessage";
+import SadLabel from "../shared/SadLabel";
 
 const DIMMED = "#808080";
 
@@ -34,14 +36,9 @@ type AlbumTracksProps = {
 };
 
 const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
-    const { data, error, isLoading } = useGetAlbumTracksQuery(album.id);
+    const { data: albumTracks, error, isLoading } = useGetAlbumTracksQuery(album.id);
     const { classes } = useStyles();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<string | undefined>(undefined);
-
-    // TODO: Add loading & error handling.
-    if (!data) {
-        return <></>;
-    }
 
     // TODO: The date and genre processing here is similar to <Playlist>. Consider extracting.
 
@@ -77,73 +74,92 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
             </Flex>
 
             {/* Track details */}
-            {/* TODO: Consider whether this should be a table or grid instead (for cleaner layout
-                  behaviour across tracks) */}
-            <Stack sx={{ gap: 0 }}>
-                {data.map((track: Track) => (
-                    <Paper
-                        key={track.id}
-                        pr={5}
-                        // Highlight the track on hover. But if the actions menu is open, then keep
-                        // the selected track highlighted but don't highlight any other tracks
-                        // (until the actions menu goes away).
-                        className={
-                            actionsMenuOpenFor === track.id
-                                ? classes.highlight
-                                : actionsMenuOpenFor
-                                ? ""
-                                : classes.highlightOnHover
-                        }
-                    >
-                        <Flex gap="sm" align="center" justify="space-between">
-                            <Flex justify="flex-end" sx={{ minWidth: "1.5rem" }}>
-                                <Text size="sm" color={DIMMED}>
-                                    {track.track_number}
-                                </Text>
-                            </Flex>
 
-                            <Box sx={{ flexGrow: 1 }}>
-                                {track.artist === album.artist ? (
-                                    <Text size="sm">{track.title}</Text>
-                                ) : (
-                                    // Display the track artist if it's different from the album artist
-                                    <Stack pb={5} sx={{ gap: 0 }}>
-                                        <Text size="sm">{track.title}</Text>
-                                        {track.artist !== album.artist && (
-                                            <Text
-                                                size="xs"
-                                                color={DIMMED}
-                                                sx={{ lineHeight: 1.25 }}
-                                            >
-                                                {track.artist}
-                                            </Text>
-                                        )}
-                                    </Stack>
-                                )}
-                            </Box>
+            {isLoading && (
+                // Tracks currently being loaded.
+                <Center pt={20}>
+                    <LoadingDataMessage message="Retrieving tracks..." />
+                </Center>
+            )}
 
-                            <Flex
-                                gap="sm"
-                                align="center"
-                                justify="flex-end"
-                                sx={{ minWidth: "4rem" }}
+            {!isLoading &&
+                // Tracks are not currently being loaded.
+                (!albumTracks || albumTracks.length <= 0 ? (
+                    <Center pt="xl">
+                        <SadLabel label="No tracks found" />
+                    </Center>
+                ) : (
+                    // Tracks were found, so display them.
+
+                    // TODO: Consider whether this should be a table or grid instead (for cleaner
+                    //  layout behaviour across tracks).
+                    <Stack sx={{ gap: 0 }}>
+                        {albumTracks.map((track: Track) => (
+                            <Paper
+                                key={track.id}
+                                pr={5}
+                                // Highlight the track on hover. But if the actions menu is open,
+                                // then keep the selected track highlighted but don't highlight any
+                                // other tracks (until the actions menu goes away).
+                                className={
+                                    actionsMenuOpenFor === track.id
+                                        ? classes.highlight
+                                        : actionsMenuOpenFor
+                                        ? ""
+                                        : classes.highlightOnHover
+                                }
                             >
-                                <Text size="sm" color={DIMMED}>
-                                    {secstoHms(track.duration)}
-                                </Text>
+                                <Flex gap="sm" align="center" justify="space-between">
+                                    <Flex justify="flex-end" sx={{ minWidth: "1.5rem" }}>
+                                        <Text size="sm" color={DIMMED}>
+                                            {track.track_number}
+                                        </Text>
+                                    </Flex>
 
-                                <TrackActionsButton
-                                    track={track}
-                                    onOpen={() => setActionsMenuOpenFor(track.id!!)}
-                                    onClose={() => setActionsMenuOpenFor(undefined)}
-                                />
+                                    <Box sx={{ flexGrow: 1 }}>
+                                        {track.artist === album.artist ? (
+                                            <Text size="sm">{track.title}</Text>
+                                        ) : (
+                                            // Display the track artist if it's different from the
+                                            // album artist
+                                            <Stack pb={5} sx={{ gap: 0 }}>
+                                                <Text size="sm">{track.title}</Text>
+                                                {track.artist !== album.artist && (
+                                                    <Text
+                                                        size="xs"
+                                                        color={DIMMED}
+                                                        sx={{ lineHeight: 1.25 }}
+                                                    >
+                                                        {track.artist}
+                                                    </Text>
+                                                )}
+                                            </Stack>
+                                        )}
+                                    </Box>
 
-                                <AppendToPlaylistButton item={track} />
-                            </Flex>
-                        </Flex>
-                    </Paper>
+                                    <Flex
+                                        gap="sm"
+                                        align="center"
+                                        justify="flex-end"
+                                        sx={{ minWidth: "4rem" }}
+                                    >
+                                        <Text size="sm" color={DIMMED}>
+                                            {secstoHms(track.duration)}
+                                        </Text>
+
+                                        <TrackActionsButton
+                                            track={track}
+                                            onOpen={() => setActionsMenuOpenFor(track.id!!)}
+                                            onClose={() => setActionsMenuOpenFor(undefined)}
+                                        />
+
+                                        <AppendToPlaylistButton item={track} />
+                                    </Flex>
+                                </Flex>
+                            </Paper>
+                        ))}
+                    </Stack>
                 ))}
-            </Stack>
         </Stack>
     );
 };

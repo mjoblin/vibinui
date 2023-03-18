@@ -9,6 +9,8 @@ import MediaActionsButton from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 // NOTE: TrackArt and AlbumArt are very similar.
 
@@ -76,6 +78,7 @@ const TrackArt: FC<TrackArtProps> = ({
     onActionsMenuClosed,
 }) => {
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
@@ -89,6 +92,8 @@ const TrackArt: FC<TrackArtProps> = ({
             });
         }
     }, [addStatus]);
+
+    const isStreamerOff = streamerPower === "off";
 
     return (
         <Box className={classes.trackArtContainer}>
@@ -112,6 +117,7 @@ const TrackArt: FC<TrackArtProps> = ({
                     sx={{ width: size, height: size }}
                 >
                     <VibinIconButton
+                        disabled={isStreamerOff}
                         icon={IconPlayerPlay}
                         size={15}
                         container={true}

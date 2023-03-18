@@ -10,6 +10,7 @@ import TrackCard from "./TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { collectionFilter } from "../../app/utils";
+import LoadingDataMessage from "../shared/LoadingDataMessage";
 
 const TrackWall: FC = () => {
     const dispatch = useAppDispatch();
@@ -43,10 +44,7 @@ const TrackWall: FC = () => {
     if (isLoading) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
-                <Loader size="sm" />
-                <Text size={14} weight="bold" pl={10}>
-                    Retrieving tracks...
-                </Text>
+                <LoadingDataMessage message="Retrieving tracks..." />
             </Center>
         );
     }

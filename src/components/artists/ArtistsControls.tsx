@@ -146,7 +146,12 @@ const ArtistsControls: FC = () => {
                     { value: "current", label: "Currently Playing" },
                 ]}
                 onChange={onArtistCollectionChange}
-                styles={STYLE_LABEL_BESIDE_COMPONENT}
+                styles={{
+                    ...STYLE_LABEL_BESIDE_COMPONENT,
+                    input: {
+                        width: 180,
+                    }
+                }}
             />
 
             {/* Filter text */}

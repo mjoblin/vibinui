@@ -83,6 +83,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const theme = useMantineTheme();
@@ -102,6 +103,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 
     const mediaTypeDisplay = mediaType && mediaType[0].toUpperCase() + mediaType.slice(1);
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === media.id);
+    const isStreamerOff = streamerPower === "off";
 
     return (
         <Box onClick={(event) => event.stopPropagation()}>
@@ -163,6 +165,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         <>
                             <Menu.Label>Playlist</Menu.Label>
                             <Menu.Item
+                                disabled={isStreamerOff}
                                 icon={
                                     <IconPlayerPlay
                                         size={14}
@@ -193,6 +196,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 Replace and play now
                             </Menu.Item>
                             <Menu.Item
+                                disabled={isStreamerOff}
                                 icon={<IconCornerDownRight size={14} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
@@ -209,6 +213,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 Insert and play now
                             </Menu.Item>
                             <Menu.Item
+                                disabled={isStreamerOff}
                                 icon={<IconCornerDownRightDouble size={14} />}
                                 onClick={() => {
                                     addMediaToPlaylist({
@@ -225,6 +230,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 Insert and play next
                             </Menu.Item>
                             <Menu.Item
+                                disabled={isStreamerOff}
                                 icon={<IconPlaylistAdd size={12} />}
                                 onClick={() => {
                                     addMediaToPlaylist({ mediaId: media.id, action: "APPEND" });

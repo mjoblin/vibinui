@@ -48,7 +48,12 @@ const AlbumsControls: FC = () => {
                 onChange={(value) =>
                     value && dispatch(setAlbumsActiveCollection(value as AlbumCollection))
                 }
-                styles={STYLE_LABEL_BESIDE_COMPONENT}
+                styles={{
+                    ...STYLE_LABEL_BESIDE_COMPONENT,
+                    input: {
+                        width: 150,
+                    }
+                }}
             />
 
             {/* Filter text */}

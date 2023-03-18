@@ -9,6 +9,8 @@ import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist"
 import MediaActionsButton, { ActionCategory } from "../shared/MediaActionsButton";
 import VibinIconButton from "../shared/VibinIconButton";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 const useStyles = createStyles((theme) => ({
     albumArtContainer: {
@@ -79,6 +81,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
 }) => {
     const { colors } = useMantineTheme();
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
@@ -94,6 +97,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
     }, [addStatus]);
 
     const artUrl = artUri ? artUri : album ? album.album_art_uri : undefined;
+    const isStreamerOff = streamerPower === "off";
 
     return (
         <Box className={classes.albumArtContainer}>
@@ -125,6 +129,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
                     sx={{ width: size, height: size }}
                 >
                     <VibinIconButton
+                        disabled={isStreamerOff}
                         icon={IconPlayerPlay}
                         size={15}
                         container={true}

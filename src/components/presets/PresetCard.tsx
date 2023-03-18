@@ -94,8 +94,12 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
             : preset.is_playing;
 
     const borderSize = 3;
-    const overlayWidth = cardSize - borderSize * 2;
-    const overlayHeight = cardSize - borderSize * 2;
+
+    const artWidth = cardSize - borderSize * 2;
+    const artHeight = cardSize - borderSize * 2;
+
+    const overlayWidth = artWidth;
+    const overlayHeight = artHeight;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         presetCard: {
@@ -111,7 +115,13 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     return (
         <Card radius="sm" className={dynamicClasses.presetCard}>
             <Card.Section>
-                <Image src={preset.art_url} fit="cover" radius={5} />
+                <Image
+                    src={preset.art_url}
+                    fit="cover"
+                    radius={5}
+                    width={artWidth}
+                    height={artHeight}
+                />
 
                 {playState === "connecting" && preset.is_playing ? (
                     <Center w={overlayWidth} h={overlayHeight} className={classes.presetConnecting}>

@@ -4,7 +4,6 @@ import {
     Center,
     createStyles,
     Flex,
-    Loader,
     Stack,
     Text,
     useMantineTheme,
@@ -23,6 +22,7 @@ import {
 import AlbumCard from "../albums/AlbumCard";
 import ArtistCard from "./ArtistCard";
 import TrackCard from "../tracks/TrackCard";
+import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
@@ -83,10 +83,7 @@ const ArtistWall: FC = () => {
     if (isLoading) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
-                <Loader size="sm" />
-                <Text size={14} weight="bold" pl={10}>
-                    Retrieving artists...
-                </Text>
+                <LoadingDataMessage message="Retrieving artists..." />
             </Center>
         );
     }

@@ -42,7 +42,12 @@ const FavoritesControls: FC = () => {
                 onChange={(value) =>
                     value && dispatch(setFavoritesActiveCollection(value as FavoriteCollection))
                 }
-                styles={STYLE_LABEL_BESIDE_COMPONENT}
+                styles={{
+                    ...STYLE_LABEL_BESIDE_COMPONENT,
+                    input: {
+                        width: 150,
+                    }
+                }}
             />
 
             {/* Filter text */}
