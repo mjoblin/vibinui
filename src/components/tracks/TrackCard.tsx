@@ -91,7 +91,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
         (state: RootState) => state.userSettings.tracks
     );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_track_media_id
     );
 
     const isCurrentlyPlaying = currentTrackMediaId === track.id;
