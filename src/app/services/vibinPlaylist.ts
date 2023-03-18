@@ -46,7 +46,7 @@ export const vibinPlaylistApi = createApi({
         }),
         clearPlaylist: builder.mutation<void, void>({
             query: () => ({
-                url: `clear`,
+                url: "clear",
                 method: "POST",
             }),
         }),
@@ -66,6 +66,18 @@ export const vibinPlaylistApi = createApi({
         >({
             query: ({ playlistId, fromIndex, toIndex }) => ({
                 url: `move/${playlistId}?from_index=${fromIndex}&to_index=${toIndex}`,
+                method: "POST",
+            }),
+        }),
+        playFavoriteAlbums: builder.mutation<void, void>({
+            query: () => ({
+                url: "play/favorites/albums",
+                method: "POST",
+            }),
+        }),
+        playFavoriteTracks: builder.mutation<void, void>({
+            query: () => ({
+                url: "play/favorites/tracks",
                 method: "POST",
             }),
         }),
@@ -89,6 +101,8 @@ export const {
     useClearPlaylistMutation,
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
+    usePlayFavoriteAlbumsMutation,
+    usePlayFavoriteTracksMutation,
     usePlayPlaylistEntryIdMutation,
     usePlayPlaylistEntryIndexMutation,
 } = vibinPlaylistApi;
