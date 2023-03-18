@@ -5,6 +5,7 @@ import {
     Center,
     createStyles,
     Flex,
+    Paper,
     Popover,
     SegmentedControl,
     Stack,
@@ -171,7 +172,20 @@ const StoredPlaylistsEditor: FC = () => {
             : [];
 
     if (storedPlaylistRows.length <= 0) {
-        return <Text weight="bold">No Playlists to display</Text>;
+        return (
+            <Paper withBorder p={20}>
+                <Center>
+                    <Stack>
+                        <Text size={14} transform="uppercase">
+                            No Playlists to display
+                        </Text>
+                        <Text size={14} color={colors.gray[6]}>
+                            To create a Playlist, choose "Save Playlist as New..." from the menu.
+                        </Text>
+                    </Stack>
+                </Center>
+            </Paper>
+        );
     }
 
     return (
