@@ -20,7 +20,7 @@ const PlaylistScreen: FC = () => {
             <ScreenHeader height={SCREEN_HEADER_HEIGHT}>
                 <PlaylistControls />
             </ScreenHeader>
-            <Box pt={SCREEN_HEADER_HEIGHT}>
+            <Box pt={SCREEN_HEADER_HEIGHT} pb={15}>
                 <Playlist />
             </Box>
         </Stack>

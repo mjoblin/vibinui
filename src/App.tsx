@@ -45,7 +45,7 @@ export default function App() {
                     element: <NowPlayingScreen />,
                 },
                 {
-                    path: "playlists",
+                    path: "playlist",
                     element: <PlaylistScreen />,
                 },
                 {

@@ -14,7 +14,10 @@ import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import { useAddFavoriteMutation, useDeleteFavoriteMutation } from "../../app/services/vibinFavorites";
+import {
+    useAddFavoriteMutation,
+    useDeleteFavoriteMutation,
+} from "../../app/services/vibinFavorites";
 
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {

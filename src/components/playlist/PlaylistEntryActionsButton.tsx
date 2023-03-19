@@ -6,6 +6,8 @@ import {
     IconArrowBarToUp,
     IconCornerDownRightDouble,
     IconDotsVertical,
+    IconHeart,
+    IconHeartOff,
     IconPlayerPlay,
     IconTrash
 } from "@tabler/icons";
@@ -16,7 +18,13 @@ import {
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../app/services/vibinPlaylist";
+import {
+    useAddFavoriteMutation,
+    useDeleteFavoriteMutation,
+} from "../../app/services/vibinFavorites";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 const useStyles = createStyles((theme) => ({
     button: {
@@ -61,7 +69,10 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const { colors } = useMantineTheme();
     const [moveEntry, moveEntryStatus] = useMovePlaylistEntryIdMutation();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
+    const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
+    const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const [playPlaylistId, playStatus] = usePlayPlaylistEntryIdMutation();
+    const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
@@ -84,6 +95,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
             });
         }
     }, [moveEntryStatus, deleteStatus, playStatus]);
+
+    const isFavorited = !!favorites.find((favorite) => favorite.media_id === entry.trackMediaId);
 
     return (
         <Box>
@@ -113,6 +126,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                 <Menu.Dropdown>
                     <>
+                        {/* General */}
                         <Menu.Label>General</Menu.Label>
                         <Menu.Item
                             icon={<IconPlayerPlay size={14} fill={colors.gray[3]} />}
@@ -136,6 +150,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             Remove from Playlist
                         </Menu.Item>
 
+                        {/* Move */}
                         <Menu.Label>Move</Menu.Label>
                         <Menu.Item
                             icon={<IconArrowBarToUp size={14} />}
@@ -195,6 +210,37 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             Move to bottom
                         </Menu.Item>
+                        
+                        {/* Favorites */}
+                        <Menu.Label>Favorites</Menu.Label>
+                        <Menu.Item
+                            icon={<IconHeart size={14} />}
+                            disabled={isFavorited}
+                            onClick={() => {
+                                addFavorite({ type: "track", mediaId: entry.trackMediaId });
+
+                                showSuccessNotification({
+                                    title: "Track added to Favorites",
+                                    message: entry.title,
+                                });
+                            }}
+                        >
+                            Add to Favorites
+                        </Menu.Item>
+                        <Menu.Item
+                            icon={<IconHeartOff size={14} />}
+                            disabled={!isFavorited}
+                            onClick={() => {
+                                deleteFavorite({ mediaId: entry.trackMediaId });
+
+                                showSuccessNotification({
+                                    title: "Track removed from Favorites",
+                                    message: entry.title,
+                                });
+                            }}
+                        >
+                            Remove from Favorites
+                        </Menu.Item>                        
                     </>
                 </Menu.Dropdown>
             </Menu>
