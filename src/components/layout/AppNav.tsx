@@ -112,7 +112,7 @@ const AppNav: FC = () => {
     const routeInfo: Record<string, { link: string; label: string; icon: TablerIcon }[]> = {
         "Now Playing": [
             { link: `${APP_URL_PREFIX}/current`, label: "Current Track", icon: IconDeviceSpeaker },
-            { link: `${APP_URL_PREFIX}/playlists`, label: "Playlists", icon: IconPlaylist },
+            { link: `${APP_URL_PREFIX}/playlist`, label: "Playlist", icon: IconPlaylist },
         ],
         Browse: [
             { link: `${APP_URL_PREFIX}/artists`, label: "Artists", icon: IconUser },

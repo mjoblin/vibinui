@@ -63,7 +63,11 @@ const TracksControls: FC = () => {
                 <FilterInstructions
                     defaultKey="title"
                     supportedKeys={["title", "album", "artist", "genre", "date", "lyrics"]}
-                    examples={["favorite track", "brick artist:(the eager) date:2004"]}
+                    examples={[
+                        "favorite track",
+                        "brick artist:(the eager) date:2004",
+                        "lyrics:(crazy diamond)",
+                    ]}
                     note={
                         "Lyrics searches are limited to tracks which have already had their " +
                         "lyrics retrieved by the Vibin backend."

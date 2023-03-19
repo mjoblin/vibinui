@@ -68,7 +68,7 @@ const FavoritesControls: FC = () => {
                 styles={{
                     ...STYLE_LABEL_BESIDE_COMPONENT,
                     input: {
-                        width: 150,
+                        width: 160,
                     },
                 }}
             />
