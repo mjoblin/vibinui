@@ -1,14 +1,17 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useNavigate } from "react-router-dom";
 import { Box, Center, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import {
     IconCornerDownRight,
     IconCornerDownRightDouble,
+    IconDisc,
     IconDotsVertical,
     IconHeart,
     IconHeartOff,
     IconList,
+    IconMicrophone2,
     IconPlayerPlay,
     IconPlaylistAdd,
 } from "@tabler/icons";
@@ -21,11 +24,20 @@ import {
 } from "../../app/services/vibinFavorites";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import {
+    setAlbumsActiveCollection,
+    setAlbumsFilterText,
+    setArtistsActiveCollection,
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
+    setArtistsSelectedTrack,
+    setTracksFilterText
+} from "../../app/store/userSettingsSlice";
 
 export type MediaType = "album" | "track";
-export type ActionCategory = "Tracks" | "Playlist" | "Favorites";
+export type ActionCategory = "Tracks" | "Playlist" | "Favorites" | "Navigation";
 
 const sizeMd = 15;
 const sizeSm = 10;
@@ -79,11 +91,15 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     onOpen = undefined,
     onClose = undefined,
 }) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
+    const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
+    const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const theme = useMantineTheme();
@@ -104,7 +120,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const mediaTypeDisplay = mediaType && mediaType[0].toUpperCase() + mediaType.slice(1);
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === media.id);
     const isStreamerOff = streamerPower === "off";
-
+    
     return (
         <Box onClick={(event) => event.stopPropagation()}>
             <Menu
@@ -278,6 +294,88 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                             >
                                 Remove from Favorites
                             </Menu.Item>
+                        </>
+                    )}
+
+                    {/* Navigation */}
+                    {categories.includes("Navigation") && (
+                        <>
+                            <Menu.Label>Navigation</Menu.Label>
+                            {mediaType === "album" && (
+                                <Menu.Item
+                                    icon={<IconDisc size={14} />}
+                                    onClick={() => {
+                                        dispatch(setAlbumsActiveCollection("all"));
+                                        dispatch(
+                                            setAlbumsFilterText(
+                                                `${media.title} artist:(${media.artist})`
+                                            )
+                                        );
+                                        navigate("/ui/albums");
+                                    }}
+                                >
+                                    View in Albums
+                                </Menu.Item>
+                            )}
+
+                            {mediaType === "track" && (
+                                <>
+                                    <Menu.Item
+                                        icon={<IconDisc size={14} />}
+                                        onClick={() => {
+                                            dispatch(setArtistsActiveCollection("all"));
+                                            dispatch(setArtistsSelectedTrack(media as Track));
+
+                                            dispatch(
+                                                setArtistsSelectedAlbum(
+                                                    albumById[(media as Track).parentId]
+                                                )
+                                            );
+
+                                            dispatch(
+                                                setArtistsSelectedArtist(
+                                                    artistByName[(media as Track).artist]
+                                                )
+                                            );
+
+                                            navigate("/ui/artists");
+                                        }}
+                                    >
+                                        View in Artists
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        icon={<IconDisc size={14} />}
+                                        onClick={() => {
+                                            dispatch(setAlbumsActiveCollection("all"));
+                                            dispatch(
+                                                setAlbumsFilterText(
+                                                    `${(media as Track).album} artist:(${
+                                                        media.artist
+                                                    })`
+                                                )
+                                            );
+                                            navigate("/ui/albums");
+                                        }}
+                                    >
+                                        View in Albums
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        icon={<IconMicrophone2 size={14} />}
+                                        onClick={() => {
+                                            dispatch(
+                                                setTracksFilterText(
+                                                    `${media.title} album:(${
+                                                        (media as Track).album
+                                                    })`
+                                                )
+                                            );
+                                            navigate("/ui/tracks");
+                                        }}
+                                    >
+                                        View in Tracks
+                                    </Menu.Item>
+                                </>
+                            )}
                         </>
                     )}
                 </Menu.Dropdown>

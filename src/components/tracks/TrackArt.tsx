@@ -5,7 +5,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import MediaActionsButton from "../shared/MediaActionsButton";
+import MediaActionsButton, { ActionCategory } from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
@@ -39,6 +39,8 @@ type TrackArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
+    actionCategories?: ActionCategory[];
+    hidePlayButton?: boolean;
     size?: number;
     showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
@@ -59,6 +61,8 @@ type TrackArtProps = {
  * @param alt
  * @param radius
  * @param showControls
+ * @param actionCategories
+ * @param hidePlayButton
  * @param size
  * @param actionsMenuPosition
  * @param onActionsMenuOpen
@@ -71,7 +75,8 @@ const TrackArt: FC<TrackArtProps> = ({
     alt,
     radius = 0,
     showControls = true,
-    // actionCategories = ["Playlist"],
+    actionCategories = ["Playlist", "Favorites", "Navigation"],
+    hidePlayButton = false,
     size = 150,
     actionsMenuPosition,
     onActionsMenuOpen,
@@ -79,6 +84,7 @@ const TrackArt: FC<TrackArtProps> = ({
 }) => {
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
+    const source = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
@@ -106,7 +112,8 @@ const TrackArt: FC<TrackArtProps> = ({
                 height={size}
             />
 
-            {track && showControls && (
+            {/* Only show the track controls for locally-streamed media */}
+            {track && showControls && source && source.class === "stream.media" && (
                 <Flex
                     p="xs"
                     justify="space-between"
@@ -116,31 +123,36 @@ const TrackArt: FC<TrackArtProps> = ({
                     }`}
                     sx={{ width: size, height: size }}
                 >
-                    <VibinIconButton
-                        disabled={isStreamerOff}
-                        icon={IconPlayerPlay}
-                        size={15}
-                        container={true}
-                        fill={true}
-                        tooltipLabel="Play"
-                        onClick={() => {
-                            if (!track.id) {
-                                return;
-                            }
+                    {hidePlayButton ? (
+                        <Box />
+                    ) : (
+                        <VibinIconButton
+                            disabled={isStreamerOff}
+                            icon={IconPlayerPlay}
+                            size={15}
+                            container={true}
+                            fill={true}
+                            tooltipLabel="Play"
+                            onClick={() => {
+                                if (!track.id) {
+                                    return;
+                                }
 
-                            addMediaToPlaylist({ mediaId: track.id, action: "REPLACE" });
+                                addMediaToPlaylist({ mediaId: track.id, action: "REPLACE" });
 
-                            showSuccessNotification({
-                                title: `Replaced Playlist with Track`,
-                                message: track.title,
-                            });
-                        }}
-                    />
+                                showSuccessNotification({
+                                    title: `Replaced Playlist with Track`,
+                                    message: track.title,
+                                });
+                            }}
+                        />
+                    )}
 
                     <MediaActionsButton
                         mediaType="track"
                         media={track}
                         position={actionsMenuPosition}
+                        categories={actionCategories}
                         onOpen={() => {
                             setIsActionsMenuOpen(true);
                             onActionsMenuOpen && onActionsMenuOpen();

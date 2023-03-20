@@ -1,5 +1,6 @@
 import React, { FC } from "react";
-import { Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -52,7 +53,7 @@ const AlbumsControls: FC = () => {
                     ...STYLE_LABEL_BESIDE_COMPONENT,
                     input: {
                         width: 170,
-                    }
+                    },
                 }}
             />
 
@@ -63,6 +64,14 @@ const AlbumsControls: FC = () => {
                     placeholder="Filter by Album title"
                     label="Filter"
                     value={filterText}
+                    rightSection={
+                        <ActionIcon
+                            disabled={!filterText}
+                            onClick={() => dispatch(setAlbumsFilterText(""))}
+                        >
+                            <IconSquareX size="1.3rem" style={{ display: "block", opacity: 0.5 }} />
+                        </ActionIcon>
+                    }
                     onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
                     styles={{
                         ...STYLE_LABEL_BESIDE_COMPONENT,

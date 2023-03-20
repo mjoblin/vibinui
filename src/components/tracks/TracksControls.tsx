@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -16,6 +16,7 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { useDebouncedValue } from "@mantine/hooks";
+import { IconSquareX } from "@tabler/icons";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 
@@ -51,6 +52,14 @@ const TracksControls: FC = () => {
                     placeholder="Filter by Track title"
                     label="Filter"
                     value={filterText}
+                    rightSection={
+                        <ActionIcon
+                            disabled={!filterText}
+                            onClick={() => dispatch(setTracksFilterText(""))}
+                        >
+                            <IconSquareX size="1.3rem" style={{ display: "block", opacity: 0.5 }} />
+                        </ActionIcon>
+                    }
                     onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
                     styles={{
                         ...STYLE_LABEL_BESIDE_COMPONENT,

@@ -18,7 +18,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { setNowPlayingActiveTab } from "../../app/store/userSettingsSlice";
 import { usePlayMutation } from "../../app/services/vibinTransport";
 import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
-import AlbumArt from "../albums/AlbumArt";
+import TrackArt from "../tracks/TrackArt";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import NowPlaying from "../currentlyPlaying/NowPlaying";
 import TrackLinks from "../nowPlaying/TrackLinks";
@@ -87,7 +87,7 @@ const NowPlayingScreen: FC = () => {
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
+    const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
@@ -99,7 +99,7 @@ const NowPlayingScreen: FC = () => {
         currentTrackTitle: {
             fontFamily: APP_ALT_FONTFACE,
             lineHeight: 0.9,
-            height: "1.7rem",
+            minHeight: "1.7rem",
         },
     }))();
 
@@ -125,6 +125,7 @@ const NowPlayingScreen: FC = () => {
 
             let result = [year, genre].filter((value) => value !== undefined).join(" • ");
 
+            setCurrentTrack(track);
             setTrackYearAndGenre(result);
         }
     }, [getTrackResult]);
@@ -152,7 +153,7 @@ const NowPlayingScreen: FC = () => {
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth}>
                 <Stack spacing="xs">
-                    <Flex justify="space-between">
+                    <Flex justify="space-between" align="flex-end">
                         <MediaSourceBadge showSource={true} />
 
                         {trackYearAndGenre && (
@@ -163,7 +164,13 @@ const NowPlayingScreen: FC = () => {
                     </Flex>
 
                     <Stack>
-                        <AlbumArt artUri={currentTrack.art_url} size={albumArtWidth} radius={5} />
+                        <TrackArt
+                            track={currentTrack}
+                            size={albumArtWidth}
+                            radius={5}
+                            actionCategories={["Favorites", "Navigation"]}
+                            hidePlayButton
+                        />
                         {playStatus === "pause" && <PlaybackPaused />}
                     </Stack>
 
