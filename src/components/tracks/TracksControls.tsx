@@ -19,6 +19,7 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
+const stripParens = new RegExp(/^\(?([^\)]+)\)?$/);
 
 const TracksControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -37,7 +38,11 @@ const TracksControls: FC = () => {
         const lyricSearch = debouncedFilterText.toLocaleLowerCase().match(lyricsSearchFinder);
 
         if (lyricSearch) {
-            dispatch(setTracksLyricsSearchText(lyricSearch[2]));
+            const searchNoParens = lyricSearch[2].match(stripParens);
+
+            dispatch(
+                setTracksLyricsSearchText(searchNoParens ? searchNoParens[1] : lyricSearch[2])
+            );
         } else {
             dispatch(setTracksLyricsSearchText(""));
         }

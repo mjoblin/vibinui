@@ -14,6 +14,7 @@ import {
     IconMicrophone2,
     IconPlayerPlay,
     IconPlaylistAdd,
+    IconUser,
 } from "@tabler/icons";
 
 import { Album, Track } from "../../app/types";
@@ -321,7 +322,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                             {mediaType === "track" && (
                                 <>
                                     <Menu.Item
-                                        icon={<IconDisc size={14} />}
+                                        icon={<IconUser size={14} />}
                                         onClick={() => {
                                             dispatch(setArtistsActiveCollection("all"));
                                             dispatch(setArtistsSelectedTrack(media as Track));
