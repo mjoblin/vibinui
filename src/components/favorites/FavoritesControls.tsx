@@ -10,7 +10,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { IconDisc, IconMicrophone2, IconPlayerPlay } from "@tabler/icons";
+import { IconDisc, IconMicrophone2, IconPlayerPlay, IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
@@ -79,6 +79,14 @@ const FavoritesControls: FC = () => {
                     placeholder="Filter by Favorite title"
                     label="Filter"
                     value={filterText}
+                    rightSection={
+                        <ActionIcon
+                            disabled={!filterText}
+                            onClick={() => dispatch(setFavoritesFilterText(""))}
+                        >
+                            <IconSquareX size="1.3rem" style={{ display: "block", opacity: 0.5 }} />
+                        </ActionIcon>
+                    }
                     onChange={(event) => dispatch(setFavoritesFilterText(event.target.value))}
                     styles={{
                         ...STYLE_LABEL_BESIDE_COMPONENT,

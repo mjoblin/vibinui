@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 
-import { Album, Track } from "../types";
+import { Album, Artist, Track } from "../types";
 import { useAppDispatch } from "../hooks";
 import { setIsComputingInBackground } from "../store/internalSlice";
 import { useGetAlbumsQuery } from "../services/vibinAlbums";
+import { useGetArtistsQuery } from "../services/vibinArtists";
 import { useGetTracksQuery } from "../services/vibinTracks";
 
 // ================================================================================================
@@ -44,7 +45,6 @@ interface LocalAction {
 }
 
 const localReducer = (state: LocalState, action: LocalAction): LocalState => {
-    // console.log("STATE", state);
     if (action.type === "add_compute_label") {
         return {
             ...state,
@@ -65,8 +65,15 @@ export const useMediaGroupings = () => {
     const [state, localDispatch] = useReducer(localReducer, { computing: [] });
     const dispatch = useAppDispatch();
     const { data: allAlbums, error: albumsError, isSuccess: albumsIsSuccess } = useGetAlbumsQuery();
+    const {
+        data: allArtists,
+        error: artistsError,
+        isSuccess: artistsIsSuccess,
+    } = useGetArtistsQuery();
     const { data: allTracks, error: tracksError, isSuccess: tracksIsSuccess } = useGetTracksQuery();
     const [albumsByArtistName, setAlbumsByArtistName] = useState<Record<string, Album[]>>({});
+    const [albumById, setAlbumById] = useState<Record<string, Album>>({});
+    const [artistByName, setArtistByName] = useState<Record<string, Artist>>({});
     const [tracksByAlbumId, setTracksByAlbumId] = useState<Record<string, Track[]>>({});
     const [tracksByArtistName, setTracksByArtistName] = useState<Record<string, Track[]>>({});
     const mediaGrouperWorker: Worker = useMemo(
@@ -77,9 +84,11 @@ export const useMediaGroupings = () => {
     mediaGrouperWorker.onmessage = (e) => {
         const { type, result } = e.data;
 
+        type === "albumById" && setAlbumById(result);
         type === "allAlbumsByArtistName" && setAlbumsByArtistName(result);
         type === "allTracksByArtistName" && setTracksByArtistName(result);
         type === "allTracksByAlbumId" && setTracksByAlbumId(result);
+        type === "artistByName" && setArtistByName(result);
 
         localDispatch({ type: "remove_compute_label", payload: e.data.type });
     }
@@ -99,7 +108,11 @@ export const useMediaGroupings = () => {
             return;
         }
 
-        const computeLabel = "allAlbumsByArtistName";
+        let computeLabel = "albumById";
+        localDispatch({ type: "add_compute_label", payload: computeLabel });
+        mediaGrouperWorker.postMessage({ type: computeLabel, payload: allAlbums });
+
+        computeLabel = "allAlbumsByArtistName";
         localDispatch({ type: "add_compute_label", payload: computeLabel });
         mediaGrouperWorker.postMessage({ type: computeLabel, payload: allAlbums });
     }, [allAlbums, mediaGrouperWorker]);
@@ -121,6 +134,19 @@ export const useMediaGroupings = () => {
         mediaGrouperWorker.postMessage({ type: computeLabel, payload: allTracks });
     }, [allTracks, mediaGrouperWorker]);
 
+    /**
+     *
+     */
+    useEffect(() => {
+        if (!allArtists) {
+            return;
+        }
+
+        const computeLabel = "artistByName";
+        localDispatch({ type: "add_compute_label", payload: computeLabel });
+        mediaGrouperWorker.postMessage({ type: computeLabel, payload: allArtists });
+    }, [allArtists, mediaGrouperWorker]);
+
     // --------------------------------------------------------------------------------------------
 
     // TODO: Investigate changing from "ByName" to "ById".
@@ -129,6 +155,11 @@ export const useMediaGroupings = () => {
         allAlbumsByArtistName: (artist: string) => albumsByArtistName[artist] || [],
         allTracksByAlbumId: (album: string) => tracksByAlbumId[album] || [],
         allTracksByArtistName: (artist: string) => tracksByArtistName[artist] || [],
-        isComputing: state.computing.length > 0,
+
+        albumsByArtistName,
+        albumById,
+        artistByName,
+        tracksByAlbumId,
+        tracksByArtistName,
     };
 };

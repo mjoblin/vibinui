@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useEffect } from "react";
 import {
+    ActionIcon,
     Flex,
     Select,
     Text,
@@ -22,9 +23,9 @@ import {
 import { RootState } from "../../app/store/store";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
-import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
+import { IconSquareX } from "@tabler/icons";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -83,22 +84,6 @@ const ArtistsControls: FC = () => {
             dispatch(setArtistsSelectedAlbum(currentAlbum));
             dispatch(setArtistsSelectedTrack(currentTrack));
         }
-
-        // // TODO: Clean this up once "current artist" is available alongside current artist/album;
-        // //  and once the current media ids are replaced with full Artist/Album/Track objects.
-        // const currentArtist = allArtists?.find(
-        //     (artist: Artist) => artist.title === currentTrack?.artist
-        // );
-        //
-        // const currentAlbum = allAlbums?.find((album: Album) => album.id === currentAlbumMediaId);
-        // const currentTrack = allTracks?.find((track: Track) => track.id === currentTrackMediaId);
-        //
-        // if (currentArtist && (currentAlbum || currentTrack)) {
-        //     dispatch(setArtistsFilterText(""));
-        //     dispatch(setArtistsSelectedArtist(currentArtist));
-        //     dispatch(setArtistsSelectedAlbum(currentAlbum));
-        //     dispatch(setArtistsSelectedTrack(currentTrack));
-        // }
     }
 
     const onArtistCollectionChange = useCallback((value: unknown) => {
@@ -150,7 +135,7 @@ const ArtistsControls: FC = () => {
                     ...STYLE_LABEL_BESIDE_COMPONENT,
                     input: {
                         width: 180,
-                    }
+                    },
                 }}
             />
 
@@ -159,6 +144,14 @@ const ArtistsControls: FC = () => {
                 placeholder="Filter by Artist name"
                 label="Filter"
                 value={filterText}
+                rightSection={
+                    <ActionIcon
+                        disabled={!filterText}
+                        onClick={() => dispatch(setArtistsFilterText(""))}
+                    >
+                        <IconSquareX size="1.3rem" style={{ display: "block", opacity: 0.5 }} />
+                    </ActionIcon>
+                }
                 disabled={activeCollection === "current"}
                 onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
                 styles={{

@@ -1,13 +1,16 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
+import { useNavigate } from "react-router-dom";
 import { Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
 import {
     IconArrowBarToDown,
     IconArrowBarToUp,
     IconCornerDownRightDouble,
+    IconDisc,
     IconDotsVertical,
     IconHeart,
     IconHeartOff,
+    IconMicrophone2,
     IconPlayerPlay,
     IconTrash
 } from "@tabler/icons";
@@ -23,7 +26,9 @@ import {
     useDeleteFavoriteMutation,
 } from "../../app/services/vibinFavorites";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
-import { useAppSelector } from "../../app/hooks";
+import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../app/store/userSettingsSlice";
+import { setTracksFilterText } from "../../app/store/userSettingsSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 
 const useStyles = createStyles((theme) => ({
@@ -66,6 +71,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     onOpen = undefined,
     onClose = undefined,
 }) => {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { colors } = useMantineTheme();
     const [moveEntry, moveEntryStatus] = useMovePlaylistEntryIdMutation();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
@@ -210,7 +217,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             Move to bottom
                         </Menu.Item>
-                        
+
                         {/* Favorites */}
                         <Menu.Label>Favorites</Menu.Label>
                         <Menu.Item
@@ -240,7 +247,33 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             }}
                         >
                             Remove from Favorites
-                        </Menu.Item>                        
+                        </Menu.Item>
+
+                        {/* Navigation */}
+                        <Menu.Label>Navigation</Menu.Label>
+                        <Menu.Item
+                            icon={<IconDisc size={14} />}
+                            onClick={() => {
+                                dispatch(setAlbumsActiveCollection("all"));
+                                dispatch(
+                                    setAlbumsFilterText(`${entry.album} artist:(${entry.artist})`)
+                                );
+                                navigate("/ui/albums");
+                            }}
+                        >
+                            View in Albums
+                        </Menu.Item>
+                        <Menu.Item
+                            icon={<IconMicrophone2 size={14} />}
+                            onClick={() => {
+                                dispatch(
+                                    setTracksFilterText(`${entry.title} album:(${entry.album})`)
+                                );
+                                navigate("/ui/tracks");
+                            }}
+                        >
+                            View in Tracks
+                        </Menu.Item>
                     </>
                 </Menu.Dropdown>
             </Menu>

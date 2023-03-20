@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -13,6 +13,7 @@ import { RootState } from "../../app/store/store";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
+import { IconSquareX } from "@tabler/icons";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -32,6 +33,14 @@ const PresetsControls: FC = () => {
                     placeholder="Filter by Preset name"
                     label="Filter"
                     value={filterText}
+                    rightSection={
+                        <ActionIcon
+                            disabled={!filterText}
+                            onClick={() => dispatch(setPresetsFilterText(""))}
+                        >
+                            <IconSquareX size="1.3rem" style={{ display: "block", opacity: 0.5 }} />
+                        </ActionIcon>
+                    }
                     onChange={(event) => dispatch(setPresetsFilterText(event.target.value))}
                     styles={{
                         ...STYLE_LABEL_BESIDE_COMPONENT,

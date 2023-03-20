@@ -15,6 +15,7 @@ import NowPlayingScreen from "./components/layout/NowPlayingScreen";
 import PresetsScreen from "./components/layout/PresetsScreen";
 import PlaylistScreen from "./components/layout/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
+import MediaGroupsManager from "./components/managers/MediaGroupsManager";
 import MediaSourceManager from "./components/managers/MediaSourceManager";
 import TracksScreen from "./components/layout/TracksScreen";
 import WebsocketManager from "./components/managers/WebsocketManager";
@@ -112,6 +113,7 @@ export default function App() {
                 <Notifications limit={5} autoClose={3000} />
                 <WebsocketManager />
                 <PlayheadManager />
+                <MediaGroupsManager />
                 <MediaSourceManager />
                 <RouterProvider router={router} />
             </MantineProvider>

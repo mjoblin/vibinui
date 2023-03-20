@@ -1,9 +1,11 @@
-import { Album, Track } from "../types";
+import { Album, Artist, Track } from "../types";
 
 type MediaGrouperMessageType =
+    | "albumById"
     | "allAlbumsByArtistName"
     | "allTracksByArtistName"
-    | "allTracksByAlbumId";
+    | "allTracksByAlbumId"
+    | "artistByName";
 
 type MediaGrouperMessage = {
     type: MediaGrouperMessageType;
@@ -13,9 +15,17 @@ type MediaGrouperMessage = {
 onmessage = (e) => {
     const { type, payload } = e.data as MediaGrouperMessage;
 
-    let result;
+    let result: any;
 
-    if (type === "allAlbumsByArtistName") {
+    if (type === "albumById") {
+        const r: Record<string, Album> = {};
+
+        for (const album of payload) {
+            r[album.id] = album;
+        }
+
+        result = r;
+    } else if (type === "allAlbumsByArtistName") {
         result = payload.reduce(
             // @ts-ignore
             (computedAlbumsByArtist, album) => {
@@ -60,6 +70,14 @@ onmessage = (e) => {
             },
             {}
         );
+    } else if (type === "artistByName") {
+        const r: Record<string, Artist> = {};
+
+        for (const artist of payload) {
+            r[artist.title] = artist;
+        }
+
+        result = r;
     }
 
     postMessage({ type, result });
