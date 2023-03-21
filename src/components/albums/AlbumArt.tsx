@@ -6,7 +6,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import MediaActionsButton, { ActionCategory } from "../shared/MediaActionsButton";
+import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 import VibinIconButton from "../shared/VibinIconButton";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import { useAppSelector } from "../../app/hooks";
@@ -37,7 +37,7 @@ type AlbumArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
-    actionCategories?: ActionCategory[];
+    enabledActions?: EnabledActions;
     size?: number;
     showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
@@ -73,7 +73,12 @@ const AlbumArt: FC<AlbumArtProps> = ({
     alt,
     radius = 0,
     showControls = true,
-    actionCategories = ["Playlist"],
+    enabledActions = {
+        Favorites: ["all"],
+        Navigation: ["ViewInArtists", "ViewInTracks"],
+        Playlist: ["all"],
+        Tracks: ["all"],
+    },
     size = 150,
     actionsMenuPosition,
     onActionsMenuOpen,
@@ -112,7 +117,9 @@ const AlbumArt: FC<AlbumArtProps> = ({
                 placeholder={
                     <Box w="100%" h="100%" bg={colors.dark[6]}>
                         <Center w="100%" h="100%">
-                            <Text transform="uppercase" weight="bold" size={11}>no art</Text>
+                            <Text transform="uppercase" weight="bold" size={11}>
+                                no art
+                            </Text>
                         </Center>
                     </Box>
                 }
@@ -149,7 +156,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
                         mediaType="album"
                         media={album}
                         position={actionsMenuPosition}
-                        categories={actionCategories}
+                        enabledActions={enabledActions}
                         onOpen={() => {
                             setIsActionsMenuOpen(true);
                             onActionsMenuOpen && onActionsMenuOpen();

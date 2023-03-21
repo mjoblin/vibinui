@@ -168,8 +168,12 @@ const NowPlayingScreen: FC = () => {
                             track={currentTrack}
                             size={albumArtWidth}
                             radius={5}
-                            actionCategories={["Favorites", "Navigation"]}
                             hidePlayButton
+                            enabledActions={{
+                                Favorites: ["all"],
+                                Navigation: ["all"],
+                                Playlist: ["all"],
+                            }}
                         />
                         {playStatus === "pause" && <PlaybackPaused />}
                     </Stack>

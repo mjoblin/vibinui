@@ -11,6 +11,7 @@ import {
     setAlbumById,
     setAlbumsByArtistName,
     setArtistByName,
+    setTrackById,
     setTracksByAlbumId,
     setTracksByArtistName,
 } from "../../app/store/mediaGroupsSlice";
@@ -18,8 +19,14 @@ import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 
 const MediaGroupsManager: FC = () => {
     const dispatch = useDispatch();
-    const { albumById, albumsByArtistName, artistByName, tracksByAlbumId, tracksByArtistName } =
-        useMediaGroupings();
+    const {
+        albumById,
+        albumsByArtistName,
+        artistByName,
+        trackById,
+        tracksByAlbumId,
+        tracksByArtistName,
+    } = useMediaGroupings();
 
     useEffect(() => {
         dispatch(setAlbumById(albumById));
@@ -34,10 +41,14 @@ const MediaGroupsManager: FC = () => {
     }, [dispatch, artistByName]);
 
     useEffect(() => {
+        dispatch(setTrackById(trackById));
+    }, [dispatch, trackById]);
+
+    useEffect(() => {
         dispatch(setTracksByAlbumId(tracksByAlbumId));
     }, [dispatch, tracksByAlbumId]);
 
-        useEffect(() => {
+    useEffect(() => {
         dispatch(setTracksByArtistName(tracksByArtistName));
     }, [dispatch, tracksByArtistName]);
 

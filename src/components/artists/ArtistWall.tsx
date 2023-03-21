@@ -170,7 +170,8 @@ const ArtistWall: FC = () => {
         </Box>
     ) : (
         <Flex gap={20} pb={15}>
-            {/* Artists */}
+            {/* Artists ----------------------------------------------------------------------- */}
+
             <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Artist
@@ -197,7 +198,8 @@ const ArtistWall: FC = () => {
                 </Stack>
             </Stack>
 
-            {/* Albums */}
+            {/* Albums ------------------------------------------------------------------------ */}
+
             <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Albums
@@ -214,6 +216,12 @@ const ArtistWall: FC = () => {
                                         type="compact"
                                         album={album}
                                         tracks={allTracksByAlbumId(album.id)}
+                                        enabledActions={{
+                                            Favorites: ["all"],
+                                            Navigation: ["ViewInAlbums", "ViewInTracks"],
+                                            Playlist: ["all"],
+                                            Tracks: ["all"],
+                                        }}
                                         selected={album.id === selectedAlbum?.id}
                                         onClick={(album: Album) =>
                                             dispatch(setArtistsSelectedAlbum(album))
@@ -240,7 +248,8 @@ const ArtistWall: FC = () => {
                 </Stack>
             </Stack>
 
-            {/* Tracks */}
+            {/* Tracks ------------------------------------------------------------------------ */}
+
             <Stack miw={minWidth}>
                 <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
                     Tracks
@@ -254,6 +263,12 @@ const ArtistWall: FC = () => {
                                 type="compact"
                                 track={track}
                                 showArt={false}
+                                enabledActions={{
+                                    Favorites: ["all"],
+                                    Navigation: ["ViewInAlbums", "ViewInTracks"],
+                                    Playlist: ["all"],
+                                    Tracks: ["all"],
+                                }}
                                 selected={track.id === selectedTrack?.id}
                                 onClick={(track: Track) => dispatch(setArtistsSelectedTrack(track))}
                             />

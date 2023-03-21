@@ -5,7 +5,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { Track } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
-import MediaActionsButton, { ActionCategory } from "../shared/MediaActionsButton";
+import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
@@ -39,7 +39,7 @@ type TrackArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
-    actionCategories?: ActionCategory[];
+    enabledActions?: EnabledActions;
     hidePlayButton?: boolean;
     size?: number;
     showArtStub?: boolean;
@@ -75,7 +75,12 @@ const TrackArt: FC<TrackArtProps> = ({
     alt,
     radius = 0,
     showControls = true,
-    actionCategories = ["Playlist", "Favorites", "Navigation"],
+    enabledActions = {
+        Favorites: ["all"],
+        Navigation: ["ViewInArtists", "ViewInAlbums"],
+        Playlist: ["all"],
+        Tracks: ["all"],
+    },
     hidePlayButton = false,
     size = 150,
     actionsMenuPosition,
@@ -152,7 +157,7 @@ const TrackArt: FC<TrackArtProps> = ({
                         mediaType="track"
                         media={track}
                         position={actionsMenuPosition}
-                        categories={actionCategories}
+                        enabledActions={enabledActions}
                         onOpen={() => {
                             setIsActionsMenuOpen(true);
                             onActionsMenuOpen && onActionsMenuOpen();

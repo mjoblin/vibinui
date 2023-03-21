@@ -15,7 +15,7 @@ import {
     IconTrash
 } from "@tabler/icons";
 
-import { PlaylistEntry } from "../../app/types";
+import { PlaylistEntry, Track } from "../../app/types";
 import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
@@ -26,7 +26,11 @@ import {
     useDeleteFavoriteMutation,
 } from "../../app/services/vibinFavorites";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
-import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../app/store/userSettingsSlice";
+import {
+    setAlbumsActiveCollection,
+    setAlbumsFilterText,
+    setArtistsActiveCollection, setArtistsSelectedAlbum, setArtistsSelectedArtist, setArtistsSelectedTrack
+} from "../../app/store/userSettingsSlice";
 import { setTracksFilterText } from "../../app/store/userSettingsSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -80,6 +84,9 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const [playPlaylistId, playStatus] = usePlayPlaylistEntryIdMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
+    const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
+    const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
+    const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
@@ -133,7 +140,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                 <Menu.Dropdown>
                     <>
-                        {/* General */}
+                        {/* General actions --------------------------------------------------- */}
+
                         <Menu.Label>General</Menu.Label>
                         <Menu.Item
                             icon={<IconPlayerPlay size={14} fill={colors.gray[3]} />}
@@ -157,7 +165,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             Remove from Playlist
                         </Menu.Item>
 
-                        {/* Move */}
+                        {/* Move actions ------------------------------------------------------ */}
+
                         <Menu.Label>Move</Menu.Label>
                         <Menu.Item
                             icon={<IconArrowBarToUp size={14} />}
@@ -218,7 +227,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             Move to bottom
                         </Menu.Item>
 
-                        {/* Favorites */}
+                        {/* Favorites actions ------------------------------------------------- */}
+
                         <Menu.Label>Favorites</Menu.Label>
                         <Menu.Item
                             icon={<IconHeart size={14} />}
@@ -249,8 +259,22 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             Remove from Favorites
                         </Menu.Item>
 
-                        {/* Navigation */}
+                        {/* Navigation actions ------------------------------------------------ */}
+
                         <Menu.Label>Navigation</Menu.Label>
+                        <Menu.Item
+                            icon={<IconDisc size={14} />}
+                            onClick={() => {
+                                dispatch(setArtistsActiveCollection("all"));
+                                dispatch(setArtistsSelectedArtist(artistByName[entry.artist]));
+                                dispatch(setArtistsSelectedAlbum(albumById[entry.albumMediaId]));
+                                dispatch(setArtistsSelectedTrack(trackById[entry.trackMediaId]));
+
+                                navigate("/ui/artists");
+                            }}
+                        >
+                            View in Artists
+                        </Menu.Item>
                         <Menu.Item
                             icon={<IconDisc size={14} />}
                             onClick={() => {

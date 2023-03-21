@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Box, Center, createStyles, Flex, Loader, Paper, Stack, Text } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Paper, Stack, Text } from "@mantine/core";
 
 import { useGetAlbumTracksQuery } from "../../app/services/vibinAlbums";
 import { Album, Track } from "../../app/types";
@@ -7,7 +7,6 @@ import { secstoHms, yearFromDate } from "../../app/utils";
 import MediaActionsButton from "../shared/MediaActionsButton";
 import AlbumArt from "../albums/AlbumArt";
 import AppendToPlaylistButton from "./AppendToPlaylistButton";
-import TrackActionsButton from "./TrackActionsButton";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
 
@@ -67,7 +66,6 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                     <MediaActionsButton
                         media={album}
                         mediaType="album"
-                        categories={["Playlist"]}
                         position="bottom"
                     />
                 </Box>
@@ -147,8 +145,10 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                             {secstoHms(track.duration)}
                                         </Text>
 
-                                        <TrackActionsButton
-                                            track={track}
+                                        <MediaActionsButton
+                                            media={track}
+                                            mediaType="track"
+                                            inCircle={false}
                                             onOpen={() => setActionsMenuOpenFor(track.id!!)}
                                             onClose={() => setActionsMenuOpenFor(undefined)}
                                         />
