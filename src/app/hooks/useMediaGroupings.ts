@@ -76,6 +76,7 @@ export const useMediaGroupings = () => {
     const [artistByName, setArtistByName] = useState<Record<string, Artist>>({});
     const [tracksByAlbumId, setTracksByAlbumId] = useState<Record<string, Track[]>>({});
     const [tracksByArtistName, setTracksByArtistName] = useState<Record<string, Track[]>>({});
+    const [trackById, setTrackById] = useState<Record<string, Track>>({});
     const mediaGrouperWorker: Worker = useMemo(
         () => new Worker(new URL("../workers/mediaGrouperWorker.ts", import.meta.url)),
         []
@@ -89,6 +90,7 @@ export const useMediaGroupings = () => {
         type === "allTracksByArtistName" && setTracksByArtistName(result);
         type === "allTracksByAlbumId" && setTracksByAlbumId(result);
         type === "artistByName" && setArtistByName(result);
+        type === "trackById" && setTrackById(result);
 
         localDispatch({ type: "remove_compute_label", payload: e.data.type });
     }
@@ -132,6 +134,10 @@ export const useMediaGroupings = () => {
         computeLabel = "allTracksByAlbumId";
         localDispatch({ type: "add_compute_label", payload: computeLabel });
         mediaGrouperWorker.postMessage({ type: computeLabel, payload: allTracks });
+
+        computeLabel = "trackById";
+        localDispatch({ type: "add_compute_label", payload: computeLabel });
+        mediaGrouperWorker.postMessage({ type: computeLabel, payload: allTracks });
     }, [allTracks, mediaGrouperWorker]);
 
     /**
@@ -159,6 +165,7 @@ export const useMediaGroupings = () => {
         albumsByArtistName,
         albumById,
         artistByName,
+        trackById,
         tracksByAlbumId,
         tracksByArtistName,
     };

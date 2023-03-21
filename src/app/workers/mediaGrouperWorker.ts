@@ -5,7 +5,8 @@ type MediaGrouperMessageType =
     | "allAlbumsByArtistName"
     | "allTracksByArtistName"
     | "allTracksByAlbumId"
-    | "artistByName";
+    | "artistByName"
+    | "trackById";
 
 type MediaGrouperMessage = {
     type: MediaGrouperMessageType;
@@ -75,6 +76,14 @@ onmessage = (e) => {
 
         for (const artist of payload) {
             r[artist.title] = artist;
+        }
+
+        result = r;
+    } else if (type === "trackById") {
+        const r: Record<string, Track> = {};
+
+        for (const track of payload) {
+            r[track.id] = track;
         }
 
         result = r;

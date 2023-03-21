@@ -119,6 +119,8 @@ const FavoritesWall: FC = () => {
 
     return (
         <Stack spacing="xs">
+            {/* Favorite albums */}
+
             <StylizedLabel color={colors.gray[7]}>favorite albums</StylizedLabel>
 
             <Box className={dynamicClasses.favoritesWall}>
@@ -127,6 +129,12 @@ const FavoritesWall: FC = () => {
                         <AlbumCard
                             key={favorite.id}
                             album={favorite as Album}
+                            enabledActions={{
+                                Favorites: ["all"],
+                                Navigation: ["all"],
+                                Playlist: ["all"],
+                                Tracks: ["all"],
+                            }}
                             sizeOverride={cardSize}
                             detailsOverride={showDetails}
                         />
@@ -142,6 +150,8 @@ const FavoritesWall: FC = () => {
                 )}
             </Box>
 
+            {/* Favorite tracks */}
+
             <StylizedLabel color={colors.gray[7]}>favorite tracks</StylizedLabel>
 
             <Box className={dynamicClasses.favoritesWall}>
@@ -150,6 +160,12 @@ const FavoritesWall: FC = () => {
                         <TrackCard
                             key={favorite.id}
                             track={favorite as Track}
+                            enabledActions={{
+                                Favorites: ["all"],
+                                Navigation: ["all"],
+                                Playlist: ["all"],
+                                Tracks: ["all"],
+                            }}
                             sizeOverride={cardSize}
                             detailsOverride={showDetails}
                         />

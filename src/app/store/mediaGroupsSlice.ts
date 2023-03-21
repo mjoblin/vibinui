@@ -7,6 +7,7 @@ export interface MediaGroupsState {
     albumById: Record<string, Album>,
     albumsByArtistName: Record<string, Album[]>,
     artistByName: Record<string, Artist>;
+    trackById: Record<string, Track>;
     tracksByAlbumId: Record<string, Track[]>,
     tracksByArtistName: Record<string, Track[]>,
 }
@@ -15,6 +16,7 @@ const initialState: MediaGroupsState = {
     albumById: {},
     albumsByArtistName: {},
     artistByName: {},
+    trackById: {},
     tracksByAlbumId: {},
     tracksByArtistName: {},
 };
@@ -32,6 +34,9 @@ export const mediaGroupsSlice = createSlice({
         setArtistByName: (state, action: PayloadAction<Record<string, Artist>>) => {
             state.artistByName = action.payload;
         },
+        setTrackById: (state, action: PayloadAction<Record<string, Track>>) => {
+            state.trackById = action.payload;
+        },
         setTracksByAlbumId: (state, action: PayloadAction<Record<string, Track[]>>) => {
             state.tracksByAlbumId = action.payload;
         },
@@ -45,6 +50,7 @@ export const {
     setAlbumById,
     setAlbumsByArtistName,
     setArtistByName,
+    setTrackById,
     setTracksByAlbumId,
     setTracksByArtistName,
 } = mediaGroupsSlice.actions;

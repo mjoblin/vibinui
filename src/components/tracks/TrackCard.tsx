@@ -9,7 +9,7 @@ import { setTrackCardRenderDimensions } from "../../app/store/internalSlice";
 import { secstoHms, yearFromDate } from "../../app/utils";
 import TrackArt from "./TrackArt";
 import CompactArtCard from "../shared/CompactArtCard";
-import MediaActionsButton from "../shared/MediaActionsButton";
+import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 import { MediaViewMode } from "../../app/store/userSettingsSlice";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 
@@ -44,6 +44,7 @@ type TrackCardTypeProps = Omit<TrackCardProps, "type">;
 const TrackCardCompact: FC<TrackCardTypeProps> = ({
     track,
     showArt,
+    enabledActions,
     selected,
     highlightIfPlaying,
     onClick,
@@ -58,7 +59,20 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
         <CompactArtCard
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
             actions={
-                <MediaActionsButton mediaType="track" media={track} position="bottom" size="sm" />
+                <MediaActionsButton
+                    mediaType="track"
+                    media={track}
+                    enabledActions={
+                        enabledActions || {
+                            Favorites: ["all"],
+                            Navigation: ["ViewInArtists", "ViewInAlbums"],
+                            Playlist: ["all"],
+                            Tracks: ["all"],
+                        }
+                    }
+                    position="bottom"
+                    size="sm"
+                />
             }
             selected={selected}
             isCurrentlyPlaying={highlightIfPlaying && isCurrentlyPlaying}
@@ -80,6 +94,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
 
 const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
     track,
+    enabledActions,
     sizeOverride,
     detailsOverride,
     selected,
@@ -120,6 +135,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
             <Box>
                 <TrackArt
                     track={track}
+                    enabledActions={enabledActions}
                     size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}
                     radius={5}
                 />
@@ -157,6 +173,7 @@ type TrackCardProps = {
     type?: MediaViewMode;
     track: Track;
     showArt?: boolean;
+    enabledActions?: EnabledActions;
     sizeOverride?: number;
     detailsOverride?: boolean;
     selected?: boolean;
@@ -168,6 +185,7 @@ const TrackCard: FC<TrackCardProps> = ({
     type = "art_focused",
     track,
     showArt = true,
+    enabledActions,
     sizeOverride,
     detailsOverride,
     selected = false,
@@ -231,6 +249,7 @@ const TrackCard: FC<TrackCardProps> = ({
                         <Box ref={cardRef}>
                             <TrackCardArtFocused
                                 track={track}
+                                enabledActions={enabledActions}
                                 sizeOverride={sizeOverride}
                                 detailsOverride={detailsOverride}
                                 selected={selected}
@@ -254,6 +273,7 @@ const TrackCard: FC<TrackCardProps> = ({
                         <TrackCardCompact
                             track={track}
                             showArt={showArt}
+                            enabledActions={enabledActions}
                             selected={selected}
                             highlightIfPlaying={highlightIfPlaying}
                             onClick={onClick}

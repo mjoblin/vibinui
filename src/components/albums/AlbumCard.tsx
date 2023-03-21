@@ -13,7 +13,7 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 import CompactArtCard from "../shared/CompactArtCard";
-import MediaActionsButton from "../shared/MediaActionsButton";
+import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 
 // ------------------------------------------------------------------------------------------------
 // Helpers
@@ -51,6 +51,7 @@ type AlbumCardTypeProps = Omit<AlbumCardProps, "type">;
 const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
     album,
     tracks,
+    enabledActions,
     selected,
     highlightIfPlaying,
     onClick,
@@ -69,7 +70,14 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
                 <MediaActionsButton
                     mediaType="album"
                     media={album}
-                    categories={["Playlist", "Favorites"]}
+                    enabledActions={
+                        enabledActions || {
+                            Favorites: ["all"],
+                            Navigation: ["ViewInArtists", "ViewInTracks"],
+                            Playlist: ["all"],
+                            Tracks: ["all"],
+                        }
+                    }
                     size="sm"
                     position="bottom"
                 />
@@ -89,6 +97,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
 
 const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     album,
+    enabledActions,
     sizeOverride,
     detailsOverride,
     selected,
@@ -132,7 +141,14 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
             <Box onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
                 <AlbumArt
                     album={album}
-                    actionCategories={["Tracks", "Playlist", "Favorites"]}
+                    enabledActions={
+                        enabledActions || {
+                            Favorites: ["all"],
+                            Navigation: ["ViewInArtists", "ViewInTracks"],
+                            Playlist: ["all"],
+                            Tracks: ["all"],
+                        }
+                    }
                     size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}
                     radius={5}
                     onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
@@ -174,6 +190,7 @@ type AlbumCardProps = {
     type?: MediaViewMode;
     album: Album;
     tracks?: Track[];
+    enabledActions?: EnabledActions;
     // Allow callers to override the size and details settings which would otherwise be pulled from
     // the users album display settings. This is intended for use by (for now) the favorites
     // screen, so its use of AlbumCard (and TrackCard) can use independent card display settings.
@@ -188,6 +205,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
     type = "art_focused",
     album,
     tracks,
+    enabledActions,
     sizeOverride,
     detailsOverride,
     selected = false,
@@ -251,6 +269,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
                         <Box ref={cardRef}>
                             <AlbumCardArtFocused
                                 album={album}
+                                enabledActions={enabledActions}
                                 sizeOverride={sizeOverride}
                                 detailsOverride={detailsOverride}
                                 selected={selected}
@@ -275,6 +294,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
                         <AlbumCardCompact
                             album={album}
                             tracks={tracks}
+                            enabledActions={enabledActions}
                             sizeOverride={sizeOverride}
                             detailsOverride={detailsOverride}
                             selected={selected}
