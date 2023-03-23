@@ -34,14 +34,20 @@ const FilterInstructions: FC<FilterInstructionsProps> = ({
             </Popover.Target>
             <Popover.Dropdown>
                 <Stack spacing={15}>
-                    <Text size="xs">
-                        {`Filter cards to those matching the given text. Cards filtered on
+                    <Stack spacing={5}>
+                        <Text size="xs" weight="bold" transform="uppercase">
+                            Advanced Search
+                        </Text>
+                        <Text size="xs">
+                            {`Filter cards to those matching the given text. Cards filtered on
                         '${defaultKey}' by default. Multiple criteria filtered using "AND".`}
-                    </Text>
+                        </Text>
+                    </Stack>
+
                     {(examples.length > 0 || supportedKeys.length > 0) && (
-                        <Stack spacing={10}>
+                        <Stack spacing={15}>
                             {examples.length > 0 && (
-                                <>
+                                <Stack spacing={5}>
                                     <Text size="xs" weight="bold" transform="uppercase">
                                         Examples
                                     </Text>
@@ -54,11 +60,11 @@ const FilterInstructions: FC<FilterInstructionsProps> = ({
                                             >{`> ${example}`}</Text>
                                         ))}
                                     </Stack>
-                                </>
+                                </Stack>
                             )}
 
                             {supportedKeys.length > 0 && (
-                                <>
+                                <Stack spacing={5}>
                                     <Text size="xs" weight="bold" transform="uppercase">
                                         Supported Keys
                                     </Text>
@@ -73,7 +79,7 @@ const FilterInstructions: FC<FilterInstructionsProps> = ({
                                             </Text>
                                         ))}
                                     </Stack>
-                                </>
+                                </Stack>
                             )}
 
                             {note && (
