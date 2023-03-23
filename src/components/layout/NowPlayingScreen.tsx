@@ -137,7 +137,14 @@ const NowPlayingScreen: FC = () => {
     }
 
     if (playStatus === "ready" || !currentTrack) {
-        return (
+        return playStatus === "play" ? (
+            <Center pt="xl">
+                <Flex gap={10} align="center">
+                    <Text size={16} weight="bold">Currently playing from</Text>
+                    <MediaSourceBadge />
+                </Flex>
+            </Center>
+        ) : (
             <Center pt="xl">
                 <SadLabel label="Nothing is currently playing" />
             </Center>
