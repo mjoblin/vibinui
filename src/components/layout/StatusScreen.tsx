@@ -1,9 +1,24 @@
 import React, { FC } from "react";
-import { Center, Flex, Paper, Stack, Table, Text, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconMoodSmile } from "@tabler/icons";
+import {
+    Button,
+    Center,
+    Flex,
+    Paper,
+    Stack,
+    Table,
+    Text,
+    Tooltip,
+    useMantineTheme,
+} from "@mantine/core";
+import { IconMoodSmile, IconRefresh } from "@tabler/icons";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import { useLazyClearMediaCachesQuery } from "../../app/services/vibinVibin";
+import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
+import { useGetArtistsQuery } from "../../app/services/vibinArtists";
+import { useGetTracksQuery } from "../../app/services/vibinTracks";
+import { showSuccessNotification } from "../../app/utils";
 import StylizedLabel from "../shared/StylizedLabel";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
@@ -15,6 +30,11 @@ import SelfUpdatingRelativeDate from "../shared/SelfUpdatingRelativeDate";
 
 const StatusScreen: FC = () => {
     const { colors } = useMantineTheme();
+    const [clearMediaCache, clearMediaCacheStatus] = useLazyClearMediaCachesQuery();
+    const { refetch: refetchAlbums } = useGetAlbumsQuery();
+    const { refetch: refetchNewAlbums } = useGetNewAlbumsQuery();
+    const { refetch: refetchArtists } = useGetArtistsQuery();
+    const { refetch: refetchTracks } = useGetTracksQuery();
     const { streamer, media_device: mediaDevice } = useAppSelector(
         (state: RootState) => state.system
     );
@@ -73,15 +93,37 @@ const StatusScreen: FC = () => {
                 <Stack spacing={10}>
                     <StylizedLabel color={colors.dark[3]}>devices</StylizedLabel>
 
-                    <FieldValueList
-                        rowHeight={1.3}
-                        fieldValues={{
-                            Streamer: streamer.name || "",
-                            Media: mediaDevice.name || "",
-                            "Play State": <PlayStateIndicator />,
-                            Source: <MediaSourceBadge />,
-                        }}
-                    />
+                    <Flex gap={50}>
+                        <FieldValueList
+                            rowHeight={1.3}
+                            fieldValues={{
+                                Streamer: streamer.name || "",
+                                Media: mediaDevice.name || "",
+                                "Play State": <PlayStateIndicator />,
+                                Source: <MediaSourceBadge />,
+                            }}
+                        />
+                        <Button
+                            variant="outline"
+                            size="xs"
+                            leftIcon={<IconRefresh size={16} />}
+                            onClick={() =>
+                                clearMediaCache().then(() => {
+                                    showSuccessNotification({
+                                        title: "Media information cleared",
+                                        message: "Latest media information is being re-fetched",
+                                    });
+
+                                    refetchAlbums();
+                                    refetchNewAlbums();
+                                    refetchArtists();
+                                    refetchTracks();
+                                })
+                            }
+                        >
+                            Refresh Media
+                        </Button>
+                    </Flex>
                 </Stack>
             </Paper>
 
