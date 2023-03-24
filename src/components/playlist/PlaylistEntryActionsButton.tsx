@@ -29,8 +29,15 @@ import { showErrorNotification, showSuccessNotification } from "../../app/utils"
 import {
     setAlbumsActiveCollection,
     setAlbumsFilterText,
-    setArtistsActiveCollection, setArtistsSelectedAlbum, setArtistsSelectedArtist, setArtistsSelectedTrack
+    setArtistsActiveCollection,
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
+    setArtistsSelectedTrack
 } from "../../app/store/userSettingsSlice";
+import {
+    setArtistsScrollToCurrentOnScreenEnter,
+    setArtistsScrollToSelectedOnScreenEnter
+} from "../../app/store/internalSlice";
 import { setTracksFilterText } from "../../app/store/userSettingsSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -269,6 +276,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                 dispatch(setArtistsSelectedArtist(artistByName[entry.artist]));
                                 dispatch(setArtistsSelectedAlbum(albumById[entry.albumMediaId]));
                                 dispatch(setArtistsSelectedTrack(trackById[entry.trackMediaId]));
+
+                                if (entry.index === currentlyPlayingIndex) {
+                                    dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
+                                }
+                                else {
+                                    dispatch(setArtistsScrollToSelectedOnScreenEnter(true));
+                                }
 
                                 navigate("/ui/artists");
                             }}
