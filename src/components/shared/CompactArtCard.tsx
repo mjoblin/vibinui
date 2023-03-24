@@ -1,5 +1,5 @@
 import React, { FC, ReactNode } from "react";
-import { Box, createStyles, Flex, Image, Paper, Stack } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Image, Paper, Stack } from "@mantine/core";
 
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 
@@ -44,18 +44,19 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
         <Paper
             radius={5}
             pr={10}
+            miw={300}
             className={dynamicClasses.compactArtCard}
             onClick={() => onClick && onClick()}
         >
-            <Flex align="center" justify="space-between" gap={10} w="100%">
-                <Flex align="center">
+            <Flex align="flex-start" justify="space-between" gap={10} w="100%">
+                <Flex align="flex-start">
                     {artUrl &&
                         <Image src={artUrl} width={70} height={70} radius={5} fit="cover" />
                     }
                     <Stack spacing={5} p={10}>{children}</Stack>
                 </Flex>
 
-                <Box sx={{ alignSelf: "right" }}>{actions}</Box>
+                <Box sx={{ alignSelf: "center" }}>{actions}</Box>
             </Flex>
         </Paper>
     );

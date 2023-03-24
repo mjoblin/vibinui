@@ -25,6 +25,15 @@ export interface InternalState {
             renderWidth: number;
             renderHeight: number;
         };
+        scrollPos: {
+            artists: number;
+            albums: number;
+            tracks: number;
+        };
+        scrollCurrentIntoView: () => void;
+        scrollSelectedIntoView: () => void;
+        scrollToCurrentOnScreenEnter: boolean;
+        scrollToSelectedOnScreenEnter: boolean;
     };
     favorites: {
         filteredFavoriteCount: number;
@@ -71,6 +80,15 @@ const initialState: InternalState = {
             renderWidth: 200,
             renderHeight: 200,
         },
+        scrollPos: {
+            artists: 0,
+            albums: 0,
+            tracks: 0,
+        },
+        scrollCurrentIntoView: () => {},
+        scrollSelectedIntoView: () => {},
+        scrollToCurrentOnScreenEnter: false,
+        scrollToSelectedOnScreenEnter: false,
     },
     favorites: {
         // Number of favorites currently displayed in the Favorites screen.
@@ -113,6 +131,24 @@ export const internalSlice = createSlice({
         ) => {
             state.artists.artistCard.renderWidth = action.payload.width;
             state.artists.artistCard.renderHeight = action.payload.height;
+        },
+        setArtistsScrollPos: (
+            state,
+            action: PayloadAction<{ category: "artists" | "albums" | "tracks"; pos: number }>
+        ) => {
+            state.artists.scrollPos[action.payload.category] = action.payload.pos;
+        },
+        setArtistsScrollCurrentIntoView: (state, action: PayloadAction<() => void>) => {
+            state.artists.scrollCurrentIntoView = action.payload;
+        },
+        setArtistsScrollSelectedIntoView: (state, action: PayloadAction<() => void>) => {
+            state.artists.scrollSelectedIntoView = action.payload;
+        },
+        setArtistsScrollToCurrentOnScreenEnter: (state, action: PayloadAction<boolean>) => {
+            state.artists.scrollToCurrentOnScreenEnter = action.payload;
+        },
+        setArtistsScrollToSelectedOnScreenEnter: (state, action: PayloadAction<boolean>) => {
+            state.artists.scrollToSelectedOnScreenEnter = action.payload;
         },
         setCurrentScreen: (state, action: PayloadAction<string>) => {
             state.application.currentScreen = action.payload;
@@ -173,6 +209,11 @@ export const internalSlice = createSlice({
 export const {
     setAlbumCardRenderDimensions,
     setArtistCardRenderDimensions,
+    setArtistsScrollPos,
+    setArtistsScrollCurrentIntoView,
+    setArtistsScrollSelectedIntoView,
+    setArtistsScrollToCurrentOnScreenEnter,
+    setArtistsScrollToSelectedOnScreenEnter,
     setCurrentScreen,
     setFavoriteCardRenderDimensions,
     setIsComputingInBackground,

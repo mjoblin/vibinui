@@ -36,11 +36,20 @@ import {
     setArtistsSelectedTrack,
     setTracksFilterText
 } from "../../app/store/userSettingsSlice";
+import {
+    setArtistsScrollToCurrentOnScreenEnter,
+    setArtistsScrollToSelectedOnScreenEnter,
+} from "../../app/store/internalSlice";
 
 export type MediaType = "album" | "track";
 
 export type FavoritesAction = "all" | "AddFavorite" | "RemoveFavorite";
-export type NavigationAction = "all" | "ViewInArtists" | "ViewInAlbums" | "ViewInTracks";
+export type NavigationAction =
+    | "all"
+    | "ViewCurrentInArtists"
+    | "ViewInArtists"
+    | "ViewInAlbums"
+    | "ViewInTracks";
 export type PlaylistAction =
     | "all"
     | "AppendToEnd"
@@ -128,6 +137,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
+    const source = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
@@ -159,6 +169,12 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const wantAction = (callerActions: MediaAction[], action: MediaAction): boolean =>
         callerActions.some((callerAction) => [action, "all"].includes(callerAction));
 
+    const wantViewInArtists = wantAction(enabledActions.Navigation!!, "ViewInArtists");
+    const wantViewCurrentInArtists = wantAction(
+        enabledActions.Navigation!!,
+        "ViewCurrentInArtists"
+    );
+    
     return (
         <Box onClick={(event) => event.stopPropagation()}>
             <Menu
@@ -364,7 +380,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         <>
                             <Menu.Label>Navigation</Menu.Label>
 
-                            {wantAction(enabledActions.Navigation!!, "ViewInArtists") && (
+                            {(wantViewInArtists || wantViewCurrentInArtists) && (
                                 <Menu.Item
                                     icon={<IconUser size={14} />}
                                     onClick={() => {
@@ -387,6 +403,11 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                             );
                                             dispatch(setArtistsSelectedTrack(media as Track));
                                         }
+
+                                        wantViewInArtists &&
+                                            dispatch(setArtistsScrollToSelectedOnScreenEnter(true));
+                                        wantViewCurrentInArtists &&
+                                            dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
 
                                         navigate("/ui/artists");
                                     }}

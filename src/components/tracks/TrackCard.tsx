@@ -50,7 +50,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
     onClick,
 }) => {
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_track_media_id
     );
 
     const isCurrentlyPlaying = currentTrackMediaId === track.id;
