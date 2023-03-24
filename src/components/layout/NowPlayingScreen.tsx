@@ -156,7 +156,7 @@ const NowPlayingScreen: FC = () => {
         : undefined;
 
     return (
-        <Flex gap={30} pt={7}>
+        <Flex gap={30} pt={7} pb={10}>
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth}>
                 <Stack spacing="xs">
