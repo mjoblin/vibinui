@@ -89,7 +89,6 @@ const TrackArt: FC<TrackArtProps> = ({
 }) => {
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
-    const source = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
@@ -118,7 +117,7 @@ const TrackArt: FC<TrackArtProps> = ({
             />
 
             {/* Only show the track controls for locally-streamed media */}
-            {track && showControls && source && source.class === "stream.media" && (
+            {track && showControls && (
                 <Flex
                     p="xs"
                     justify="space-between"

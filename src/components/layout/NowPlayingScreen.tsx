@@ -178,7 +178,7 @@ const NowPlayingScreen: FC = () => {
                             hidePlayButton
                             enabledActions={{
                                 Favorites: ["all"],
-                                Navigation: ["all"],
+                                Navigation: ["ViewCurrentInArtists", "ViewInAlbums"],
                                 Playlist: ["all"],
                             }}
                         />

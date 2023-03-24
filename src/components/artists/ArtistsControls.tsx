@@ -1,10 +1,13 @@
 import React, { FC, useCallback, useEffect } from "react";
 import {
     ActionIcon,
+    Box,
+    Button,
     Flex,
     Select,
     Text,
     TextInput,
+    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
 
@@ -22,7 +25,6 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
-import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { IconSquareX } from "@tabler/icons";
@@ -31,8 +33,17 @@ const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
-    const { allAlbumsByArtistName, allTracksByArtistName } = useMediaGroupings();
-    const { activeCollection } = useAppSelector((state: RootState) => state.userSettings.artists);
+    const albumsByArtistName = useAppSelector(
+        (state: RootState) => state.mediaGroups.albumsByArtistName
+    );
+    const tracksByArtistName = useAppSelector(
+        (state: RootState) => state.mediaGroups.tracksByArtistName
+    );
+    const { scrollCurrentIntoView, scrollSelectedIntoView } = useAppSelector(
+        (state: RootState) => state.internal.artists
+    );
+    const { activeCollection, filterText, selectedAlbum, selectedArtist, selectedTrack } =
+        useAppSelector((state: RootState) => state.userSettings.artists);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
@@ -41,7 +52,6 @@ const ArtistsControls: FC = () => {
     );
     const { data: allArtists } = useGetArtistsQuery();
     const { data: allTracks } = useGetTracksQuery();
-    const { filterText } = useAppSelector((state: RootState) => state.userSettings.artists);
     const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
 
     // --------------------------------------------------------------------------------------------
@@ -74,7 +84,7 @@ const ArtistsControls: FC = () => {
 
         // currentAlbum might be undefined, which is expected sometimes (e.g. if the current track
         // is from a compilation album where the artist doesn't have any of their own albums).
-        const currentAlbum = allAlbumsByArtistName(artistName).find(
+        const currentAlbum = albumsByArtistName[artistName].find(
             (album: Album) => album.id === currentAlbumMediaId
         );
 
@@ -87,11 +97,10 @@ const ArtistsControls: FC = () => {
     }
 
     const onArtistCollectionChange = useCallback((value: unknown) => {
-        if (!currentTrackMediaId) {
-            return;
+        if (value) {
+            dispatch(setArtistsActiveCollection(value as ArtistCollection));
+            dispatch(setArtistsFilterText(""));
         }
-
-        value && dispatch(setArtistsActiveCollection(value as ArtistCollection));
 
         if (value !== "current") {
             dispatch(setArtistsSelectedArtist(undefined));
@@ -100,7 +109,7 @@ const ArtistsControls: FC = () => {
             return;
         }
 
-        emitNewSelection(currentTrackMediaId);
+        // currentTrackMediaId && emitNewSelection(currentTrackMediaId);
     }, [currentTrackMediaId, dispatch]);
 
     /**
@@ -114,7 +123,7 @@ const ArtistsControls: FC = () => {
         if (activeCollection === "current" && currentTrackMediaId) {
             emitNewSelection(currentTrackMediaId);
         }
-    }, [currentTrackMediaId, activeCollection, allAlbumsByArtistName, allTracksByArtistName]);
+    }, [currentTrackMediaId, activeCollection, albumsByArtistName, tracksByArtistName]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -128,7 +137,11 @@ const ArtistsControls: FC = () => {
                 data={[
                     { value: "all", label: "All Artists" },
                     { value: "with_albums", label: "Artists with Albums" },
-                    { value: "current", label: "Currently Playing" },
+                    {
+                        value: "current",
+                        label: "Currently Playing",
+                        disabled: !currentTrackMediaId,
+                    },
                 ]}
                 onChange={onArtistCollectionChange}
                 styles={{
@@ -153,7 +166,14 @@ const ArtistsControls: FC = () => {
                     </ActionIcon>
                 }
                 disabled={activeCollection === "current"}
-                onChange={(event) => dispatch(setArtistsFilterText(event.target.value))}
+                onChange={(event) => {
+                    dispatch(setArtistsFilterText(event.target.value));
+
+                    // Deselect any selections when the user is interacting with the filter
+                    selectedArtist && dispatch(setArtistsSelectedArtist(undefined));
+                    selectedAlbum && dispatch(setArtistsSelectedAlbum(undefined));
+                    selectedTrack && dispatch(setArtistsSelectedTrack(undefined));
+                }}
                 styles={{
                     ...STYLE_LABEL_BESIDE_COMPONENT,
                     wrapper: {
@@ -161,6 +181,43 @@ const ArtistsControls: FC = () => {
                     },
                 }}
             />
+
+            <Flex gap={10}>
+                {/* Scroll currently-playing items into view */}
+                <Tooltip label="Scroll currently-playing items into view">
+                    <Box>
+                        <Button
+                            compact
+                            size="xs"
+                            variant="light"
+                            color="yellow"
+                            disabled={!currentTrackMediaId}
+                            onClick={() => {
+                                dispatch(setArtistsFilterText(""));
+                                currentTrackMediaId && emitNewSelection(currentTrackMediaId);
+                                scrollCurrentIntoView();
+                            }}
+                        >
+                            Current
+                        </Button>
+                    </Box>
+                </Tooltip>
+
+                {/* Scroll selected items into view */}
+                <Tooltip label="Scroll selected items into view">
+                    <Box>
+                        <Button
+                            compact
+                            size="xs"
+                            variant="light"
+                            disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
+                            onClick={scrollSelectedIntoView}
+                        >
+                            Selected
+                        </Button>
+                    </Box>
+                </Tooltip>
+            </Flex>
 
             {/* "Showing x of y artists" */}
             <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>

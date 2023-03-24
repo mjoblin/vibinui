@@ -49,7 +49,9 @@ export const store = configureStore({
         [vibinWebsocket.reducerPath]: vibinWebsocket.reducer,
     },
     middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware().concat(
+        getDefaultMiddleware({
+            serializableCheck: false, // Some functions, like scroll handlers, are stored in state
+        }).concat(
             localStorageMiddleware.middleware,
             vibinAlbumsApi.middleware,
             vibinArtistsApi.middleware,
