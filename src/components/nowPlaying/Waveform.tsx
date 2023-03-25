@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, createStyles, Image } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Image, Loader, Text } from "@mantine/core";
 import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../app/types";
@@ -115,9 +115,10 @@ type WaveformProps = {
     trackId: MediaId;
     width?: number;
     height?: number;
+    showProgress?: boolean;
 };
 
-const Waveform: FC<WaveformProps> = ({ trackId, width = 800, height = 250 }) => {
+const Waveform: FC<WaveformProps> = ({ trackId, width = 800, height = 250, showProgress = true }) => {
     const { classes } = useStyles();
 
     return (
@@ -126,7 +127,7 @@ const Waveform: FC<WaveformProps> = ({ trackId, width = 800, height = 250 }) => 
                 src={`/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
                 radius={5}
             />
-            <WaveformProgress />
+            {showProgress && <WaveformProgress />}
         </Box>
     );
 };

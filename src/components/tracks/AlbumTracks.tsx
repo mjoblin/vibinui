@@ -3,9 +3,9 @@ import { Box, Center, createStyles, Flex, Paper, Stack, Text } from "@mantine/co
 
 import { useGetAlbumTracksQuery } from "../../app/services/vibinAlbums";
 import { Album, Track } from "../../app/types";
-import { secstoHms, yearFromDate } from "../../app/utils";
+import { secstoHms } from "../../app/utils";
 import MediaActionsButton from "../shared/MediaActionsButton";
-import AlbumArt from "../albums/AlbumArt";
+import MediaSummaryBanner from "../shared/MediaSummaryBanner";
 import AppendToPlaylistButton from "./AppendToPlaylistButton";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
@@ -44,35 +44,13 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
     return (
         <Stack>
             {/* Album details */}
-            <Flex gap="md" justify="space-between">
-                <AlbumArt album={album} size={100} actionsMenuPosition={"bottom"} />
-
-                <Stack sx={{ gap: 0, flexGrow: 1 }}>
-                    <Text size="lg" weight="bold" sx={{ lineHeight: 1.25 }}>
-                        {album.title}
-                    </Text>
-                    <Text size="md" sx={{ lineHeight: 1.25 }}>
-                        {album.artist}
-                    </Text>
-                    <Text size="xs" weight="bold" color={DIMMED}>
-                        {yearFromDate(album.date) || ""}
-                        {album.genre && album.genre.toLowerCase() !== "unknown"
-                            ? ` • ${album.genre.toUpperCase()}`
-                            : ""}
-                    </Text>
-                </Stack>
-
-                <Box pr={5}>
-                    <MediaActionsButton
-                        media={album}
-                        mediaType="album"
-                        position="bottom"
-                    />
-                </Box>
-            </Flex>
+            <MediaSummaryBanner
+                media={album}
+                showArtControls={true}
+                showSeparateActionsButton={true}
+            />
 
             {/* Track details */}
-
             {isLoading && (
                 // Tracks currently being loaded.
                 <Center pt={20}>

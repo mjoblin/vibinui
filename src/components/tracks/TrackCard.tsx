@@ -67,7 +67,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInAlbums"],
                             Playlist: ["all"],
-                            Tracks: ["all"],
+                            Details: ["all"],
                         }
                     }
                     position="bottom"

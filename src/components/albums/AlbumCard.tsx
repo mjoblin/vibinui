@@ -75,7 +75,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInTracks"],
                             Playlist: ["all"],
-                            Tracks: ["all"],
+                            Details: ["all"],
                         }
                     }
                     size="sm"
@@ -146,7 +146,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInTracks"],
                             Playlist: ["all"],
-                            Tracks: ["all"],
+                            Details: ["all"],
                         }
                     }
                     size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}

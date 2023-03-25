@@ -405,13 +405,13 @@ const ArtistWall: FC = () => {
                                                     album={album}
                                                     tracks={safeGet(tracksByAlbumId, album.id)}
                                                     enabledActions={{
+                                                        Details: ["all"],
                                                         Favorites: ["all"],
                                                         Navigation: [
                                                             "ViewInAlbums",
                                                             "ViewInTracks",
                                                         ],
                                                         Playlist: ["all"],
-                                                        Tracks: ["all"],
                                                     }}
                                                     selected={album.id === selectedAlbum?.id}
                                                     onClick={(album: Album) =>
@@ -480,10 +480,10 @@ const ArtistWall: FC = () => {
                                         track={track}
                                         showArt={false}
                                         enabledActions={{
+                                            Details: ["all"],
                                             Favorites: ["all"],
                                             Navigation: ["ViewInAlbums", "ViewInTracks"],
                                             Playlist: ["all"],
-                                            Tracks: ["all"],
                                         }}
                                         selected={track.id === selectedTrack?.id}
                                         onClick={(track: Track) =>
