@@ -9,7 +9,12 @@ export type LyricChunk = {
     body: string[];
 };
 
-export type Lyrics = LyricChunk[];
+export type Lyrics = {
+    lyrics_id: string;
+    media_id: MediaId;
+    is_valid: boolean;
+    chunks: LyricChunk[];
+};
 
 export type MediaLink = {
     type: string;
@@ -28,15 +33,26 @@ export const vibinTracksApi = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: "/tracks" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
-        getLyrics: builder.query<Lyrics, { trackId?: string; artist?: string; title?: string }>({
-            query: ({ trackId, artist, title }) => ({
+        getLyrics: builder.query<
+            Lyrics,
+            { trackId?: string; artist?: string; title?: string; updateCache?: boolean }
+        >({
+            query: ({ trackId, artist, title, updateCache = false }) => ({
                 url: trackId ? `${trackId}/lyrics` : "lyrics",
-                params: trackId ? {} : { artist, title },
+                params: trackId
+                    ? { update_cache: updateCache }
+                    : { update_cache: updateCache, artist, title },
             }),
         }),
         getLinks: builder.query<
             MediaLinks,
-            { trackId?: string; artist?: string; album?: string; title?: string; allTypes?: boolean }
+            {
+                trackId?: string;
+                artist?: string;
+                album?: string;
+                title?: string;
+                allTypes?: boolean;
+            }
         >({
             query: ({ trackId, artist, album, title, allTypes = false }) => ({
                 url: trackId ? `${trackId}/links?all_types=${allTypes}` : "links",
@@ -75,13 +91,25 @@ export const vibinTracksApi = createApi({
                 responseHandler: "content-type",
             }),
         }),
-        searchLyrics: builder.mutation<{ query: string, matches: MediaId[] }, { query: string }>({
+        searchLyrics: builder.mutation<{ query: string; matches: MediaId[] }, { query: string }>({
             query: ({ query }) => ({
                 url: "lyrics/search",
                 method: "POST",
                 body: {
                     query,
                 },
+            }),
+        }),
+        validateLyrics: builder.query<
+            Lyrics,
+            { trackId?: string; artist?: string; title?: string; isValid: boolean }
+        >({
+            query: ({ trackId, artist, title, isValid }) => ({
+                url: trackId ? `${trackId}/lyrics/validate` : "lyrics/validate",
+                params: trackId
+                    ? { is_valid: isValid }
+                    : { is_valid: isValid, artist, title },
+                method: "POST",
             }),
         }),
     }),
@@ -93,6 +121,8 @@ export const {
     useGetTrackByIdQuery,
     useGetTracksQuery,
     useGetWaveformQuery,
+    useLazyGetLyricsQuery,
     useLazyGetTrackByIdQuery,
+    useLazyValidateLyricsQuery,
     useSearchLyricsMutation,
 } = vibinTracksApi;
