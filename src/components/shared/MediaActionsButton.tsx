@@ -4,10 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { Box, Center, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import {
+    IconArticle,
     IconCornerDownRight,
     IconCornerDownRightDouble,
     IconDisc,
     IconDotsVertical,
+    IconExternalLink,
     IconHeart,
     IconHeartOff,
     IconList,
@@ -15,6 +17,7 @@ import {
     IconPlayerPlay,
     IconPlaylistAdd,
     IconUser,
+    IconWaveSine,
 } from "@tabler/icons";
 
 import { Album, Track } from "../../app/types";
@@ -24,6 +27,9 @@ import {
     useDeleteFavoriteMutation,
 } from "../../app/services/vibinFavorites";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
+import TrackLinksModal from "../tracks/TrackLinksModal";
+import TrackLyricsModal from "../tracks/TrackLyricsModal";
+import TrackWaveformModal from "../tracks/TrackWaveformModal";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -43,6 +49,7 @@ import {
 
 export type MediaType = "album" | "track";
 
+export type DetailsAction = "all" | "ViewLinks" | "ViewLyrics" | "ViewTracks" | "ViewWaveform";
 export type FavoritesAction = "all" | "AddFavorite" | "RemoveFavorite";
 export type NavigationAction =
     | "all"
@@ -56,15 +63,14 @@ export type PlaylistAction =
     | "InsertAndPlayNext"
     | "InsertAndPlayNow"
     | "ReplaceAndPlayNow";
-export type TrackAction = "all" | "ViewTracks";
 
-export type MediaAction = FavoritesAction | NavigationAction | PlaylistAction | TrackAction;
+export type MediaAction = DetailsAction | FavoritesAction | NavigationAction | PlaylistAction;
 
 export type EnabledActions = {
-    Tracks?: TrackAction[],
-    Playlist?: PlaylistAction[],
+    Details?: DetailsAction[],
     Favorites?: FavoritesAction[],
     Navigation?: NavigationAction[],
+    Playlist?: PlaylistAction[],
 }
 
 const sizeMd = 15;
@@ -137,10 +143,12 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
-    const source = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
-    const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
+    const [showAlbumTracksModal, setShowAlbumTracksModal] = useState<boolean>(false);
+    const [showTrackLinksModal, setShowTrackLinksModal] = useState<boolean>(false);
+    const [showTrackLyricsModal, setShowTrackLyricsModal] = useState<boolean>(false);
+    const [showTrackWaveformModal, setShowTrackWaveformModal] = useState<boolean>(false);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const theme = useMantineTheme();
     const { classes } = useStyles();
@@ -161,7 +169,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === media.id);
     const isStreamerOff = streamerPower === "off";
 
-    const showTrackActions = enabledActions.Tracks && enabledActions.Tracks.length > 0;
+    const showDetailsActions = enabledActions.Details && enabledActions.Details.length > 0;
     const showFavoritesActions = enabledActions.Favorites && enabledActions.Favorites.length > 0;
     const showNavigationActions = enabledActions.Navigation && enabledActions.Navigation.length > 0;
     const showPlaylistActions = enabledActions.Playlist && enabledActions.Playlist.length > 0;
@@ -217,21 +225,53 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                 </Menu.Target>
 
                 <Menu.Dropdown>
-                    {/* Tracks actions -------------------------------------------------------- */}
+                    {/* Details actions ------------------------------------------------------- */}
 
-                    {showTrackActions &&
-                        mediaType === "album" &&
-                        wantAction(enabledActions.Tracks!!, "ViewTracks") && (
-                            <>
-                                <Menu.Label>Tracks</Menu.Label>
-                                <Menu.Item
-                                    icon={<IconList size={14} />}
-                                    onClick={() => setShowTracksModal(true)}
-                                >
-                                    View tracks
-                                </Menu.Item>
-                            </>
-                        )}
+                    {showDetailsActions && (
+                        <>
+                            <Menu.Label>Details</Menu.Label>
+
+                            {mediaType === "album" &&
+                                wantAction(enabledActions.Details!!, "ViewTracks") && (
+                                    <Menu.Item
+                                        icon={<IconList size={14} />}
+                                        onClick={() => setShowAlbumTracksModal(true)}
+                                    >
+                                        View tracks...
+                                    </Menu.Item>
+                                )}
+
+                            {mediaType === "track" &&
+                                wantAction(enabledActions.Details!!, "ViewLyrics") && (
+                                    <Menu.Item
+                                        icon={<IconArticle size={14} />}
+                                        onClick={() => setShowTrackLyricsModal(true)}
+                                    >
+                                        View lyrics...
+                                    </Menu.Item>
+                                )}
+
+                            {mediaType === "track" &&
+                                wantAction(enabledActions.Details!!, "ViewWaveform") && (
+                                    <Menu.Item
+                                        icon={<IconWaveSine size={14} />}
+                                        onClick={() => setShowTrackWaveformModal(true)}
+                                    >
+                                        View waveform...
+                                    </Menu.Item>
+                                )}
+
+                            {mediaType === "track" &&
+                                wantAction(enabledActions.Details!!, "ViewLinks") && (
+                                    <Menu.Item
+                                        icon={<IconExternalLink size={14} />}
+                                        onClick={() => setShowTrackLinksModal(true)}
+                                    >
+                                        View links...
+                                    </Menu.Item>
+                                )}
+                        </>
+                    )}
 
                     {/* Playlist actions ------------------------------------------------------ */}
 
@@ -460,14 +500,39 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                     )}
                 </Menu.Dropdown>
 
-                {/* Album Tracks modal -------------------------------------------------------- */}
+                {/* Details modals ------------------------------------------------------------ */}
 
+                {/* Albums can show their track list */}
                 {mediaType === "album" && (
-                    // Track list modal
                     <AlbumTracksModal
                         album={media as Album}
-                        opened={showTracksModal}
-                        onClose={() => setShowTracksModal(false)}
+                        opened={showAlbumTracksModal}
+                        onClose={() => setShowAlbumTracksModal(false)}
+                    />
+                )}
+
+                {/* Tracks can show their lyrics, waveform, and links */}
+                {mediaType === "track" && (
+                    <TrackLyricsModal
+                        track={media as Track}
+                        opened={showTrackLyricsModal}
+                        onClose={() => setShowTrackLyricsModal(false)}
+                    />
+                )}
+
+                {mediaType === "track" && (
+                    <TrackWaveformModal
+                        track={media as Track}
+                        opened={showTrackWaveformModal}
+                        onClose={() => setShowTrackWaveformModal(false)}
+                    />
+                )}
+
+                {mediaType === "track" && (
+                    <TrackLinksModal
+                        track={media as Track}
+                        opened={showTrackLinksModal}
+                        onClose={() => setShowTrackLinksModal(false)}
                     />
                 )}
             </Menu>

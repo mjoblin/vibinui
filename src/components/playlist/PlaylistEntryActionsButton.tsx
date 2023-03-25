@@ -5,17 +5,22 @@ import { Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core
 import {
     IconArrowBarToDown,
     IconArrowBarToUp,
+    IconArticle,
     IconCornerDownRightDouble,
     IconDisc,
     IconDotsVertical,
+    IconExternalLink,
     IconHeart,
     IconHeartOff,
     IconMicrophone2,
     IconPlayerPlay,
-    IconTrash
+    IconTrash,
+    IconWaveSine,
 } from "@tabler/icons";
 
 import { PlaylistEntry, Track } from "../../app/types";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
@@ -32,15 +37,20 @@ import {
     setArtistsActiveCollection,
     setArtistsSelectedAlbum,
     setArtistsSelectedArtist,
-    setArtistsSelectedTrack
+    setArtistsSelectedTrack,
 } from "../../app/store/userSettingsSlice";
 import {
     setArtistsScrollToCurrentOnScreenEnter,
-    setArtistsScrollToSelectedOnScreenEnter
+    setArtistsScrollToSelectedOnScreenEnter,
 } from "../../app/store/internalSlice";
 import { setTracksFilterText } from "../../app/store/userSettingsSlice";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { RootState } from "../../app/store/store";
+import TrackLyricsModal from "../tracks/TrackLyricsModal";
+import TrackWaveformModal from "../tracks/TrackWaveformModal";
+import TrackLinksModal from "../tracks/TrackLinksModal";
+
+// NOTE: This component is very similar to <MediaActionsButton>. Currently, the two components are
+//  separate as they differ enough to make generalizing them a little unwieldy -- but that may not
+//  always be the case.
 
 const useStyles = createStyles((theme) => ({
     button: {
@@ -91,10 +101,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
     const [playPlaylistId, playStatus] = usePlayPlaylistEntryIdMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
-    const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
-    const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
-    const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
+    const { albumById, artistByName, trackById } = useAppSelector(
+        (state: RootState) => state.mediaGroups
+    );
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
+    const [showTrackLinksModal, setShowTrackLinksModal] = useState<boolean>(false);
+    const [showTrackLyricsModal, setShowTrackLyricsModal] = useState<boolean>(false);
+    const [showTrackWaveformModal, setShowTrackWaveformModal] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
@@ -147,34 +160,10 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                 <Menu.Dropdown>
                     <>
-                        {/* General actions --------------------------------------------------- */}
+                        {/* Playlist actions -------------------------------------------------- */}
 
-                        <Menu.Label>General</Menu.Label>
-                        <Menu.Item
-                            icon={<IconPlayerPlay size={14} fill={colors.gray[3]} />}
-                            onClick={() => {
-                                playPlaylistId({ playlistId: entry.id });
-                            }}
-                        >
-                            Play now
-                        </Menu.Item>
-                        <Menu.Item
-                            icon={<IconTrash size={14} />}
-                            onClick={() => {
-                                deletePlaylistId({ playlistId: entry.id });
+                        <Menu.Label>Playlist</Menu.Label>
 
-                                showSuccessNotification({
-                                    title: "Entry removed from Playlist",
-                                    message: entry.title,
-                                });
-                            }}
-                        >
-                            Remove from Playlist
-                        </Menu.Item>
-
-                        {/* Move actions ------------------------------------------------------ */}
-
-                        <Menu.Label>Move</Menu.Label>
                         <Menu.Item
                             icon={<IconArrowBarToUp size={14} />}
                             onClick={() => {
@@ -192,6 +181,16 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             Move to top
                         </Menu.Item>
+
+                        <Menu.Item
+                            icon={<IconPlayerPlay size={14} fill={colors.gray[3]} />}
+                            onClick={() => {
+                                playPlaylistId({ playlistId: entry.id });
+                            }}
+                        >
+                            Play now
+                        </Menu.Item>
+
                         <Menu.Item
                             disabled={!currentlyPlayingIndex}
                             icon={<IconCornerDownRightDouble size={14} />}
@@ -216,6 +215,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             Move to Play next
                         </Menu.Item>
+
                         <Menu.Item
                             icon={<IconArrowBarToDown size={12} />}
                             onClick={() => {
@@ -234,9 +234,49 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             Move to bottom
                         </Menu.Item>
 
+                        <Menu.Item
+                            icon={<IconTrash size={14} />}
+                            onClick={() => {
+                                deletePlaylistId({ playlistId: entry.id });
+
+                                showSuccessNotification({
+                                    title: "Entry removed from Playlist",
+                                    message: entry.title,
+                                });
+                            }}
+                        >
+                            Remove from Playlist
+                        </Menu.Item>
+
+                        {/* Details actions --------------------------------------------------- */}
+
+                        <Menu.Label>Details</Menu.Label>
+
+                        <Menu.Item
+                            icon={<IconArticle size={14} />}
+                            onClick={() => setShowTrackLyricsModal(true)}
+                        >
+                            View lyrics...
+                        </Menu.Item>
+
+                        <Menu.Item
+                            icon={<IconWaveSine size={14} />}
+                            onClick={() => setShowTrackWaveformModal(true)}
+                        >
+                            View waveform...
+                        </Menu.Item>
+
+                        <Menu.Item
+                            icon={<IconExternalLink size={14} />}
+                            onClick={() => setShowTrackLinksModal(true)}
+                        >
+                            View links...
+                        </Menu.Item>
+
                         {/* Favorites actions ------------------------------------------------- */}
 
                         <Menu.Label>Favorites</Menu.Label>
+
                         <Menu.Item
                             icon={<IconHeart size={14} />}
                             disabled={isFavorited}
@@ -251,6 +291,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             Add to Favorites
                         </Menu.Item>
+
                         <Menu.Item
                             icon={<IconHeartOff size={14} />}
                             disabled={!isFavorited}
@@ -269,6 +310,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         {/* Navigation actions ------------------------------------------------ */}
 
                         <Menu.Label>Navigation</Menu.Label>
+
                         <Menu.Item
                             icon={<IconDisc size={14} />}
                             onClick={() => {
@@ -279,8 +321,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                                 if (entry.index === currentlyPlayingIndex) {
                                     dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
-                                }
-                                else {
+                                } else {
                                     dispatch(setArtistsScrollToSelectedOnScreenEnter(true));
                                 }
 
@@ -289,6 +330,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             View in Artists
                         </Menu.Item>
+
                         <Menu.Item
                             icon={<IconDisc size={14} />}
                             onClick={() => {
@@ -301,6 +343,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         >
                             View in Albums
                         </Menu.Item>
+
                         <Menu.Item
                             icon={<IconMicrophone2 size={14} />}
                             onClick={() => {
@@ -314,6 +357,27 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
                     </>
                 </Menu.Dropdown>
+
+                {/* Details modals ------------------------------------------------------------ */}
+
+                {/* Tracks can show their lyrics, waveform, and links */}
+                <TrackLyricsModal
+                    track={trackById[entry.trackMediaId]}
+                    opened={showTrackLyricsModal}
+                    onClose={() => setShowTrackLyricsModal(false)}
+                />
+
+                <TrackWaveformModal
+                    track={trackById[entry.trackMediaId]}
+                    opened={showTrackWaveformModal}
+                    onClose={() => setShowTrackWaveformModal(false)}
+                />
+
+                <TrackLinksModal
+                    track={trackById[entry.trackMediaId]}
+                    opened={showTrackLinksModal}
+                    onClose={() => setShowTrackLinksModal(false)}
+                />
             </Menu>
         </Box>
     );

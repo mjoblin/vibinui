@@ -76,10 +76,10 @@ const TrackArt: FC<TrackArtProps> = ({
     radius = 0,
     showControls = true,
     enabledActions = {
+        Details: ["all"],
         Favorites: ["all"],
         Navigation: ["ViewInArtists", "ViewInAlbums"],
         Playlist: ["all"],
-        Tracks: ["all"],
     },
     hidePlayButton = false,
     size = 150,

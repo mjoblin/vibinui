@@ -130,10 +130,10 @@ const FavoritesWall: FC = () => {
                             key={favorite.id}
                             album={favorite as Album}
                             enabledActions={{
+                                Details: ["all"],
                                 Favorites: ["all"],
                                 Navigation: ["all"],
                                 Playlist: ["all"],
-                                Tracks: ["all"],
                             }}
                             sizeOverride={cardSize}
                             detailsOverride={showDetails}
@@ -161,10 +161,10 @@ const FavoritesWall: FC = () => {
                             key={favorite.id}
                             track={favorite as Track}
                             enabledActions={{
+                                Details: ["all"],
                                 Favorites: ["all"],
                                 Navigation: ["all"],
                                 Playlist: ["all"],
-                                Tracks: ["all"],
                             }}
                             sizeOverride={cardSize}
                             detailsOverride={showDetails}

@@ -74,10 +74,10 @@ const AlbumArt: FC<AlbumArtProps> = ({
     radius = 0,
     showControls = true,
     enabledActions = {
+        Details: ["all"],
         Favorites: ["all"],
         Navigation: ["ViewInArtists", "ViewInTracks"],
         Playlist: ["all"],
-        Tracks: ["all"],
     },
     size = 150,
     actionsMenuPosition,
