@@ -78,7 +78,20 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     }
 
     if (!getLyricsStatus.data || getLyricsStatus.data.chunks.length <= 0) {
-        return <SadLabel label="No lyrics found" />;
+        return (
+            <Stack spacing={20}>
+                <SadLabel label="No lyrics found" />
+                <Button
+                    compact
+                    variant="light"
+                    size="xs"
+                    w="10rem"
+                    onClick={() => getLyrics({ trackId, artist, title, updateCache: true })}
+                >
+                    Retry from Genius
+                </Button>
+            </Stack>
+        );
     }
 
     if (!getLyricsStatus.data.is_valid && !showInvalidLyrics) {
