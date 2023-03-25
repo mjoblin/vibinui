@@ -76,6 +76,12 @@ export type EnabledActions = {
 const sizeMd = 15;
 const sizeSm = 11;
 
+// TODO: See if these dark/light enabled/disabled are exposed in the mantine theme somewhere
+const darkDisabled = "#5C5F6B";
+const darkEnabled = "#C1C2C5";
+const lightDisabled = "#adb5bd";
+const lightEnabled = "#000";
+
 const useStyles = createStyles((theme) => ({
     actionsContainer: {
         "&:hover": {
@@ -285,15 +291,14 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     icon={
                                         <IconPlayerPlay
                                             size={14}
-                                            color={
-                                                theme.colorScheme === "dark"
-                                                    ? theme.colors.gray[5]
-                                                    : theme.colors.dark[6]
-                                            }
                                             fill={
                                                 theme.colorScheme === "dark"
-                                                    ? theme.colors.gray[5]
-                                                    : theme.colors.dark[6]
+                                                    ? isStreamerOff
+                                                        ? darkDisabled
+                                                        : darkEnabled
+                                                    : isStreamerOff
+                                                        ? lightDisabled
+                                                        : lightEnabled
                                             }
                                         />
                                     }
