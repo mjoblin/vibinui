@@ -1,7 +1,11 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, createStyles, Highlight } from "@mantine/core";
+import { Box, Button, Center, createStyles, Flex, Highlight, Stack, Text } from "@mantine/core";
 
-import { LyricChunk, useGetLyricsQuery } from "../../app/services/vibinTracks";
+import {
+    LyricChunk,
+    useLazyGetLyricsQuery,
+    useLazyValidateLyricsQuery,
+} from "../../app/services/vibinTracks";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
 import { getTextWidth } from "../../app/utils";
@@ -21,8 +25,10 @@ type TrackLyricsProps = {
 const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     const { APP_ALT_FONTFACE } = useAppConstants();
     const [maxLineWidth, setMaxLineWidth] = useState<number>(0);
+    const [showInvalidLyrics, setShowInvalidLyrics] = useState<boolean>(false);
     const { lyricsSearchText } = useAppSelector((state: RootState) => state.userSettings.tracks);
-    const { data, error, isFetching } = useGetLyricsQuery({ trackId, artist, title });
+    const [validateLyrics, validateLyricsStatus] = useLazyValidateLyricsQuery();
+    const [getLyrics, getLyricsStatus] = useLazyGetLyricsQuery();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         lyricsContainer: {
@@ -40,6 +46,10 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
         },
     }))();
 
+    useEffect(() => {
+        getLyrics({ trackId, artist, title });
+    }, []);
+
     /**
      * Calculate the maximum line length, which will be used to set the column width. This means
      * that all columns will be the width of the widest line (regardless of column), which isn't
@@ -49,11 +59,11 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
      *  space.
      */
     useEffect(() => {
-        if (!data) {
+        if (!getLyricsStatus.data) {
             return;
         }
 
-        const allLineWidths = data
+        const allLineWidths = getLyricsStatus.data.chunks
             .map((chunk) => [
                 getTextWidth(chunk.header || ""),
                 ...chunk.body.map((line) => getTextWidth(line)),
@@ -61,14 +71,35 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
             .flat(1);
 
         setMaxLineWidth(Math.max(...allLineWidths));
-    }, [data]);
+    }, [getLyricsStatus.data]);
 
-    if (isFetching) {
+    if (getLyricsStatus.isFetching || getLyricsStatus.isLoading) {
         return <LoadingDataMessage message="Retrieving lyrics..." />;
     }
 
-    if (!data || data.length <= 0) {
+    if (!getLyricsStatus.data || getLyricsStatus.data.chunks.length <= 0) {
         return <SadLabel label="No lyrics found" />;
+    }
+
+    if (!getLyricsStatus.data.is_valid && !showInvalidLyrics) {
+        return (
+            <Center>
+                <Stack align="center">
+                    <Text size="sm" weight="bold" transform="uppercase">
+                        Lyrics marked as invalid
+                    </Text>
+                    <Button
+                        compact
+                        variant="light"
+                        size="xs"
+                        w="7rem"
+                        onClick={() => setShowInvalidLyrics(true)}
+                    >
+                        Show Anyway
+                    </Button>
+                </Stack>
+            </Center>
+        );
     }
 
     /**
@@ -100,7 +131,44 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
         );
     };
 
-    return <Box className={dynamicClasses.lyricsContainer}>{data.map(chunkRender)}</Box>;
+    return (
+        <Stack>
+            <Flex gap={10}>
+                {/* Mark as Valid/Invalid */}
+                <Button
+                    compact
+                    variant="light"
+                    size="xs"
+                    w="7rem"
+                    onClick={() =>
+                        getLyricsStatus.data?.is_valid !== undefined &&
+                        validateLyrics({
+                            trackId,
+                            artist,
+                            title,
+                            isValid: !getLyricsStatus.data.is_valid,
+                        }).then(() => getLyrics({ trackId, artist, title }))
+                    }
+                >
+                    {`Mark as ${getLyricsStatus.data.is_valid ? "Invalid" : "Valid"}`}
+                </Button>
+
+                {/* Refresh from Genius */}
+                <Button
+                    compact
+                    variant="light"
+                    size="xs"
+                    w="10rem"
+                    onClick={() => getLyrics({ trackId, artist, title, updateCache: true })}
+                >
+                    Refresh from Genius
+                </Button>
+            </Flex>
+            <Box className={dynamicClasses.lyricsContainer}>
+                {getLyricsStatus.data.chunks.map(chunkRender)}
+            </Box>
+        </Stack>
+    );
 };
 
 export default TrackLyrics;
