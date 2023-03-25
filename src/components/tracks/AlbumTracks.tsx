@@ -127,6 +127,12 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                             media={track}
                                             mediaType="track"
                                             inCircle={false}
+                                            enabledActions={{
+                                                Details: ["all"],
+                                                Favorites: ["all"],
+                                                Navigation: ["ViewInArtists", "ViewInAlbums"],
+                                                Playlist: ["all"],
+                                            }}
                                             onOpen={() => setActionsMenuOpenFor(track.id!!)}
                                             onClose={() => setActionsMenuOpenFor(undefined)}
                                         />

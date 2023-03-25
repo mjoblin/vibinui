@@ -361,23 +361,27 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                 {/* Details modals ------------------------------------------------------------ */}
 
                 {/* Tracks can show their lyrics, waveform, and links */}
-                <TrackLyricsModal
-                    track={trackById[entry.trackMediaId]}
-                    opened={showTrackLyricsModal}
-                    onClose={() => setShowTrackLyricsModal(false)}
-                />
+                {trackById[entry.trackMediaId] && (
+                    <>
+                        <TrackLyricsModal
+                            track={trackById[entry.trackMediaId]}
+                            opened={showTrackLyricsModal}
+                            onClose={() => setShowTrackLyricsModal(false)}
+                        />
 
-                <TrackWaveformModal
-                    track={trackById[entry.trackMediaId]}
-                    opened={showTrackWaveformModal}
-                    onClose={() => setShowTrackWaveformModal(false)}
-                />
+                        <TrackWaveformModal
+                            track={trackById[entry.trackMediaId]}
+                            opened={showTrackWaveformModal}
+                            onClose={() => setShowTrackWaveformModal(false)}
+                        />
 
-                <TrackLinksModal
-                    track={trackById[entry.trackMediaId]}
-                    opened={showTrackLinksModal}
-                    onClose={() => setShowTrackLinksModal(false)}
-                />
+                        <TrackLinksModal
+                            track={trackById[entry.trackMediaId]}
+                            opened={showTrackLinksModal}
+                            onClose={() => setShowTrackLinksModal(false)}
+                        />
+                    </>
+                )}
             </Menu>
         </Box>
     );
