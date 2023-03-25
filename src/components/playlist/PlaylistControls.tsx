@@ -12,6 +12,7 @@ import {
     Loader,
     Menu,
     Modal,
+    RingProgress,
     SegmentedControl,
     Select,
     Stack,
@@ -39,10 +40,86 @@ import { RootState } from "../../app/store/store";
 import StoredPlaylistsEditor from "./StoredPlaylistsEditor";
 import {
     epochSecondsToStringRelative,
+    hmsToSecs,
+    secstoHms,
     showErrorNotification,
     showSuccessNotification,
 } from "../../app/utils";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+
+// ------------------------------------------------------------------------------------------------
+
+const PlaylistDuration: FC = () => {
+    const { colors } = useMantineTheme();
+    const [activePlaylistDuration, setActivePlaylistDuration] = useState<number>(0);
+    const [completedEntriesProgress, setCompletedEntriesProgress] = useState<number>(0);
+    const [totalProgress, setTotalProgress] = useState<number>(0);
+    const { current_track_index, entries: activePlaylistEntries } = useAppSelector(
+        (state: RootState) => state.playlist
+    );
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const playheadPosition = useAppSelector((state: RootState) => state.playback.playhead.position);
+    const playheadPositionNormalized = useAppSelector(
+        (state: RootState) => state.playback.playhead.position_normalized
+    );
+
+    useEffect(() => {
+        if (!activePlaylistEntries || activePlaylistEntries.length <= 0) {
+            setActivePlaylistDuration(0);
+            return;
+        }
+
+        console.log(activePlaylistEntries);
+        console.log(current_track_index);
+
+        const totalDuration = activePlaylistEntries.reduce(
+            (totalDuration, entry) => totalDuration + hmsToSecs(entry.duration),
+            0
+        );
+
+        setActivePlaylistDuration(totalDuration);
+    }, [activePlaylistEntries]);
+
+    useEffect(() => {
+        if (!current_track_index || !activePlaylistEntries || activePlaylistEntries.length <= 0) {
+            setCompletedEntriesProgress(0);
+            return;
+        }
+
+        const progress = activePlaylistEntries
+            .filter((entry) => entry.index < current_track_index)
+            .reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
+
+        setCompletedEntriesProgress(progress);
+    }, [activePlaylistEntries, current_track_index, playStatus]);
+    
+    useEffect(() => {
+        // The check for buffering and playheadPositionNormalized is to reduce the chances that
+        // the totalProgress will (briefly) add the progress of the *next* playlist entry to the
+        // *end time* of the previous track. This results in the totalProgress skipping ahead by
+        // a full track duration before being reset back to where it should be.
+        playStatus !== "buffering" &&
+            playheadPositionNormalized < 0.95 &&
+            setTotalProgress(completedEntriesProgress + playheadPosition);
+    }, [completedEntriesProgress, playheadPosition, playheadPositionNormalized, playStatus]);
+
+    const completed = (totalProgress / activePlaylistDuration) * 100;
+
+    return (
+        <Flex align="center" pl={10}>
+            <Text size="xs" pr={5} color={colors.dark[2]}>
+                duration:
+            </Text>
+            <Text size="xs" pr={10} color={colors.dark[2]} weight="bold">{`${secstoHms(
+                activePlaylistDuration
+            )}s`}</Text>
+            <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
+            <Text size="xs" color={colors.blue[5]} weight="bold">{`${completed.toFixed(0)}%`}</Text>
+        </Flex>
+    );
+};
+
+// ------------------------------------------------------------------------------------------------
 
 type PlaylistSelectItemProps = {
     label: string;
@@ -74,6 +151,8 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
         );
     }
 );
+
+// ------------------------------------------------------------------------------------------------
 
 const PlaylistControls: FC = () => {
     const { APP_MODAL_BLUR } = useAppConstants();
@@ -179,7 +258,7 @@ const PlaylistControls: FC = () => {
 
     return (
         <Flex h="100%" align="center" justify="space-between">
-            <Flex gap={25}>
+            <Flex gap={25} align="center">
                 <Flex gap={5} w={275} align="center">
                     {activatingStoredPlaylist && (
                         <Flex gap={10} align="center">
@@ -296,6 +375,9 @@ const PlaylistControls: FC = () => {
                         },
                     ]}
                 />
+
+                {/* Playlist duration */}
+                <PlaylistDuration />
             </Flex>
 
             {!activeStoredPlaylistId && (
@@ -315,6 +397,8 @@ const PlaylistControls: FC = () => {
                     <Text color={colors.gray[4]}>Current Playlist is unsaved</Text>
                 </Alert>
             )}
+
+            {/* Modals ------------------------------------------------------------------------ */}
 
             {/* Stored Playlist editor modal (change playlist names, delete playlists, etc) */}
             <Modal
