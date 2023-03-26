@@ -5,6 +5,7 @@ export type WebsocketStatus = "disconnected" | "connecting" | "connected" | "wai
 
 export interface InternalState {
     application: {
+        currentlyPlayingArtUrl: string | undefined;
         currentScreen: string;
         isComputingInBackground: boolean;
         showKeyboardShortcuts: boolean;
@@ -56,6 +57,7 @@ export interface InternalState {
 
 const initialState: InternalState = {
     application: {
+        currentlyPlayingArtUrl: undefined,
         currentScreen: "",
         isComputingInBackground: false,
         showKeyboardShortcuts: false,
@@ -150,6 +152,9 @@ export const internalSlice = createSlice({
         setArtistsScrollToSelectedOnScreenEnter: (state, action: PayloadAction<boolean>) => {
             state.artists.scrollToSelectedOnScreenEnter = action.payload;
         },
+        setCurrentlyPlayingArtUrl: (state, action: PayloadAction<string | undefined>) => {
+            state.application.currentlyPlayingArtUrl = action.payload;
+        },
         setCurrentScreen: (state, action: PayloadAction<string>) => {
             state.application.currentScreen = action.payload;
         },
@@ -214,6 +219,7 @@ export const {
     setArtistsScrollSelectedIntoView,
     setArtistsScrollToCurrentOnScreenEnter,
     setArtistsScrollToSelectedOnScreenEnter,
+    setCurrentlyPlayingArtUrl,
     setCurrentScreen,
     setFavoriteCardRenderDimensions,
     setIsComputingInBackground,

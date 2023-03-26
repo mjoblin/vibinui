@@ -49,7 +49,7 @@ const RootLayout: FC = () => {
     const theme = useMantineTheme();
     const { classes } = useStyles();
     const { APP_URL_PREFIX, NAVBAR_PADDING } = useAppConstants();
-    const { currentScreen, websocketStatus } = useAppSelector(
+    const { currentlyPlayingArtUrl, currentScreen, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application
     );
     const { useImageBackground } = useAppSelector(
@@ -81,12 +81,11 @@ const RootLayout: FC = () => {
     //  https://developer.chrome.com/blog/what-is-the-top-layer/
 
     const currentTrack = currentTrackId ? trackById[currentTrackId] : undefined;
-    const artUrl = currentTrack && currentTrack.album_art_uri;
     const renderAppBackgroundImage = !!(
         useImageBackground &&
         theme.colorScheme === "dark" &&
         currentScreen === "current" &&
-        artUrl
+        currentlyPlayingArtUrl
     );
 
     return (
@@ -95,8 +94,11 @@ const RootLayout: FC = () => {
                 <Box
                     className={classes.artBackground}
                     sx={
-                        artUrl
-                            ? { backgroundImage: `url(${artUrl})`, backgroundSize: "100% auto" }
+                        currentlyPlayingArtUrl
+                            ? {
+                                  backgroundImage: `url(${currentlyPlayingArtUrl})`,
+                                  backgroundSize: "100% auto",
+                              }
                             : {}
                     }
                 >
