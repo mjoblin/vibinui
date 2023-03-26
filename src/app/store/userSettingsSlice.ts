@@ -19,6 +19,7 @@ const DEFAULT_ALBUMS_CARD_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
 const DEFAULT_APPLICATION_THEME = "dark";
+const DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND = true;
 const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
 const DEFAULT_ARTISTS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_ARTISTS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
@@ -50,6 +51,7 @@ export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
 export const LSKEY_APPLICATION_THEME = "application.theme";
+export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
 export const LSKEY_ARTISTS_CARD_GAP = "artists.cardGap";
 export const LSKEY_ARTISTS_CARD_SIZE = "artists.cardSize";
@@ -91,6 +93,7 @@ export interface UserSettingsState {
     };
     application: {
         theme: ApplicationTheme;
+        useImageBackground: boolean;
     };
     artists: {
         activeCollection: ArtistCollection;
@@ -161,6 +164,10 @@ const initialState: UserSettingsState = {
     },
     application: {
         theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
+        useImageBackground: getLocalStorageValue(
+            LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
+            DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND
+        ),
     },
     artists: {
         activeCollection: getLocalStorageValue(
@@ -183,8 +190,14 @@ const initialState: UserSettingsState = {
         ),
         cardGap: getLocalStorageValue(LSKEY_FAVORITES_CARD_GAP, DEFAULT_FAVORITES_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_FAVORITES_CARD_SIZE, DEFAULT_FAVORITES_CARD_SIZE),
-        filterText: getLocalStorageValue(LSKEY_FAVORITES_FILTER_TEXT, DEFAULT_FAVORITES_FILTER_TEXT),
-        showDetails: getLocalStorageValue(LSKEY_FAVORITES_SHOW_DETAILS, DEFAULT_FAVORITES_SHOW_DETAILS),
+        filterText: getLocalStorageValue(
+            LSKEY_FAVORITES_FILTER_TEXT,
+            DEFAULT_FAVORITES_FILTER_TEXT
+        ),
+        showDetails: getLocalStorageValue(
+            LSKEY_FAVORITES_SHOW_DETAILS,
+            DEFAULT_FAVORITES_SHOW_DETAILS
+        ),
     },
     nowPlaying: {
         activeTab: getLocalStorageValue(LSKEY_NOWPLAYING_ACTIVETAB, DEFAULT_NOWPLAYING_ACTIVETAB),
@@ -259,6 +272,9 @@ export const userSettingsSlice = createSlice({
         },
         setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
             state.application.theme = action.payload;
+        },
+        setApplicationUseImageBackground: (state, action: PayloadAction<boolean>) => {
+            state.application.useImageBackground = action.payload;
         },
         setArtistsActiveCollection: (state, action: PayloadAction<ArtistCollection>) => {
             state.artists.activeCollection = action.payload;
@@ -354,6 +370,7 @@ export const {
     setAlbumsFilterText,
     setAlbumsShowDetails,
     setApplicationTheme,
+    setApplicationUseImageBackground,
     setArtistsActiveCollection,
     setArtistsCardGap,
     setArtistsCardSize,

@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import {
     Button,
     Center,
+    Checkbox,
     Flex,
     Paper,
     Stack,
@@ -12,13 +13,14 @@ import {
 } from "@mantine/core";
 import { IconMoodSmile, IconRefresh } from "@tabler/icons";
 
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { useLazyClearMediaCachesQuery } from "../../app/services/vibinVibin";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { showSuccessNotification } from "../../app/utils";
+import { setApplicationUseImageBackground } from "../../app/store/userSettingsSlice";
 import StylizedLabel from "../shared/StylizedLabel";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import BackgroundComputeIndicator from "../shared/BackgroundComputeIndicator";
@@ -29,6 +31,7 @@ import MediaSourceBadge from "../shared/MediaSourceBadge";
 import SelfUpdatingRelativeDate from "../shared/SelfUpdatingRelativeDate";
 
 const StatusScreen: FC = () => {
+    const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
     const [clearMediaCache, clearMediaCacheStatus] = useLazyClearMediaCachesQuery();
     const { refetch: refetchAlbums } = useGetAlbumsQuery();
@@ -47,6 +50,9 @@ const StatusScreen: FC = () => {
         system_platform: systemPlatform,
         clients,
     } = useAppSelector((state: RootState) => state.vibinStatus);
+    const { useImageBackground } = useAppSelector(
+        (state: RootState) => state.userSettings.application
+    );    
 
     return (
         <Stack>
@@ -195,6 +201,22 @@ const StatusScreen: FC = () => {
                             </tbody>
                         </Table>
                     </Stack>
+                </Stack>
+            </Paper>
+
+            {/* User settings ----------------------------------------------------------------- */}
+
+            <Paper pt={5} p={15} shadow="xs">
+                <Stack spacing={10}>
+                    <StylizedLabel color={colors.dark[3]}>user settings</StylizedLabel>
+
+                    <Checkbox
+                        checked={useImageBackground}
+                        label="Show image background in Current Track (dark mode only)"
+                        onClick={() =>
+                            dispatch(setApplicationUseImageBackground(!useImageBackground))
+                        }
+                    />
                 </Stack>
             </Paper>
         </Stack>
