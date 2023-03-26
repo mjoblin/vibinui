@@ -15,6 +15,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { setCurrentlyPlayingArtUrl } from "../../app/store/internalSlice";
 import { setNowPlayingActiveTab } from "../../app/store/userSettingsSlice";
 import { usePlayMutation } from "../../app/services/vibinTransport";
 import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
@@ -92,6 +93,7 @@ const NowPlayingScreen: FC = () => {
         (state: RootState) => state.playback.current_track_media_id
     );
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const [getTrack, getTrackResult] = useLazyGetTrackByIdQuery();
     const [trackYearAndGenre, setTrackYearAndGenre] = useState<string | undefined>(undefined);
 
@@ -108,8 +110,25 @@ const NowPlayingScreen: FC = () => {
      */
     useEffect(() => {
         setTrackYearAndGenre(undefined);
-        currentTrackId && getTrack(currentTrackId);
-    }, [currentTrackId, getTrack]);
+
+        if (currentTrackId) {
+            getTrack(currentTrackId);
+        } else if (currentPlaybackTrack) {
+            // currentPlaybackTrack gets populated from sources like Airplay. When it looks like
+            // a currentPlaybackTrack is available (and the currentTrackId -- from a local media
+            // source -- is not), then a "fake" Track is created. This is fine so long as nothing
+            // down the line is expecting any keys that aren't being provided here.
+            setCurrentTrack({
+                artist: currentPlaybackTrack.artist,
+                album: currentPlaybackTrack.artist,
+                title: currentPlaybackTrack.title,
+                art_url: currentPlaybackTrack.art_url,
+                album_art_uri: currentPlaybackTrack.art_url,
+            } as Track);
+
+            dispatch(setCurrentlyPlayingArtUrl(currentPlaybackTrack.art_url));
+        }
+    }, [currentTrackId, currentPlaybackTrack, getTrack]);
 
     /**
      *
@@ -127,6 +146,7 @@ const NowPlayingScreen: FC = () => {
 
             setCurrentTrack(track);
             setTrackYearAndGenre(result);
+            dispatch(setCurrentlyPlayingArtUrl(track.album_art_uri));
         }
     }, [getTrackResult]);
 
@@ -136,11 +156,18 @@ const NowPlayingScreen: FC = () => {
         return <StandbyMode />;
     }
 
-    if (playStatus === "ready" || !currentTrack) {
+    if (
+        playStatus === "ready" ||
+        !currentSource ||
+        !currentTrack ||
+        !Object.keys(sourcesSupportingDetailsTabs).includes(currentSource.class)
+    ) {
         return playStatus === "play" ? (
             <Center pt="xl">
                 <Flex gap={10} align="center">
-                    <Text size={16} weight="bold">Currently playing from</Text>
+                    <Text size={16} weight="bold">
+                        Currently playing from
+                    </Text>
                     <MediaSourceBadge />
                 </Flex>
             </Center>
@@ -176,6 +203,7 @@ const NowPlayingScreen: FC = () => {
                             size={albumArtWidth}
                             radius={5}
                             hidePlayButton
+                            showControls={currentSource.class === "stream.media"}
                             enabledActions={{
                                 Favorites: ["all"],
                                 Navigation: ["ViewCurrentInArtists", "ViewInAlbums"],
