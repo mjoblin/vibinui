@@ -52,6 +52,12 @@ import TrackLinksModal from "../tracks/TrackLinksModal";
 //  separate as they differ enough to make generalizing them a little unwieldy -- but that may not
 //  always be the case.
 
+// TODO: See if these dark/light enabled/disabled are exposed in the mantine theme somewhere
+const darkDisabled = "#5C5F6B";
+const darkEnabled = "#C1C2C5";
+const lightDisabled = "#adb5bd";
+const lightEnabled = "#000";
+
 const useStyles = createStyles((theme) => ({
     button: {
         transition: "color .2s ease-in-out",
@@ -94,7 +100,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [moveEntry, moveEntryStatus] = useMovePlaylistEntryIdMutation();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
@@ -130,6 +137,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
         }
     }, [moveEntryStatus, deleteStatus, playStatus]);
 
+    const isStreamerOff = streamerPower === "off";
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === entry.trackMediaId);
 
     return (
@@ -183,7 +191,20 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
 
                         <Menu.Item
-                            icon={<IconPlayerPlay size={14} fill={colors.gray[3]} />}
+                            icon={
+                                <IconPlayerPlay
+                                    size={14}
+                                    fill={
+                                        theme.colorScheme === "dark"
+                                            ? isStreamerOff
+                                                ? darkDisabled
+                                                : darkEnabled
+                                            : isStreamerOff
+                                                ? lightDisabled
+                                                : lightEnabled
+                                    }
+                                />
+                            }
                             onClick={() => {
                                 playPlaylistId({ playlistId: entry.id });
                             }}
