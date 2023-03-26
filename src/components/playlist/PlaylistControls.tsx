@@ -69,9 +69,6 @@ const PlaylistDuration: FC = () => {
             return;
         }
 
-        console.log(activePlaylistEntries);
-        console.log(current_track_index);
-
         const totalDuration = activePlaylistEntries.reduce(
             (totalDuration, entry) => totalDuration + hmsToSecs(entry.duration),
             0
