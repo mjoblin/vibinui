@@ -100,11 +100,15 @@ const useStyles = createStyles((theme) => ({
         tr: {
             verticalAlign: "center",
         },
-    }
+    },
 }));
 
-const AppNav: FC = () => {
-    const { colors } = useMantineTheme();
+type AppNavProps = {
+    noBackground?: boolean;
+};
+
+const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
+    const theme = useMantineTheme();
     const { pathname } = useLocation();
     const { classes, cx } = useStyles();
     const { APP_URL_PREFIX, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
@@ -121,9 +125,7 @@ const AppNav: FC = () => {
             { link: `${APP_URL_PREFIX}/presets`, label: "Presets", icon: IconRadio },
             { link: `${APP_URL_PREFIX}/favorites`, label: "Favorites", icon: IconHeart },
         ],
-        Application: [
-            { link: `${APP_URL_PREFIX}/status`, label: "Status", icon: IconListDetails },
-        ],
+        Application: [{ link: `${APP_URL_PREFIX}/status`, label: "Status", icon: IconListDetails }],
     };
 
     const getLinks = (key: string) =>
@@ -140,23 +142,50 @@ const AppNav: FC = () => {
         ));
 
     return (
-        <Navbar width={{ sm: NAVBAR_WIDTH }} p={NAVBAR_PADDING}>
+        <Navbar
+            width={{ sm: NAVBAR_WIDTH }}
+            p={NAVBAR_PADDING}
+            styles={{
+                root: {
+                    backgroundColor: noBackground
+                        ? "rgb(0, 0, 0, 0)"
+                        : theme.colorScheme === "dark"
+                        ? theme.colors.dark[6]
+                        : theme.white,
+                },
+            }}
+        >
             <Navbar.Section grow>
                 <Stack spacing={15}>
                     <Stack spacing={10}>
-                        <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
+                        <Text
+                            size="xs"
+                            weight="bold"
+                            transform="uppercase"
+                            color={theme.colors.dark[3]}
+                        >
                             Now Playing
                         </Text>
                         <Box>{getLinks("Now Playing")}</Box>
                     </Stack>
                     <Stack spacing={10}>
-                        <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
+                        <Text
+                            size="xs"
+                            weight="bold"
+                            transform="uppercase"
+                            color={theme.colors.dark[3]}
+                        >
                             Browse
                         </Text>
                         <Box>{getLinks("Browse")}</Box>
                     </Stack>
                     <Stack spacing={10}>
-                        <Text size="xs" weight="bold" transform="uppercase" color={colors.dark[3]}>
+                        <Text
+                            size="xs"
+                            weight="bold"
+                            transform="uppercase"
+                            color={theme.colors.dark[3]}
+                        >
                             Application
                         </Text>
                         <Box>{getLinks("Application")}</Box>

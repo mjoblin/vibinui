@@ -8,7 +8,11 @@ import MiniController from "../currentlyPlaying/MiniController";
 import StylizedLabel from "../shared/StylizedLabel";
 import VibinLogo from "./VibinLogo";
 
-const AppHeader: FC = () => {
+type AppHeaderProps = {
+    noBackground?: boolean;
+};
+
+const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
     const { HEADER_HEIGHT, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
     const currentScreen = useAppSelector(
@@ -18,7 +22,15 @@ const AppHeader: FC = () => {
     return (
         <Header
             height={HEADER_HEIGHT}
-            bg={theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white}
+            styles={{
+                root: {
+                    backgroundColor: noBackground
+                        ? "rgb(0, 0, 0, 0)"
+                        : theme.colorScheme === "dark"
+                        ? theme.colors.dark[6]
+                        : theme.white,
+                },
+            }}
         >
             <Flex align="center" sx={{ height: "100%" }}>
                 <Box pl={NAVBAR_PADDING} miw={NAVBAR_WIDTH} maw={NAVBAR_WIDTH}>
