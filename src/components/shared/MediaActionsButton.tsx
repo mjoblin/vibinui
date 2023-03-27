@@ -117,7 +117,7 @@ type MediaActionsButtonProps = {
     media: Album | Track;
     enabledActions?: EnabledActions;
     position?: FloatingPosition;
-    size?: "md" | "sm";
+    size?: "md" | "sm" | number;
     inCircle?: boolean;
     onOpen?: () => void;
     onClose?: () => void;
@@ -131,10 +131,10 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     mediaType,
     media,
     enabledActions = {
+        Details: ["all"],
         Favorites: ["all"],
         Navigation: ["all"],
         Playlist: ["all"],
-        Tracks: ["all"],
     },
     position = "top",
     size = "md",
@@ -180,6 +180,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const showNavigationActions = enabledActions.Navigation && enabledActions.Navigation.length > 0;
     const showPlaylistActions = enabledActions.Playlist && enabledActions.Playlist.length > 0;
 
+    const displaySize = size === "sm" ? sizeSm : size === "md" ? sizeMd : size;
+
     const wantAction = (callerActions: MediaAction[], action: MediaAction): boolean =>
         callerActions.some((callerAction) => [action, "all"].includes(callerAction));
 
@@ -220,11 +222,11 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                             className={`${classes.actionsContainer} ${
                                 inCircle && classes.actionsInCircleContainer
                             } ${isActionsMenuOpen && inCircle && classes.buttonActive}`}
-                            w={inCircle ? (size === "md" ? sizeMd * 2 : sizeSm * 2) : undefined}
-                            h={inCircle ? (size === "md" ? sizeMd * 2 : sizeSm * 2) : undefined}
+                            w={inCircle ? displaySize * 2 : undefined}
+                            h={inCircle ? displaySize * 2 : undefined}
                         >
-                            <Box pt={size === "md" ? (inCircle ? 3 : 4) : 0}>
-                                <IconDotsVertical size={size === "md" ? sizeMd : sizeSm} />
+                            <Box pt={displaySize === sizeMd ? (inCircle ? 3 : 4) : 0}>
+                                <IconDotsVertical size={displaySize} />
                             </Box>
                         </Center>
                     </Tooltip>

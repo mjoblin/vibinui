@@ -150,8 +150,6 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
         );
     };
 
-    console.log(lyrics);
-
     return (
         <Stack>
             <Flex gap={10}>

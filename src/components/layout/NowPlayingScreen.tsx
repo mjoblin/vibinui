@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     ActionIcon,
     Box,
@@ -9,14 +10,24 @@ import {
     Stack,
     Tabs,
     Text,
+    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { setCurrentlyPlayingArtUrl } from "../../app/store/internalSlice";
-import { setNowPlayingActiveTab } from "../../app/store/userSettingsSlice";
+import {
+    setArtistsScrollToCurrentOnScreenEnter,
+    setCurrentlyPlayingArtUrl,
+} from "../../app/store/internalSlice";
+import {
+    setArtistsActiveCollection,
+    setArtistsSelectedAlbum,
+    setArtistsSelectedArtist,
+    setArtistsSelectedTrack,
+    setNowPlayingActiveTab
+} from "../../app/store/userSettingsSlice";
 import { usePlayMutation } from "../../app/services/vibinTransport";
 import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
 import TrackArt from "../tracks/TrackArt";
@@ -27,6 +38,7 @@ import TrackLyrics from "../nowPlaying/TrackLyrics";
 import Waveform from "../nowPlaying/Waveform";
 import SadLabel from "../shared/SadLabel";
 import StandbyMode from "../shared/StandbyMode";
+import MediaActionsButton from "../shared/MediaActionsButton";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
 import { yearFromDate } from "../../app/utils";
 import { MediaSourceClass, Track } from "../../app/types";
@@ -83,10 +95,13 @@ const PlaybackPaused: FC = () => {
 
 const NowPlayingScreen: FC = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE } = useAppConstants();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
+    const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
+    const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
     const currentTrackId = useAppSelector(
@@ -102,6 +117,9 @@ const NowPlayingScreen: FC = () => {
             fontFamily: APP_ALT_FONTFACE,
             lineHeight: 0.9,
             minHeight: "1.7rem",
+            "&:hover": {
+                cursor: "pointer",
+            },
         },
     }))();
 
@@ -181,11 +199,11 @@ const NowPlayingScreen: FC = () => {
     const tabsToDisplay = currentSource
         ? sourcesSupportingDetailsTabs[currentSource.class]
         : undefined;
-
+    
     return (
         <Flex gap={30} pt={7} pb={10}>
             {/* LHS stack: Album art, playhead, etc */}
-            <Stack miw={albumArtWidth} maw={albumArtWidth}>
+            <Stack miw={albumArtWidth} maw={albumArtWidth} spacing={30} align="flex-end">
                 <Stack spacing="xs">
                     <Flex justify="space-between" align="flex-end">
                         <MediaSourceBadge showSource={true} />
@@ -203,7 +221,7 @@ const NowPlayingScreen: FC = () => {
                             size={albumArtWidth}
                             radius={5}
                             hidePlayButton
-                            showControls={currentSource.class === "stream.media"}
+                            showControls={false}
                             enabledActions={{
                                 Favorites: ["all"],
                                 Navigation: ["ViewCurrentInArtists", "ViewInAlbums"],
@@ -215,15 +233,54 @@ const NowPlayingScreen: FC = () => {
 
                     <NowPlaying showAlbumDetails={false} />
                 </Stack>
+
+                {/* Track actions button */}
+                {currentSource.class === "stream.media" && (
+                    <Flex gap={10} align="center">
+                        <MediaActionsButton
+                            mediaType="track"
+                            media={currentTrack}
+                            size={"md"}
+                            enabledActions={{
+                                Details: ["all"],
+                                Favorites: ["all"],
+                                Navigation: ["all"],
+                            }}
+                        />
+                    </Flex>
+                )}
             </Stack>
 
             {/* RHS stack: Track name, album, artist, and tabs */}
             <Stack spacing="lg" sx={{ flexGrow: 1 }}>
                 <Stack spacing={5}>
                     <Box mih={40} w="fit-content">
-                        <Text size={34} weight="bold" className={dynamicClasses.currentTrackTitle}>
-                            {currentTrack.title || " "}
-                        </Text>
+                        <Tooltip label="View Track in Artists screen" position="bottom">
+                            <Text
+                                size={34}
+                                weight="bold"
+                                className={dynamicClasses.currentTrackTitle}
+                                onClick={() => {
+                                    // TODO: Clarify how best to configure the Artists screen for
+                                    //  navigation purposes. This code is duplicated elsewhere (like
+                                    //  <MediaActionsButton> and <PlaylistEntryActionsButton>) and is
+                                    //  overly verbose.
+                                    dispatch(setArtistsActiveCollection("all"));
+                                    dispatch(
+                                        setArtistsSelectedArtist(artistByName[currentTrack.artist])
+                                    );
+                                    dispatch(
+                                        setArtistsSelectedAlbum(albumById[currentTrack.parentId])
+                                    );
+                                    dispatch(setArtistsSelectedTrack(currentTrack));
+                                    dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
+
+                                    navigate("/ui/artists");
+                                }}
+                            >
+                                {currentTrack.title || " "}
+                            </Text>
+                        </Tooltip>
                     </Box>
 
                     {(currentSource?.class === "stream.media" ||
