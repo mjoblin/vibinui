@@ -108,12 +108,8 @@ const FavoritesControls: FC = () => {
                 <Box sx={{ alignSelf: "center" }}>
                     <Menu withArrow arrowPosition="center" position="top-start" withinPortal={true}>
                         <Menu.Target>
-                            <ActionIcon variant="filled" color={theme.primaryColor}>
-                                <IconPlayerPlay
-                                    size="1rem"
-                                    color={theme.white}
-                                    fill={theme.white}
-                                />
+                            <ActionIcon variant="light" color={theme.primaryColor}>
+                                <IconPlayerPlay size="1rem" />
                             </ActionIcon>
                         </Menu.Target>
                         <Menu.Dropdown>

@@ -43,6 +43,9 @@ export interface InternalState {
             renderHeight: number;
         };
     };
+    playlist: {
+        scrollPos: number;
+    };
     presets: {
         filteredPresetCount: number;
     };
@@ -100,6 +103,9 @@ const initialState: InternalState = {
             renderWidth: 200,
             renderHeight: 200,
         },
+    },
+    playlist: {
+        scrollPos: 0,
     },
     presets: {
         // Number of presets currently displayed in the Presets screen.
@@ -188,6 +194,9 @@ export const internalSlice = createSlice({
         setFilteredTrackCount: (state, action: PayloadAction<number>) => {
             state.tracks.filteredTrackCount = action.payload;
         },
+        setPlaylistScrollPos: (state, action: PayloadAction<number>) => {
+            state.playlist.scrollPos = action.payload;
+        },
         setShowDebugPanel: (state, action: PayloadAction<boolean | undefined>) => {
             state.application.showDebugPanel = action.payload === undefined ? true : action.payload;
         },
@@ -228,6 +237,7 @@ export const {
     setFilteredFavoriteCount,
     setFilteredPresetCount,
     setFilteredTrackCount,
+    setPlaylistScrollPos,
     setShowDebugPanel,
     setShowKeyboardShortcuts,
     setTrackCardRenderDimensions,

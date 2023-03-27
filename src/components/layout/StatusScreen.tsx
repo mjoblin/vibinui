@@ -212,7 +212,7 @@ const StatusScreen: FC = () => {
 
                     <Checkbox
                         checked={useImageBackground}
-                        label="Show image background in Current Track (dark mode only)"
+                        label="Show art image background in Now Playing screens (dark mode only)"
                         onClick={() =>
                             dispatch(setApplicationUseImageBackground(!useImageBackground))
                         }

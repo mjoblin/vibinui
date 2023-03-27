@@ -5,16 +5,21 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 
 type ScreenHeaderProps = {
     height: number;
+    noBackground?: boolean;
     children: ReactNode;
 };
 
-const ScreenHeader: FC<ScreenHeaderProps> = ({ height, children }) => {
+const ScreenHeader: FC<ScreenHeaderProps> = ({ height, noBackground = false, children }) => {
     const { HEADER_HEIGHT, NAVBAR_WIDTH } = useAppConstants();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         header: {
             position: "fixed",
-            background: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.white,
+            background: noBackground
+                ? "rgb(0, 0, 0, 0)"
+                : theme.colorScheme === "dark"
+                ? theme.colors.dark[8]
+                : theme.white,
             height,
             zIndex: 100,
             top: HEADER_HEIGHT,

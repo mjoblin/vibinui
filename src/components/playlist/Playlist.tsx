@@ -439,7 +439,7 @@ const Playlist: FC = () => {
     // --------------------------------------------------------------------------------------------
 
     return (
-        <ScrollArea>
+        <>
             {activatingStoredPlaylist && <Overlay opacity={0.5} color="#000000" radius={5} />}
             <DragDropContext
                 onDragEnd={({ draggableId, source, destination }) => {
@@ -498,7 +498,7 @@ const Playlist: FC = () => {
                     </Droppable>
                 </table>
             </DragDropContext>
-        </ScrollArea>
+        </>
     );
 };
 

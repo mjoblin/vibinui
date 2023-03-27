@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import {
     AppShell,
@@ -21,7 +21,7 @@ import Debug from "./Debug";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
-import { setCurrentScreen } from "../../app/store/internalSlice";
+import { setCurrentlyPlayingArtUrl, setCurrentScreen } from "../../app/store/internalSlice";
 import { RootState } from "../../app/store/store";
 
 const useStyles = createStyles((theme) => ({
@@ -47,60 +47,50 @@ const useStyles = createStyles((theme) => ({
 const RootLayout: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
-    const theme = useMantineTheme();
     const { classes } = useStyles();
-    const { APP_URL_PREFIX, APP_PADDING } = useAppConstants();
+    const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppConstants();
     const { currentlyPlayingArtUrl, currentScreen, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application
     );
-    const { useImageBackground } = useAppSelector(
-        (state: RootState) => state.userSettings.application
+    const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
+    const currentTrackId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
     );
-    const [windowDimensions, setWindowDimensions] = useState<string>(
+    const [backgroundUniqueKey, setBackgroundUniqueKey] = useState<string>(
         `${window.innerWidth}x${window.innerHeight}`
     );
 
     useEffect(() => {
         const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}\/([^\/]+)`));
         screenNameMatch && dispatch(setCurrentScreen(screenNameMatch[1] || ""));
-    }, [location, dispatch]);
+    }, [location, dispatch, APP_URL_PREFIX]);
 
-    // Prepare for rendering a blurred album art background behind the entire application. This is
-    // only done if art exists, the user is in the "current" screen, and the app theme is in dark
-    // mode. Rendering the background entails creating some divs outside the <AppShell> which hold
-    // the image and its filters. When displaying the art background, the NavBar, Header, and Main
-    // section all need to render a transparent background (i.e. rgb(0, 0, 0, 0)).
-    //
-    // NOTE: Because the AppNav background will be transparent, the main content panel will be
-    //  visible underneath it if the main panel needs to scroll vertically. There's a few
-    //  solutions to this: prevent the main content pane from scrolling at the window level;
-    //  don't make the AppNav transparent; have the AppNav use the top of the same image background
-    //  that the app is using (rather than being transparent and showing the app's background).
-    //
-    // TODO: Can this approach benefit from "top layer":
-    //  https://developer.chrome.com/blog/what-is-the-top-layer/
+    useEffect(() => {
+        if (currentTrackId && trackById[currentTrackId]) {
+            dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
+        }
+    }, [dispatch, currentTrackId, trackById]);
 
-    const renderAppBackgroundImage = !!(
-        useImageBackground &&
-        theme.colorScheme === "dark" &&
-        currentScreen === "current" &&
-        currentlyPlayingArtUrl
+    // Create a key unique to the current screen and window dimensions. If any of those things
+    // change (e.g. a window resize) then the key is changed. This key then becomes the key prop
+    // for the image background element. This ensures that the background image (and its filters)
+    // are re-generated when required. If this isn't done then a window resize, or switching
+    // between screens where one has a browser scrollbar and one doesn't, can produce undesirable
+    // results (some background image areas will not be properly filtered).
+    const windowResizeHandler = useCallback(
+        (event: UIEvent) =>
+            event.target &&
+            setBackgroundUniqueKey(`${currentScreen}::${window.innerWidth}x${window.innerHeight}`),
+        [currentScreen]
     );
-
-    // Keep track of the window dimensions. This gets used as the key for the background image
-    // <Box>, which in turn forces a re-render when the widow is resized. If the app isn't
-    // re-rendered on resize then the background image (and its filters) don't get re-generated and
-    // the result is visually awkward.
-    const windowResizeHandler = (event: UIEvent) =>
-        event.target && setWindowDimensions(`${window.innerWidth}x${window.innerHeight}`);
 
     useWindowEvent("resize", windowResizeHandler);
 
     return (
         <>
-            {renderAppBackgroundImage && (
+            {RENDER_APP_BACKGROUND_IMAGE && (
                 <Box
-                    key={windowDimensions}
+                    key={backgroundUniqueKey}
                     className={classes.artBackground}
                     sx={
                         currentlyPlayingArtUrl
@@ -117,11 +107,11 @@ const RootLayout: FC = () => {
 
             <AppShell
                 padding="md"
-                navbar={<AppNav noBackground={renderAppBackgroundImage} />}
-                header={<AppHeader noBackground={renderAppBackgroundImage} />}
+                navbar={<AppNav noBackground={RENDER_APP_BACKGROUND_IMAGE} />}
+                header={<AppHeader noBackground={RENDER_APP_BACKGROUND_IMAGE} />}
                 styles={(theme) => ({
                     main: {
-                        backgroundColor: renderAppBackgroundImage
+                        backgroundColor: RENDER_APP_BACKGROUND_IMAGE
                             ? "rgb(0, 0, 0, 0)"
                             : theme.colorScheme === "dark"
                             ? theme.colors.dark[8]

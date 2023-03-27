@@ -153,7 +153,7 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
 // ------------------------------------------------------------------------------------------------
 
 const PlaylistControls: FC = () => {
-    const { APP_MODAL_BLUR } = useAppConstants();
+    const { APP_MODAL_BLUR, RENDER_APP_BACKGROUND_IMAGE } = useAppConstants();
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
@@ -364,6 +364,13 @@ const PlaylistControls: FC = () => {
                 <SegmentedControl
                     value={viewMode}
                     radius={5}
+                    styles={{
+                        root: {
+                            backgroundColor: RENDER_APP_BACKGROUND_IMAGE
+                                ? "rgb(0, 0, 0, 0)"
+                                : undefined,
+                        },
+                    }}
                     onChange={(value) =>
                         value && dispatch(setPlaylistViewMode(value as PlaylistViewMode))
                     }
