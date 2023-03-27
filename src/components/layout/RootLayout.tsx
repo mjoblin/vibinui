@@ -38,7 +38,7 @@ const useStyles = createStyles((theme) => ({
         right: 0,
         left: 0,
         bottom: 0,
-        backdropFilter: "blur(20px) brightness(0.25)",
+        backdropFilter: "blur(20px) brightness(0.25) saturate(0.8)",
         zIndex: -9998,
     },
 }));
@@ -80,7 +80,6 @@ const RootLayout: FC = () => {
     // TODO: Can this approach benefit from "top layer":
     //  https://developer.chrome.com/blog/what-is-the-top-layer/
 
-    const currentTrack = currentTrackId ? trackById[currentTrackId] : undefined;
     const renderAppBackgroundImage = !!(
         useImageBackground &&
         theme.colorScheme === "dark" &&
