@@ -14,6 +14,7 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { IconSquareX } from "@tabler/icons";
+import ShowCountLabel from "../shared/ShowCountLabel";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -30,7 +31,7 @@ const PresetsControls: FC = () => {
             {/* Filter text */}
             <Flex gap={10} align="center">
                 <TextInput
-                    placeholder="Filter by Preset name"
+                    placeholder="Name filter, or advanced"
                     label="Filter"
                     value={filterText}
                     rightSection={
@@ -59,23 +60,11 @@ const PresetsControls: FC = () => {
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y presets" */}
-                <Flex gap={3} align="flex-end">
-                    <Text size="xs" color={colors.gray[6]}>
-                        Showing
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {filteredPresetCount.toLocaleString()}
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]}>
-                        of
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {presets?.length.toLocaleString() || 0}
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]}>
-                        presets
-                    </Text>
-                </Flex>
+                <ShowCountLabel
+                    showing={filteredPresetCount}
+                    of={presets?.length || 0}
+                    type="presets"
+                />
 
                 {/* Card display settings */}
                 <CardControls

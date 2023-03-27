@@ -102,22 +102,20 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
 
     if (!lyrics.is_valid && !showInvalidLyrics) {
         return (
-            <Center>
-                <Stack align="center">
-                    <Text size="sm" weight="bold" transform="uppercase">
-                        Lyrics marked as invalid
-                    </Text>
-                    <Button
-                        compact
-                        variant="light"
-                        size="xs"
-                        w="7rem"
-                        onClick={() => setShowInvalidLyrics(true)}
-                    >
-                        Show Anyway
-                    </Button>
-                </Stack>
-            </Center>
+            <Stack align="self-start">
+                <Text size="sm" weight="bold" transform="uppercase">
+                    Lyrics marked as invalid
+                </Text>
+                <Button
+                    compact
+                    variant="light"
+                    size="xs"
+                    w="7rem"
+                    onClick={() => setShowInvalidLyrics(true)}
+                >
+                    Show Anyway
+                </Button>
+            </Stack>
         );
     }
 
@@ -153,6 +151,19 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     return (
         <Stack>
             <Flex gap={10}>
+                {!lyrics.is_valid && (
+                    // Hide the lyrics
+                    <Button
+                        compact
+                        variant="light"
+                        size="xs"
+                        w="9rem"
+                        onClick={() => setShowInvalidLyrics(false)}
+                    >
+                        Hide Invalid Lyrics
+                    </Button>
+                )}
+
                 {/* Mark as Valid/Invalid */}
                 <Button
                     compact
@@ -183,9 +194,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
                     Refresh from Genius
                 </Button>
             </Flex>
-            <Box className={dynamicClasses.lyricsContainer}>
-                {lyrics.chunks.map(chunkRender)}
-            </Box>
+            <Box className={dynamicClasses.lyricsContainer}>{lyrics.chunks.map(chunkRender)}</Box>
         </Stack>
     );
 };

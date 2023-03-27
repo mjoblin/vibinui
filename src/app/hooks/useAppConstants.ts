@@ -1,18 +1,21 @@
 import React from "react";
 import { useMantineTheme } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 
 export const useAppConstants = () => {
     const { colors } = useMantineTheme();
+    const largeScreen = useMediaQuery("(min-width: 88em)");
 
     return {
         APP_ALT_FONTFACE: "Kanit",
         APP_PADDING: "md",
         APP_URL_PREFIX: "/ui",
         APP_MODAL_BLUR: 0.5,
-        CARD_FILTER_WIDTH: 275,
+        CARD_FILTER_WIDTH: largeScreen ? 450 : 295,
         CURRENTLY_PLAYING_COLOR: colors.yellow[4],
         HEADER_HEIGHT: 60,
-        NAVBAR_WIDTH: 210,
+        LARGE_SCREEN: largeScreen,
+        NAVBAR_WIDTH: largeScreen ? 210 : 185,
         SCREEN_LOADING_PT: 25,
         SCREEN_HEADER_HEIGHT: 70,
         SELECTED_COLOR: "rgba(25, 113, 194, 0.2)",

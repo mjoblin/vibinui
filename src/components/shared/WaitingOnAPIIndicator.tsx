@@ -42,6 +42,10 @@ const WaitingOnAPIIndicator: FC<WaitingOnAPIIndicatorProps> = ({ stealth = false
 
     const pendingQueryCount = pendingQueries.length;
 
+    if (stealth && pendingQueryCount <= 0) {
+        return null;
+    }
+
     return (
         <Popover
             position="top"
@@ -53,17 +57,13 @@ const WaitingOnAPIIndicator: FC<WaitingOnAPIIndicatorProps> = ({ stealth = false
             <Popover.Target>
                 <Tooltip
                     label="Lit when API calls are pending"
-                    disabled={stealth || pendingQueryCount > 0}
+                    disabled={pendingQueryCount > 0}
                 >
                     <ColorSwatch
                         size={20}
                         color={
                             pendingQueryCount
                                 ? TEMPORARY_ACTIVITY_COLOR
-                                : stealth
-                                ? theme.colorScheme === "dark"
-                                    ? theme.colors.dark[7]
-                                    : theme.white
                                 : theme.colorScheme === "dark"
                                 ? theme.colors.dark[6]
                                 : theme.colors.gray[2]

@@ -17,6 +17,7 @@ import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
+import ShowCountLabel from "../shared/ShowCountLabel";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 const stripParens = new RegExp(/^\(?([^\)]+)\)?$/);
@@ -54,7 +55,7 @@ const TracksControls: FC = () => {
             {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
             <Flex gap={10} align="center">
                 <TextInput
-                    placeholder="Filter by Track title"
+                    placeholder="Title filter, or advanced"
                     label="Filter"
                     value={filterText}
                     rightSection={
@@ -91,23 +92,11 @@ const TracksControls: FC = () => {
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y tracks" */}
-                <Flex gap={3} align="flex-end">
-                    <Text size="xs" color={colors.gray[6]}>
-                        Showing
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {filteredTrackCount.toLocaleString()}
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]}>
-                        of
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {allTracks?.length.toLocaleString() || 0}
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]}>
-                        tracks
-                    </Text>
-                </Flex>
+                <ShowCountLabel
+                    showing={filteredTrackCount}
+                    of={allTracks?.length || 0}
+                    type="tracks"
+                />
 
                 {/* Card display settings */}
                 <CardControls

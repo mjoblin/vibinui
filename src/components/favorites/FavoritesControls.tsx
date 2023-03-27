@@ -5,7 +5,6 @@ import {
     Flex,
     Menu,
     Select,
-    Text,
     TextInput,
     Tooltip,
     useMantineTheme,
@@ -31,6 +30,7 @@ import {
 import { showSuccessNotification } from "../../app/utils";
 import FilterInstructions from "../shared/FilterInstructions";
 import CardControls from "../shared/CardControls";
+import ShowCountLabel from "../shared/ShowCountLabel";
 
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -76,7 +76,7 @@ const FavoritesControls: FC = () => {
             {/* Filter text */}
             <Flex gap={10} align="center">
                 <TextInput
-                    placeholder="Filter by Favorite title"
+                    placeholder="Title filter, or advanced"
                     label="Filter"
                     value={filterText}
                     rightSection={
@@ -149,24 +149,12 @@ const FavoritesControls: FC = () => {
             </Tooltip>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
-                {/* "Showing x of y albums" */}
-                <Flex gap={3} align="flex-end">
-                    <Text size="xs" color={theme.colors.gray[6]}>
-                        Showing
-                    </Text>
-                    <Text size="xs" color={theme.colors.gray[6]} weight="bold">
-                        {filteredFavoriteCount.toLocaleString()}
-                    </Text>
-                    <Text size="xs" color={theme.colors.gray[6]}>
-                        of
-                    </Text>
-                    <Text size="xs" color={theme.colors.gray[6]} weight="bold">
-                        {favorites.length.toLocaleString() || 0}
-                    </Text>
-                    <Text size="xs" color={theme.colors.gray[6]}>
-                        favorites
-                    </Text>
-                </Flex>
+                {/* "Showing x of y favorites" */}
+                <ShowCountLabel
+                    showing={filteredFavoriteCount}
+                    of={favorites.length}
+                    type="favorites"
+                />
 
                 {/* Card display settings */}
                 <CardControls
