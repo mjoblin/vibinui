@@ -74,6 +74,10 @@ export default function App() {
                     element: <StatusScreen />,
                 },
                 {
+                    path: "*",
+                    element: <Navigate to="/ui/albums" replace />,
+                },
+                {
                     index: true,
                     element: <Navigate to="/ui/albums" replace />,
                 },
