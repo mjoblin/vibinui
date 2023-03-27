@@ -18,10 +18,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-    setArtistsScrollToCurrentOnScreenEnter,
-    setCurrentlyPlayingArtUrl,
-} from "../../app/store/internalSlice";
+import { setArtistsScrollToCurrentOnScreenEnter } from "../../app/store/internalSlice";
 import {
     setArtistsActiveCollection,
     setArtistsSelectedAlbum,
@@ -147,8 +144,6 @@ const NowPlayingScreen: FC = () => {
                 art_url: currentPlaybackTrack.art_url,
                 album_art_uri: currentPlaybackTrack.art_url,
             } as Track);
-
-            dispatch(setCurrentlyPlayingArtUrl(currentPlaybackTrack.art_url));
         }
     }, [currentTrackId, currentPlaybackTrack, getTrack]);
 
@@ -168,7 +163,6 @@ const NowPlayingScreen: FC = () => {
 
             setCurrentTrack(track);
             setTrackYearAndGenre(result);
-            dispatch(setCurrentlyPlayingArtUrl(track.album_art_uri));
         }
     }, [getTrackResult]);
 

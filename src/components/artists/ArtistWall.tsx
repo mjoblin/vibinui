@@ -41,12 +41,11 @@ import { store } from "../../app/store/store";
 
 const safeGet = (mediaData: Record<string, any>, key: string) => get(mediaData, key, []);
 
-const SCROLL_POS_DISPATCH_RATE = 500;
-
 const ArtistWall: FC = () => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
-    const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, SCREEN_LOADING_PT } = useAppConstants();
+    const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, SCREEN_LOADING_PT, SCROLL_POS_DISPATCH_RATE } =
+        useAppConstants();
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
     const { data: allTracks } = useGetTracksQuery();
     const { activeCollection, selectedAlbum, selectedArtist, selectedTrack, viewMode } =
