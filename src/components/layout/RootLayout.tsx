@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import {
     AppShell,
@@ -13,6 +13,7 @@ import {
     Text,
     useMantineTheme,
 } from "@mantine/core";
+import { useWindowEvent } from "@mantine/hooks";
 
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
@@ -55,9 +56,8 @@ const RootLayout: FC = () => {
     const { useImageBackground } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );
-    const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
-    const currentTrackId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+    const [windowDimensions, setWindowDimensions] = useState<string>(
+        `${window.innerWidth}x${window.innerHeight}`
     );
 
     useEffect(() => {
@@ -87,10 +87,20 @@ const RootLayout: FC = () => {
         currentlyPlayingArtUrl
     );
 
+    // Keep track of the window dimensions. This gets used as the key for the background image
+    // <Box>, which in turn forces a re-render when the widow is resized. If the app isn't
+    // re-rendered on resize then the background image (and its filters) don't get re-generated and
+    // the result is visually awkward.
+    const windowResizeHandler = (event: UIEvent) =>
+        event.target && setWindowDimensions(`${window.innerWidth}x${window.innerHeight}`);
+
+    useWindowEvent("resize", windowResizeHandler);
+
     return (
         <>
             {renderAppBackgroundImage && (
                 <Box
+                    key={windowDimensions}
                     className={classes.artBackground}
                     sx={
                         currentlyPlayingArtUrl
