@@ -231,7 +231,7 @@ const NowPlayingScreen: FC = () => {
     return (
         <Flex gap={30} pt={7} pb={10}>
             {/* LHS stack: Album art, playhead, etc */}
-            <Stack miw={albumArtWidth} maw={albumArtWidth} spacing={30} align="flex-end">
+            <Stack miw={albumArtWidth} maw={albumArtWidth} spacing={20} align="flex-end">
                 <Stack spacing="xs">
                     <Flex justify="space-between" align="flex-end">
                         <MediaSourceBadge showSource={true} />
