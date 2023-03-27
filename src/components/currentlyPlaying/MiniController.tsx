@@ -20,9 +20,11 @@ const MiniController: FC = () => {
 
     return transportActions.length > 0 &&
         ["play", "pause", "buffering"].includes(playStatus || "") ? (
-        <Flex gap={10} mih={componentHeight} mah={componentHeight} sx={{ flexGrow: 1 }}>
+        <Flex gap={10} mih={componentHeight} mah={componentHeight} w="100%">
             <TransportControls />
-            <NowPlaying playheadWidth={300} />
+            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                <NowPlaying playheadWidth={300} />
+            </Box>
         </Flex>
     ) : (
         <Flex mih={componentHeight} mah={componentHeight} align="center">

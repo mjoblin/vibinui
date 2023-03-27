@@ -111,7 +111,7 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
     const { pathname } = useLocation();
     const { classes, cx } = useStyles();
-    const { APP_URL_PREFIX, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
+    const { APP_URL_PREFIX, APP_PADDING, NAVBAR_WIDTH } = useAppConstants();
 
     const routeInfo: Record<string, { link: string; label: string; icon: TablerIcon }[]> = {
         "Now Playing": [
@@ -144,7 +144,7 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
     return (
         <Navbar
             width={{ sm: NAVBAR_WIDTH }}
-            p={NAVBAR_PADDING}
+            p={APP_PADDING}
             styles={{
                 root: {
                     backgroundColor: noBackground

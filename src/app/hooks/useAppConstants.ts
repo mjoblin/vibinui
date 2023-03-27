@@ -6,12 +6,12 @@ export const useAppConstants = () => {
 
     return {
         APP_ALT_FONTFACE: "Kanit",
+        APP_PADDING: "md",
         APP_URL_PREFIX: "/ui",
         APP_MODAL_BLUR: 0.5,
         CARD_FILTER_WIDTH: 275,
         CURRENTLY_PLAYING_COLOR: colors.yellow[4],
         HEADER_HEIGHT: 60,
-        NAVBAR_PADDING: "md",
         NAVBAR_WIDTH: 210,
         SCREEN_LOADING_PT: 25,
         SCREEN_HEADER_HEIGHT: 70,
