@@ -17,6 +17,7 @@ import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibi
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
+import ShowCountLabel from "../shared/ShowCountLabel";
 
 const AlbumsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -61,7 +62,7 @@ const AlbumsControls: FC = () => {
             {/* TODO: Consider debouncing setAlbumsFilterText() if performance is an issue */}
             <Flex gap={10} align="center">
                 <TextInput
-                    placeholder="Filter by Album title"
+                    placeholder="Title filter, or advanced"
                     label="Filter"
                     value={filterText}
                     rightSection={
@@ -90,29 +91,19 @@ const AlbumsControls: FC = () => {
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y albums" */}
-                <Flex gap={3} align="flex-end">
-                    <Text size="xs" color={colors.gray[6]}>
-                        Showing
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {filteredAlbumCount.toLocaleString()}
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]}>
-                        of
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]} weight="bold">
-                        {activeCollection === "all"
-                            ? allAlbums?.length.toLocaleString() || 0
+                <ShowCountLabel
+                    showing={filteredAlbumCount}
+                    of={
+                        activeCollection === "all"
+                            ? allAlbums?.length || 0
                             : activeCollection === "new"
-                            ? newAlbums?.length.toLocaleString() || 0
+                            ? newAlbums?.length || 0
                             : allAlbums?.find((album) => album.id === currentAlbumMediaId)
                             ? 1
-                            : 0}
-                    </Text>
-                    <Text size="xs" color={colors.gray[6]}>
-                        albums
-                    </Text>
-                </Flex>
+                            : 0
+                    }
+                    type="albums"
+                />
 
                 {/* Card display settings */}
                 <CardControls

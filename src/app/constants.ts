@@ -4,4 +4,4 @@
 
 export const API_REFRESH_INTERVAL = 60 * 60 * 24; // Refresh API data once per day.
 
-export const WEBSOCKET_RECONNECT_DELAY = 5000;
+export const WEBSOCKET_RECONNECT_DELAY = 3000;

@@ -28,6 +28,7 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { IconSquareX } from "@tabler/icons";
+import ShowCountLabel from "../shared/ShowCountLabel";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -154,7 +155,7 @@ const ArtistsControls: FC = () => {
 
             {/* Filter text */}
             <TextInput
-                placeholder="Filter by Artist name"
+                placeholder="Name filter, or advanced"
                 label="Filter"
                 value={filterText}
                 rightSection={
@@ -220,22 +221,12 @@ const ArtistsControls: FC = () => {
             </Flex>
 
             {/* "Showing x of y artists" */}
-            <Flex gap={3} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
-                <Text size="xs" color={colors.gray[6]}>
-                    Showing
-                </Text>
-                <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {filteredArtistCount.toLocaleString()}
-                </Text>
-                <Text size="xs" color={colors.gray[6]}>
-                    of
-                </Text>
-                <Text size="xs" color={colors.gray[6]} weight="bold">
-                    {allArtists?.length.toLocaleString() || 0}
-                </Text>
-                <Text size="xs" color={colors.gray[6]}>
-                    artists
-                </Text>
+            <Flex justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+                <ShowCountLabel
+                    showing={filteredArtistCount}
+                    of={allArtists?.length || 0}
+                    type="artists"
+                />
             </Flex>
         </Flex>
     );

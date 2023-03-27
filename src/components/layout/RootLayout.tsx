@@ -39,7 +39,7 @@ const useStyles = createStyles((theme) => ({
         right: 0,
         left: 0,
         bottom: 0,
-        backdropFilter: "blur(20px) brightness(0.25) saturate(0.8)",
+        backdropFilter: "blur(20px) brightness(0.15) saturate(0.8) contrast(0.8)",
         zIndex: -9998,
     },
 }));
