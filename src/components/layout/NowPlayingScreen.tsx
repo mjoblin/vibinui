@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     ActionIcon,
@@ -13,6 +13,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
+import { useWindowEvent } from "@mantine/hooks";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
@@ -111,6 +112,9 @@ const NowPlayingScreen: FC = () => {
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const [getTrack, getTrackResult] = useLazyGetTrackByIdQuery();
     const [trackYearAndGenre, setTrackYearAndGenre] = useState<string | undefined>(undefined);
+    const [tabContentHeight, setTabContentHeight] = useState<number>(300);
+    const tabListRef = useRef<HTMLDivElement>(null);
+    const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         currentTrackTitle: {
@@ -167,6 +171,30 @@ const NowPlayingScreen: FC = () => {
             dispatch(setCurrentlyPlayingArtUrl(track.album_art_uri));
         }
     }, [getTrackResult]);
+
+    /**
+     *
+     */
+    useEffect(() => {
+        if (!tabListRef?.current || !currentTrack) {
+            return;
+        }
+
+        const tabListBottomMargin = 20;
+        const bottomPadding = 20;
+
+        const tabViewportTop = tabListRef.current.getBoundingClientRect().bottom;
+
+        const tabContentHeight =
+            windowHeight - tabViewportTop - (tabListBottomMargin + bottomPadding);
+
+        setTabContentHeight(tabContentHeight);
+    }, [tabListRef, currentTrack, windowHeight]);
+
+    const windowResizeHandler = (event: UIEvent) =>
+        event.target && setWindowHeight((event.target as Window).innerHeight);
+    
+    useWindowEvent("resize", windowResizeHandler);
 
     // --------------------------------------------------------------------------------------------
 
@@ -305,6 +333,7 @@ const NowPlayingScreen: FC = () => {
                 {tabsToDisplay &&
                     (currentTrackId || (currentTrack.artist && currentTrack.title)) && (
                         <Tabs
+                            sx={{ flexGrow: 1 }}
                             value={activeTab}
                             onTabChange={(tabName) =>
                                 dispatch(setNowPlayingActiveTab(tabName as NowPlayingTab))
@@ -318,7 +347,7 @@ const NowPlayingScreen: FC = () => {
                                 },
                             })}
                         >
-                            <Tabs.List mb={20}>
+                            <Tabs.List ref={tabListRef} mb={20}>
                                 {tabsToDisplay.includes("lyrics") && (
                                     <Tabs.Tab value="lyrics">LYRICS</Tabs.Tab>
                                 )}
@@ -332,7 +361,7 @@ const NowPlayingScreen: FC = () => {
 
                             {tabsToDisplay.includes("lyrics") && (
                                 <Tabs.Panel value="lyrics">
-                                    <ScrollArea>
+                                    <ScrollArea h={tabContentHeight}>
                                         {(currentTrackId ||
                                             (currentTrack.artist && currentTrack.title)) && (
                                             <TrackLyrics
@@ -347,7 +376,7 @@ const NowPlayingScreen: FC = () => {
 
                             {tabsToDisplay.includes("waveform") && (
                                 <Tabs.Panel value="waveform">
-                                    <ScrollArea>
+                                    <ScrollArea h={tabContentHeight}>
                                         {currentTrackId && (
                                             <Waveform
                                                 trackId={currentTrackId}
@@ -361,7 +390,7 @@ const NowPlayingScreen: FC = () => {
 
                             {tabsToDisplay.includes("links") && (
                                 <Tabs.Panel value="links">
-                                    <ScrollArea>
+                                    <ScrollArea h={tabContentHeight}>
                                         {(currentTrackId ||
                                             (currentTrack.artist && currentTrack.title)) && (
                                             <TrackLinks
