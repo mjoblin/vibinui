@@ -49,7 +49,7 @@ const RootLayout: FC = () => {
     const location = useLocation();
     const theme = useMantineTheme();
     const { classes } = useStyles();
-    const { APP_URL_PREFIX, NAVBAR_PADDING } = useAppConstants();
+    const { APP_URL_PREFIX, APP_PADDING } = useAppConstants();
     const { currentlyPlayingArtUrl, currentScreen, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application
     );
@@ -129,7 +129,7 @@ const RootLayout: FC = () => {
                     },
                 })}
             >
-                <Stack pr={NAVBAR_PADDING}>
+                <Stack pr={APP_PADDING}>
                     {/* The route <Outlet> is the main screen (Albums, Artists, etc) */}
                     <Outlet />
                 </Stack>

@@ -14,14 +14,17 @@ type AppHeaderProps = {
 
 const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
-    const { HEADER_HEIGHT, NAVBAR_PADDING, NAVBAR_WIDTH } = useAppConstants();
+    const { HEADER_HEIGHT, APP_PADDING, NAVBAR_WIDTH } = useAppConstants();
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );
 
     return (
         <Header
+            w="100%"
             height={HEADER_HEIGHT}
+            pl={APP_PADDING}
+            pr={APP_PADDING}
             styles={{
                 root: {
                     backgroundColor: noBackground
@@ -33,14 +36,16 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
             }}
         >
             <Flex align="center" sx={{ height: "100%" }}>
-                <Box pl={NAVBAR_PADDING} miw={NAVBAR_WIDTH} maw={NAVBAR_WIDTH}>
+                <Box miw={NAVBAR_WIDTH} maw={NAVBAR_WIDTH}>
                     <VibinLogo />
                 </Box>
-                <Flex pl={NAVBAR_PADDING} gap={20} align="center">
+                <Flex gap={20} align="center" sx={{ flexGrow: 1, minWidth: 0 }}>
                     <Box miw={150} maw={150}>
                         <StylizedLabel>{currentScreen}</StylizedLabel>
                     </Box>
-                    <MiniController />
+                    <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+                        <MiniController />
+                    </Box>
                 </Flex>
             </Flex>
         </Header>

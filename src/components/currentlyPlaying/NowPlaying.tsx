@@ -26,7 +26,7 @@ const NowPlaying: FC<NowPlayingProps> = ({ showAlbumDetails = true, playheadWidt
     }
 
     return (
-        <Flex direction="row" gap={10} align="center" sx={{ flexGrow: 1 }}>
+        <Flex direction="row" gap={10} align="center" sx={{ flexGrow: 1, minWidth: 0 }}>
             <Flex
                 direction="column"
                 gap={5}
@@ -48,7 +48,7 @@ const NowPlaying: FC<NowPlayingProps> = ({ showAlbumDetails = true, playheadWidt
             </Flex>
 
             {showAlbumDetails && (
-                <Flex direction="row" align="center" gap={10}>
+                <Flex direction="row" align="center" gap={10} sx={{ flexGrow: 1, minWidth: 0 }}>
                     {/* TODO: Consider replacing with <AlbumArt> */}
                     <Image
                         src={currentTrack.art_url}
@@ -67,11 +67,34 @@ const NowPlaying: FC<NowPlayingProps> = ({ showAlbumDetails = true, playheadWidt
                             </Box>
                         }
                     />
-                    <Flex direction="column" align="start">
-                        <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
+                    <Flex
+                        direction="column"
+                        align="start"
+                        sx={{ flexGrow: 1, minWidth: 0, overflow: "hidden" }}
+                    >
+                        <Text
+                            size="xs"
+                            weight="bold"
+                            sx={{
+                                lineHeight: 1.25,
+                                maxWidth: "100%",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }}
+                        >
                             {currentTrack.title}
                         </Text>
-                        <Text size="xs" sx={{ lineHeight: 1.25 }}>
+                        <Text
+                            size="xs"
+                            sx={{
+                                lineHeight: 1.25,
+                                maxWidth: "100%",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                            }}
+                        >
                             {currentTrack.artist}
                             {currentTrack.album && ` - ${currentTrack.album}`}
                         </Text>
