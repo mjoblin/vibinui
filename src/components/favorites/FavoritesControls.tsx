@@ -2,12 +2,12 @@ import React, { FC } from "react";
 import {
     ActionIcon,
     Box,
+    Button,
     Flex,
     Menu,
     Select,
     TextInput,
     Tooltip,
-    useMantineTheme,
 } from "@mantine/core";
 import { IconDisc, IconMicrophone2, IconPlayerPlay, IconSquareX } from "@tabler/icons";
 
@@ -34,7 +34,6 @@ import ShowCountLabel from "../shared/ShowCountLabel";
 
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
-    const theme = useMantineTheme();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.favorites
@@ -108,36 +107,40 @@ const FavoritesControls: FC = () => {
                 <Box sx={{ alignSelf: "center" }}>
                     <Menu withArrow arrowPosition="center" position="top-start" withinPortal={true}>
                         <Menu.Target>
-                            <ActionIcon variant="light" color={theme.primaryColor}>
-                                <IconPlayerPlay size="1rem" />
-                            </ActionIcon>
+                            <Button
+                                size="xs"
+                                variant="light"
+                                leftIcon={<IconPlayerPlay size={18} />}
+                            >
+                                Play
+                            </Button>
                         </Menu.Target>
                         <Menu.Dropdown>
                             <Menu.Item
                                 disabled={isStreamerOff || !haveFavoriteAlbums}
                                 icon={<IconDisc size={14} />}
                                 onClick={() => {
-                                    playFavoriteAlbums();
+                                    playFavoriteAlbums({});
 
                                     showSuccessNotification({
-                                        message: "Playlist replaced with all favorite Albums",
+                                        message: "Playlist replaced with favorite Albums",
                                     });
                                 }}
                             >
-                                Play all Favorite Albums
+                                Play Favorite Albums (max 10)
                             </Menu.Item>
                             <Menu.Item
                                 disabled={isStreamerOff || !haveFavoriteTracks}
                                 icon={<IconMicrophone2 size={14} />}
                                 onClick={() => {
-                                    playFavoriteTracks();
+                                    playFavoriteTracks({});
 
                                     showSuccessNotification({
-                                        message: "Playlist replaced with all favorite Tracks",
+                                        message: "Playlist replaced with favorite Tracks",
                                     });
                                 }}
                             >
-                                Play all Favorite Tracks
+                                Play Favorite Tracks (max 100)
                             </Menu.Item>
                         </Menu.Dropdown>
                     </Menu>

@@ -69,16 +69,18 @@ export const vibinPlaylistApi = createApi({
                 method: "POST",
             }),
         }),
-        playFavoriteAlbums: builder.mutation<void, void>({
-            query: () => ({
+        playFavoriteAlbums: builder.mutation<void, { maxCount?: number }>({
+            query: ({ maxCount }) => ({
                 url: "play/favorites/albums",
                 method: "POST",
+                params: maxCount ? { max_count: maxCount } : {},
             }),
         }),
-        playFavoriteTracks: builder.mutation<void, void>({
-            query: () => ({
+        playFavoriteTracks: builder.mutation<void, { maxCount?: number }>({
+            query: ({ maxCount }) => ({
                 url: "play/favorites/tracks",
                 method: "POST",
+                params: maxCount ? { max_count: maxCount } : {},
             }),
         }),
         playPlaylistEntryId: builder.mutation<void, { playlistId: PlaylistEntryId }>({
@@ -93,12 +95,13 @@ export const vibinPlaylistApi = createApi({
                 method: "POST",
             }),
         }),
-        setPlaylistMediaIds: builder.mutation<void, { mediaIds: MediaId[] }>({
-            query: ({ mediaIds }) => ({
+        setPlaylistMediaIds: builder.mutation<void, { mediaIds: MediaId[], maxCount?: number }>({
+            query: ({ mediaIds, maxCount = 10 }) => ({
                 url: `modify`,
                 method: "POST",
                 body: {
                     action: "REPLACE",
+                    max_count: maxCount,
                     media_ids: mediaIds,
                 },
             }),
