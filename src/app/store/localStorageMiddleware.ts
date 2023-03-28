@@ -9,7 +9,7 @@ import {
     LSKEY_ALBUMS_CARD_SIZE,
     LSKEY_ALBUMS_FILTER_TEXT,
     LSKEY_ALBUMS_SHOW_DETAILS,
-    LSKEY_APPLICATION_SHOWN_WELCOME,
+    LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     LSKEY_APPLICATION_THEME,
     LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
     LSKEY_ARTISTS_ACTIVE_COLLECTION,
@@ -94,7 +94,7 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setAlbumsCardSize.type]: LSKEY_ALBUMS_CARD_SIZE,
     [setAlbumsShowDetails.type]: LSKEY_ALBUMS_SHOW_DETAILS,
     [setAlbumsFilterText.type]: LSKEY_ALBUMS_FILTER_TEXT,
-    [setApplicationHaveShownWelcomeMessage.type]: LSKEY_APPLICATION_SHOWN_WELCOME,
+    [setApplicationHaveShownWelcomeMessage.type]: LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
     [setApplicationUseImageBackground.type]: LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
     [setArtistsActiveCollection.type]: LSKEY_ARTISTS_ACTIVE_COLLECTION,
@@ -215,7 +215,6 @@ localStorageMiddleware.startListening({
         // Store the given key/value pair in local storage. Local storage wants string values, so
         // JSON.stringify() is used. Anything wishing to use these stored values (userSettingsSlice)
         // needs to run them through JSON.parse().
-
         key &&
             value !== null &&
             value !== undefined &&

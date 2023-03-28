@@ -18,7 +18,7 @@ const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_CARD_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
-const DEFAULT_APPLICATION_SHOWN_WELCOME = false;
+const DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = false;
 const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND = true;
 const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
@@ -51,7 +51,7 @@ export const LSKEY_ALBUMS_CARD_GAP = "albums.cardGap";
 export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
-export const LSKEY_APPLICATION_SHOWN_WELCOME = "application.haveShownWelcome";
+export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
 export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
@@ -167,8 +167,8 @@ const initialState: UserSettingsState = {
     },
     application: {
         haveShownWelcomeMessage: getLocalStorageValue(
-            LSKEY_APPLICATION_SHOWN_WELCOME,
-            DEFAULT_APPLICATION_SHOWN_WELCOME
+            LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
+            DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE
         ),
         theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
         useImageBackground: getLocalStorageValue(

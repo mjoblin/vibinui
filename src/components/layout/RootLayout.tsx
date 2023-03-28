@@ -11,7 +11,6 @@ import {
     Paper,
     Stack,
     Text,
-    useMantineTheme,
 } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 
@@ -20,10 +19,11 @@ import AppNav from "./AppNav";
 import Debug from "./Debug";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
 import WelcomeMessage from "./WelcomeMessage";
+import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { setCurrentlyPlayingArtUrl, setCurrentScreen } from "../../app/store/internalSlice";
-import { RootState } from "../../app/store/store";
+import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
 
 const useStyles = createStyles((theme) => ({
     artBackground: {
@@ -53,6 +53,9 @@ const RootLayout: FC = () => {
     const { currentlyPlayingArtUrl, currentScreen, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application
     );
+    const { haveShownWelcomeMessage } = useAppSelector(
+        (state: RootState) => state.userSettings.application
+    );    
     const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
@@ -166,7 +169,10 @@ const RootLayout: FC = () => {
                 )}
 
                 {/* Welcome message modal */}
-                <WelcomeMessage />
+                <WelcomeMessage
+                    opened={!haveShownWelcomeMessage}
+                    onClose={() => dispatch(setApplicationHaveShownWelcomeMessage(true))}
+                />
             </AppShell>
         </>
     );

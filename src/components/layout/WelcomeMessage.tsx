@@ -1,33 +1,26 @@
 import React, { FC } from "react";
 import { List, Modal, Paper, Stack } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { RootState } from "../../app/store/store";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
-import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
 import VibinLogo from "./VibinLogo";
 
-const WelcomeMessage: FC = () => {
-    const dispatch = useAppDispatch();
-    const { APP_MODAL_BLUR } = useAppConstants();
-    const { haveShownWelcomeMessage } = useAppSelector(
-        (state: RootState) => state.userSettings.application
-    );
+type WelcomeMessageProps = {
+    opened: boolean;
+    onClose: () => void;
+}
 
-    if (haveShownWelcomeMessage) {
-        return null;
-    }
+const WelcomeMessage: FC<WelcomeMessageProps> = ({ opened, onClose }) => {
+    const { APP_MODAL_BLUR } = useAppConstants();
 
     return (
         <Modal
-            // opened={!haveShownWelcomeMessage}
-            opened={true}
+            opened={opened}
             centered
             title="Welcome to Vibin"
             overlayProps={{ blur: APP_MODAL_BLUR }}
             withCloseButton
             size={"30rem"}
-            onClose={() => dispatch(setApplicationHaveShownWelcomeMessage(true))}
+            onClose={() => onClose && onClose()}
         >
             <Stack spacing={0} pt={20}>
                 <Paper withBorder p={25}>
