@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ActionIcon, Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Flex, TextInput, useMantineTheme } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -18,13 +18,12 @@ import ShowCountLabel from "../shared/ShowCountLabel";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { colors } = useMantineTheme();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { presets } = useAppSelector((state: RootState) => state.presets);
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );
-    const { filteredPresetCount } = useAppSelector((state: RootState) => state.internal.presets);
+    const { filteredPresetIds } = useAppSelector((state: RootState) => state.internal.presets);
 
     return (
         <Flex gap={25} align="center">
@@ -61,7 +60,7 @@ const PresetsControls: FC = () => {
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y presets" */}
                 <ShowCountLabel
-                    showing={filteredPresetCount}
+                    showing={filteredPresetIds.length}
                     of={presets?.length || 0}
                     type="presets"
                 />

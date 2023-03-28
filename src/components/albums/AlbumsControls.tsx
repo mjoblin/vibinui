@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ActionIcon, Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Box, Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -18,10 +18,10 @@ import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import ShowCountLabel from "../shared/ShowCountLabel";
+import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 
 const AlbumsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { colors } = useMantineTheme();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { data: allAlbums } = useGetAlbumsQuery();
     const { data: newAlbums } = useGetNewAlbumsQuery();
@@ -31,7 +31,7 @@ const AlbumsControls: FC = () => {
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
-    const { filteredAlbumCount } = useAppSelector((state: RootState) => state.internal.albums);
+    const { filteredAlbumMediaIds } = useAppSelector((state: RootState) => state.internal.albums);
 
     // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
     //  the tops of components to get them to look OK.
@@ -87,12 +87,21 @@ const AlbumsControls: FC = () => {
                     supportedKeys={["title", "artist", "creator", "genre", "date"]}
                     examples={["favorite album", "squirrels artist:(the rods) date:2004"]}
                 />
+
+                <Box pl={15}>
+                    <PlayMediaIdsButton
+                        mediaIds={filteredAlbumMediaIds}
+                        tooltipLabel={`Replace Playlist with ${filteredAlbumMediaIds.length} filtered Albums (10 max)`}
+                        notificationLabel={`Playlist replaced with ${filteredAlbumMediaIds.length} filtered Albums`}
+                        maxToPlay={10}
+                    />
+                </Box>
             </Flex>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y albums" */}
                 <ShowCountLabel
-                    showing={filteredAlbumCount}
+                    showing={filteredAlbumMediaIds.length}
                     of={
                         activeCollection === "all"
                             ? allAlbums?.length || 0

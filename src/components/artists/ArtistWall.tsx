@@ -23,7 +23,7 @@ import {
     setArtistsScrollSelectedIntoView,
     setArtistsScrollToCurrentOnScreenEnter,
     setArtistsScrollToSelectedOnScreenEnter,
-    setFilteredArtistCount,
+    setFilteredArtistMediaIds,
 } from "../../app/store/internalSlice";
 import {
     setArtistsSelectedAlbum,
@@ -290,7 +290,7 @@ const ArtistWall: FC = () => {
                       return artist.title.toLowerCase().includes(filterValueLower);
                   });
 
-    dispatch(setFilteredArtistCount(artistsToDisplay.length));
+    dispatch(setFilteredArtistMediaIds(artistsToDisplay.map((artist) => artist.id)));
 
     if (artistsToDisplay.length <= 0) {
         return (

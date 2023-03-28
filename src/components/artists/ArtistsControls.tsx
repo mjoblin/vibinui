@@ -5,7 +5,6 @@ import {
     Button,
     Flex,
     Select,
-    Text,
     TextInput,
     Tooltip,
     useMantineTheme,
@@ -32,7 +31,6 @@ import ShowCountLabel from "../shared/ShowCountLabel";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { colors } = useMantineTheme();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const albumsByArtistName = useAppSelector(
         (state: RootState) => state.mediaGroups.albumsByArtistName
@@ -40,9 +38,8 @@ const ArtistsControls: FC = () => {
     const tracksByArtistName = useAppSelector(
         (state: RootState) => state.mediaGroups.tracksByArtistName
     );
-    const { scrollCurrentIntoView, scrollSelectedIntoView } = useAppSelector(
-        (state: RootState) => state.internal.artists
-    );
+    const { filteredArtistMediaIds, scrollCurrentIntoView, scrollSelectedIntoView } =
+        useAppSelector((state: RootState) => state.internal.artists);
     const { activeCollection, filterText, selectedAlbum, selectedArtist, selectedTrack } =
         useAppSelector((state: RootState) => state.userSettings.artists);
     const currentAlbumMediaId = useAppSelector(
@@ -53,7 +50,6 @@ const ArtistsControls: FC = () => {
     );
     const { data: allArtists } = useGetArtistsQuery();
     const { data: allTracks } = useGetTracksQuery();
-    const { filteredArtistCount } = useAppSelector((state: RootState) => state.internal.artists);
 
     // --------------------------------------------------------------------------------------------
 
@@ -223,7 +219,7 @@ const ArtistsControls: FC = () => {
             {/* "Showing x of y artists" */}
             <Flex justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 <ShowCountLabel
-                    showing={filteredArtistCount}
+                    showing={filteredArtistMediaIds.length}
                     of={allArtists?.length || 0}
                     type="artists"
                 />

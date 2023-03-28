@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
-import { Box, Center, createStyles, Loader, Text } from "@mantine/core";
+import React, { FC, useEffect } from "react";
+import { Box, Center, createStyles } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetTracksQuery, useSearchLyricsMutation } from "../../app/services/vibinTracks";
-import { setFilteredTrackCount } from "../../app/store/internalSlice";
+import { setFilteredTrackMediaIds } from "../../app/store/internalSlice";
 import TrackCard from "./TrackCard";
 import SadLabel from "../shared/SadLabel";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
@@ -19,9 +19,6 @@ const TrackWall: FC = () => {
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const { cardSize, cardGap, lyricsSearchText } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
-    );
-    const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
     );
     const { data: allTracks, error, isLoading } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics }] = useSearchLyricsMutation();
@@ -72,7 +69,7 @@ const TrackWall: FC = () => {
 
     const tracksToDisplay = collectionFilter(tracksToFilter, debouncedFilterText, "title");
 
-    dispatch(setFilteredTrackCount(tracksToDisplay.length));
+    dispatch(setFilteredTrackMediaIds(tracksToDisplay.map((track) => track.id)));
 
     if (tracksToDisplay.length <= 0) {
         return (

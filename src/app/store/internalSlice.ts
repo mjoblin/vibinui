@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
+import { MediaId } from "../types";
+
 export type WebsocketStatus = "disconnected" | "connecting" | "connected" | "waiting_to_reconnect";
 
 export interface InternalState {
@@ -15,6 +17,7 @@ export interface InternalState {
     };
     albums: {
         filteredAlbumCount: number;
+        filteredAlbumMediaIds: MediaId[];
         albumCard: {
             renderWidth: number;
             renderHeight: number;
@@ -22,6 +25,7 @@ export interface InternalState {
     };
     artists: {
         filteredArtistCount: number;
+        filteredArtistMediaIds: MediaId[];
         artistCard: {
             renderWidth: number;
             renderHeight: number;
@@ -38,6 +42,7 @@ export interface InternalState {
     };
     favorites: {
         filteredFavoriteCount: number;
+        filteredFavoriteMediaIds: MediaId[];
         favoriteCard: {
             renderWidth: number;
             renderHeight: number;
@@ -48,9 +53,11 @@ export interface InternalState {
     };
     presets: {
         filteredPresetCount: number;
+        filteredPresetIds: number[];
     };
     tracks: {
         filteredTrackCount: number;
+        filteredTrackMediaIds: MediaId[];
         trackCard: {
             renderWidth: number;
             renderHeight: number;
@@ -71,6 +78,7 @@ const initialState: InternalState = {
     albums: {
         // Number of albums currently displayed in the Albums screen.
         filteredAlbumCount: 0,
+        filteredAlbumMediaIds: [],
         albumCard: {
             // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
             renderWidth: 200,
@@ -80,6 +88,7 @@ const initialState: InternalState = {
     artists: {
         // Number of artists currently displayed in the Albums screen.
         filteredArtistCount: 0,
+        filteredArtistMediaIds: [],
         artistCard: {
             // Dimensions of the last-rendered AlbumCard, to inform not-visible AlbumCard container sizes.
             renderWidth: 200,
@@ -98,6 +107,7 @@ const initialState: InternalState = {
     favorites: {
         // Number of favorites currently displayed in the Favorites screen.
         filteredFavoriteCount: 0,
+        filteredFavoriteMediaIds: [],
         favoriteCard: {
             // Dimensions of the last-rendered FavoriteCard, to inform not-visible FavoriteCard container sizes.
             renderWidth: 200,
@@ -110,10 +120,12 @@ const initialState: InternalState = {
     presets: {
         // Number of presets currently displayed in the Presets screen.
         filteredPresetCount: 0,
+        filteredPresetIds: [],
     },
     tracks: {
         // Number of tracks currently displayed in the Tracks screen.
         filteredTrackCount: 0,
+        filteredTrackMediaIds: [],
         trackCard: {
             // Dimensions of the last-rendered TrackCard, to inform not-visible TrackCard container sizes.
             renderWidth: 200,
@@ -182,17 +194,32 @@ export const internalSlice = createSlice({
         setFilteredAlbumCount: (state, action: PayloadAction<number>) => {
             state.albums.filteredAlbumCount = action.payload;
         },
+        setFilteredAlbumMediaIds: (state, action: PayloadAction<MediaId[]>) => {
+            state.albums.filteredAlbumMediaIds = action.payload;
+        },
         setFilteredArtistCount: (state, action: PayloadAction<number>) => {
             state.artists.filteredArtistCount = action.payload;
+        },
+        setFilteredArtistMediaIds: (state, action: PayloadAction<MediaId[]>) => {
+            state.artists.filteredArtistMediaIds = action.payload;
         },
         setFilteredFavoriteCount: (state, action: PayloadAction<number>) => {
             state.favorites.filteredFavoriteCount = action.payload;
         },
+        setFilteredFavoriteMediaIds: (state, action: PayloadAction<MediaId[]>) => {
+            state.favorites.filteredFavoriteMediaIds = action.payload;
+        },
         setFilteredPresetCount: (state, action: PayloadAction<number>) => {
             state.presets.filteredPresetCount = action.payload;
         },
+        setFilteredPresetIds: (state, action: PayloadAction<number[]>) => {
+            state.presets.filteredPresetIds = action.payload;
+        },
         setFilteredTrackCount: (state, action: PayloadAction<number>) => {
             state.tracks.filteredTrackCount = action.payload;
+        },
+        setFilteredTrackMediaIds: (state, action: PayloadAction<MediaId[]>) => {
+            state.tracks.filteredTrackMediaIds = action.payload;
         },
         setPlaylistScrollPos: (state, action: PayloadAction<number>) => {
             state.playlist.scrollPos = action.payload;
@@ -233,10 +260,15 @@ export const {
     setFavoriteCardRenderDimensions,
     setIsComputingInBackground,
     setFilteredAlbumCount,
+    setFilteredAlbumMediaIds,
     setFilteredArtistCount,
+    setFilteredArtistMediaIds,
     setFilteredFavoriteCount,
+    setFilteredFavoriteMediaIds,
     setFilteredPresetCount,
+    setFilteredPresetIds,
     setFilteredTrackCount,
+    setFilteredTrackMediaIds,
     setPlaylistScrollPos,
     setShowDebugPanel,
     setShowKeyboardShortcuts,

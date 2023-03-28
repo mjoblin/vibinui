@@ -41,7 +41,7 @@ const FavoritesControls: FC = () => {
     );
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
-    const { filteredFavoriteCount } = useAppSelector(
+    const { filteredFavoriteMediaIds } = useAppSelector(
         (state: RootState) => state.internal.favorites
     );
     const [playFavoriteAlbums] = usePlayFavoriteAlbumsMutation();
@@ -147,7 +147,7 @@ const FavoritesControls: FC = () => {
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y favorites" */}
                 <ShowCountLabel
-                    showing={filteredFavoriteCount}
+                    showing={filteredFavoriteMediaIds.length}
                     of={favorites.length}
                     type="favorites"
                 />
