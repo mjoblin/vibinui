@@ -5,7 +5,6 @@ import { MediaId } from "../../app/types";
 import { IconPlayerPlay } from "@tabler/icons";
 import { useSetPlaylistMediaIdsMutation } from "../../app/services/vibinPlaylist";
 import { showSuccessNotification } from "../../app/utils";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 
@@ -34,13 +33,9 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
                 <ActionIcon
                     variant="light"
                     color={theme.primaryColor}
-                    disabled={
-                        !isLocalMedia ||
-                        mediaIds.length === 0 ||
-                        mediaIds.length > maxToPlay
-                    }
+                    disabled={!isLocalMedia || mediaIds.length === 0}
                     onClick={() => {
-                        setPlaylistIds({ mediaIds });
+                        setPlaylistIds({ mediaIds, maxCount: maxToPlay });
 
                         showSuccessNotification({
                             title: "Playlist replaced",
