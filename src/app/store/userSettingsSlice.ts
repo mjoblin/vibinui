@@ -18,6 +18,7 @@ const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_CARD_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
+const DEFAULT_APPLICATION_SHOWN_WELCOME = false;
 const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND = true;
 const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
@@ -50,6 +51,7 @@ export const LSKEY_ALBUMS_CARD_GAP = "albums.cardGap";
 export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
+export const LSKEY_APPLICATION_SHOWN_WELCOME = "application.haveShownWelcome";
 export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
@@ -92,6 +94,7 @@ export interface UserSettingsState {
         showDetails: boolean;
     };
     application: {
+        haveShownWelcomeMessage: boolean;
         theme: ApplicationTheme;
         useImageBackground: boolean;
     };
@@ -163,6 +166,10 @@ const initialState: UserSettingsState = {
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
     },
     application: {
+        haveShownWelcomeMessage: getLocalStorageValue(
+            LSKEY_APPLICATION_SHOWN_WELCOME,
+            DEFAULT_APPLICATION_SHOWN_WELCOME
+        ),
         theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
         useImageBackground: getLocalStorageValue(
             LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
@@ -270,6 +277,9 @@ export const userSettingsSlice = createSlice({
         setAlbumsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.albums.showDetails = action.payload;
         },
+        setApplicationHaveShownWelcomeMessage: (state, action: PayloadAction<boolean>) => {
+            state.application.haveShownWelcomeMessage = action.payload;
+        },
         setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
             state.application.theme = action.payload;
         },
@@ -369,6 +379,7 @@ export const {
     setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
+    setApplicationHaveShownWelcomeMessage,
     setApplicationTheme,
     setApplicationUseImageBackground,
     setArtistsActiveCollection,

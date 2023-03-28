@@ -19,6 +19,7 @@ import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
 import Debug from "./Debug";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
+import WelcomeMessage from "./WelcomeMessage";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { setCurrentlyPlayingArtUrl, setCurrentScreen } from "../../app/store/internalSlice";
@@ -163,6 +164,9 @@ const RootLayout: FC = () => {
                         </Center>
                     </Overlay>
                 )}
+
+                {/* Welcome message modal */}
+                <WelcomeMessage />
             </AppShell>
         </>
     );

@@ -5,8 +5,20 @@ import { IconPlant2 } from "@tabler/icons";
 import CustomFonts from "../customFonts/CustomFonts";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 
-const VibinLogo: FC = () => {
+type VibinLogoProps = {
+    compact?: boolean;
+};
+
+const VibinLogo: FC<VibinLogoProps> = ({ compact = false }) => {
     const { APP_ALT_FONTFACE } = useAppConstants();
+
+    if (compact) {
+        return (
+            <ThemeIcon size={24} color="green" radius="xl">
+                <IconPlant2 size="1rem" />
+            </ThemeIcon>
+        );
+    }
 
     return (
         <Flex align="center" gap={8}>
