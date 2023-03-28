@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { ActionIcon, Flex, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -18,19 +18,19 @@ import FilterInstructions from "../shared/FilterInstructions";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../shared/ShowCountLabel";
+import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 const stripParens = new RegExp(/^\(?([^\)]+)\)?$/);
 
 const TracksControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { colors } = useMantineTheme();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { data: allTracks } = useGetTracksQuery();
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
-    const { filteredTrackCount } = useAppSelector((state: RootState) => state.internal.tracks);
+    const { filteredTrackMediaIds } = useAppSelector((state: RootState) => state.internal.tracks);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
 
     // If the filter text includes something like "lyric:(some lyric search)" then store
@@ -88,12 +88,21 @@ const TracksControls: FC = () => {
                         "lyrics retrieved by the Vibin backend."
                     }
                 />
+
+                <Box pl={15}>
+                    <PlayMediaIdsButton
+                        mediaIds={filteredTrackMediaIds}
+                        tooltipLabel={`Replace Playlist with ${filteredTrackMediaIds.length} filtered Tracks (100 max)`}
+                        notificationLabel={`Playlist replaced with ${filteredTrackMediaIds.length} filtered Tracks`}
+                        maxToPlay={100}
+                    />
+                </Box>
             </Flex>
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y tracks" */}
                 <ShowCountLabel
-                    showing={filteredTrackCount}
+                    showing={filteredTrackMediaIds.length}
                     of={allTracks?.length || 0}
                     type="tracks"
                 />

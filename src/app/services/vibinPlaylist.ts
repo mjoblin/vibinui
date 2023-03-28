@@ -93,8 +93,20 @@ export const vibinPlaylistApi = createApi({
                 method: "POST",
             }),
         }),
+        setPlaylistMediaIds: builder.mutation<void, { mediaIds: MediaId[] }>({
+            query: ({ mediaIds }) => ({
+                url: `modify`,
+                method: "POST",
+                body: {
+                    action: "REPLACE",
+                    media_ids: mediaIds,
+                },
+            }),
+        }),
     }),
 });
+
+// TODO: Consider using Query not Mutation (as a naming convention)
 
 export const {
     useAddMediaToPlaylistMutation,
@@ -105,4 +117,5 @@ export const {
     usePlayFavoriteTracksMutation,
     usePlayPlaylistEntryIdMutation,
     usePlayPlaylistEntryIndexMutation,
+    useSetPlaylistMediaIdsMutation,
 } = vibinPlaylistApi;

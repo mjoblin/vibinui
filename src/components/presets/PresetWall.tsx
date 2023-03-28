@@ -3,7 +3,7 @@ import { Box, createStyles } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { setFilteredPresetCount } from "../../app/store/internalSlice";
+import { setFilteredPresetIds } from "../../app/store/internalSlice";
 import PresetCard from "./PresetCard";
 import { collectionFilter } from "../../app/utils";
 
@@ -24,7 +24,7 @@ const PresetWall: FC = () => {
 
     const presetsToDisplay = collectionFilter(presets, filterText, "name");
 
-    dispatch(setFilteredPresetCount(presetsToDisplay.length));
+    dispatch(setFilteredPresetIds(presetsToDisplay.map((preset) => preset.id)));
 
     return (
         <Box className={dynamicClasses.presetsWall}>

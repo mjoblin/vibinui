@@ -111,8 +111,15 @@ const PlaylistDuration: FC = () => {
             <Text size="xs" pr={10} color={colors.dark[2]} weight="bold">{`${secstoHms(
                 activePlaylistDuration
             )}s`}</Text>
-            <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
-            <Text size="xs" color={colors.blue[5]} weight="bold">{`${completed.toFixed(0)}%`}</Text>
+
+            {!isNaN(completed) && (
+                <>
+                    <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
+                    <Text size="xs" color={colors.blue[5]} weight="bold">{`${completed.toFixed(
+                        0
+                    )}%`}</Text>
+                </>
+            )}
         </Flex>
     );
 };

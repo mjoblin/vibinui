@@ -8,7 +8,7 @@ import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
-import { setFilteredAlbumCount } from "../../app/store/internalSlice";
+import { setFilteredAlbumMediaIds } from "../../app/store/internalSlice";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { collectionFilter } from "../../app/utils";
 
@@ -74,7 +74,7 @@ const AlbumWall: FC = () => {
 
     const albumsToDisplay = collectionFilter(collection, filterText, "title");
 
-    dispatch(setFilteredAlbumCount(albumsToDisplay.length));
+    dispatch(setFilteredAlbumMediaIds(albumsToDisplay.map((album) => album.id)));
 
     if (albumsToDisplay.length <= 0) {
         return (

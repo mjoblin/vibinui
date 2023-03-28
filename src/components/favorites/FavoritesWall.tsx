@@ -5,7 +5,7 @@ import { Album, Track } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { collectionFilter } from "../../app/utils";
-import { setFilteredFavoriteCount } from "../../app/store/internalSlice";
+import { setFilteredFavoriteMediaIds } from "../../app/store/internalSlice";
 import AlbumCard from "../albums/AlbumCard";
 import SadLabel from "../shared/SadLabel";
 import StylizedLabel from "../shared/StylizedLabel";
@@ -58,7 +58,7 @@ const FavoritesWall: FC = () => {
             "title"
         );
 
-        dispatch(setFilteredFavoriteCount(collectionToShow.length));
+        dispatch(setFilteredFavoriteMediaIds(collectionToShow.map((favorite) => favorite.id)));
 
         return collectionToShow.length > 0 ? (
             <Box className={dynamicClasses.favoritesWall}>
@@ -114,7 +114,10 @@ const FavoritesWall: FC = () => {
     );
 
     dispatch(
-        setFilteredFavoriteCount(filteredAlbumFavorites.length + filteredTrackFavorites.length)
+        setFilteredFavoriteMediaIds([
+            ...filteredAlbumFavorites.map((albumFavorite) => albumFavorite.id),
+            ...filteredTrackFavorites.map((trackFavorite) => trackFavorite.id),
+        ])
     );
 
     return (
