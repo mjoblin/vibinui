@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import ArtistsControls from "../artists/ArtistsControls";
 import ArtistWall from "../artists/ArtistWall";
 import ScreenHeader from "./ScreenHeader";
 
 const ArtistsScreen: FC = () => {
-    const { SCREEN_HEADER_HEIGHT } = useAppConstants();
+    const { SCREEN_HEADER_HEIGHT } = useAppGlobals();
 
     return (
         <Stack spacing={0}>

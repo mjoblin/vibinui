@@ -9,7 +9,7 @@ import SadLabel from "../shared/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../app/store/internalSlice";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { collectionFilter } from "../../app/utils";
 
 type AlbumWallProps = {
@@ -18,7 +18,7 @@ type AlbumWallProps = {
 
 const AlbumWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     const dispatch = useAppDispatch();
-    const { SCREEN_LOADING_PT } = useAppConstants();
+    const { SCREEN_LOADING_PT } = useAppGlobals();
     const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
     const currentAlbumRef = useRef<HTMLDivElement>(null);
     const { activeCollection, cardSize, cardGap } = useAppSelector(

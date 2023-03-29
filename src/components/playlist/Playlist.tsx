@@ -33,7 +33,7 @@ import VibinIconButton from "../shared/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../shared/SadLabel";
 import StandbyMode from "../shared/StandbyMode";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 const DIMMED = "#808080";
 const TITLE_AND_ALBUM_COLUMN_GAP = 40;
@@ -143,7 +143,7 @@ type PlaylistProps = {
 
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
     const { colors } = useMantineTheme();
-    const { CURRENTLY_PLAYING_COLOR } = useAppConstants();
+    const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);

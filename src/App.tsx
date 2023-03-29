@@ -6,7 +6,7 @@ import { Notifications } from "@mantine/notifications";
 import { RootState } from "./app/store/store";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
-import { useAppConstants } from "./app/hooks/useAppConstants";
+import { useAppGlobals } from "./app/hooks/useAppGlobals";
 import RootLayout from "./components/layout/RootLayout";
 import AlbumsScreen from "./components/layout/AlbumsScreen";
 import ArtistsScreen from "./components/layout/ArtistsScreen";
@@ -25,7 +25,7 @@ import StatusScreen from "./components/layout/StatusScreen";
 export default function App() {
     const dispatch = useAppDispatch();
     const { theme } = useAppSelector((state: RootState) => state.userSettings.application);
-    const { APP_ALT_FONTFACE, APP_URL_PREFIX } = useAppConstants();
+    const { APP_ALT_FONTFACE, APP_URL_PREFIX } = useAppGlobals();
     const [colorScheme, setColorScheme] = useState<ColorScheme>(theme);
 
     const toggleColorScheme = (value?: ColorScheme) => {

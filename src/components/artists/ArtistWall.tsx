@@ -35,7 +35,7 @@ import ArtistCard from "./ArtistCard";
 import TrackCard from "../tracks/TrackCard";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { store } from "../../app/store/store";
 
@@ -45,7 +45,7 @@ const ArtistWall: FC = () => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, SCREEN_LOADING_PT, SCROLL_POS_DISPATCH_RATE } =
-        useAppConstants();
+        useAppGlobals();
     const { data: allArtists, error, isLoading } = useGetArtistsQuery();
     const { data: allTracks } = useGetTracksQuery();
     const { activeCollection, selectedAlbum, selectedArtist, selectedTrack, viewMode } =

@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { Box, createStyles, rem } from "@mantine/core";
 
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 type ScreenHeaderProps = {
     height: number;
@@ -10,7 +10,7 @@ type ScreenHeaderProps = {
 };
 
 const ScreenHeader: FC<ScreenHeaderProps> = ({ height, noBackground = false, children }) => {
-    const { HEADER_HEIGHT, NAVBAR_WIDTH } = useAppConstants();
+    const { HEADER_HEIGHT, NAVBAR_WIDTH } = useAppGlobals();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         header: {

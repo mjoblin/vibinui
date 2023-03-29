@@ -2,7 +2,7 @@ import React, { FC, useCallback, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
 import { useAppDispatch } from "../../app/hooks";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../app/store/userSettingsSlice";
 import AlbumsControls from "../albums/AlbumsControls";
 import AlbumWall from "../albums/AlbumWall";
@@ -10,7 +10,7 @@ import ScreenHeader from "./ScreenHeader";
 
 const AlbumsScreen: FC = () => {
     const dispatch = useAppDispatch();
-    const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppConstants();
+    const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const [currentAlbumRef, setCurrentAlbumRef] = useState<HTMLDivElement>();
 
     /**

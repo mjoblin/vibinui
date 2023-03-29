@@ -3,7 +3,7 @@ import { Modal } from "@mantine/core";
 
 import { Album } from "../../app/types";
 import AlbumTracks from "./AlbumTracks";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 type AlbumTracksModalProps = {
     album: Album;
@@ -12,7 +12,7 @@ type AlbumTracksModalProps = {
 };
 
 const AlbumTracksModal: FC<AlbumTracksModalProps> = ({ album, opened, onClose = undefined }) => {
-    const { APP_MODAL_BLUR } = useAppConstants();
+    const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
         <Modal

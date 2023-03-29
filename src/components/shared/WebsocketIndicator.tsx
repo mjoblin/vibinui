@@ -3,12 +3,12 @@ import { ColorSwatch, MantineColor, Tooltip, useMantineTheme } from "@mantine/co
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { WebsocketStatus } from "../../app/store/internalSlice";
 
 const WebsocketIndicator: FC = () => {
     const { colors } = useMantineTheme();
-    const { TEMPORARY_ACTIVITY_COLOR } = useAppConstants();
+    const { TEMPORARY_ACTIVITY_COLOR } = useAppGlobals();
     const { websocketStatus } = useAppSelector((state: RootState) => state.internal.application);
 
     const statusColors: Record<WebsocketStatus, MantineColor> = {

@@ -10,7 +10,7 @@ import {
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 import SadLabel from "../shared/SadLabel";
 import { getTextWidth } from "../../app/utils";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 
@@ -24,7 +24,7 @@ type TrackLyricsProps = {
 };
 
 const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
-    const { APP_ALT_FONTFACE } = useAppConstants();
+    const { APP_ALT_FONTFACE } = useAppGlobals();
     const [lyrics, setLyrics] = useState<Lyrics | undefined>(undefined);
     const [maxLineWidth, setMaxLineWidth] = useState<number>(0);
     const [showInvalidLyrics, setShowInvalidLyrics] = useState<boolean>(false);

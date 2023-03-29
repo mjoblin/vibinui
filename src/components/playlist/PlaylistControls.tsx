@@ -47,7 +47,7 @@ import {
     showErrorNotification,
     showSuccessNotification,
 } from "../../app/utils";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -165,7 +165,7 @@ type PlaylistControlsProps = {
 }
 
 const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
-    const { APP_MODAL_BLUR, RENDER_APP_BACKGROUND_IMAGE } = useAppConstants();
+    const { APP_MODAL_BLUR, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);

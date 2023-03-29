@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { createStyles, MantineColor, Text } from "@mantine/core";
 
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 type StylizedLabelProps = {
     color?: MantineColor;
@@ -9,7 +9,7 @@ type StylizedLabelProps = {
 };
 
 const StylizedLabel: FC<StylizedLabelProps> = ({ color, children }) => {
-    const { APP_ALT_FONTFACE } = useAppConstants();
+    const { APP_ALT_FONTFACE } = useAppGlobals();
 
     const { classes: dynamicClasses } = createStyles(() => ({
         screenName: {

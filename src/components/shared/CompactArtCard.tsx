@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { Box, Center, createStyles, Flex, Image, Paper, Stack } from "@mantine/core";
 
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 type CompactArtCardProps = {
     artUrl?: string;
@@ -20,7 +20,7 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
     onClick,
     children,
 }) => {
-    const { SELECTED_COLOR, CURRENTLY_PLAYING_COLOR } = useAppConstants();
+    const { SELECTED_COLOR, CURRENTLY_PLAYING_COLOR } = useAppGlobals();
     
     const borderSize = 2;
 

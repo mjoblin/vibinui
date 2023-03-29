@@ -9,7 +9,7 @@ import { setAlbumCardRenderDimensions } from "../../app/store/internalSlice";
 import { MediaViewMode } from "../../app/store/userSettingsSlice";
 import { yearFromDate } from "../../app/utils";
 import { secstoHms } from "../../app/utils";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "../tracks/AlbumTracksModal";
 import CompactArtCard from "../shared/CompactArtCard";
@@ -104,7 +104,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     highlightIfPlaying,
     onClick,
 }) => {
-    const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppConstants();
+    const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppGlobals();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );

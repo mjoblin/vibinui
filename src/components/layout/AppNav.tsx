@@ -25,7 +25,7 @@ import {
 
 import Settings from "./Settings";
 import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import StandbyMode from "../shared/StandbyMode";
 
 // Taken from: https://ui.mantine.dev/category/navbars
@@ -111,7 +111,7 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
     const { pathname } = useLocation();
     const { classes, cx } = useStyles();
-    const { APP_URL_PREFIX, APP_PADDING, NAVBAR_WIDTH } = useAppConstants();
+    const { APP_URL_PREFIX, APP_PADDING, NAVBAR_WIDTH } = useAppGlobals();
 
     const routeInfo: Record<string, { link: string; label: string; icon: TablerIcon }[]> = {
         "Now Playing": [

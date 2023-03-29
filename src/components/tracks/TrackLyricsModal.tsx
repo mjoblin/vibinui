@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Modal, ScrollArea, Stack } from "@mantine/core";
 
 import { Track } from "../../app/types";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import MediaSummaryBanner from "../shared/MediaSummaryBanner";
 import TrackLyrics from "../nowPlaying/TrackLyrics";
 
@@ -13,7 +13,7 @@ type TrackLyricsModalProps = {
 };
 
 const TrackLyricsModal: FC<TrackLyricsModalProps> = ({ track, opened, onClose = undefined }) => {
-    const { APP_MODAL_BLUR } = useAppConstants();
+    const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
         <Modal

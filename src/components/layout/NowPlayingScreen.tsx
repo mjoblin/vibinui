@@ -40,7 +40,7 @@ import MediaActionsButton from "../shared/MediaActionsButton";
 import MediaSourceBadge from "../shared/MediaSourceBadge";
 import { yearFromDate } from "../../app/utils";
 import { MediaSourceClass, Track } from "../../app/types";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 export type NowPlayingTab = "links" | "lyrics" | "waveform";
 
@@ -95,7 +95,7 @@ const NowPlayingScreen: FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { colors } = useMantineTheme();
-    const { APP_ALT_FONTFACE } = useAppConstants();
+    const { APP_ALT_FONTFACE } = useAppGlobals();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
