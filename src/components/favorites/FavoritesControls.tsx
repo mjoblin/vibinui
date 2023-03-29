@@ -105,7 +105,7 @@ const FavoritesControls: FC = () => {
             {/* Replace playlist with favorites */}
             <Tooltip label="Play favorite Albums or Tracks" position="bottom">
                 <Box sx={{ alignSelf: "center" }}>
-                    <Menu withArrow arrowPosition="center" position="top-start" withinPortal={true}>
+                    <Menu withArrow arrowPosition="center" position="bottom" withinPortal={true}>
                         <Menu.Target>
                             <Button
                                 size="xs"

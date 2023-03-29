@@ -43,7 +43,7 @@ export const useAppGlobals = () => {
         APP_PADDING: "md",
         APP_URL_PREFIX: "/ui",
         APP_MODAL_BLUR: 0.5,
-        CARD_FILTER_WIDTH: largeScreen ? 450 : 295,
+        CARD_FILTER_WIDTH: largeScreen === false ? 295 : 450,
         CURRENTLY_PLAYING_COLOR: theme.colors.yellow[4],
         HEADER_HEIGHT: 60,
         LARGE_SCREEN: largeScreen,

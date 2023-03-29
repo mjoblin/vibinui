@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ActionIcon, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Tooltip } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
@@ -17,13 +17,15 @@ const CurrentlyPlayingButton: FC<CurrentlyPlayingButtonProps> = ({ disabled = fa
 
     return (
         <Tooltip label="Scroll current Track into view" position="bottom">
-            <ActionIcon
-                color="yellow"
-                disabled={disabled || !currentTrackMediaId}
-                onClick={() => onClick && onClick()}
-            >
-                <IconCurrentLocation size="1.2rem" />
-            </ActionIcon>
+            <Box>
+                <ActionIcon
+                    color="yellow"
+                    disabled={disabled || !currentTrackMediaId}
+                    onClick={() => onClick && onClick()}
+                >
+                    <IconCurrentLocation size="1.2rem" />
+                </ActionIcon>
+            </Box>
         </Tooltip>
     );
 };

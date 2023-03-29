@@ -1,15 +1,30 @@
-import React, { FC } from "react";
-import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
+import React, { FC, useState } from "react";
+import { ActionIcon, Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
+import { IconPlayerPlay } from "@tabler/icons";
 
 import { MediaId } from "../../app/types";
-import { IconPlayerPlay } from "@tabler/icons";
-import { useSetPlaylistMediaIdsMutation } from "../../app/services/vibinPlaylist";
-import { showSuccessNotification } from "../../app/utils";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
+import { useSetPlaylistMediaIdsMutation } from "../../app/services/vibinPlaylist";
+import { showSuccessNotification } from "../../app/utils";
+
+const darkEnabled = "#C1C2C5";
+const lightEnabled = "#000";
+
+const useMenuStyles = createStyles((theme) => ({
+    item: {
+        fontSize: 12,
+        padding: "7px 12px",
+        "&[data-hovered]": {
+            backgroundColor: theme.colors[theme.primaryColor][theme.fn.primaryShade()],
+            color: theme.white,
+        },
+    },
+}));
 
 type PlayMediaIdsButtonProps = {
     mediaIds: MediaId[];
+    disabled?: boolean;
     tooltipLabel?: string;
     notificationLabel?: string;
     maxToPlay?: number;
@@ -17,34 +32,62 @@ type PlayMediaIdsButtonProps = {
 
 const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
     mediaIds,
+    disabled = false,
     tooltipLabel = "Replace Playlist with filtered results",
     notificationLabel = "Playlist replaced with filtered results",
     maxToPlay = 10,
 }) => {
     const theme = useMantineTheme();
-    const [setPlaylistIds, setPlaylistIdsStatus] = useSetPlaylistMediaIdsMutation();
+    const menuStyles = useMenuStyles();
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const [setPlaylistIds, setPlaylistIdsStatus] = useSetPlaylistMediaIdsMutation();
+    const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     const isLocalMedia = currentSource ? currentSource.class === "stream.media" : false;
 
     return (
-        <Tooltip label={tooltipLabel} position="bottom">
+        <Tooltip label={tooltipLabel} disabled={menuOpen} position="bottom">
             <Box sx={{ alignSelf: "center" }}>
-                <ActionIcon
-                    variant="light"
-                    color={theme.primaryColor}
-                    disabled={!isLocalMedia || mediaIds.length === 0}
-                    onClick={() => {
-                        setPlaylistIds({ mediaIds, maxCount: maxToPlay });
-
-                        showSuccessNotification({
-                            title: "Playlist replaced",
-                            message: notificationLabel,
-                        });
-                    }}
+                <Menu
+                    withArrow
+                    arrowPosition="center"
+                    position="bottom"
+                    withinPortal={true}
+                    classNames={menuStyles.classes}
+                    onOpen={() => setMenuOpen(true)}
+                    onClose={() => setMenuOpen(false)}
                 >
-                    <IconPlayerPlay size="1rem" />
-                </ActionIcon>
+                    <Menu.Target>
+                        <ActionIcon
+                            variant="light"
+                            color={theme.primaryColor}
+                            disabled={disabled || !isLocalMedia || mediaIds.length === 0}
+                        >
+                            <IconPlayerPlay size="1rem" />
+                        </ActionIcon>
+                    </Menu.Target>
+                    <Menu.Dropdown>
+                        <Menu.Label>Playlist</Menu.Label>
+                        <Menu.Item
+                            icon={
+                                <IconPlayerPlay
+                                    size={14}
+                                    fill={theme.colorScheme === "dark" ? darkEnabled : lightEnabled}
+                                />
+                            }
+                            onClick={() => {
+                                setPlaylistIds({ mediaIds, maxCount: maxToPlay });
+
+                                showSuccessNotification({
+                                    title: "Playlist replaced",
+                                    message: notificationLabel,
+                                });
+                            }}
+                        >
+                            Replace Playlist with filtered items
+                        </Menu.Item>
+                    </Menu.Dropdown>
+                </Menu>
             </Box>
         </Tooltip>
     );
