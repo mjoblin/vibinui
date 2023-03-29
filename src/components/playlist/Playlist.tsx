@@ -299,6 +299,15 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
     };
 
     /**
+     * Returns true if the given playlist index can be played. The only thing preventing an entry
+     * from being playable is if it's the current entry and is already being played.
+     *
+     * @param index Playlist entry index
+     */
+    const entryCanBePlayed = (index: number) =>
+        !(index === playlist.current_track_index && playStatus === "play");
+
+    /**
      * Generate an array of table rows; one row per playlist entry.
      *
      * TODO: Consider per-row interactivity and feedback. Currently, clicking the title or artist
@@ -360,14 +369,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
                                 </td>
                             )}
                             <td
-                                className={
-                                    index !== playlist.current_track_index
-                                        ? classes.pointerOnHover
-                                        : ""
-                                }
+                                className={entryCanBePlayed(index) ? classes.pointerOnHover : ""}
                                 style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    index !== playlist.current_track_index &&
+                                    // Disallow play on click if this entry is already playing
+                                    entryCanBePlayed(index) &&
                                         playPlaylistId({ playlistId: entry.id });
                                 }}
                             >
