@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { ActionCreator } from "@reduxjs/toolkit";
 import {
     Box,
@@ -41,14 +41,23 @@ const CardControls: FC<CardSettingsProps> = ({
     resetter,
 }) => {
     const dispatch = useAppDispatch();
+    const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     return (
-        <Popover width={200} position="bottom-end" withArrow arrowPosition="center">
+        <Popover
+            width={200}
+            position="bottom-end"
+            withArrow
+            arrowPosition="center"
+            onOpen={() => setMenuOpen(true)}
+            onClose={() => setMenuOpen(false)}
+        >
             <Popover.Target>
                 <Tooltip
                     label="Configure card display"
                     position="bottom-end"
                     arrowPosition="center"
+                    disabled={menuOpen}
                 >
                     <Button
                         size="xs"

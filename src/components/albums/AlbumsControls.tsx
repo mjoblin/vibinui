@@ -95,13 +95,14 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
 
             <Flex align="center" gap={10}>
                 <CurrentlyPlayingButton
-                    disabled={filterText !== ""}
+                    disabled={activeCollection !== "all" || filterText !== ""}
                     onClick={() => scrollToCurrent && scrollToCurrent()}
                 />
 
                 <Box>
                     <PlayMediaIdsButton
                         mediaIds={filteredAlbumMediaIds}
+                        disabled={filterText === ""}
                         tooltipLabel={`Replace Playlist with ${filteredAlbumMediaIds.length.toLocaleString()} filtered Albums (10 max)`}
                         notificationLabel={`Playlist replaced with ${filteredAlbumMediaIds.length.toLocaleString()} filtered Albums`}
                         maxToPlay={10}
