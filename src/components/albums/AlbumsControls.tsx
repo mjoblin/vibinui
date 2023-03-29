@@ -96,6 +96,7 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
             <Flex align="center" gap={10}>
                 <CurrentlyPlayingButton
                     disabled={activeCollection !== "all" || filterText !== ""}
+                    tooltipLabel="Show currently playing Album"
                     onClick={() => scrollToCurrent && scrollToCurrent()}
                 />
 

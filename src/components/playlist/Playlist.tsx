@@ -10,7 +10,7 @@ import {
     Text,
     useMantineTheme,
 } from "@mantine/core";
-import { IconGripVertical, IconPlayerPlay, IconTrash } from "@tabler/icons";
+import { IconGripVertical, IconPlayerPause, IconPlayerPlay, IconTrash } from "@tabler/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { PlaylistEntry } from "../../app/types";
@@ -23,6 +23,7 @@ import {
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
+import { usePauseMutation, usePlayMutation } from "../../app/services/vibinTransport";
 import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
@@ -154,6 +155,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
+    const [pausePlayback] = usePauseMutation();
+    const [resumePlayback] = usePlayMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
     const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
     const currentEntryRef = useRef<HTMLDivElement>(null);
@@ -299,15 +302,6 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
     };
 
     /**
-     * Returns true if the given playlist index can be played. The only thing preventing an entry
-     * from being playable is if it's the current entry and is already being played.
-     *
-     * @param index Playlist entry index
-     */
-    const entryCanBePlayed = (index: number) =>
-        !(index === playlist.current_track_index && playStatus === "play");
-
-    /**
      * Generate an array of table rows; one row per playlist entry.
      *
      * TODO: Consider per-row interactivity and feedback. Currently, clicking the title or artist
@@ -369,12 +363,21 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
                                 </td>
                             )}
                             <td
-                                className={entryCanBePlayed(index) ? classes.pointerOnHover : ""}
+                                className={classes.pointerOnHover}
                                 style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    // Disallow play on click if this entry is already playing
-                                    entryCanBePlayed(index) &&
-                                        playPlaylistId({ playlistId: entry.id });
+                                    // Heuristic when user clicks a playlist entry:
+                                    //  - If it's the current track:
+                                    //      - If currently playing, pause the track
+                                    //      - If currently paused, resume playback
+                                    //  - If it's not the current track, play track from beginning
+                                    // entryCanBePlayed(index) &&
+                                    index === playlist.current_track_index && playStatus === "pause"
+                                        ? resumePlayback()
+                                        : index === playlist.current_track_index &&
+                                          playStatus === "play"
+                                        ? pausePlayback()
+                                        : playPlaylistId({ playlistId: entry.id });
                                 }}
                             >
                                 <Stack spacing={0}>
@@ -420,13 +423,35 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
                             </td>
                             <td style={{ width: 45 }}>
                                 <Flex pl={5} gap={5} align="center">
-                                    <VibinIconButton
-                                        icon={IconPlayerPlay}
-                                        container={false}
-                                        fill={true}
-                                        tooltipLabel="Play"
-                                        onClick={() => playPlaylistId({ playlistId: entry.id })}
-                                    />
+                                    {/* Entry Play button. If the entry is the current entry,
+                                        then instead implement Pause/Resume behavior. */}
+                                    {index === playlist.current_track_index ? (
+                                        playStatus === "play" ? (
+                                            <VibinIconButton
+                                                icon={IconPlayerPause}
+                                                container={false}
+                                                fill={true}
+                                                tooltipLabel="Pause"
+                                                onClick={() => pausePlayback()}
+                                            />
+                                        ) : (
+                                            <VibinIconButton
+                                                icon={IconPlayerPlay}
+                                                container={false}
+                                                fill={true}
+                                                tooltipLabel="Resume"
+                                                onClick={() => resumePlayback()}
+                                            />
+                                        )
+                                    ) : (
+                                        <VibinIconButton
+                                            icon={IconPlayerPlay}
+                                            container={false}
+                                            fill={true}
+                                            tooltipLabel="Play"
+                                            onClick={() => playPlaylistId({ playlistId: entry.id })}
+                                        />
+                                    )}
 
                                     <VibinIconButton
                                         icon={IconTrash}

@@ -164,6 +164,7 @@ const ArtistsControls: FC = () => {
             <Flex gap={5}>
                 {/* Scroll currently-playing items into view */}
                 <CurrentlyPlayingButton
+                    tooltipLabel="Show currently playing"
                     onClick={() => {
                         currentTrackMediaId && emitNewSelection(currentTrackMediaId);
                         scrollCurrentIntoView();

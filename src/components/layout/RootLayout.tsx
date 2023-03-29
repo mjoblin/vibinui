@@ -17,6 +17,7 @@ import { useWindowEvent } from "@mantine/hooks";
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
 import Debug from "./Debug";
+import BackgroundImageManager from "../managers/BackgroundImageManager";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
 import TrackLyricsModal from "../tracks/TrackLyricsModal";
 import WelcomeMessage from "./WelcomeMessage";
@@ -57,6 +58,7 @@ const RootLayout: FC = () => {
     const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
     const { currentlyPlayingArtUrl, currentScreen, showCurrentTrackLyrics, websocketStatus } =
         useAppSelector((state: RootState) => state.internal.application);
+    // const playlist = useAppSelector((state: RootState) => state.playlist);
     const { haveShownWelcomeMessage } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );    
@@ -68,16 +70,19 @@ const RootLayout: FC = () => {
         `${window.innerWidth}x${window.innerHeight}`
     );
 
-    useEffect(() => {
+    const screenName = (): string | undefined => {
         const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}\/([^\/]+)`));
-        screenNameMatch && dispatch(setCurrentScreen(screenNameMatch[1] || ""));
-    }, [location, dispatch, APP_URL_PREFIX]);
+
+        if (!screenNameMatch) {
+            return undefined;
+        }
+
+        return screenNameMatch[1] || "";
+    }
 
     useEffect(() => {
-        if (currentTrackId && trackById[currentTrackId]) {
-            dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
-        }
-    }, [dispatch, currentTrackId, trackById]);
+        dispatch(setCurrentScreen(screenName() || ""));
+    }, [location, dispatch, APP_URL_PREFIX]);
 
     // Create a key unique to the current screen and window dimensions. If any of those things
     // change (e.g. a window resize) then the key is changed. This key then becomes the key prop
@@ -141,6 +146,11 @@ const RootLayout: FC = () => {
                 />
 
                 <KeyboardShortcutsManager />
+
+                {/* Enable the background image manager for select screens. Enabling it on all
+                    screens results in unwanted full renders of those other screens when the
+                    current track changes. */}
+                {["current", "playlist"].includes(screenName() || "") && <BackgroundImageManager />}
 
                 {/* The Debug pane */}
                 <Box
