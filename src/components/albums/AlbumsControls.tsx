@@ -94,7 +94,10 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
             </Flex>
 
             <Flex align="center" gap={10}>
-                <CurrentlyPlayingButton onClick={() => scrollToCurrent && scrollToCurrent()} />
+                <CurrentlyPlayingButton
+                    disabled={filterText !== ""}
+                    onClick={() => scrollToCurrent && scrollToCurrent()}
+                />
 
                 <Box>
                     <PlayMediaIdsButton
