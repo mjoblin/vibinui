@@ -96,7 +96,10 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             </Flex>
 
             <Flex>
-                <CurrentlyPlayingButton onClick={() => scrollToCurrent && scrollToCurrent()} />
+                <CurrentlyPlayingButton
+                    disabled={filterText !== ""}
+                    onClick={() => scrollToCurrent && scrollToCurrent()}
+                />
 
                 <Box pl={15}>
                     <PlayMediaIdsButton

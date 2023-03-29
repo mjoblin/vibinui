@@ -420,7 +420,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
             {/* Inform the user if the current persisted playlist has changed */}
             {isPlaylistPersisted && !activeSyncedWithStore && (
                 <Tooltip label="Playlist has unsaved changes" position="bottom">
-                    <ThemeIcon color="yellow" size={20} radius={10}>
+                    <ThemeIcon color={colors.yellow[4]} size={20} radius={10}>
                         <IconExclamationMark size={17} stroke={2} color={colors.dark[7]} />
                     </ThemeIcon>
                 </Tooltip>
