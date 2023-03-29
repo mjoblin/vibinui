@@ -81,8 +81,8 @@ export type MediaViewMode = "art_focused" | "compact";
 export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "updated";
-export type AlbumCollection = "all" | "new" | "current";
-export type ArtistCollection = "all" | "with_albums" | "current";
+export type AlbumCollection = "all" | "new";
+export type ArtistCollection = "all" | "with_albums";
 export type FavoriteCollection = "all" | "albums" | "tracks";
 
 export interface UserSettingsState {

@@ -56,6 +56,22 @@ const StatusScreen: FC = () => {
 
     return (
         <Stack>
+            {/* User settings ----------------------------------------------------------------- */}
+
+            <Paper pt={5} p={15} shadow="xs">
+                <Stack spacing={10}>
+                    <StylizedLabel color={colors.dark[3]}>user settings</StylizedLabel>
+
+                    <Checkbox
+                        checked={useImageBackground}
+                        label="Show art image background in Now Playing screens (dark mode only)"
+                        onClick={() =>
+                            dispatch(setApplicationUseImageBackground(!useImageBackground))
+                        }
+                    />
+                </Stack>
+            </Paper>
+
             {/* Web Application ---------------------------------------------------------------- */}
 
             <Paper pt={5} p={15} shadow="xs">
@@ -201,22 +217,6 @@ const StatusScreen: FC = () => {
                             </tbody>
                         </Table>
                     </Stack>
-                </Stack>
-            </Paper>
-
-            {/* User settings ----------------------------------------------------------------- */}
-
-            <Paper pt={5} p={15} shadow="xs">
-                <Stack spacing={10}>
-                    <StylizedLabel color={colors.dark[3]}>user settings</StylizedLabel>
-
-                    <Checkbox
-                        checked={useImageBackground}
-                        label="Show art image background in Now Playing screens (dark mode only)"
-                        onClick={() =>
-                            dispatch(setApplicationUseImageBackground(!useImageBackground))
-                        }
-                    />
                 </Stack>
             </Paper>
         </Stack>

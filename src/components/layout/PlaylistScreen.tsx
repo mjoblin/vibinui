@@ -15,7 +15,7 @@ import StandbyMode from "../shared/StandbyMode";
 type WindowDimensions = {
     height: number;
     width: number;
-}
+};
 
 const PlaylistScreen: FC = () => {
     const dispatch = useAppDispatch();
@@ -27,6 +27,7 @@ const PlaylistScreen: FC = () => {
         SCROLL_POS_DISPATCH_RATE,
     } = useAppConstants();
     const playlistViewportRef = useRef<HTMLDivElement>(null);
+    const [currentEntryRef, setCurrentEntryRef] = useState<HTMLDivElement>();
     const [playlistHeight, setPlaylistHeight] = useState<number>(300);
     const [windowDimensions, setWindowDimensions] = useState<WindowDimensions>({
         height: window.innerHeight,
@@ -54,10 +55,37 @@ const PlaylistScreen: FC = () => {
         const availableHeight =
             windowDimensions.height - (HEADER_HEIGHT + SCREEN_HEADER_HEIGHT + bottomPadding);
 
-        console.log(windowDimensions);
         setPlaylistHeight(availableHeight);
     }, [windowDimensions, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT]);
 
+    /**
+     *
+     */
+    const scrollToCurrent = useCallback(() => {
+        // TODO: This is a pretty disappointing way to find the top of the playlist (it assumes
+        //  the currentEntryRef is a div wrapping a <td> in the current entry's table row; so it
+        //  walks up the hierarchy to the top of the table). The goal is to figure out where in
+        //  the playlistViewport to scroll to -- there is (hopefully) a better way to figure that
+        //  out.
+        const playlistTop =
+            currentEntryRef?.parentNode?.parentNode?.parentNode?.parentNode?.parentElement?.getBoundingClientRect()
+                .top;
+        const entryTop = currentEntryRef?.getBoundingClientRect().top;
+
+        if (playlistViewportRef?.current && playlistTop && entryTop) {
+            const offset = 40;
+
+            playlistViewportRef.current.scrollTo({
+                top: entryTop - playlistTop - offset,
+                behavior: "smooth",
+            });
+        }
+    }, [playlistViewportRef, currentEntryRef]);
+
+    /**
+     *
+     * @param event
+     */
     const windowResizeHandler = (event: UIEvent) =>
         event.target &&
         setWindowDimensions({
@@ -67,6 +95,9 @@ const PlaylistScreen: FC = () => {
 
     useWindowEvent("resize", windowResizeHandler);
 
+    /**
+     *
+     */
     const throttledPlaylistPosChange = useCallback(
         throttle(
             (value) => {
@@ -79,22 +110,23 @@ const PlaylistScreen: FC = () => {
     );
 
     // --------------------------------------------------------------------------------------------
-    
+
     return streamerPower === "off" ? (
         <StandbyMode />
     ) : (
         <Stack spacing={0}>
             <ScreenHeader height={SCREEN_HEADER_HEIGHT} noBackground={RENDER_APP_BACKGROUND_IMAGE}>
-                <PlaylistControls />
+                <PlaylistControls scrollToCurrent={scrollToCurrent} />
             </ScreenHeader>
+
             <Box pt={SCREEN_HEADER_HEIGHT - 17}>
                 <ScrollArea
                     h={playlistHeight}
                     viewportRef={playlistViewportRef}
                     onScrollPositionChange={throttledPlaylistPosChange}
-                    offsetScrollbars                    
+                    offsetScrollbars
                 >
-                    <Playlist />
+                    <Playlist onNewCurrentEntryRef={setCurrentEntryRef} />
                 </ScrollArea>
             </Box>
         </Stack>
