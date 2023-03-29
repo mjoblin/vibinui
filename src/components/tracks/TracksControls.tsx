@@ -98,6 +98,7 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             <Flex>
                 <CurrentlyPlayingButton
                     disabled={filterText !== ""}
+                    tooltipLabel="Show currently playing Track"
                     onClick={() => scrollToCurrent && scrollToCurrent()}
                 />
 

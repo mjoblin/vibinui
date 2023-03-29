@@ -129,9 +129,9 @@ const FavoritesControls: FC = () => {
                     ...filteredFavoriteMediaIds.albums.slice(0, 10),
                     ...filteredFavoriteMediaIds.tracks.slice(0, 100),
                 ]}
-                tooltipLabel="Replace Playlist with visible Favorites"
-                menuItemLabel="Replace Playlist with visible Favorites"
-                notificationLabel={`Playlist replaced with visible Favorites`}
+                tooltipLabel="Replace Playlist with filtered Favorites"
+                menuItemLabel="Replace Playlist with filtered Favorites"
+                notificationLabel={`Playlist replaced with filtered Favorites`}
                 maxToPlay={100}
             />
 

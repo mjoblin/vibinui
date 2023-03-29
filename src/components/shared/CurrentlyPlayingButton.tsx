@@ -7,16 +7,21 @@ import { useAppSelector } from "../../app/hooks";
 
 type CurrentlyPlayingButtonProps = {
     disabled?: boolean;
+    tooltipLabel?: string;
     onClick?: () => void;
 };
 
-const CurrentlyPlayingButton: FC<CurrentlyPlayingButtonProps> = ({ disabled = false, onClick }) => {
+const CurrentlyPlayingButton: FC<CurrentlyPlayingButtonProps> = ({
+    disabled = false,
+    tooltipLabel = "Show current item",
+    onClick,
+}) => {
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
 
     return (
-        <Tooltip label="Scroll current Track into view" position="bottom">
+        <Tooltip label={tooltipLabel} position="bottom">
             <Box>
                 <ActionIcon
                     color="yellow"
