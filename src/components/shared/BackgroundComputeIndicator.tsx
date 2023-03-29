@@ -3,11 +3,11 @@ import { ColorSwatch, Tooltip, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 const BackgroundComputeIndicator: FC = () => {
     const theme = useMantineTheme();
-    const { TEMPORARY_ACTIVITY_COLOR } = useAppConstants();
+    const { TEMPORARY_ACTIVITY_COLOR } = useAppGlobals();
     const { isComputingInBackground } = useAppSelector(
         (state: RootState) => state.internal.application
     );

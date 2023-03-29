@@ -3,7 +3,7 @@ import { Box, Flex, Text, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import TransportControls from "./TransportControls";
 import NowPlaying from "./NowPlaying";
 
@@ -12,7 +12,7 @@ import NowPlaying from "./NowPlaying";
 
 const MiniController: FC = () => {
     const { colors } = useMantineTheme();
-    const { LARGE_SCREEN } = useAppConstants();
+    const { LARGE_SCREEN } = useAppGlobals();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const transportActions = useAppSelector(
         (state: RootState) => state.playback.active_transport_actions

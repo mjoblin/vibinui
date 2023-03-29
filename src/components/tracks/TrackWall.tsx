@@ -8,7 +8,7 @@ import { useGetTracksQuery, useSearchLyricsMutation } from "../../app/services/v
 import { setFilteredTrackMediaIds } from "../../app/store/internalSlice";
 import TrackCard from "./TrackCard";
 import SadLabel from "../shared/SadLabel";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { collectionFilter } from "../../app/utils";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 
@@ -18,7 +18,7 @@ type TrackWallProps = {
 
 const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
     const dispatch = useAppDispatch();
-    const { SCREEN_LOADING_PT } = useAppConstants();
+    const { SCREEN_LOADING_PT } = useAppGlobals();
     const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackRef = useRef<HTMLDivElement>(null);

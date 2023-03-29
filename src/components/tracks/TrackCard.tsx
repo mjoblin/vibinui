@@ -11,7 +11,7 @@ import TrackArt from "./TrackArt";
 import CompactArtCard from "../shared/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 import { MediaViewMode } from "../../app/store/userSettingsSlice";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 // ------------------------------------------------------------------------------------------------
 // Helpers
@@ -101,7 +101,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
     highlightIfPlaying,
     onClick,
 }) => {
-    const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppConstants();
+    const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppGlobals();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );

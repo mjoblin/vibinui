@@ -5,7 +5,7 @@ import throttle from "lodash/throttle";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState, store } from "../../app/store/store";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setPlaylistScrollPos } from "../../app/store/internalSlice";
 import Playlist from "../playlist/Playlist";
 import PlaylistControls from "../playlist/PlaylistControls";
@@ -25,7 +25,7 @@ const PlaylistScreen: FC = () => {
         RENDER_APP_BACKGROUND_IMAGE,
         SCREEN_HEADER_HEIGHT,
         SCROLL_POS_DISPATCH_RATE,
-    } = useAppConstants();
+    } = useAppGlobals();
     const playlistViewportRef = useRef<HTMLDivElement>(null);
     const [currentEntryRef, setCurrentEntryRef] = useState<HTMLDivElement>();
     const [playlistHeight, setPlaylistHeight] = useState<number>(300);

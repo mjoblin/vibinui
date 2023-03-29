@@ -3,14 +3,14 @@ import { Flex, Text, ThemeIcon } from "@mantine/core";
 import { IconPlant2 } from "@tabler/icons";
 
 import CustomFonts from "../customFonts/CustomFonts";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 type VibinLogoProps = {
     compact?: boolean;
 };
 
 const VibinLogo: FC<VibinLogoProps> = ({ compact = false }) => {
-    const { APP_ALT_FONTFACE } = useAppConstants();
+    const { APP_ALT_FONTFACE } = useAppGlobals();
 
     if (compact) {
         return (

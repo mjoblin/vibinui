@@ -13,14 +13,14 @@ import {
 } from "../../app/services/vibinTransport";
 import FieldValueList from "../fieldValueList/FieldValueList";
 import { setShowKeyboardShortcuts } from "../../app/store/internalSlice";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 const SEEK_OFFSET_SECS = 10;
 
 const KeyboardShortcutsManager: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const { APP_MODAL_BLUR } = useAppConstants();
+    const { APP_MODAL_BLUR } = useAppGlobals();
     const { showKeyboardShortcuts } = useAppSelector(
         (state: RootState) => state.internal.application
     );

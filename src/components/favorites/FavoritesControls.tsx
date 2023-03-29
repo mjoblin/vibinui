@@ -12,7 +12,7 @@ import {
 import { IconDisc, IconMicrophone2, IconPlayerPlay, IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { RootState } from "../../app/store/store";
 import {
     FavoriteCollection,
@@ -34,7 +34,7 @@ import ShowCountLabel from "../shared/ShowCountLabel";
 
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.favorites
     );

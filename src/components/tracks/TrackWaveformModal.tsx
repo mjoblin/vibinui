@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { Modal, Stack } from "@mantine/core";
 
 import { Track } from "../../app/types";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import MediaSummaryBanner from "../shared/MediaSummaryBanner";
 import Waveform from "../nowPlaying/Waveform";
 
@@ -17,7 +17,7 @@ const TrackWaveformModal: FC<TrackWaveformModalProps> = ({
     opened,
     onClose = undefined,
 }) => {
-    const { APP_MODAL_BLUR } = useAppConstants();
+    const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
         <Modal

@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Box, Flex, Header, useMantineTheme } from "@mantine/core";
 
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import MiniController from "../currentlyPlaying/MiniController";
@@ -14,7 +14,7 @@ type AppHeaderProps = {
 
 const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
-    const { HEADER_HEIGHT, APP_PADDING, NAVBAR_WIDTH } = useAppConstants();
+    const { HEADER_HEIGHT, APP_PADDING, NAVBAR_WIDTH } = useAppGlobals();
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );

@@ -16,7 +16,7 @@ import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import ShowCountLabel from "../shared/ShowCountLabel";
 import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
@@ -27,7 +27,7 @@ type AlbumsControlsProps = {
 
 const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allAlbums } = useGetAlbumsQuery();
     const { data: newAlbums } = useGetNewAlbumsQuery();
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(

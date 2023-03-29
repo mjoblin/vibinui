@@ -12,7 +12,7 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { useDebouncedValue } from "@mantine/hooks";
@@ -30,7 +30,7 @@ type TracksControlsProps = {
 
 const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allTracks } = useGetTracksQuery();
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks

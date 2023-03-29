@@ -16,7 +16,7 @@ import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
 import { IconPlayerPlay } from "@tabler/icons";
 import { useLazyPlayPresetIdQuery } from "../../app/services/vibinPresets";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 const useStyles = createStyles((theme) => ({
     playPreset: {
@@ -46,7 +46,7 @@ type PresetCardProps = {
 const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
-    const { CURRENTLY_PLAYING_COLOR } = useAppConstants();
+    const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );

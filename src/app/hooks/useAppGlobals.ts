@@ -1,10 +1,11 @@
 import React from "react";
 import { useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
+
 import { useAppSelector } from "../hooks";
 import { RootState } from "../store/store";
 
-export const useAppConstants = () => {
+export const useAppGlobals = () => {
     const theme = useMantineTheme();
     const largeScreen = useMediaQuery("(min-width: 88em)");
     const { currentScreen } = useAppSelector((state: RootState) => state.internal.application);

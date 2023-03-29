@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { List, Modal, Paper, Stack } from "@mantine/core";
 
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import VibinLogo from "./VibinLogo";
 
 type WelcomeMessageProps = {
@@ -10,7 +10,7 @@ type WelcomeMessageProps = {
 }
 
 const WelcomeMessage: FC<WelcomeMessageProps> = ({ opened, onClose }) => {
-    const { APP_MODAL_BLUR } = useAppConstants();
+    const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
         <Modal

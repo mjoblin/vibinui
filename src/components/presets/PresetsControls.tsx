@@ -10,7 +10,7 @@ import {
     setPresetsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
 import { IconSquareX } from "@tabler/icons";
@@ -18,7 +18,7 @@ import ShowCountLabel from "../shared/ShowCountLabel";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { presets } = useAppSelector((state: RootState) => state.presets);
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets

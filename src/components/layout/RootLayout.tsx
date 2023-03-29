@@ -21,7 +21,7 @@ import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
 import WelcomeMessage from "./WelcomeMessage";
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setCurrentlyPlayingArtUrl, setCurrentScreen } from "../../app/store/internalSlice";
 import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
 
@@ -49,7 +49,7 @@ const RootLayout: FC = () => {
     const dispatch = useAppDispatch();
     const location = useLocation();
     const { classes } = useStyles();
-    const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppConstants();
+    const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
     const { currentlyPlayingArtUrl, currentScreen, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application
     );

@@ -23,7 +23,7 @@ import {
     setArtistsSelectedTrack,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import { useAppConstants } from "../../app/hooks/useAppConstants";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { IconCurrentLocation, IconHandFinger, IconSquareX } from "@tabler/icons";
@@ -32,7 +32,7 @@ import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
+    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const albumsByArtistName = useAppSelector(
         (state: RootState) => state.mediaGroups.albumsByArtistName
     );
