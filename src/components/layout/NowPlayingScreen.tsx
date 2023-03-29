@@ -13,7 +13,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { useWindowEvent } from "@mantine/hooks";
+import { useDebouncedValue, useWindowEvent } from "@mantine/hooks";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
@@ -100,13 +100,14 @@ const NowPlayingScreen: FC = () => {
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
-    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const [debouncedPlayStatus] = useDebouncedValue(playStatus, 1000);
     const [getTrack, getTrackResult] = useLazyGetTrackByIdQuery();
     const [trackYearAndGenre, setTrackYearAndGenre] = useState<string | undefined>(undefined);
     const [tabContentHeight, setTabContentHeight] = useState<number>(300);
@@ -190,6 +191,11 @@ const NowPlayingScreen: FC = () => {
     
     useWindowEvent("resize", windowResizeHandler);
 
+    // Airplay sets the play status to "paused" between tracks, which makes the UI briefly display
+    // an awkward paused state.
+    const playStatusDisplay =
+        currentSource?.class === "stream.service.airplay" ? debouncedPlayStatus : playStatus;
+
     // --------------------------------------------------------------------------------------------
 
     if (streamerPower === "off") {
@@ -197,12 +203,12 @@ const NowPlayingScreen: FC = () => {
     }
 
     if (
-        playStatus === "ready" ||
+        playStatusDisplay === "ready" ||
         !currentSource ||
         !currentTrack ||
         !Object.keys(sourcesSupportingDetailsTabs).includes(currentSource.class)
     ) {
-        return playStatus === "play" ? (
+        return playStatusDisplay === "play" ? (
             <Center pt="xl">
                 <Flex gap={10} align="center">
                     <Text size={16} weight="bold">
@@ -250,7 +256,7 @@ const NowPlayingScreen: FC = () => {
                                 Playlist: ["all"],
                             }}
                         />
-                        {playStatus === "pause" && <PlaybackPaused />}
+                        {playStatusDisplay === "pause" && <PlaybackPaused />}
                     </Stack>
 
                     <NowPlaying showAlbumDetails={false} />
