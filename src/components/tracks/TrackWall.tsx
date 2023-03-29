@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useRef } from "react";
 import { Box, Center, createStyles } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
@@ -12,13 +12,21 @@ import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { collectionFilter } from "../../app/utils";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 
-const TrackWall: FC = () => {
+type TrackWallProps = {
+    onNewCurrentTrackRef?: (ref: HTMLDivElement) => void;
+}
+
+const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppConstants();
     const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
+    const currentTrackRef = useRef<HTMLDivElement>(null);
     const { cardSize, cardGap, lyricsSearchText } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
+    );
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
     );
     const { data: allTracks, error, isLoading } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics }] = useSearchLyricsMutation();
@@ -31,6 +39,12 @@ const TrackWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+
+    useEffect(() => {
+        if (onNewCurrentTrackRef && currentTrackRef && currentTrackRef.current) {
+            onNewCurrentTrackRef(currentTrackRef.current);
+        }
+    }, [currentTrackRef, onNewCurrentTrackRef, currentTrackMediaId]);
 
     useEffect(() => {
         if (lyricsSearchText !== "") {
@@ -83,9 +97,15 @@ const TrackWall: FC = () => {
         <Box className={dynamicClasses.trackWall}>
             {[...tracksToDisplay]
                 .sort((trackA, trackB) => trackA.title.localeCompare(trackB.title))
-                .map((track) => (
-                    <TrackCard key={track.id} track={track} />
-                ))}
+                .map((track) =>
+                    track.id === currentTrackMediaId ? (
+                        <Box ref={currentTrackRef}>
+                            <TrackCard key={track.id} track={track} />
+                        </Box>
+                    ) : (
+                        <TrackCard key={track.id} track={track} />
+                    )
+                )}
         </Box>
     );
 };

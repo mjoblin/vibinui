@@ -19,8 +19,13 @@ import FilterInstructions from "../shared/FilterInstructions";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import ShowCountLabel from "../shared/ShowCountLabel";
 import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
+import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 
-const AlbumsControls: FC = () => {
+type AlbumsControlsProps = {
+    scrollToCurrent?: () => void;
+}
+
+const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { data: allAlbums } = useGetAlbumsQuery();
@@ -37,7 +42,7 @@ const AlbumsControls: FC = () => {
     //  the tops of components to get them to look OK.
 
     return (
-        <Flex gap={25} align="flex-end">
+        <Flex gap={25} align="center">
             {/* Active collection */}
             <Select
                 label="Show"
@@ -45,7 +50,6 @@ const AlbumsControls: FC = () => {
                 data={[
                     { value: "all", label: "All Albums" },
                     { value: "new", label: "New Albums" },
-                    { value: "current", label: "Currently Playing" },
                 ]}
                 onChange={(value) =>
                     value && dispatch(setAlbumsActiveCollection(value as AlbumCollection))
@@ -87,12 +91,16 @@ const AlbumsControls: FC = () => {
                     supportedKeys={["title", "artist", "creator", "genre", "date"]}
                     examples={["favorite album", "squirrels artist:(the rods) date:2004"]}
                 />
+            </Flex>
 
-                <Box pl={15}>
+            <Flex align="center" gap={10}>
+                <CurrentlyPlayingButton onClick={() => scrollToCurrent && scrollToCurrent()} />
+
+                <Box>
                     <PlayMediaIdsButton
                         mediaIds={filteredAlbumMediaIds}
-                        tooltipLabel={`Replace Playlist with ${filteredAlbumMediaIds.length} filtered Albums (10 max)`}
-                        notificationLabel={`Playlist replaced with ${filteredAlbumMediaIds.length} filtered Albums`}
+                        tooltipLabel={`Replace Playlist with ${filteredAlbumMediaIds.length.toLocaleString()} filtered Albums (10 max)`}
+                        notificationLabel={`Playlist replaced with ${filteredAlbumMediaIds.length.toLocaleString()} filtered Albums`}
                         maxToPlay={10}
                     />
                 </Box>

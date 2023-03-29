@@ -19,11 +19,16 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../shared/ShowCountLabel";
 import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
+import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 const stripParens = new RegExp(/^\(?([^\)]+)\)?$/);
 
-const TracksControls: FC = () => {
+type TracksControlsProps = {
+    scrollToCurrent?: () => void;
+}
+
+const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppConstants();
     const { data: allTracks } = useGetTracksQuery();
@@ -88,12 +93,16 @@ const TracksControls: FC = () => {
                         "lyrics retrieved by the Vibin backend."
                     }
                 />
+            </Flex>
+
+            <Flex>
+                <CurrentlyPlayingButton onClick={() => scrollToCurrent && scrollToCurrent()} />
 
                 <Box pl={15}>
                     <PlayMediaIdsButton
                         mediaIds={filteredTrackMediaIds}
-                        tooltipLabel={`Replace Playlist with ${filteredTrackMediaIds.length} filtered Tracks (100 max)`}
-                        notificationLabel={`Playlist replaced with ${filteredTrackMediaIds.length} filtered Tracks`}
+                        tooltipLabel={`Replace Playlist with ${filteredTrackMediaIds.length.toLocaleString()} filtered Tracks (100 max)`}
+                        notificationLabel={`Playlist replaced with ${filteredTrackMediaIds.length.toLocaleString()} filtered Tracks`}
                         maxToPlay={100}
                     />
                 </Box>

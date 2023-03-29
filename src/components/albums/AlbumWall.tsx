@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Box, Center, createStyles, Loader, Stack, Text } from "@mantine/core";
+import React, { FC, useEffect, useRef } from "react";
+import { Box, Center, createStyles } from "@mantine/core";
 
 import { Album } from "../../app/types";
 import type { RootState } from "../../app/store/store";
@@ -12,10 +12,15 @@ import { setFilteredAlbumMediaIds } from "../../app/store/internalSlice";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { collectionFilter } from "../../app/utils";
 
-const AlbumWall: FC = () => {
+type AlbumWallProps = {
+    onNewCurrentAlbumRef?: (ref: HTMLDivElement) => void;
+}
+
+const AlbumWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppConstants();
     const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
+    const currentAlbumRef = useRef<HTMLDivElement>(null);
     const { activeCollection, cardSize, cardGap } = useAppSelector(
         (state: RootState) => state.userSettings.albums
     );
@@ -33,6 +38,12 @@ const AlbumWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+
+    useEffect(() => {
+        if (onNewCurrentAlbumRef && currentAlbumRef && currentAlbumRef.current) {
+            onNewCurrentAlbumRef(currentAlbumRef.current);
+        }
+    }, [currentAlbumRef, onNewCurrentAlbumRef, currentAlbumMediaId]);
 
     if ((activeCollection === "all" && allIsLoading) || (activeCollection === "new" && newIsLoading)) {
         return (
@@ -86,9 +97,15 @@ const AlbumWall: FC = () => {
 
     return (
         <Box className={dynamicClasses.albumWall}>
-            {albumsToDisplay.map((album) => (
-                <AlbumCard key={album.id} album={album} />
-            ))}
+            {albumsToDisplay.map((album: Album) =>
+                album.id === currentAlbumMediaId ? (
+                    <Box ref={currentAlbumRef}>
+                        <AlbumCard key={album.id} album={album} />
+                    </Box>
+                ) : (
+                    <AlbumCard key={album.id} album={album} />
+                )
+            )}
         </Box>
     );
 };

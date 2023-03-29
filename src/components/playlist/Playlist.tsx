@@ -1,11 +1,11 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import {
+    Box,
     Center,
     createStyles,
     Flex,
     Overlay,
-    ScrollArea,
     Stack,
     Text,
     useMantineTheme,
@@ -127,6 +127,10 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
+type PlaylistProps = {
+    onNewCurrentEntryRef?: (ref: HTMLDivElement) => void;
+}
+
 /**
  * Play Now (Inserts Track or Album after current Track in Playlist, and plays)
  * Play from Here (Tracks only; same as "Replace Queue" + "Now play this track")
@@ -137,7 +141,7 @@ const useStyles = createStyles((theme) => ({
  * @constructor
  */
 
-const Playlist: FC = () => {
+const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR } = useAppConstants();
     const playlist = useAppSelector((state: RootState) => state.playlist);
@@ -152,6 +156,7 @@ const Playlist: FC = () => {
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
     const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
+    const currentEntryRef = useRef<HTMLDivElement>(null);
 
     const { classes } = useStyles();
 
@@ -237,6 +242,12 @@ const Playlist: FC = () => {
         setOptimisticPlaylistEntries(playlist?.entries || []);
     }, [playlist?.entries]);
 
+    useEffect(() => {
+        if (onNewCurrentEntryRef && currentEntryRef && currentEntryRef.current) {
+            onNewCurrentEntryRef(currentEntryRef.current);
+        }
+    }, [currentEntryRef, onNewCurrentEntryRef, playlist.current_track_index]);
+
     if (playStatus === "not_ready") {
         return <StandbyMode />;
     }
@@ -248,7 +259,6 @@ const Playlist: FC = () => {
             ? playlist.entries
             : [];
 
-    // TODO: Render something useful when there's no playlist.
     if (playlistEntries.length <= 0) {
         return (
             <Center pt="xl">
@@ -330,9 +340,19 @@ const Playlist: FC = () => {
                                 className={`${classes.alignRight} ${classes.dimmed}`}
                                 style={{ width: 35 }}
                             >
-                                <Text size={12} color={colors.dark[3]}>
-                                    {entry.index + 1}
-                                </Text>
+                                {/* Attach a reference to the currently-playing entry so the
+                                    "scroll to current" feature has something to work with. */}
+                                <Box
+                                    ref={
+                                        index === playlist.current_track_index
+                                            ? currentEntryRef
+                                            : undefined
+                                    }
+                                >
+                                    <Text size={12} color={colors.dark[3]}>
+                                        {entry.index + 1}
+                                    </Text>
+                                </Box>
                             </td>
                             {viewMode === "detailed" && (
                                 <td style={{ width: 50 }}>

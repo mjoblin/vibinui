@@ -271,24 +271,19 @@ const ArtistWall: FC = () => {
     // 3. What's currently playing, in which case limit the artist list to the selected artist
     //      (the ArtistsControls will have set this artist in application state).
 
-    const artistsToDisplay: Artist[] =
-        activeCollection === "current"
-            ? currentArtist
-                ? [currentArtist]
-                : []
-            : allArtists
-                  .filter((artist: Artist) => {
-                      return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
-                  })
-                  .filter((artist: Artist) => {
-                      if (filterText === "") {
-                          return true;
-                      }
+    const artistsToDisplay: Artist[] = allArtists
+        .filter((artist: Artist) => {
+            return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
+        })
+        .filter((artist: Artist) => {
+            if (filterText === "") {
+                return true;
+            }
 
-                      const filterValueLower = filterText.toLowerCase();
+            const filterValueLower = filterText.toLowerCase();
 
-                      return artist.title.toLowerCase().includes(filterValueLower);
-                  });
+            return artist.title.toLowerCase().includes(filterValueLower);
+        });
 
     dispatch(setFilteredArtistMediaIds(artistsToDisplay.map((artist) => artist.id)));
 

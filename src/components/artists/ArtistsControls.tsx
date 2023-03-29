@@ -26,8 +26,9 @@ import { RootState } from "../../app/store/store";
 import { useAppConstants } from "../../app/hooks/useAppConstants";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import { IconSquareX } from "@tabler/icons";
+import { IconCurrentLocation, IconHandFinger, IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../shared/ShowCountLabel";
+import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
@@ -109,19 +110,6 @@ const ArtistsControls: FC = () => {
         // currentTrackMediaId && emitNewSelection(currentTrackMediaId);
     }, [currentTrackMediaId, dispatch]);
 
-    /**
-     * If the currently-playing Track id changes and the Artists screen is in "current" mode, then
-     * automatically select the current artist, album and track.
-     *
-     * Reasoning: An album, track, etc, can be played from the Artists screen. When this happens,
-     * it seems reasonable to want to reflect the newly-playing media by selecting it in the UI.
-     */
-    useEffect(() => {
-        if (activeCollection === "current" && currentTrackMediaId) {
-            emitNewSelection(currentTrackMediaId);
-        }
-    }, [currentTrackMediaId, activeCollection, albumsByArtistName, tracksByArtistName]);
-
     // --------------------------------------------------------------------------------------------
 
     return (
@@ -134,11 +122,6 @@ const ArtistsControls: FC = () => {
                 data={[
                     { value: "all", label: "All Artists" },
                     { value: "with_albums", label: "Artists with Albums" },
-                    {
-                        value: "current",
-                        label: "Currently Playing",
-                        disabled: !currentTrackMediaId,
-                    },
                 ]}
                 onChange={onArtistCollectionChange}
                 styles={{
@@ -162,7 +145,6 @@ const ArtistsControls: FC = () => {
                         <IconSquareX size="1.3rem" style={{ display: "block", opacity: 0.5 }} />
                     </ActionIcon>
                 }
-                disabled={activeCollection === "current"}
                 onChange={(event) => {
                     dispatch(setArtistsFilterText(event.target.value));
 
@@ -179,40 +161,24 @@ const ArtistsControls: FC = () => {
                 }}
             />
 
-            <Flex gap={10}>
+            <Flex gap={5}>
                 {/* Scroll currently-playing items into view */}
-                <Tooltip label="Scroll currently-playing items into view">
-                    <Box>
-                        <Button
-                            compact
-                            size="xs"
-                            variant="light"
-                            color="yellow"
-                            disabled={!currentTrackMediaId}
-                            onClick={() => {
-                                dispatch(setArtistsFilterText(""));
-                                currentTrackMediaId && emitNewSelection(currentTrackMediaId);
-                                scrollCurrentIntoView();
-                            }}
-                        >
-                            Current
-                        </Button>
-                    </Box>
-                </Tooltip>
+                <CurrentlyPlayingButton
+                    onClick={() => {
+                        currentTrackMediaId && emitNewSelection(currentTrackMediaId);
+                        scrollCurrentIntoView();
+                    }}
+                />
 
                 {/* Scroll selected items into view */}
-                <Tooltip label="Scroll selected items into view">
-                    <Box>
-                        <Button
-                            compact
-                            size="xs"
-                            variant="light"
-                            disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
-                            onClick={scrollSelectedIntoView}
-                        >
-                            Selected
-                        </Button>
-                    </Box>
+                <Tooltip label="Scroll selected items into view" position="bottom">
+                    <ActionIcon
+                        color="blue"
+                        disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
+                        onClick={scrollSelectedIntoView}
+                    >
+                        <IconHandFinger size="1.2rem" />
+                    </ActionIcon>
                 </Tooltip>
             </Flex>
 

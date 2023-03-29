@@ -39,6 +39,7 @@ import {
 } from "../../app/services/vibinStoredPlaylists";
 import { RootState } from "../../app/store/store";
 import StoredPlaylistsEditor from "./StoredPlaylistsEditor";
+import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 import {
     epochSecondsToStringRelative,
     hmsToSecs,
@@ -115,7 +116,7 @@ const PlaylistDuration: FC = () => {
             {!isNaN(completed) && (
                 <>
                     <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
-                    <Text size="xs" color={colors.blue[5]} weight="bold">{`${completed.toFixed(
+                    <Text size="xs" color={colors.blue[5]} weight="bold" miw="1.80rem">{`${completed.toFixed(
                         0
                     )}%`}</Text>
                 </>
@@ -159,7 +160,11 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
 
 // ------------------------------------------------------------------------------------------------
 
-const PlaylistControls: FC = () => {
+type PlaylistControlsProps = {
+    scrollToCurrent?: () => void;
+}
+
+const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     const { APP_MODAL_BLUR, RENDER_APP_BACKGROUND_IMAGE } = useAppConstants();
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
@@ -407,13 +412,14 @@ const PlaylistControls: FC = () => {
                     ]}
                 />
 
-                {/* Playlist duration */}
                 <PlaylistDuration />
+
+                <CurrentlyPlayingButton onClick={scrollToCurrent} />
             </Flex>
 
             {/* Inform the user if the current persisted playlist has changed */}
             {isPlaylistPersisted && !activeSyncedWithStore && (
-                <Tooltip label="Playlist has unsaved changes">
+                <Tooltip label="Playlist has unsaved changes" position="bottom">
                     <ThemeIcon color="yellow" size={20} radius={10}>
                         <IconExclamationMark size={17} stroke={2} color={colors.dark[7]} />
                     </ThemeIcon>
