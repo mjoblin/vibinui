@@ -5,6 +5,7 @@ import {
     Box,
     Button,
     Center,
+    Checkbox,
     Flex,
     Group,
     Indicator,
@@ -32,7 +33,11 @@ import {
 } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { PlaylistViewMode, setPlaylistViewMode } from "../../app/store/userSettingsSlice";
+import {
+    PlaylistViewMode,
+    setPlaylistFollowCurrentlyPlaying,
+    setPlaylistViewMode,
+} from "../../app/store/userSettingsSlice";
 import {
     useLazyActivateStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
@@ -161,20 +166,21 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
 // ------------------------------------------------------------------------------------------------
 
 type PlaylistControlsProps = {
-    scrollToCurrent?: () => void;
+    scrollToCurrent?: (options?: { offset?: number }) => void;
 }
 
 const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     const { APP_MODAL_BLUR, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
-    const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
+    const { followCurrentlyPlaying, viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const {
         active_stored_playlist_id: activeStoredPlaylistId,
         active_synced_with_store: activeSyncedWithStore,
         activating_stored_playlist: activatingStoredPlaylist,
         stored_playlists: storedPlaylists,
     } = useAppSelector((state: RootState) => state.storedPlaylists);
+    const { current_track_index } = useAppSelector((state: RootState) => state.playlist);    
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();
@@ -198,6 +204,18 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
         },
         validateInputOnChange: true,
     });
+
+    /**
+     * Auto-scroll to the current entry when the current entry changes, and if the "follow" feature
+     * is enabled. The goal is to keep the current entry near the top of the playlist while the
+     * playlist screen remains open.
+     */
+    useEffect(() => {
+        followCurrentlyPlaying &&
+            current_track_index &&
+            scrollToCurrent &&
+            scrollToCurrent({ offset: 45 }); // Offset results in previous track still showing
+    }, [followCurrentlyPlaying, current_track_index, scrollToCurrent]);
 
     useEffect(() => {
         setActiveStoredPlaylistName(
@@ -414,7 +432,17 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
 
                 <PlaylistDuration />
 
-                <CurrentlyPlayingButton onClick={scrollToCurrent} />
+                <Flex gap={10} align="center">
+                    <CurrentlyPlayingButton onClick={scrollToCurrent} />
+
+                    <Checkbox
+                        label="Follow"
+                        checked={followCurrentlyPlaying}
+                        onChange={(event) =>
+                            dispatch(setPlaylistFollowCurrentlyPlaying(event.currentTarget.checked))
+                        }
+                    />
+                </Flex>
             </Flex>
 
             {/* Inform the user if the current persisted playlist has changed */}

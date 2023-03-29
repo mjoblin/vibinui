@@ -34,6 +34,7 @@ const DEFAULT_FAVORITES_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_FAVORITES_SHOW_DETAILS = true;
 const DEFAULT_NOWPLAYING_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
+const DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = true;
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
 const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
@@ -67,6 +68,7 @@ export const LSKEY_FAVORITES_FILTER_TEXT = "favorites.filterText";
 export const LSKEY_FAVORITES_SHOW_DETAILS = "favorites.showDetails";
 export const LSKEY_NOWPLAYING_ACTIVETAB = "nowPlaying.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
+export const LSKEY_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = "playlist.followCurrentlyPlaying";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
 export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
 export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
@@ -123,6 +125,7 @@ export interface UserSettingsState {
         editor: {
             sortField: PlaylistEditorSortField;
         };
+        followCurrentlyPlaying: boolean;
         viewMode: PlaylistViewMode;
     };
     presets: {
@@ -216,6 +219,10 @@ const initialState: UserSettingsState = {
                 DEFAULT_PLAYLIST_EDITOR_SORTFIELD
             ),
         },
+        followCurrentlyPlaying: getLocalStorageValue(
+            LSKEY_PLAYLIST_FOLLOW_CURRENTLY_PLAYING,
+            DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING
+        ),
         viewMode: getLocalStorageValue(LSKEY_PLAYLIST_VIEWMODE, DEFAULT_PLAYLIST_VIEWMODE),
     },
     presets: {
@@ -334,6 +341,9 @@ export const userSettingsSlice = createSlice({
         setPlaylistEditorSortField: (state, action: PayloadAction<PlaylistEditorSortField>) => {
             state.playlist.editor.sortField = action.payload;
         },
+        setPlaylistFollowCurrentlyPlaying: (state, action: PayloadAction<boolean>) => {
+            state.playlist.followCurrentlyPlaying = action.payload;
+        },
         setPlaylistViewMode: (state, action: PayloadAction<PlaylistViewMode>) => {
             state.playlist.viewMode = action.payload;
         },
@@ -398,6 +408,7 @@ export const {
     setFavoritesShowDetails,
     setNowPlayingActiveTab,
     setPlaylistEditorSortField,
+    setPlaylistFollowCurrentlyPlaying,
     setPlaylistViewMode,
     setPresetsCardGap,
     setPresetsCardSize,
