@@ -18,11 +18,16 @@ import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
 import Debug from "./Debug";
 import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
+import TrackLyricsModal from "../tracks/TrackLyricsModal";
 import WelcomeMessage from "./WelcomeMessage";
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import { setCurrentlyPlayingArtUrl, setCurrentScreen } from "../../app/store/internalSlice";
+import {
+    setCurrentlyPlayingArtUrl,
+    setCurrentScreen,
+    setShowCurrentTrackLyrics,
+} from "../../app/store/internalSlice";
 import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
 
 const useStyles = createStyles((theme) => ({
@@ -50,9 +55,8 @@ const RootLayout: FC = () => {
     const location = useLocation();
     const { classes } = useStyles();
     const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
-    const { currentlyPlayingArtUrl, currentScreen, websocketStatus } = useAppSelector(
-        (state: RootState) => state.internal.application
-    );
+    const { currentlyPlayingArtUrl, currentScreen, showCurrentTrackLyrics, websocketStatus } =
+        useAppSelector((state: RootState) => state.internal.application);
     const { haveShownWelcomeMessage } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );    
@@ -173,6 +177,15 @@ const RootLayout: FC = () => {
                     opened={!haveShownWelcomeMessage}
                     onClose={() => dispatch(setApplicationHaveShownWelcomeMessage(true))}
                 />
+
+                {/* Handle request to show current track's lyrics */}
+                {currentTrackId && trackById[currentTrackId] && (
+                    <TrackLyricsModal
+                        track={trackById[currentTrackId]}
+                        opened={showCurrentTrackLyrics}
+                        onClose={() => dispatch(setShowCurrentTrackLyrics(false))}
+                    />
+                )}
             </AppShell>
         </>
     );

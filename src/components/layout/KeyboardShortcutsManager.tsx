@@ -1,4 +1,5 @@
 import React, { FC } from "react";
+import { useNavigate } from "react-router-dom";
 import { Modal, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 
@@ -12,13 +13,14 @@ import {
     useSeekMutation,
 } from "../../app/services/vibinTransport";
 import FieldValueList from "../fieldValueList/FieldValueList";
-import { setShowKeyboardShortcuts } from "../../app/store/internalSlice";
+import { setShowCurrentTrackLyrics, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 const SEEK_OFFSET_SECS = 10;
 
 const KeyboardShortcutsManager: FC = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { colors } = useMantineTheme();
     const { APP_MODAL_BLUR } = useAppGlobals();
     const { showKeyboardShortcuts } = useAppSelector(
@@ -34,12 +36,15 @@ const KeyboardShortcutsManager: FC = () => {
     const [seek] = useSeekMutation();
 
     useHotkeys([
-        ["shift+?", () => dispatch(setShowKeyboardShortcuts(!showKeyboardShortcuts))],
-        ["j", () => seek(Math.max(position - SEEK_OFFSET_SECS, 0))],
-        ["k", () => (playStatus === "play" ? pausePlayback() : resumePlayback())],
-        ["l", () => duration && seek(Math.min(position + SEEK_OFFSET_SECS, duration))],
+        ["J", () => seek(Math.max(position - SEEK_OFFSET_SECS, 0))],
+        ["K", () => (playStatus === "play" ? pausePlayback() : resumePlayback())],
+        ["L", () => duration && seek(Math.min(position + SEEK_OFFSET_SECS, duration))],
         [",", () => previousTrack()],
         [".", () => nextTrack()],
+        ["C", () => navigate("/ui/current")],
+        ["P", () => navigate("/ui/playlist")],
+        ["shift+?", () => dispatch(setShowKeyboardShortcuts(!showKeyboardShortcuts))],
+        ["shift+L", () => dispatch(setShowCurrentTrackLyrics(true))],
     ]);
 
     return showKeyboardShortcuts ? (
@@ -85,16 +90,43 @@ const KeyboardShortcutsManager: FC = () => {
                     <Stack spacing="sm">
                         <Stack spacing={0}>
                             <Text weight="bold" transform="uppercase">
-                                Application
+                                Navigation
                             </Text>
                             <Text fz="xs" c="dimmed">
-                                Application-wide controls
+                                Navigate around the application
                             </Text>
                         </Stack>
                         <FieldValueList
                             fieldValues={{
-                                "?": `Show this Help screen`,
-                                d: `Show the Debug panel`,
+                                c: "Current Track",
+                                p: "Playlist",
+                            }}
+                            columnGap={10}
+                            keySize={16}
+                            keyWeight="bold"
+                            keyColor={colors.gray[1]}
+                            valueSize={16}
+                            valueWeight="normal"
+                            valueColor={colors.gray[5]}
+                        />
+                    </Stack>
+                </Paper>
+
+                <Paper p="md" radius={5} withBorder>
+                    <Stack spacing="sm">
+                        <Stack spacing={0}>
+                            <Text weight="bold" transform="uppercase">
+                                Additional
+                            </Text>
+                            <Text fz="xs" c="dimmed">
+                                Additional controls
+                            </Text>
+                        </Stack>
+                        <FieldValueList
+                            fieldValues={{
+                                "?": "Show this Help screen",
+                                L: "Show the current track lyrics",
+                                d: "Show the Debug panel",
                             }}
                             columnGap={10}
                             keySize={16}

@@ -10,6 +10,7 @@ export interface InternalState {
         currentlyPlayingArtUrl: string | undefined;
         currentScreen: string;
         isComputingInBackground: boolean;
+        showCurrentTrackLyrics: boolean;
         showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
         websocketClientId: string | undefined;
@@ -73,6 +74,7 @@ const initialState: InternalState = {
         currentlyPlayingArtUrl: undefined,
         currentScreen: "",
         isComputingInBackground: false,
+        showCurrentTrackLyrics: false,
         showKeyboardShortcuts: false,
         showDebugPanel: false,
         websocketClientId: undefined,
@@ -233,6 +235,9 @@ export const internalSlice = createSlice({
         setPlaylistScrollPos: (state, action: PayloadAction<number>) => {
             state.playlist.scrollPos = action.payload;
         },
+        setShowCurrentTrackLyrics: (state, action: PayloadAction<boolean>) => {
+            state.application.showCurrentTrackLyrics = action.payload;
+        },
         setShowDebugPanel: (state, action: PayloadAction<boolean | undefined>) => {
             state.application.showDebugPanel = action.payload === undefined ? true : action.payload;
         },
@@ -279,6 +284,7 @@ export const {
     setFilteredTrackCount,
     setFilteredTrackMediaIds,
     setPlaylistScrollPos,
+    setShowCurrentTrackLyrics,
     setShowDebugPanel,
     setShowKeyboardShortcuts,
     setTrackCardRenderDimensions,
