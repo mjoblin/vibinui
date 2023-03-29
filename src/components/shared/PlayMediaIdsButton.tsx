@@ -26,6 +26,7 @@ type PlayMediaIdsButtonProps = {
     mediaIds: MediaId[];
     disabled?: boolean;
     tooltipLabel?: string;
+    menuItemLabel?: string;
     notificationLabel?: string;
     maxToPlay?: number;
 };
@@ -34,6 +35,7 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
     mediaIds,
     disabled = false,
     tooltipLabel = "Replace Playlist with filtered results",
+    menuItemLabel = "Replace Playlist with filtered items",
     notificationLabel = "Playlist replaced with filtered results",
     maxToPlay = 10,
 }) => {
@@ -84,7 +86,7 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
                                 });
                             }}
                         >
-                            Replace Playlist with filtered items
+                            {menuItemLabel}
                         </Menu.Item>
                     </Menu.Dropdown>
                 </Menu>

@@ -105,7 +105,12 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                     <PlayMediaIdsButton
                         mediaIds={filteredTrackMediaIds}
                         disabled={filterText === ""}
-                        tooltipLabel={`Replace Playlist with ${filteredTrackMediaIds.length.toLocaleString()} filtered Tracks (100 max)`}
+                        tooltipLabel={`Replace Playlist with ${
+                            filteredTrackMediaIds.length < (allTracks?.length || 0)
+                                ? filteredTrackMediaIds.length.toLocaleString()
+                                : ""
+                        } filtered Tracks (10 max)`}
+                        menuItemLabel="Replace Playlist with filtered Tracks"
                         notificationLabel={`Playlist replaced with ${filteredTrackMediaIds.length.toLocaleString()} filtered Tracks`}
                         maxToPlay={100}
                     />

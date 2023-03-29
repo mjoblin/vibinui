@@ -42,7 +42,10 @@ export interface InternalState {
     };
     favorites: {
         filteredFavoriteCount: number;
-        filteredFavoriteMediaIds: MediaId[];
+        filteredFavoriteMediaIds: {
+            albums: MediaId[];
+            tracks: MediaId[];
+        };
         favoriteCard: {
             renderWidth: number;
             renderHeight: number;
@@ -107,7 +110,10 @@ const initialState: InternalState = {
     favorites: {
         // Number of favorites currently displayed in the Favorites screen.
         filteredFavoriteCount: 0,
-        filteredFavoriteMediaIds: [],
+        filteredFavoriteMediaIds: {
+            albums: [],
+            tracks: [],
+        },
         favoriteCard: {
             // Dimensions of the last-rendered FavoriteCard, to inform not-visible FavoriteCard container sizes.
             renderWidth: 200,
@@ -206,7 +212,10 @@ export const internalSlice = createSlice({
         setFilteredFavoriteCount: (state, action: PayloadAction<number>) => {
             state.favorites.filteredFavoriteCount = action.payload;
         },
-        setFilteredFavoriteMediaIds: (state, action: PayloadAction<MediaId[]>) => {
+        setFilteredFavoriteMediaIds: (
+            state,
+            action: PayloadAction<{ albums: MediaId[]; tracks: MediaId[] }>
+        ) => {
             state.favorites.filteredFavoriteMediaIds = action.payload;
         },
         setFilteredPresetCount: (state, action: PayloadAction<number>) => {
