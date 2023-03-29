@@ -1,13 +1,14 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import {
     ActionIcon,
     Box,
-    Button,
+    createStyles,
     Flex,
     Menu,
     Select,
     TextInput,
     Tooltip,
+    useMantineTheme,
 } from "@mantine/core";
 import { IconDisc, IconMicrophone2, IconPlayerPlay, IconSquareX } from "@tabler/icons";
 
@@ -26,15 +27,35 @@ import {
 import {
     usePlayFavoriteAlbumsMutation,
     usePlayFavoriteTracksMutation,
+    useSetPlaylistMediaIdsMutation,
 } from "../../app/services/vibinPlaylist";
 import { showSuccessNotification } from "../../app/utils";
 import FilterInstructions from "../shared/FilterInstructions";
 import CardControls from "../shared/CardControls";
+import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 import ShowCountLabel from "../shared/ShowCountLabel";
 
+const darkEnabled = "#C1C2C5";
+const lightEnabled = "#000";
+
+const useMenuStyles = createStyles((theme) => ({
+    item: {
+        fontSize: 12,
+        padding: "7px 12px",
+        "&[data-hovered]": {
+            backgroundColor: theme.colors[theme.primaryColor][theme.fn.primaryShade()],
+            color: theme.white,
+        },
+    },
+}));
+
 const FavoritesControls: FC = () => {
+    const theme = useMantineTheme();
+    const menuStyles = useMenuStyles();
     const dispatch = useAppDispatch();
+    const [playMenuOpen, setPlayMenuOpen] = useState<boolean>(false);
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
+    const [setPlaylistIds, setPlaylistIdsStatus] = useSetPlaylistMediaIdsMutation();
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.favorites
     );
@@ -49,7 +70,7 @@ const FavoritesControls: FC = () => {
     const haveFavoriteAlbums = favorites.some((favorite) => favorite.type === "album");
     const haveFavoriteTracks = favorites.some((favorite) => favorite.type === "track");
     const isStreamerOff = streamerPower === "off";
-    
+
     return (
         <Flex gap={25} align="flex-end">
             {/* Active collection */}
@@ -103,54 +124,24 @@ const FavoritesControls: FC = () => {
             </Flex>
 
             {/* Replace playlist with favorites */}
-            <Tooltip label="Play favorite Albums or Tracks" position="bottom">
-                <Box sx={{ alignSelf: "center" }}>
-                    <Menu withArrow arrowPosition="center" position="bottom" withinPortal={true}>
-                        <Menu.Target>
-                            <Button
-                                size="xs"
-                                variant="light"
-                                leftIcon={<IconPlayerPlay size={18} />}
-                            >
-                                Play
-                            </Button>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                            <Menu.Item
-                                disabled={isStreamerOff || !haveFavoriteAlbums}
-                                icon={<IconDisc size={14} />}
-                                onClick={() => {
-                                    playFavoriteAlbums({});
-
-                                    showSuccessNotification({
-                                        message: "Playlist replaced with favorite Albums",
-                                    });
-                                }}
-                            >
-                                Play Favorite Albums (max 10)
-                            </Menu.Item>
-                            <Menu.Item
-                                disabled={isStreamerOff || !haveFavoriteTracks}
-                                icon={<IconMicrophone2 size={14} />}
-                                onClick={() => {
-                                    playFavoriteTracks({});
-
-                                    showSuccessNotification({
-                                        message: "Playlist replaced with favorite Tracks",
-                                    });
-                                }}
-                            >
-                                Play Favorite Tracks (max 100)
-                            </Menu.Item>
-                        </Menu.Dropdown>
-                    </Menu>
-                </Box>
-            </Tooltip>
+            <PlayMediaIdsButton
+                mediaIds={[
+                    ...filteredFavoriteMediaIds.albums.slice(0, 10),
+                    ...filteredFavoriteMediaIds.tracks.slice(0, 100),
+                ]}
+                tooltipLabel="Replace Playlist with visible Favorites"
+                menuItemLabel="Replace Playlist with visible Favorites"
+                notificationLabel={`Playlist replaced with visible Favorites`}
+                maxToPlay={100}
+            />
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y favorites" */}
                 <ShowCountLabel
-                    showing={filteredFavoriteMediaIds.length}
+                    showing={
+                        filteredFavoriteMediaIds.albums.length +
+                        filteredFavoriteMediaIds.tracks.length
+                    }
                     of={favorites.length}
                     type="favorites"
                 />

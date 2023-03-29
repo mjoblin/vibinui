@@ -58,7 +58,12 @@ const FavoritesWall: FC = () => {
             "title"
         );
 
-        dispatch(setFilteredFavoriteMediaIds(collectionToShow.map((favorite) => favorite.id)));
+        const filteredFavorites = collectionToShow.map((favorite) => favorite.id);
+
+        dispatch(setFilteredFavoriteMediaIds({
+            albums: activeCollection === "albums" ? filteredFavorites : [],
+            tracks: activeCollection === "tracks" ? filteredFavorites : [],
+        }));
 
         return collectionToShow.length > 0 ? (
             <Box className={dynamicClasses.favoritesWall}>
@@ -114,10 +119,10 @@ const FavoritesWall: FC = () => {
     );
 
     dispatch(
-        setFilteredFavoriteMediaIds([
-            ...filteredAlbumFavorites.map((albumFavorite) => albumFavorite.id),
-            ...filteredTrackFavorites.map((trackFavorite) => trackFavorite.id),
-        ])
+        setFilteredFavoriteMediaIds({
+            albums: filteredAlbumFavorites.map((albumFavorite) => albumFavorite.id),
+            tracks: filteredTrackFavorites.map((trackFavorite) => trackFavorite.id),
+        })
     );
 
     return (
