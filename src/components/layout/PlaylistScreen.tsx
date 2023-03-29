@@ -61,7 +61,7 @@ const PlaylistScreen: FC = () => {
     /**
      *
      */
-    const scrollToCurrent = useCallback(() => {
+    const scrollToCurrent = useCallback((options?: { offset?: number }) => {
         // TODO: This is a pretty disappointing way to find the top of the playlist (it assumes
         //  the currentEntryRef is a div wrapping a <td> in the current entry's table row; so it
         //  walks up the hierarchy to the top of the table). The goal is to figure out where in
@@ -73,7 +73,7 @@ const PlaylistScreen: FC = () => {
         const entryTop = currentEntryRef?.getBoundingClientRect().top;
 
         if (playlistViewportRef?.current && playlistTop && entryTop) {
-            const offset = 40;
+            const offset = 40 + (options?.offset || 0);
 
             playlistViewportRef.current.scrollTo({
                 top: entryTop - playlistTop - offset,
