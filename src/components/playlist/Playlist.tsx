@@ -130,6 +130,7 @@ const useStyles = createStyles((theme) => ({
 
 type PlaylistProps = {
     onNewCurrentEntryRef?: (ref: HTMLDivElement) => void;
+    onPlaylistModified?: () => void;
 }
 
 /**
@@ -142,7 +143,7 @@ type PlaylistProps = {
  * @constructor
  */
 
-const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
+const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
     const playlist = useAppSelector((state: RootState) => state.playlist);
@@ -459,6 +460,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
                                         tooltipLabel="Remove from Playlist"
                                         onClick={() => {
                                             deletePlaylistId({ playlistId: entry.id });
+                                            onPlaylistModified && onPlaylistModified();
 
                                             showSuccessNotification({
                                                 title: "Entry removed from Playlist",
@@ -493,6 +495,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef }) => {
         <>
             {activatingStoredPlaylist && <Overlay opacity={0.5} color="#000000" radius={5} />}
             <DragDropContext
+                onDragStart={() => onPlaylistModified && onPlaylistModified()}
                 onDragEnd={({ draggableId, source, destination }) => {
                     if (destination) {
                         if (source.index === destination.index) {

@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState, store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setPlaylistScrollPos } from "../../app/store/internalSlice";
+import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import Playlist from "../playlist/Playlist";
 import PlaylistControls from "../playlist/PlaylistControls";
 import ScreenHeader from "./ScreenHeader";
@@ -126,7 +127,16 @@ const PlaylistScreen: FC = () => {
                     onScrollPositionChange={throttledPlaylistPosChange}
                     offsetScrollbars
                 >
-                    <Playlist onNewCurrentEntryRef={setCurrentEntryRef} />
+                    <Playlist
+                        onNewCurrentEntryRef={setCurrentEntryRef}
+                        onPlaylistModified={() =>
+                            // When the Playlist gets modified, disabling the follow feature avoids
+                            // weird-feeling UI updates while modifying. Although this requires the
+                            // user to be aware that they might want to re-enable Follow once
+                            // finished modifying.
+                            dispatch(setPlaylistFollowCurrentlyPlaying(false))
+                        }
+                    />
                 </ScrollArea>
             </Box>
         </Stack>
