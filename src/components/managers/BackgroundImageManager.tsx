@@ -20,7 +20,7 @@ const BackgroundImageManager: FC = () => {
     useEffect(() => {
         if (currentTrackId && trackById[currentTrackId]) {
             dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
-        } else if (playlist && playlist.entries && playlist.current_track_index) {
+        } else if (playlist && playlist.entries && playlist.current_track_index !== undefined) {
             dispatch(
                 setCurrentlyPlayingArtUrl(
                     playlist.entries[playlist.current_track_index]?.albumArtURI
