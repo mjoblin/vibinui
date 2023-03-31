@@ -38,6 +38,12 @@ const useStyles = createStyles((theme) => ({
             textTransform: "uppercase",
             td: {
                 paddingLeft: 10,
+                paddingRight: 10,
+            },
+        },
+        tbody: {
+            "td:nth-child(2)": {
+                textAlign: "right",
             },
         },
     },
@@ -84,6 +90,10 @@ const StoredPlaylistsEditor: FC = () => {
         storedPlaylists && storedPlaylists.length > 0
             ? [...storedPlaylists]
                   .sort((a, b) => {
+                      if (playlistEditorSortField === "entry_count") {
+                          return b.entry_ids.length - a.entry_ids.length;
+                      }
+
                       const aValue = a[playlistEditorSortField];
                       const bValue = b[playlistEditorSortField];
 
@@ -112,6 +122,11 @@ const StoredPlaylistsEditor: FC = () => {
                                           })
                                       }
                                   />
+                              </td>
+                              <td>
+                                  <Text color={colors.gray[6]}>
+                                      {storedPlaylist.entry_ids.length}
+                                  </Text>
                               </td>
                               <td>
                                   <Text color={colors.gray[6]}>
@@ -207,6 +222,10 @@ const StoredPlaylistsEditor: FC = () => {
                             label: <Text>Name</Text>,
                         },
                         {
+                            value: "entry_count",
+                            label: <Text>Entries</Text>,
+                        },
+                        {
                             value: "created",
                             label: <Text>Created</Text>,
                         },
@@ -222,6 +241,7 @@ const StoredPlaylistsEditor: FC = () => {
                 <thead>
                     <tr>
                         <td>Name</td>
+                        <td>Entries</td>
                         <td>Created</td>
                         <td>Updated</td>
                         <td></td>
