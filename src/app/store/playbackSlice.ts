@@ -68,6 +68,11 @@ export type ShuffleState = "off" | "all";
 
 // TODO: Rename top-level state fields from snake_case to camelCase.
 
+// TODO: Clarify current_track_media_id vs current_track. The former is valid for local media and
+//  is the source of truth for the playing track id. current_track however is also populated by
+//  other sources like AirPlay. It would be good to either merge these, or be clearer about when
+//  to use what.
+
 export interface PlaybackState {
     play_status: PlayStatus | undefined;
     active_transport_actions: TransportAction[];
