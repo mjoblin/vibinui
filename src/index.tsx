@@ -5,6 +5,7 @@ import reportWebVitals from "./reportWebVitals";
 
 import { store } from "./app/store/store";
 import App from "./App";
+import CustomFonts from "./components/customFonts/CustomFonts";
 import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
@@ -12,6 +13,7 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
     <React.StrictMode>
         <Provider store={store}>
+            <CustomFonts />
             <App />
         </Provider>
     </React.StrictMode>
