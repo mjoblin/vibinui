@@ -14,6 +14,15 @@
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon-76x76.png" sizes="76x76" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon-60x60.png" />
     <!--
+      Preload the custom fonts to reduce the chance of distracting font pop-ins the first time the
+      app is loaded (i.e. before caching).
+    -->
+    <link rel="preload" href="%PUBLIC_URL%/static/media/kanit-v12-latin-600.a2adb8f7c067494c0225.woff2" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="%PUBLIC_URL%/static/media/kanit-v12-latin-200.cf1edfa48a86a4942b2a.woff2" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="%PUBLIC_URL%/static/media/kanit-v12-latin-300.0c9e7f70b1047dcfa949.woff2" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="%PUBLIC_URL%/static/media/kanit-v12-latin-500.63d399e480c6301efad7.woff2" as="font" type="font/woff" crossorigin>
+    <link rel="preload" href="%PUBLIC_URL%/static/media/kanit-v12-latin-regular.30d596e48610ef7e8932.woff2" as="font" type="font/woff" crossorigin>
+    <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { List, Modal, Paper, Stack } from "@mantine/core";
+import { Flex, List, Modal, Paper, Stack, Text } from "@mantine/core";
 
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import VibinLogo from "./VibinLogo";
@@ -7,7 +7,7 @@ import VibinLogo from "./VibinLogo";
 type WelcomeMessageProps = {
     opened: boolean;
     onClose: () => void;
-}
+};
 
 const WelcomeMessage: FC<WelcomeMessageProps> = ({ opened, onClose }) => {
     const { APP_MODAL_BLUR } = useAppGlobals();
@@ -19,45 +19,64 @@ const WelcomeMessage: FC<WelcomeMessageProps> = ({ opened, onClose }) => {
             title="Welcome to Vibin"
             overlayProps={{ blur: APP_MODAL_BLUR }}
             withCloseButton
-            size={"30rem"}
+            size={"33rem"}
             onClose={() => onClose && onClose()}
         >
-            <Stack spacing={0} pt={20}>
-                <Paper withBorder p={25}>
-                    <List icon={<VibinLogo compact />}>
-                        <List.Item>
-                            Vibin is <b>Playlist Oriented</b>.
-                        </List.Item>
-                        <List withPadding>
+            <Stack spacing={0} pt={0}>
+                <Flex justify="space-between" pl={35} pr={35} pb={10}>
+                    <Text size={30} sx={{ transform: "scale(-1, 1)" }}>
+                        🐿️
+                    </Text>
+                    <Text size={30} sx={{ transform: "scale(-1, 1)" }}>
+                        🥜️
+                    </Text>
+                </Flex>
+
+                <Stack spacing={20}>
+                    <Paper withBorder p={25} pt={20} pb={20}>
+                        <List icon={<VibinLogo compact />}>
                             <List.Item>
-                                Music is listened to by <b>replacing the Playlist</b>.
+                                Vibin is <b>Playlist Oriented</b>.
+                            </List.Item>
+                            <List withPadding>
+                                <List.Item>
+                                    Music is listened to by <b>replacing the Playlist</b>.
+                                </List.Item>
+                                <List.Item>
+                                    Music can be <b>added</b> to an existing Playlist.
+                                </List.Item>
+                                <List.Item>
+                                    Playlists can be <b>edited</b> and <b>saved</b>.
+                                </List.Item>
+                            </List>
+                        </List>
+                    </Paper>
+
+                    <Paper withBorder p={25} pt={20} pb={20}>
+                        <List icon={<VibinLogo compact />} styles={{ item: { paddingTop: 5 } }}>
+                            <List.Item>
+                                See what's playing under <b>Now Playing</b>.
                             </List.Item>
                             <List.Item>
-                                Music can be <b>added</b> to an existing Playlist.
-                            </List.Item>
-                            <List.Item>
-                                Playlists can be <b>edited</b> and <b>saved</b>.
+                                Browse Local Media under <b>Browse</b>.
                             </List.Item>
                         </List>
-                    </List>
-                </Paper>
+                    </Paper>
+                </Stack>
 
                 <Paper p={25}>
-                    <List icon={<VibinLogo compact />} styles={{ item: { paddingTop: 5 } }}>
+                    <List icon={<VibinLogo compact outline />} styles={{ item: { paddingTop: 5 } }}>
                         <List.Item>
-                            <b>Browse Local Media</b> by Artist, Album, Track.
-                        </List.Item>
-                        <List.Item>
-                            <b>View Lyrics</b>, Waveforms, and External links.
+                            <b>View Lyrics</b> and Waveforms.
                         </List.Item>
                         <List.Item>
                             <b>Filter</b> by Title, Genre, Year, Lyrics, and more.
                         </List.Item>
                         <List.Item>
-                            <b>Presets</b> and <b>Favorites</b>.
+                            Access <b>Presets</b> and <b>Favorites</b>.
                         </List.Item>
                         <List.Item>
-                            <b>Other sources</b> like AirPlay and Internet Radio.
+                            <b>Play other sources</b> like AirPlay and Internet Radio.
                         </List.Item>
                     </List>
                 </Paper>
