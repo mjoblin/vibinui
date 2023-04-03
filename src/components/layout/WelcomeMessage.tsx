@@ -1,8 +1,18 @@
 import React, { FC } from "react";
-import { Flex, List, Modal, Paper, Stack, Text } from "@mantine/core";
+import { createStyles, Flex, List, Modal, Paper, Stack, Text } from "@mantine/core";
 
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import VibinLogo from "./VibinLogo";
+
+const useStyles = createStyles((theme) => ({
+    sky: {
+        paddingLeft: 35,
+        paddingRight: 35,
+        // Create a green-to-blue (grass-to-sky) background gradiant.
+        background: "linear-gradient(0deg, #2ab810 0%, #3ac13d 10%, #7de9ff 40%, #3774ff 100%)",
+        borderRadius: 5,
+    },
+}));
 
 type WelcomeMessageProps = {
     opened: boolean;
@@ -10,6 +20,7 @@ type WelcomeMessageProps = {
 };
 
 const WelcomeMessage: FC<WelcomeMessageProps> = ({ opened, onClose }) => {
+    const { classes } = useStyles();
     const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
@@ -23,11 +34,21 @@ const WelcomeMessage: FC<WelcomeMessageProps> = ({ opened, onClose }) => {
             onClose={() => onClose && onClose()}
         >
             <Stack spacing={0} pt={0}>
-                <Flex justify="space-between" pl={35} pr={35} pb={10}>
-                    <Text size={30} sx={{ transform: "scale(-1, 1)" }}>
+                {/* Header of a chipmunk spying some nuts on a nice sunny day */}
+                <Flex justify="space-between" mb={20} className={classes.sky}>
+                    <Text
+                        size={30}
+                        sx={{ transform: "scale(-1, 1)", textShadow: "0 0 2px #ccc, 0 0 5px #ccc" }}
+                    >
                         🐿️
                     </Text>
-                    <Text size={30} sx={{ transform: "scale(-1, 1)" }}>
+                    <Text
+                        size={30}
+                        sx={{
+                            transform: "scale(-1, 1)",
+                            textShadow: "0 0 7px #fff, 0 0 10px #fff",
+                        }}
+                    >
                         🥜️
                     </Text>
                 </Flex>
