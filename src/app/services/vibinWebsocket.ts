@@ -23,6 +23,7 @@ import {
     TransportAction,
 } from "../store/playbackSlice";
 import { WEBSOCKET_RECONNECT_DELAY } from "../constants";
+import { isDev } from "../utils";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
@@ -384,7 +385,11 @@ export const vibinWebsocket = createApi({
             ) {
                 const connectToVibinServer = async () => {
                     dispatch(setWebsocketStatus("connecting"));
-                    const ws = new WebSocket(`ws://${window.location.hostname}:7669/ws`);
+
+                    // NOTE: Development assumes there's a vibin server running on port 7669
+                    const ws = new WebSocket(
+                        `ws://${window.location.hostname}:${isDev ? 7669 : window.location.port}/ws`
+                    );
 
                     const listener = messageHandler(updateCachedData, getState, dispatch);
 
