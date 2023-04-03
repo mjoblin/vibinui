@@ -47,7 +47,7 @@ export const useAppGlobals = () => {
         CURRENTLY_PLAYING_COLOR: theme.colors.yellow[4],
         HEADER_HEIGHT: 60,
         LARGE_SCREEN: largeScreen,
-        NAVBAR_WIDTH: largeScreen === false ? 185 : 210,
+        NAVBAR_WIDTH: largeScreen === false ? 190 : 210,
         RENDER_APP_BACKGROUND_IMAGE: renderAppBackgroundImage,
         SCREEN_LOADING_PT: 25,
         SCREEN_HEADER_HEIGHT: 70,

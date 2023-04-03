@@ -10,6 +10,8 @@ dayjs.extend(relativeTime);
 
 // TODO: Write tests
 
+export const isDev = process.env.NODE_ENV === "development";
+
 /**
  *
  * TODO: This (ensuring consistent data types for the same concept) would ideally be done in the
