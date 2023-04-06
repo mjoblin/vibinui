@@ -5,6 +5,7 @@ import {
     Center,
     createStyles,
     Flex,
+    Loader,
     Overlay,
     Stack,
     Text,
@@ -145,7 +146,7 @@ type PlaylistProps = {
 
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
-    const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
+    const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -254,6 +255,14 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
 
     if (playStatus === "not_ready") {
         return <StandbyMode />;
+    }
+    
+    if (!playlist.haveReceivedInitialState) {
+        return (
+            <Center pt={SCREEN_LOADING_PT}>
+                <Loader variant="dots" size="md" />
+            </Center>
+        );
     }
     
     const playlistEntries: PlaylistEntry[] =

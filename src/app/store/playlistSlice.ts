@@ -12,11 +12,13 @@ import { updateIfDifferent } from "./helpers";
 export interface PlaylistState {
     entries: Playlist | undefined;
     current_track_index: number | undefined;
+    haveReceivedInitialState: boolean;
 }
 
 const initialState: PlaylistState = {
     entries: undefined,
     current_track_index: undefined,
+    haveReceivedInitialState: false,
 };
 
 export const playlistSlice = createSlice({
@@ -28,6 +30,7 @@ export const playlistSlice = createSlice({
         },
         setEntries: (state, action: PayloadAction<Playlist | undefined>) => {
             updateIfDifferent(state, "entries", action.payload);
+            state.haveReceivedInitialState = true;
         },
     },
 });
