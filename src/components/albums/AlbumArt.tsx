@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Flex, Image, Text, useMantineTheme } from "@mantine/core";
+import { Box, createStyles, Flex, Image, useMantineTheme } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconPlayerPlay } from "@tabler/icons";
 
@@ -8,6 +8,7 @@ import { Album } from "../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist";
 import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 import VibinIconButton from "../shared/VibinIconButton";
+import NoArtPlaceholder from "../shared/NoArtPlaceholder";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -84,7 +85,6 @@ const AlbumArt: FC<AlbumArtProps> = ({
     onActionsMenuOpen,
     onActionsMenuClosed,
 }) => {
-    const { colors } = useMantineTheme();
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
@@ -114,15 +114,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
                 width={size}
                 height={size}
                 withPlaceholder={true}
-                placeholder={
-                    <Box w="100%" h="100%" bg={colors.dark[6]}>
-                        <Center w="100%" h="100%">
-                            <Text transform="uppercase" weight="bold" size={11}>
-                                no art
-                            </Text>
-                        </Center>
-                    </Box>
-                }
+                placeholder={<NoArtPlaceholder artSize={size} />}
             />
 
             {album && showControls && (

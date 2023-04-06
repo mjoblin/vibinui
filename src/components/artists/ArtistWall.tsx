@@ -5,6 +5,7 @@ import {
     createStyles,
     Divider,
     Flex,
+    Loader,
     ScrollArea,
     Stack,
     Text,
@@ -72,6 +73,8 @@ const ArtistWall: FC = () => {
     const artistCurrentScrollRef = useRef<HTMLDivElement>(null);
     const albumCurrentScrollRef = useRef<HTMLDivElement>(null);
     const trackCurrentScrollRef = useRef<HTMLDivElement>(null);
+    const [calculatingArtistsToDisplay, setCalculatingArtistsToDisplay] = useState<boolean>(true);
+    const [artistsToDisplay, setArtistsToDisplay] = useState<Artist[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         artistWall: {
@@ -81,6 +84,38 @@ const ArtistWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+    
+    useEffect(() => {
+        if (!allArtists) {
+            return;
+        }
+
+        // Determine which artists to display. This is triggered by the "Show" dropdown in the
+        // <ArtistsControls> component, and will be one of:
+        //
+        // 1. All artists.
+        // 2. Only artists with 1 or more albums.
+        // 3. What's currently playing, in which case limit the artist list to the selected artist
+        //      (the ArtistsControls will have set this artist in application state).
+
+        const artistsToDisplay: Artist[] = allArtists
+            .filter((artist: Artist) => {
+                return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
+            })
+            .filter((artist: Artist) => {
+                if (filterText === "") {
+                    return true;
+                }
+
+                const filterValueLower = filterText.toLowerCase();
+
+                return artist.title.toLowerCase().includes(filterValueLower);
+            });
+
+        dispatch(setFilteredArtistMediaIds(artistsToDisplay.map((artist) => artist.id)));
+        setArtistsToDisplay(artistsToDisplay);
+        setCalculatingArtistsToDisplay(false);
+    }, [allArtists, filterText, activeCollection, artistIdsWithAlbums, dispatch]);
 
     /**
      *
@@ -230,6 +265,14 @@ const ArtistWall: FC = () => {
 
     // --------------------------------------------------------------------------------------------
 
+    if (calculatingArtistsToDisplay) {
+        return (
+            <Center pt={SCREEN_LOADING_PT}>
+                <Loader variant="dots" size="md" />
+            </Center>
+        );
+    }
+
     if (isLoading) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
@@ -254,6 +297,14 @@ const ArtistWall: FC = () => {
         );
     }
 
+    if (artistsToDisplay.length <= 0) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="No matching Artists" />
+            </Center>
+        );
+    }
+
     // --------------------------------------------------------------------------------------------
     // Find the current artist based on the current track. This is a brittle comparison.
     // TODO: Remove this once the app has a notion of a "current artist").
@@ -262,38 +313,6 @@ const ArtistWall: FC = () => {
     const currentArtist: Artist | undefined =
         currentTrack && allArtists.find((artist) => artist.title === currentTrack.artist);
     // --------------------------------------------------------------------------------------------
-
-    // Determine which artists to display. This is triggered by the "Show" dropdown in the
-    // <ArtistsControls> component, and will be one of:
-    //
-    // 1. All artists.
-    // 2. Only artists with 1 or more albums.
-    // 3. What's currently playing, in which case limit the artist list to the selected artist
-    //      (the ArtistsControls will have set this artist in application state).
-
-    const artistsToDisplay: Artist[] = allArtists
-        .filter((artist: Artist) => {
-            return activeCollection === "all" || artistIdsWithAlbums.includes(artist.id);
-        })
-        .filter((artist: Artist) => {
-            if (filterText === "") {
-                return true;
-            }
-
-            const filterValueLower = filterText.toLowerCase();
-
-            return artist.title.toLowerCase().includes(filterValueLower);
-        });
-
-    dispatch(setFilteredArtistMediaIds(artistsToDisplay.map((artist) => artist.id)));
-
-    if (artistsToDisplay.length <= 0) {
-        return (
-            <Center pt="xl">
-                <SadLabel label="No matching Artists" />
-            </Center>
-        );
-    }
 
     // --------------------------------------------------------------------------------------------
     // Main render

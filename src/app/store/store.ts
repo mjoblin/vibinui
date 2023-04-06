@@ -65,6 +65,17 @@ export const store = configureStore({
             vibinVibinApi.middleware,
             vibinWebsocket.middleware
         ),
+    devTools: {
+        stateSanitizer: (state) =>
+            // @ts-ignore
+            ({
+                ...state,
+                mediaGroups: "<<LARGE_MEDIA_PAYLOADS_REMOVED>>",
+                vibinAlbumsApi: "<<LARGE_API_DETAILS_REMOVED>>",
+                vibinArtistsApi: "<<LARGE_API_DETAILS_REMOVED>>",
+                vibinTracksApi: "<<LARGE_API_DETAILS_REMOVED>>",
+            }),
+    },
 });
 
 setupListeners(store.dispatch);

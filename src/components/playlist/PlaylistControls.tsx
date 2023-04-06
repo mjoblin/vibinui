@@ -211,10 +211,11 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
      * playlist screen remains open.
      */
     useEffect(() => {
+        // scrollToCurrent() Offset results in previous track still showing
         followCurrentlyPlaying &&
-            current_track_index &&
+            current_track_index !== undefined &&
             scrollToCurrent &&
-            scrollToCurrent({ offset: 45 }); // Offset results in previous track still showing
+            scrollToCurrent({ offset: 45 }); // Offset results in previous track still being visible
     }, [followCurrentlyPlaying, current_track_index, scrollToCurrent]);
 
     useEffect(() => {

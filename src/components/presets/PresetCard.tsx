@@ -17,6 +17,7 @@ import { RootState } from "../../app/store/store";
 import { IconPlayerPlay } from "@tabler/icons";
 import { useLazyPlayPresetIdQuery } from "../../app/services/vibinPresets";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import NoArtPlaceholder from "../shared/NoArtPlaceholder";
 
 const useStyles = createStyles((theme) => ({
     playPreset: {
@@ -121,6 +122,8 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
                     radius={5}
                     width={artWidth}
                     height={artHeight}
+                    withPlaceholder={true}
+                    placeholder={<NoArtPlaceholder artSize={artWidth} />}
                 />
 
                 {playState === "connecting" && preset.is_playing ? (

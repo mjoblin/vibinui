@@ -250,7 +250,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         if (onNewCurrentEntryRef && currentEntryRef && currentEntryRef.current) {
             onNewCurrentEntryRef(currentEntryRef.current);
         }
-    }, [currentEntryRef, onNewCurrentEntryRef, playlist.current_track_index]);
+    }, [currentEntryRef.current, onNewCurrentEntryRef, playlist.current_track_index]);
 
     if (playStatus === "not_ready") {
         return <StandbyMode />;

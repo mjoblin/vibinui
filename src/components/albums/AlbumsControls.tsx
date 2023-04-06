@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { ActionIcon, Box, Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
+import React, { FC, useEffect } from "react";
+import { ActionIcon, Box, Checkbox, Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
 import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -9,8 +9,8 @@ import {
     setAlbumsActiveCollection,
     setAlbumsCardGap,
     setAlbumsCardSize,
-    setAlbumsFilterText,
-    setAlbumsShowDetails,
+    setAlbumsFilterText, setAlbumsFollowCurrentlyPlaying,
+    setAlbumsShowDetails, setTracksFollowCurrentlyPlaying,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
@@ -30,16 +30,24 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allAlbums } = useGetAlbumsQuery();
     const { data: newAlbums } = useGetNewAlbumsQuery();
-    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
-    );
+    const { activeCollection, cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails } =
+        useAppSelector((state: RootState) => state.userSettings.albums);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
     const { filteredAlbumMediaIds } = useAppSelector((state: RootState) => state.internal.albums);
 
-    // TODO: Improve the alignment of these various controls. Currently there's a lot of hackery of
-    //  the tops of components to get them to look OK.
+    /**
+     * Auto-scroll to the current entry when the current entry changes, and if the "follow" feature
+     * is enabled. The goal is to keep the current entry near the top of the playlist while the
+     * playlist screen remains open.
+     */
+    useEffect(() => {
+        followCurrentlyPlaying &&
+            currentAlbumMediaId &&
+            scrollToCurrent &&
+            setTimeout(() => scrollToCurrent(), 1);
+    }, [followCurrentlyPlaying, currentAlbumMediaId, scrollToCurrent]);
 
     return (
         <Flex gap={25} align="center">
@@ -100,33 +108,33 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                     onClick={() => scrollToCurrent && scrollToCurrent()}
                 />
 
-                <PlayMediaIdsButton
-                    mediaIds={filteredAlbumMediaIds}
-                    disabled={filterText === ""}
-                    tooltipLabel={`Replace Playlist with ${
-                        filteredAlbumMediaIds.length < (allAlbums?.length || 0)
-                            ? filteredAlbumMediaIds.length.toLocaleString()
-                            : ""
-                    } filtered Albums (10 max)`}
-                    menuItemLabel="Replace Playlist with filtered Albums"
-                    notificationLabel={`Playlist replaced with ${filteredAlbumMediaIds.length.toLocaleString()} filtered Albums`}
-                    maxToPlay={10}
+                <Checkbox
+                    label="Follow"
+                    checked={followCurrentlyPlaying}
+                    onChange={(event) =>
+                        dispatch(setAlbumsFollowCurrentlyPlaying(event.currentTarget.checked))
+                    }
                 />
             </Flex>
+
+            <PlayMediaIdsButton
+                mediaIds={filteredAlbumMediaIds}
+                disabled={filterText === ""}
+                tooltipLabel={`Replace Playlist with ${
+                    filteredAlbumMediaIds.length < (allAlbums?.length || 0)
+                        ? filteredAlbumMediaIds.length.toLocaleString()
+                        : ""
+                } filtered Albums (10 max)`}
+                menuItemLabel="Replace Playlist with filtered Albums"
+                notificationLabel={`Playlist replaced with ${filteredAlbumMediaIds.length.toLocaleString()} filtered Albums`}
+                maxToPlay={10}
+            />
 
             <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
                 {/* "Showing x of y albums" */}
                 <ShowCountLabel
                     showing={filteredAlbumMediaIds.length}
-                    of={
-                        activeCollection === "all"
-                            ? allAlbums?.length || 0
-                            : activeCollection === "new"
-                            ? newAlbums?.length || 0
-                            : allAlbums?.find((album) => album.id === currentAlbumMediaId)
-                            ? 1
-                            : 0
-                    }
+                    of={allAlbums?.length || 0}
                     type="albums"
                 />
 

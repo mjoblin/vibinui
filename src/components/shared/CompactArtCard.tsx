@@ -1,7 +1,8 @@
 import React, { FC, ReactNode } from "react";
-import { Box, Center, createStyles, Flex, Image, Paper, Stack } from "@mantine/core";
+import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@mantine/core";
 
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import NoArtPlaceholder from "./NoArtPlaceholder";
 
 type CompactArtCardProps = {
     artUrl?: string;
@@ -20,8 +21,10 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
     onClick,
     children,
 }) => {
+    const { colors } = useMantineTheme();
     const { SELECTED_COLOR, CURRENTLY_PLAYING_COLOR } = useAppGlobals();
-    
+
+    const artSize = 70;
     const borderSize = 2;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -50,10 +53,25 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
         >
             <Flex align="flex-start" justify="space-between" gap={10} w="100%">
                 <Flex align="flex-start">
-                    {artUrl &&
-                        <Image src={artUrl} width={70} height={70} radius={5} fit="cover" />
-                    }
-                    <Stack spacing={5} p={10}>{children}</Stack>
+                    {artUrl && (
+                        <Image
+                            src={artUrl}
+                            width={artSize}
+                            height={artSize}
+                            radius={5}
+                            fit="cover"
+                            withPlaceholder={true}
+                            placeholder={
+                                <NoArtPlaceholder
+                                    artSize={artSize}
+                                    backgroundColor={colors.dark[5]}
+                                />
+                            }
+                        />
+                    )}
+                    <Stack spacing={5} p={10}>
+                        {children}
+                    </Stack>
                 </Flex>
 
                 <Box sx={{ alignSelf: "center" }}>{actions}</Box>

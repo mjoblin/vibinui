@@ -9,12 +9,14 @@ export interface FavoritesState {
     favorites: Favorite[];
     favoriteAlbumMediaIds: MediaId[];
     favoriteTrackMediaIds: MediaId[];
+    haveReceivedInitialState: boolean;
 }
 
 const initialState: FavoritesState = {
     favorites: [],
     favoriteAlbumMediaIds: [],
     favoriteTrackMediaIds: [],
+    haveReceivedInitialState: false,
 };
 
 export const presetsSlice = createSlice({
@@ -41,6 +43,8 @@ export const presetsSlice = createSlice({
                     [] as MediaId[]
                 )
             );
+
+            state.haveReceivedInitialState = true;
         },
     },
 });
