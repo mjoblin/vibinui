@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Flex, Image } from "@mantine/core";
+import { Box, Center, createStyles, Flex, Image, Text, useMantineTheme } from "@mantine/core";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { Track } from "../../app/types";
@@ -8,6 +8,7 @@ import { useAddMediaToPlaylistMutation } from "../../app/services/vibinPlaylist"
 import MediaActionsButton, { EnabledActions } from "../shared/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../shared/VibinIconButton";
+import NoArtPlaceholder from "../shared/NoArtPlaceholder";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import { useAppSelector } from "../../app/hooks";
 import { RootState } from "../../app/store/store";
@@ -109,11 +110,12 @@ const TrackArt: FC<TrackArtProps> = ({
         <Box className={classes.trackArtContainer}>
             <Image
                 src={artUri ? artUri : track ? track.album_art_uri : ""}
-                alt={alt ? alt : track ? `${track.artist} / ${track.title}` : "unknown"}
                 fit="cover"
                 radius={radius}
                 width={size}
                 height={size}
+                withPlaceholder={true}
+                placeholder={<NoArtPlaceholder artSize={size} />}
             />
 
             {/* Only show the track controls for locally-streamed media */}

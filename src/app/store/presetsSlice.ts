@@ -9,6 +9,7 @@ export interface PresetsState {
     end: number;
     max_presets: number;
     presets: Preset[];
+    haveReceivedInitialState: boolean;
 }
 
 const initialState: PresetsState = {
@@ -16,6 +17,7 @@ const initialState: PresetsState = {
     end: 99,
     max_presets: 99,
     presets: [],
+    haveReceivedInitialState: false,
 };
 
 export const presetsSlice = createSlice({
@@ -27,6 +29,7 @@ export const presetsSlice = createSlice({
             updateIfDifferent(state, "end", action.payload.end);
             updateIfDifferent(state, "max_presets", action.payload.max_presets);
             updateIfDifferent(state, "presets", action.payload.presets);
+            state.haveReceivedInitialState = true;
         },
     },
 });

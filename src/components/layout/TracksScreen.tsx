@@ -1,35 +1,41 @@
-import React, { FC, useCallback, useState } from "react";
+import React, { FC, RefObject, useCallback, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setTracksFilterText } from "../../app/store/userSettingsSlice";
 import TracksControls from "../tracks/TracksControls";
 import TrackWall from "../tracks/TrackWall";
 import ScreenHeader from "./ScreenHeader";
+import { RootState } from "../../app/store/store";
 
 const TracksScreen: FC = () => {
     const dispatch = useAppDispatch();
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
-    const [currentTrackRef, setCurrentTrackRef] = useState<HTMLDivElement>();
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
+    );
+    const [currentTrackRef, setCurrentTrackRef] = useState<RefObject<HTMLDivElement>>();
 
     /**
      *
      */
     const scrollToCurrent = useCallback(() => {
+        if (!currentTrackRef?.current) {
+            return;
+        }
+
         dispatch(setTracksFilterText(""));
 
-        if (currentTrackRef) {
-            const buffer = 10;
+        const buffer = 10;
 
-            const currentTrackTop =
-                currentTrackRef.getBoundingClientRect().top +
-                window.scrollY -
-                (HEADER_HEIGHT + SCREEN_HEADER_HEIGHT + buffer);
+        const currentTrackTop =
+            currentTrackRef.current.getBoundingClientRect().top +
+            window.scrollY -
+            (HEADER_HEIGHT + SCREEN_HEADER_HEIGHT + buffer);
 
-            window.scrollTo({ top: currentTrackTop });
-        }
-    }, [currentTrackRef]);
+        window.scrollTo({ top: currentTrackTop });
+    }, [currentTrackMediaId, currentTrackRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, dispatch]);
 
     return (
         <Stack spacing={0}>

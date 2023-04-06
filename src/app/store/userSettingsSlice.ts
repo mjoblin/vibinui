@@ -8,15 +8,12 @@ export const minCardGap = 0;
 export const maxCardGap = 50;
 export const minCardSize = 100;
 export const maxCardSize = 300;
-export const minPresetCardGap = 0;
-export const maxPresetCardGap = 50;
-export const minPresetCardSize = 100;
-export const maxPresetCardSize = 300;
 
 const DEFAULT_ALBUMS_ACTIVE_COLLECTION = "all";
 const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_CARD_GAP = 15;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
+const DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING = false;
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
 const DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = false;
 const DEFAULT_APPLICATION_THEME = "dark";
@@ -43,6 +40,7 @@ const DEFAULT_PRESETS_SHOW_DETAILS = true;
 const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_TRACKS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
+const DEFAULT_TRACKS_FOLLOW_CURRENTLY_PLAYING = false;
 const DEFAULT_TRACKS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
@@ -51,6 +49,7 @@ export const LSKEY_ALBUMS_ACTIVE_COLLECTION = "albums.activeCollection";
 export const LSKEY_ALBUMS_CARD_GAP = "albums.cardGap";
 export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
+export const LSKEY_ALBUMS_FOLLOW_CURRENTLY_PLAYING = "albums.followCurrentlyPlaying";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
 export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
 export const LSKEY_APPLICATION_THEME = "application.theme";
@@ -77,6 +76,7 @@ export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
 export const LSKEY_TRACKS_CARD_GAP = "tracks.cardGap";
 export const LSKEY_TRACKS_CARD_SIZE = "tracks.cardSize";
 export const LSKEY_TRACKS_FILTER_TEXT = "tracks.filterText";
+export const LSKEY_TRACKS_FOLLOW_CURRENTLY_PLAYING = "tracks.followCurrentlyPlaying";
 export const LSKEY_TRACKS_SHOW_DETAILS = "tracks.showDetails";
 
 export type MediaViewMode = "art_focused" | "compact";
@@ -93,6 +93,7 @@ export interface UserSettingsState {
         cardGap: number;
         cardSize: number;
         filterText: string;
+        followCurrentlyPlaying: boolean;
         showDetails: boolean;
     };
     application: {
@@ -138,6 +139,7 @@ export interface UserSettingsState {
         cardGap: number;
         cardSize: number;
         filterText: string;
+        followCurrentlyPlaying: boolean;
         lyricsSearchText: string;
         showDetails: boolean;
     };
@@ -166,6 +168,10 @@ const initialState: UserSettingsState = {
         cardGap: getLocalStorageValue(LSKEY_ALBUMS_CARD_GAP, DEFAULT_ALBUMS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_ALBUMS_CARD_SIZE, DEFAULT_ALBUMS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_ALBUMS_FILTER_TEXT, DEFAULT_ALBUMS_FILTER_TEXT),
+        followCurrentlyPlaying: getLocalStorageValue(
+            LSKEY_ALBUMS_FOLLOW_CURRENTLY_PLAYING,
+            DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING
+        ),
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
     },
     application: {
@@ -235,6 +241,10 @@ const initialState: UserSettingsState = {
         cardGap: getLocalStorageValue(LSKEY_TRACKS_CARD_GAP, DEFAULT_TRACKS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_TRACKS_CARD_SIZE, DEFAULT_TRACKS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_TRACKS_FILTER_TEXT, DEFAULT_TRACKS_FILTER_TEXT),
+        followCurrentlyPlaying: getLocalStorageValue(
+            LSKEY_TRACKS_FOLLOW_CURRENTLY_PLAYING,
+            DEFAULT_TRACKS_FOLLOW_CURRENTLY_PLAYING
+        ),
         lyricsSearchText: "",
         showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
     },
@@ -280,6 +290,9 @@ export const userSettingsSlice = createSlice({
         },
         setAlbumsFilterText: (state, action: PayloadAction<string>) => {
             state.albums.filterText = action.payload;
+        },
+        setAlbumsFollowCurrentlyPlaying: (state, action: PayloadAction<boolean>) => {
+            state.albums.followCurrentlyPlaying = action.payload;
         },
         setAlbumsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.albums.showDetails = action.payload;
@@ -368,6 +381,9 @@ export const userSettingsSlice = createSlice({
         setTracksFilterText: (state, action: PayloadAction<string>) => {
             state.tracks.filterText = action.payload;
         },
+        setTracksFollowCurrentlyPlaying: (state, action: PayloadAction<boolean>) => {
+            state.tracks.followCurrentlyPlaying = action.payload;
+        },
         setTracksLyricsSearchText: (state, action: PayloadAction<string>) => {
             state.tracks.lyricsSearchText = action.payload;
         },
@@ -388,6 +404,7 @@ export const {
     setAlbumsCardGap,
     setAlbumsCardSize,
     setAlbumsFilterText,
+    setAlbumsFollowCurrentlyPlaying,
     setAlbumsShowDetails,
     setApplicationHaveShownWelcomeMessage,
     setApplicationTheme,
@@ -417,6 +434,7 @@ export const {
     setTracksCardGap,
     setTracksCardSize,
     setTracksFilterText,
+    setTracksFollowCurrentlyPlaying,
     setTracksLyricsSearchText,
     setTracksShowDetails,
 } = userSettingsSlice.actions;

@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
+import { ActionIcon, Box, Checkbox, Flex, TextInput } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -7,6 +7,7 @@ import {
     setTracksCardGap,
     setTracksCardSize,
     setTracksFilterText,
+    setTracksFollowCurrentlyPlaying,
     setTracksLyricsSearchText,
     setTracksShowDetails,
 } from "../../app/store/userSettingsSlice";
@@ -32,11 +33,26 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allTracks } = useGetTracksQuery();
-    const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
+    const { cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
     const { filteredTrackMediaIds } = useAppSelector((state: RootState) => state.internal.tracks);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
+    );
+
+    /**
+     * Auto-scroll to the current entry when the current entry changes, and if the "follow" feature
+     * is enabled. The goal is to keep the current entry near the top of the playlist while the
+     * playlist screen remains open.
+     */
+    useEffect(() => {
+        followCurrentlyPlaying &&
+            currentTrackMediaId &&
+            scrollToCurrent &&
+            setTimeout(() => scrollToCurrent(), 1);
+    }, [followCurrentlyPlaying, currentTrackMediaId, scrollToCurrent]);
 
     // If the filter text includes something like "lyric:(some lyric search)" then store
     // "some lyric search" in application state.
@@ -95,12 +111,22 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                 />
             </Flex>
 
-            <Flex>
-                <CurrentlyPlayingButton
-                    disabled={filterText !== ""}
-                    tooltipLabel="Show currently playing Track"
-                    onClick={() => scrollToCurrent && scrollToCurrent()}
-                />
+            <Flex gap={20} align="center">
+                <Flex gap={10} align="center">
+                    <CurrentlyPlayingButton
+                        disabled={filterText !== ""}
+                        tooltipLabel="Show currently playing Track"
+                        onClick={() => scrollToCurrent && scrollToCurrent()}
+                    />
+
+                    <Checkbox
+                        label="Follow"
+                        checked={followCurrentlyPlaying}
+                        onChange={(event) =>
+                            dispatch(setTracksFollowCurrentlyPlaying(event.currentTarget.checked))
+                        }
+                    />
+                </Flex>
 
                 <Box pl={15}>
                     <PlayMediaIdsButton

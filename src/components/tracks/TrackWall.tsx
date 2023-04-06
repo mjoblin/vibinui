@@ -1,9 +1,10 @@
-import React, { FC, useEffect, useRef } from "react";
-import { Box, Center, createStyles } from "@mantine/core";
+import React, { FC, RefObject, useEffect, useRef, useState } from "react";
+import { Box, Center, createStyles, Loader } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { Track } from "../../app/types";
 import { useGetTracksQuery, useSearchLyricsMutation } from "../../app/services/vibinTracks";
 import { setFilteredTrackMediaIds } from "../../app/store/internalSlice";
 import TrackCard from "./TrackCard";
@@ -13,7 +14,7 @@ import { collectionFilter } from "../../app/utils";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 
 type TrackWallProps = {
-    onNewCurrentTrackRef?: (ref: HTMLDivElement) => void;
+    onNewCurrentTrackRef: (ref: RefObject<HTMLDivElement>) => void;
 }
 
 const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
@@ -29,7 +30,9 @@ const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         (state: RootState) => state.playback.current_track_media_id
     );
     const { data: allTracks, error, isLoading } = useGetTracksQuery();
-    const [searchLyrics, { data: tracksMatchingLyrics }] = useSearchLyricsMutation();
+    const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] = useSearchLyricsMutation();
+    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
+    const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         trackWall: {
@@ -41,16 +44,57 @@ const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
     }))();
 
     useEffect(() => {
-        if (onNewCurrentTrackRef && currentTrackRef && currentTrackRef.current) {
-            onNewCurrentTrackRef(currentTrackRef.current);
-        }
-    }, [currentTrackRef, onNewCurrentTrackRef, currentTrackMediaId]);
+        onNewCurrentTrackRef(currentTrackRef);
+    }, []);
 
     useEffect(() => {
-        if (lyricsSearchText !== "") {
-            searchLyrics({ query: lyricsSearchText });
-        }
+        lyricsSearchText !== "" && searchLyrics({ query: lyricsSearchText });
     }, [lyricsSearchText, searchLyrics]);
+    
+    useEffect(() => {
+        if (!allTracks || allTracks.length <= 0) {
+            return;
+        }
+
+        if (
+            lyricsSearchText !== "" &&
+            (!tracksMatchingLyrics || tracksMatchingLyrics.matches.length <= 0)
+        ) {
+            // This prevents the UI from briefly flashing all tracks before displaying the tracks
+            // which match the lyrics search.
+            dispatch(setFilteredTrackMediaIds([]));
+            setTracksToDisplay([]);
+            return;
+        }
+
+        const tracksToFilter =
+            lyricsSearchText !== "" && tracksMatchingLyrics
+                ? allTracks.filter((track) => tracksMatchingLyrics.matches.includes(track.id))
+                : allTracks;
+
+        const tracksToDisplay = collectionFilter(tracksToFilter, debouncedFilterText, "title");
+
+        dispatch(setFilteredTrackMediaIds(tracksToDisplay.map((track) => track.id)));
+        setTracksToDisplay(tracksToDisplay);
+        setCalculatingTracksToDisplay(false);
+    }, [
+        allTracks,
+        tracksMatchingLyrics,
+        filterText,
+        debouncedFilterText,
+        lyricsSearchText,
+        dispatch,
+    ]);
+
+    // --------------------------------------------------------------------------------------------
+
+    if (calculatingTracksToDisplay || isLoadingSearchLyrics) {
+        return (
+            <Center pt={SCREEN_LOADING_PT}>
+                <Loader variant="dots" size="md" />
+            </Center>
+        );
+    }
 
     if (isLoading) {
         return (
@@ -76,15 +120,6 @@ const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         );
     }
 
-    const tracksToFilter =
-        lyricsSearchText !== "" && tracksMatchingLyrics
-            ? allTracks.filter((track) => tracksMatchingLyrics.matches.includes(track.id))
-            : allTracks;
-
-    const tracksToDisplay = collectionFilter(tracksToFilter, debouncedFilterText, "title");
-
-    dispatch(setFilteredTrackMediaIds(tracksToDisplay.map((track) => track.id)));
-
     if (tracksToDisplay.length <= 0) {
         return (
             <Center pt="xl">
@@ -93,14 +128,16 @@ const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         );
     }
 
+    // --------------------------------------------------------------------------------------------
+
     return (
         <Box className={dynamicClasses.trackWall}>
             {[...tracksToDisplay]
                 .sort((trackA, trackB) => trackA.title.localeCompare(trackB.title))
                 .map((track) =>
                     track.id === currentTrackMediaId ? (
-                        <Box ref={currentTrackRef}>
-                            <TrackCard key={track.id} track={track} />
+                        <Box key={track.id} ref={currentTrackRef}>
+                            <TrackCard track={track} />
                         </Box>
                     ) : (
                         <TrackCard key={track.id} track={track} />

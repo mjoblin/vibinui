@@ -1,5 +1,11 @@
 # NOTES
 
+To enable support for running the UI behind an SSL reverse proxy, build the app with:
+
+```base
+REACT_APP_USING_SSL_PROXY=true npm run build
+```
+
 Using `@hello-pangea/dnd` instead of `react-beautiful-dnd` due to issue outlined
 [here](https://stackoverflow.com/a/72355197).
 

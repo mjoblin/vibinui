@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { showNotification } from "@mantine/notifications";
 import { IconCheck, IconX } from "@tabler/icons";
+import get from "lodash/get";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -9,8 +10,6 @@ dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 
 // TODO: Write tests
-
-export const isDev = process.env.NODE_ENV === "development";
 
 /**
  *
@@ -189,9 +188,9 @@ export function collectionFilter<T extends Object>(
     // Find any items in the collection which contain the searched-for key/value pairs. This is an
     // "AND" search; and matching is a case-insensitive partial text match.
     return collection.filter((item) => {
-        for (const [key, value] of matchKeyValues) {
-            // @ts-ignore
-            if (key in item && !item[key].toLocaleLowerCase().includes(value)) {
+        for (const [key, searchValue] of matchKeyValues) {
+            const thisValue = get(item, key); // Using lodash to support "nested.key.names".
+            if (thisValue && !thisValue.toLocaleLowerCase().includes(searchValue)) {
                 return false;
             }
         }

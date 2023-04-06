@@ -6,6 +6,7 @@ import {
     Center,
     createStyles,
     Flex,
+    Loader,
     ScrollArea,
     Stack,
     Tabs,
@@ -95,7 +96,7 @@ const NowPlayingScreen: FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { colors } = useMantineTheme();
-    const { APP_ALT_FONTFACE } = useAppGlobals();
+    const { APP_ALT_FONTFACE, SCREEN_LOADING_PT } = useAppGlobals();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.nowPlaying);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
@@ -113,6 +114,7 @@ const NowPlayingScreen: FC = () => {
     const [tabContentHeight, setTabContentHeight] = useState<number>(300);
     const tabListRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
+    const [preparingForDisplay, setPreparingForDisplay] = useState<boolean>(true);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         currentTrackTitle: {
@@ -145,6 +147,8 @@ const NowPlayingScreen: FC = () => {
                 art_url: currentPlaybackTrack.art_url,
                 album_art_uri: currentPlaybackTrack.art_url,
             } as Track);
+
+            setPreparingForDisplay(false);
         }
     }, [currentTrackId, currentPlaybackTrack, getTrack]);
 
@@ -163,6 +167,7 @@ const NowPlayingScreen: FC = () => {
             let result = [year, genre].filter((value) => value !== undefined).join(" • ");
 
             setCurrentTrack(track);
+            setPreparingForDisplay(false);
             setTrackYearAndGenre(result);
         }
     }, [getTrackResult]);
@@ -200,6 +205,14 @@ const NowPlayingScreen: FC = () => {
 
     if (streamerPower === "off") {
         return <StandbyMode />;
+    }
+    
+    if ((!currentTrackId && !currentPlaybackTrack) || preparingForDisplay) {
+        return (
+            <Center pt={SCREEN_LOADING_PT}>
+                <Loader variant="dots" size="md" />
+            </Center>
+        );
     }
 
     if (
