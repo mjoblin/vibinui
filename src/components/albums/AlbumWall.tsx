@@ -42,6 +42,10 @@ const AlbumWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     }))();
 
     useEffect(() => {
+        onNewCurrentAlbumRef(currentAlbumRef);
+    }, []);
+
+    useEffect(() => {
         if (!allAlbums || allAlbums.length <= 0) {
             return;
         }
@@ -58,10 +62,6 @@ const AlbumWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         setAlbumsToDisplay(albumsToDisplay);
         setCalculatingAlbumsToDisplay(false);
     }, [allAlbums, newAlbums, filterText, activeCollection, dispatch]);
-
-    useEffect(() => {
-        onNewCurrentAlbumRef(currentAlbumRef);
-    }, []);
 
     // --------------------------------------------------------------------------------------------
 

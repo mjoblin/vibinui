@@ -23,6 +23,7 @@ export interface InternalState {
             renderWidth: number;
             renderHeight: number;
         };
+        scrollPosition: number,
     };
     artists: {
         filteredArtistCount: number;
@@ -51,17 +52,20 @@ export interface InternalState {
             renderWidth: number;
             renderHeight: number;
         };
+        scrollPosition: number,
     };
     playlist: {
-        scrollPos: number;
+        scrollPosition: number;
     };
     presets: {
         filteredPresetCount: number;
         filteredPresetIds: number[];
+        scrollPosition: number,
     };
     tracks: {
         filteredTrackCount: number;
         filteredTrackMediaIds: MediaId[];
+        scrollPosition: number,
         trackCard: {
             renderWidth: number;
             renderHeight: number;
@@ -89,6 +93,7 @@ const initialState: InternalState = {
             renderWidth: 200,
             renderHeight: 200,
         },
+        scrollPosition: 0,
     },
     artists: {
         // Number of artists currently displayed in the Albums screen.
@@ -121,19 +126,22 @@ const initialState: InternalState = {
             renderWidth: 200,
             renderHeight: 200,
         },
+        scrollPosition: 0,
     },
     playlist: {
-        scrollPos: 0,
+        scrollPosition: 0,
     },
     presets: {
         // Number of presets currently displayed in the Presets screen.
         filteredPresetCount: 0,
         filteredPresetIds: [],
+        scrollPosition: 0,
     },
     tracks: {
         // Number of tracks currently displayed in the Tracks screen.
         filteredTrackCount: 0,
         filteredTrackMediaIds: [],
+        scrollPosition: 0,
         trackCard: {
             // Dimensions of the last-rendered TrackCard, to inform not-visible TrackCard container sizes.
             renderWidth: 200,
@@ -152,6 +160,9 @@ export const internalSlice = createSlice({
         ) => {
             state.albums.albumCard.renderWidth = action.payload.width;
             state.albums.albumCard.renderHeight = action.payload.height;
+        },
+        setAlbumsScrollPosition: (state, action: PayloadAction<number>) => {
+            state.albums.scrollPosition = action.payload;
         },
         setArtistCardRenderDimensions: (
             state,
@@ -190,6 +201,9 @@ export const internalSlice = createSlice({
         ) => {
             state.favorites.favoriteCard.renderWidth = action.payload.width;
             state.favorites.favoriteCard.renderHeight = action.payload.height;
+        },
+        setFavoritesScrollPosition: (state, action: PayloadAction<number>) => {
+            state.favorites.scrollPosition = action.payload;
         },
         setIsComputingInBackground: (state, action: PayloadAction<boolean>) => {
             // TODO: This currently allows any one background worker to state that the app is
@@ -232,8 +246,11 @@ export const internalSlice = createSlice({
         setFilteredTrackMediaIds: (state, action: PayloadAction<MediaId[]>) => {
             state.tracks.filteredTrackMediaIds = action.payload;
         },
-        setPlaylistScrollPos: (state, action: PayloadAction<number>) => {
-            state.playlist.scrollPos = action.payload;
+        setPlaylistScrollPosition: (state, action: PayloadAction<number>) => {
+            state.playlist.scrollPosition = action.payload;
+        },
+        setPresetsScrollPosition: (state, action: PayloadAction<number>) => {
+            state.presets.scrollPosition = action.payload;
         },
         setShowCurrentTrackLyrics: (state, action: PayloadAction<boolean>) => {
             state.application.showCurrentTrackLyrics = action.payload;
@@ -252,6 +269,9 @@ export const internalSlice = createSlice({
             state.tracks.trackCard.renderWidth = action.payload.width;
             state.tracks.trackCard.renderHeight = action.payload.height;
         },
+        setTracksScrollPosition: (state, action: PayloadAction<number>) => {
+            state.tracks.scrollPosition = action.payload;
+        },
         setWebsocketClientId: (state, action: PayloadAction<string>) => {
             state.application.websocketClientId = action.payload;
         },
@@ -263,6 +283,7 @@ export const internalSlice = createSlice({
 
 export const {
     setAlbumCardRenderDimensions,
+    setAlbumsScrollPosition,
     setArtistCardRenderDimensions,
     setArtistsScrollPos,
     setArtistsScrollCurrentIntoView,
@@ -272,6 +293,7 @@ export const {
     setCurrentlyPlayingArtUrl,
     setCurrentScreen,
     setFavoriteCardRenderDimensions,
+    setFavoritesScrollPosition,
     setIsComputingInBackground,
     setFilteredAlbumCount,
     setFilteredAlbumMediaIds,
@@ -283,11 +305,13 @@ export const {
     setFilteredPresetIds,
     setFilteredTrackCount,
     setFilteredTrackMediaIds,
-    setPlaylistScrollPos,
+    setPlaylistScrollPosition,
+    setPresetsScrollPosition,
     setShowCurrentTrackLyrics,
     setShowDebugPanel,
     setShowKeyboardShortcuts,
     setTrackCardRenderDimensions,
+    setTracksScrollPosition,
     setWebsocketClientId,
     setWebsocketStatus,
 } = internalSlice.actions;

@@ -1,13 +1,15 @@
-import React, { FC, RefObject, useCallback, useState } from "react";
+import React, { FC, RefObject, useCallback, useEffect, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { RootState } from "../../app/store/store";
 import { setTracksFilterText } from "../../app/store/userSettingsSlice";
+import { useWindowScroll } from "../../app/hooks/useWindowScroll";
+import { setTracksScrollPosition } from "../../app/store/internalSlice";
 import TracksControls from "../tracks/TracksControls";
 import TrackWall from "../tracks/TrackWall";
 import ScreenHeader from "./ScreenHeader";
-import { RootState } from "../../app/store/store";
 
 const TracksScreen: FC = () => {
     const dispatch = useAppDispatch();
@@ -16,6 +18,16 @@ const TracksScreen: FC = () => {
         (state: RootState) => state.playback.current_track_media_id
     );
     const [currentTrackRef, setCurrentTrackRef] = useState<RefObject<HTMLDivElement>>();
+    const { scrollPosition } = useAppSelector((state: RootState) => state.internal.tracks);
+    const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
+
+    useEffect(() => {
+        setTimeout(() => scrollTo({ y: scrollPosition }), 1);
+    }, []);
+
+    useEffect(() => {
+        dispatch(setTracksScrollPosition(scroll.y));
+    }, [scroll, dispatch]);
 
     /**
      *

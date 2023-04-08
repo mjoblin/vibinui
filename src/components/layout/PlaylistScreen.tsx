@@ -6,7 +6,7 @@ import throttle from "lodash/throttle";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RootState, store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import { setPlaylistScrollPos } from "../../app/store/internalSlice";
+import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import Playlist from "../playlist/Playlist";
 import PlaylistControls from "../playlist/PlaylistControls";
@@ -39,7 +39,7 @@ const PlaylistScreen: FC = () => {
      *
      */
     useEffect(() => {
-        const lastScrollPos = store.getState().internal.playlist.scrollPos;
+        const lastScrollPos = store.getState().internal.playlist.scrollPosition;
 
         setTimeout(() => {
             playlistViewportRef.current &&
@@ -99,10 +99,10 @@ const PlaylistScreen: FC = () => {
     /**
      *
      */
-    const throttledPlaylistPosChange = useCallback(
+    const throttledPlaylistPositionChange = useCallback(
         throttle(
             (value) => {
-                dispatch(setPlaylistScrollPos(value.y));
+                dispatch(setPlaylistScrollPosition(value.y));
             },
             SCROLL_POS_DISPATCH_RATE,
             { leading: false }
@@ -124,7 +124,7 @@ const PlaylistScreen: FC = () => {
                 <ScrollArea
                     h={playlistHeight}
                     viewportRef={playlistViewportRef}
-                    onScrollPositionChange={throttledPlaylistPosChange}
+                    onScrollPositionChange={throttledPlaylistPositionChange}
                     offsetScrollbars
                 >
                     <Playlist

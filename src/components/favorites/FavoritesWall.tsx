@@ -42,20 +42,8 @@ const FavoritesWall: FC = () => {
     useEffect(() => {
         const albumFavorites = favorites.filter((favorite) => favorite.type === "album");
         const trackFavorites = favorites.filter((favorite) => favorite.type === "track");
-
-        const filteredAlbumFavorites = collectionFilter(
-            // albumFavorites.map((favorite) => favorite.media),
-            albumFavorites,
-            filterText,
-            "media.title"
-        );
-
-        const filteredTrackFavorites = collectionFilter(
-            // trackFavorites.map((favorite) => favorite.media),
-            trackFavorites,
-            filterText,
-            "media.title"
-        );
+        const filteredAlbumFavorites = collectionFilter(albumFavorites, filterText, "media.title");
+        const filteredTrackFavorites = collectionFilter(trackFavorites, filterText, "media.title");
 
         if (activeCollection === "all") {
             dispatch(
