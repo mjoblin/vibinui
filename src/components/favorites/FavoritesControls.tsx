@@ -1,16 +1,6 @@
-import React, { FC, useState } from "react";
-import {
-    ActionIcon,
-    Box,
-    createStyles,
-    Flex,
-    Menu,
-    Select,
-    TextInput,
-    Tooltip,
-    useMantineTheme,
-} from "@mantine/core";
-import { IconDisc, IconMicrophone2, IconPlayerPlay, IconSquareX } from "@tabler/icons";
+import React, { FC } from "react";
+import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
+import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
@@ -24,52 +14,21 @@ import {
     setFavoritesFilterText,
     setFavoritesShowDetails,
 } from "../../app/store/userSettingsSlice";
-import {
-    usePlayFavoriteAlbumsMutation,
-    usePlayFavoriteTracksMutation,
-    useSetPlaylistMediaIdsMutation,
-} from "../../app/services/vibinPlaylist";
-import { showSuccessNotification } from "../../app/utils";
 import FilterInstructions from "../shared/FilterInstructions";
 import CardControls from "../shared/CardControls";
 import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 import ShowCountLabel from "../shared/ShowCountLabel";
 
-const darkEnabled = "#C1C2C5";
-const lightEnabled = "#000";
-
-const useMenuStyles = createStyles((theme) => ({
-    item: {
-        fontSize: 12,
-        padding: "7px 12px",
-        "&[data-hovered]": {
-            backgroundColor: theme.colors[theme.primaryColor][theme.fn.primaryShade()],
-            color: theme.white,
-        },
-    },
-}));
-
 const FavoritesControls: FC = () => {
-    const theme = useMantineTheme();
-    const menuStyles = useMenuStyles();
     const dispatch = useAppDispatch();
-    const [playMenuOpen, setPlayMenuOpen] = useState<boolean>(false);
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
-    const [setPlaylistIds, setPlaylistIdsStatus] = useSetPlaylistMediaIdsMutation();
+    const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.favorites
     );
-    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { filteredFavoriteMediaIds } = useAppSelector(
         (state: RootState) => state.internal.favorites
     );
-    const [playFavoriteAlbums] = usePlayFavoriteAlbumsMutation();
-    const [playFavoriteTracks] = usePlayFavoriteTracksMutation();
-
-    const haveFavoriteAlbums = favorites.some((favorite) => favorite.type === "album");
-    const haveFavoriteTracks = favorites.some((favorite) => favorite.type === "track");
-    const isStreamerOff = streamerPower === "off";
 
     return (
         <Flex gap={25} align="flex-end">
@@ -94,7 +53,7 @@ const FavoritesControls: FC = () => {
             />
 
             {/* Filter text */}
-            <Flex gap={10} align="center">
+            <Flex gap={10} align="center" sx={{ flexGrow: 1 }}>
                 <TextInput
                     placeholder="Title filter, or advanced"
                     label="Filter"
@@ -109,9 +68,12 @@ const FavoritesControls: FC = () => {
                     }
                     onChange={(event) => dispatch(setFavoritesFilterText(event.target.value))}
                     styles={{
-                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        root: {
+                            ...STYLE_LABEL_BESIDE_COMPONENT.root,
+                            flexGrow: 1,
+                        },
                         wrapper: {
-                            width: CARD_FILTER_WIDTH,
+                            flexGrow: 1,
                         },
                     }}
                 />
@@ -135,7 +97,7 @@ const FavoritesControls: FC = () => {
                 maxToPlay={100}
             />
 
-            <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
                 {/* "Showing x of y favorites" */}
                 <ShowCountLabel
                     showing={

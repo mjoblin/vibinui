@@ -1,14 +1,5 @@
-import React, { FC, useCallback, useEffect } from "react";
-import {
-    ActionIcon,
-    Box,
-    Button,
-    Flex,
-    Select,
-    TextInput,
-    Tooltip,
-    useMantineTheme,
-} from "@mantine/core";
+import React, { FC, useCallback } from "react";
+import { ActionIcon, Box, Flex, Select, TextInput, Tooltip } from "@mantine/core";
 
 import { Album, Artist, MediaId, Track } from "../../app/types";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -26,18 +17,15 @@ import { RootState } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import { IconCurrentLocation, IconHandFinger, IconSquareX } from "@tabler/icons";
+import { IconHandFinger, IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../shared/ShowCountLabel";
 import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
+    const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const albumsByArtistName = useAppSelector(
         (state: RootState) => state.mediaGroups.albumsByArtistName
-    );
-    const tracksByArtistName = useAppSelector(
-        (state: RootState) => state.mediaGroups.tracksByArtistName
     );
     const { filteredArtistMediaIds, scrollCurrentIntoView, scrollSelectedIntoView } =
         useAppSelector((state: RootState) => state.internal.artists);
@@ -113,7 +101,7 @@ const ArtistsControls: FC = () => {
     // --------------------------------------------------------------------------------------------
 
     return (
-        <Flex gap={25} align="center">
+        <Flex gap={25} align="center" sx={{ flexGrow: 1 }}>
             {/* Show all or just artists with albums */}
             <Select
                 label="Show"
@@ -154,9 +142,12 @@ const ArtistsControls: FC = () => {
                     selectedTrack && dispatch(setArtistsSelectedTrack(undefined));
                 }}
                 styles={{
-                    ...STYLE_LABEL_BESIDE_COMPONENT,
+                    root: {
+                        ...STYLE_LABEL_BESIDE_COMPONENT.root,
+                        flexGrow: 1,
+                    },
                     wrapper: {
-                        width: CARD_FILTER_WIDTH,
+                        flexGrow: 1,
                     },
                 }}
             />
@@ -173,18 +164,20 @@ const ArtistsControls: FC = () => {
 
                 {/* Scroll selected items into view */}
                 <Tooltip label="Scroll selected items into view" position="bottom">
-                    <ActionIcon
-                        color="blue"
-                        disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
-                        onClick={scrollSelectedIntoView}
-                    >
-                        <IconHandFinger size="1.2rem" />
-                    </ActionIcon>
+                    <Box>
+                        <ActionIcon
+                            color="blue"
+                            disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
+                            onClick={scrollSelectedIntoView}
+                        >
+                            <IconHandFinger size="1.2rem" />
+                        </ActionIcon>
+                    </Box>
                 </Tooltip>
             </Flex>
 
             {/* "Showing x of y artists" */}
-            <Flex justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+            <Flex justify="right" sx={{ alignSelf: "flex-end" }}>
                 <ShowCountLabel
                     showing={filteredArtistMediaIds.length}
                     of={allArtists?.length || 0}
