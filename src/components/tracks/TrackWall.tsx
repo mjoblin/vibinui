@@ -4,13 +4,13 @@ import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { Track } from "../../app/types";
 import { useGetTracksQuery, useSearchLyricsMutation } from "../../app/services/vibinTracks";
 import { setFilteredTrackMediaIds } from "../../app/store/internalSlice";
+import { collectionFilter } from "../../app/utils";
 import TrackCard from "./TrackCard";
 import SadLabel from "../shared/SadLabel";
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import { collectionFilter } from "../../app/utils";
 import LoadingDataMessage from "../shared/LoadingDataMessage";
 
 type TrackWallProps = {
@@ -46,6 +46,7 @@ const TrackWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
     useEffect(() => {
         onNewCurrentTrackRef(currentTrackRef);
     }, []);
+
 
     useEffect(() => {
         lyricsSearchText !== "" && searchLyrics({ query: lyricsSearchText });

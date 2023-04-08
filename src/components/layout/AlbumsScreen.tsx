@@ -1,9 +1,12 @@
-import React, { FC, RefObject, useCallback, useState } from "react";
+import React, { FC, RefObject, useCallback, useEffect, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppDispatch } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { RootState } from "../../app/store/store";
 import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../app/store/userSettingsSlice";
+import { useWindowScroll } from "../../app/hooks/useWindowScroll";
+import { setAlbumsScrollPosition } from "../../app/store/internalSlice";
 import AlbumsControls from "../albums/AlbumsControls";
 import AlbumWall from "../albums/AlbumWall";
 import ScreenHeader from "./ScreenHeader";
@@ -12,6 +15,16 @@ const AlbumsScreen: FC = () => {
     const dispatch = useAppDispatch();
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const [currentAlbumRef, setCurrentAlbumRef] = useState<RefObject<HTMLDivElement>>();
+    const { scrollPosition } = useAppSelector((state: RootState) => state.internal.albums);
+    const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
+
+    useEffect(() => {
+        setTimeout(() => scrollTo({ y: scrollPosition }), 1);
+    }, []);
+
+    useEffect(() => {
+        dispatch(setAlbumsScrollPosition(scroll.y));
+    }, [scroll, dispatch]);
 
     /**
      *
