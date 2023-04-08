@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { ActionIcon, Flex, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Flex, TextInput } from "@mantine/core";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -18,7 +18,7 @@ import ShowCountLabel from "../shared/ShowCountLabel";
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
+    const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { presets } = useAppSelector((state: RootState) => state.presets);
     const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.presets
@@ -28,7 +28,7 @@ const PresetsControls: FC = () => {
     return (
         <Flex gap={25} align="center">
             {/* Filter text */}
-            <Flex gap={10} align="center">
+            <Flex gap={10} align="center" sx={{ flexGrow: 1 }}>
                 <TextInput
                     placeholder="Name filter, or advanced"
                     label="Filter"
@@ -43,9 +43,12 @@ const PresetsControls: FC = () => {
                     }
                     onChange={(event) => dispatch(setPresetsFilterText(event.target.value))}
                     styles={{
-                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        root: {
+                            ...STYLE_LABEL_BESIDE_COMPONENT.root,
+                            flexGrow: 1,
+                        },
                         wrapper: {
-                            width: CARD_FILTER_WIDTH,
+                            flexGrow: 1,
                         },
                     }}
                 />
@@ -57,7 +60,7 @@ const PresetsControls: FC = () => {
                 />
             </Flex>
 
-            <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
                 {/* "Showing x of y presets" */}
                 <ShowCountLabel
                     showing={filteredPresetIds.length}

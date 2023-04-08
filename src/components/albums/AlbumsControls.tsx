@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { ActionIcon, Box, Checkbox, Flex, Select, Text, TextInput, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
 import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -9,17 +9,19 @@ import {
     setAlbumsActiveCollection,
     setAlbumsCardGap,
     setAlbumsCardSize,
-    setAlbumsFilterText, setAlbumsFollowCurrentlyPlaying,
-    setAlbumsShowDetails, setTracksFollowCurrentlyPlaying,
+    setAlbumsFilterText,
+    setAlbumsFollowCurrentlyPlaying,
+    setAlbumsShowDetails,
 } from "../../app/store/userSettingsSlice";
 import { RootState } from "../../app/store/store";
-import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
+import { useGetAlbumsQuery } from "../../app/services/vibinAlbums";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import ShowCountLabel from "../shared/ShowCountLabel";
 import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
+import FollowCurrentlyPlayingToggle from "../shared/FollowCurrentlyPlayingToggle";
 
 type AlbumsControlsProps = {
     scrollToCurrent?: () => void;
@@ -27,9 +29,8 @@ type AlbumsControlsProps = {
 
 const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
+    const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allAlbums } = useGetAlbumsQuery();
-    const { data: newAlbums } = useGetNewAlbumsQuery();
     const { activeCollection, cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails } =
         useAppSelector((state: RootState) => state.userSettings.albums);
     const currentAlbumMediaId = useAppSelector(
@@ -48,6 +49,16 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
             scrollToCurrent &&
             setTimeout(() => scrollToCurrent(), 1);
     }, [followCurrentlyPlaying, currentAlbumMediaId, scrollToCurrent]);
+
+    /**
+     * Disable following the currently-playing album if an incomplete list of albums be currently
+     * being displayed (e.g. a filter is active).
+     */
+    useEffect(() => {
+        if (activeCollection !== "all" || filterText !== "") {
+            dispatch(setAlbumsFollowCurrentlyPlaying(false));
+        }
+    }, [activeCollection, filterText, dispatch]);
 
     return (
         <Flex gap={25} align="center">
@@ -72,7 +83,7 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
 
             {/* Filter text */}
             {/* TODO: Consider debouncing setAlbumsFilterText() if performance is an issue */}
-            <Flex gap={10} align="center">
+            <Flex gap={10} align="center" sx={{ flexGrow: 1 }}>
                 <TextInput
                     placeholder="Title filter, or advanced"
                     label="Filter"
@@ -87,9 +98,12 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                     }
                     onChange={(event) => dispatch(setAlbumsFilterText(event.target.value))}
                     styles={{
-                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        root: {
+                            ...STYLE_LABEL_BESIDE_COMPONENT.root,
+                            flexGrow: 1,
+                        },
                         wrapper: {
-                            width: CARD_FILTER_WIDTH,
+                            flexGrow: 1,
                         },
                     }}
                 />
@@ -101,22 +115,25 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                 />
             </Flex>
 
-            <Flex align="center" gap={10}>
+            {/* Buttons to show and follow currently-playing */}
+            <Flex align="center" gap={5}>
                 <CurrentlyPlayingButton
                     disabled={activeCollection !== "all" || filterText !== ""}
                     tooltipLabel="Show currently playing Album"
                     onClick={() => scrollToCurrent && scrollToCurrent()}
                 />
 
-                <Checkbox
-                    label="Follow"
-                    checked={followCurrentlyPlaying}
-                    onChange={(event) =>
-                        dispatch(setAlbumsFollowCurrentlyPlaying(event.currentTarget.checked))
+                <FollowCurrentlyPlayingToggle
+                    isOn={followCurrentlyPlaying}
+                    disabled={activeCollection !== "all" || filterText !== ""}
+                    tooltipLabel="Follow currently playing Album"
+                    onClick={() =>
+                        dispatch(setAlbumsFollowCurrentlyPlaying(!followCurrentlyPlaying))
                     }
                 />
             </Flex>
 
+            {/* Play the currently-filtered albums */}
             <PlayMediaIdsButton
                 mediaIds={filteredAlbumMediaIds}
                 disabled={filterText === ""}
@@ -130,7 +147,7 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                 maxToPlay={10}
             />
 
-            <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
                 {/* "Showing x of y albums" */}
                 <ShowCountLabel
                     showing={filteredAlbumMediaIds.length}

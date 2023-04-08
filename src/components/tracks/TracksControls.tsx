@@ -1,5 +1,7 @@
 import React, { FC, useEffect } from "react";
-import { ActionIcon, Box, Checkbox, Flex, TextInput } from "@mantine/core";
+import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
+import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -16,11 +18,10 @@ import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import CardControls from "../shared/CardControls";
 import FilterInstructions from "../shared/FilterInstructions";
-import { useDebouncedValue } from "@mantine/hooks";
-import { IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../shared/ShowCountLabel";
 import PlayMediaIdsButton from "../shared/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
+import FollowCurrentlyPlayingToggle from "../shared/FollowCurrentlyPlayingToggle";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 const stripParens = new RegExp(/^\(?([^\)]+)\)?$/);
@@ -31,7 +32,7 @@ type TracksControlsProps = {
 
 const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
-    const { CARD_FILTER_WIDTH, STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
+    const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allTracks } = useGetTracksQuery();
     const { cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
@@ -54,6 +55,16 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             setTimeout(() => scrollToCurrent(), 1);
     }, [followCurrentlyPlaying, currentTrackMediaId, scrollToCurrent]);
 
+    /**
+     * Disable following the currently-playing album if an incomplete list of albums be currently
+     * being displayed (e.g. a filter is active).
+     */
+    useEffect(() => {
+        if (filterText !== "") {
+            dispatch(setTracksFollowCurrentlyPlaying(false));
+        }
+    }, [filterText, dispatch]);
+
     // If the filter text includes something like "lyric:(some lyric search)" then store
     // "some lyric search" in application state.
     useEffect(() => {
@@ -74,7 +85,7 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
         <Flex gap={25} align="center">
             {/* Filter text */}
             {/* TODO: Consider debouncing setTracksFilterText() if performance is an issue */}
-            <Flex gap={10} align="center">
+            <Flex gap={10} align="center" sx={{ flexGrow: 1 }}>
                 <TextInput
                     placeholder="Title filter, or advanced"
                     label="Filter"
@@ -89,9 +100,12 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                     }
                     onChange={(event) => dispatch(setTracksFilterText(event.target.value))}
                     styles={{
-                        ...STYLE_LABEL_BESIDE_COMPONENT,
+                        root: {
+                            ...STYLE_LABEL_BESIDE_COMPONENT.root,
+                            flexGrow: 1,
+                        },
                         wrapper: {
-                            width: CARD_FILTER_WIDTH,
+                            flexGrow: 1,
                         },
                     }}
                 />
@@ -112,22 +126,25 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             </Flex>
 
             <Flex gap={20} align="center">
-                <Flex gap={10} align="center">
+                {/* Buttons to show and follow currently-playing */}
+                <Flex gap={5} align="center">
                     <CurrentlyPlayingButton
                         disabled={filterText !== ""}
                         tooltipLabel="Show currently playing Track"
                         onClick={() => scrollToCurrent && scrollToCurrent()}
                     />
 
-                    <Checkbox
-                        label="Follow"
-                        checked={followCurrentlyPlaying}
-                        onChange={(event) =>
-                            dispatch(setTracksFollowCurrentlyPlaying(event.currentTarget.checked))
+                    <FollowCurrentlyPlayingToggle
+                        isOn={followCurrentlyPlaying}
+                        disabled={filterText !== ""}
+                        tooltipLabel="Follow currently playing Track"
+                        onClick={() =>
+                            dispatch(setTracksFollowCurrentlyPlaying(!followCurrentlyPlaying))
                         }
                     />
                 </Flex>
 
+                {/* Play the currently-filtered tracks */}
                 <Box pl={15}>
                     <PlayMediaIdsButton
                         mediaIds={filteredTrackMediaIds}
@@ -144,7 +161,7 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                 </Box>
             </Flex>
 
-            <Flex gap={20} justify="right" sx={{ flexGrow: 1, alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
                 {/* "Showing x of y tracks" */}
                 <ShowCountLabel
                     showing={filteredTrackMediaIds.length}

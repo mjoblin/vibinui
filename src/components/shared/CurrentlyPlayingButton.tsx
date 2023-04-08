@@ -24,6 +24,7 @@ const CurrentlyPlayingButton: FC<CurrentlyPlayingButtonProps> = ({
         <Tooltip label={tooltipLabel} position="bottom">
             <Box>
                 <ActionIcon
+                    variant="subtle"
                     color="yellow"
                     disabled={disabled || !currentTrackMediaId}
                     onClick={() => onClick && onClick()}
