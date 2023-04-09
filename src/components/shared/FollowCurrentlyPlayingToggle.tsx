@@ -1,6 +1,8 @@
 import React, { FC } from "react";
 import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconArrowAutofitHeight } from "@tabler/icons";
+import { useAppSelector } from "../../app/hooks";
+import { RootState } from "../../app/store/store";
 
 type CurrentlyPlayingToggleProps = {
     isOn: boolean;
@@ -16,6 +18,9 @@ const FollowCurrentlyPlayingToggle: FC<CurrentlyPlayingToggleProps> = ({
     onClick,
 }) => {
     const { colors } = useMantineTheme();
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
+    );
 
     return (
         <Tooltip label={tooltipLabel} position="bottom">
@@ -23,7 +28,7 @@ const FollowCurrentlyPlayingToggle: FC<CurrentlyPlayingToggleProps> = ({
                 <ActionIcon
                     variant="subtle"
                     color={isOn ? "yellow" : "gray"}
-                    disabled={disabled}
+                    disabled={disabled || !currentTrackMediaId}
                     onClick={() => onClick && onClick()}
                 >
                     <IconArrowAutofitHeight
@@ -31,7 +36,9 @@ const FollowCurrentlyPlayingToggle: FC<CurrentlyPlayingToggleProps> = ({
                         // Specifying a color here when isOn is false to override the "gray" on
                         // <ActionIcon>, because <ActionIcon> only accepts a theme key and not a
                         // level (0 thru 9) within that key.
-                        color={!isOn ? colors.dark[3] : undefined}
+                        color={
+                            !isOn && !disabled && currentTrackMediaId ? colors.dark[3] : undefined
+                        }
                     />
                 </ActionIcon>
             </Box>

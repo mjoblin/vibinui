@@ -3,15 +3,14 @@ import { Box, ScrollArea, Stack } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 import throttle from "lodash/throttle";
 
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { RootState, store } from "../../app/store/store";
+import { useAppDispatch } from "../../app/hooks";
+import { store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import Playlist from "../playlist/Playlist";
 import PlaylistControls from "../playlist/PlaylistControls";
 import ScreenHeader from "./ScreenHeader";
-import StandbyMode from "../shared/StandbyMode";
 
 type WindowDimensions = {
     height: number;
@@ -20,7 +19,6 @@ type WindowDimensions = {
 
 const PlaylistScreen: FC = () => {
     const dispatch = useAppDispatch();
-    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const {
         HEADER_HEIGHT,
         RENDER_APP_BACKGROUND_IMAGE,
