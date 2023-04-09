@@ -28,11 +28,22 @@ export type MediaLinks = {
 
 export type WaveformFormat = "dat" | "json" | "png";
 
+export type RMS = {
+    rms: number;
+    peak: number;
+    rms_to_peak: number;
+}
+
 export const vibinTracksApi = createApi({
     reducerPath: "vibinTracksApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/tracks" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
+        getRMS: builder.query<RMS, MediaId>({
+            query: (trackId) => ({
+                url: `${trackId}/rms`,
+            }),
+        }),
         getLyrics: builder.query<
             Lyrics,
             { trackId?: string; artist?: string; title?: string; updateCache?: boolean }
@@ -106,9 +117,7 @@ export const vibinTracksApi = createApi({
         >({
             query: ({ trackId, artist, title, isValid }) => ({
                 url: trackId ? `${trackId}/lyrics/validate` : "lyrics/validate",
-                params: trackId
-                    ? { is_valid: isValid }
-                    : { is_valid: isValid, artist, title },
+                params: trackId ? { is_valid: isValid } : { is_valid: isValid, artist, title },
                 method: "POST",
             }),
         }),
@@ -116,6 +125,7 @@ export const vibinTracksApi = createApi({
 });
 
 export const {
+    useGetRMSQuery,
     useGetLinksQuery,
     useGetLyricsQuery,
     useGetTrackByIdQuery,
