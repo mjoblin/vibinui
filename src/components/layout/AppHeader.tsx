@@ -7,6 +7,7 @@ import { useAppSelector } from "../../app/hooks";
 import MiniController from "../currentlyPlaying/MiniController";
 import StylizedLabel from "../shared/StylizedLabel";
 import VibinLogo from "./VibinLogo";
+import StreamerOffWarning from "../shared/StreamerOffWarning";
 
 type AppHeaderProps = {
     noBackground?: boolean;
@@ -15,6 +16,7 @@ type AppHeaderProps = {
 const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
     const { HEADER_HEIGHT, APP_PADDING, NAVBAR_WIDTH } = useAppGlobals();
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );
@@ -39,6 +41,7 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                 <Box miw={NAVBAR_WIDTH} maw={NAVBAR_WIDTH}>
                     <VibinLogo />
                 </Box>
+
                 <Flex gap={20} align="center" sx={{ flexGrow: 1, minWidth: 0 }}>
                     <Box miw={150} maw={150}>
                         <StylizedLabel>{currentScreen}</StylizedLabel>
@@ -47,6 +50,8 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                         <MiniController />
                     </Box>
                 </Flex>
+
+                {streamerPower === "off" && <StreamerOffWarning />}
             </Flex>
         </Header>
     );
