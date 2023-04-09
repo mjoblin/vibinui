@@ -112,9 +112,7 @@ const PlaylistScreen: FC = () => {
 
     // --------------------------------------------------------------------------------------------
 
-    return streamerPower === "off" ? (
-        <StandbyMode />
-    ) : (
+    return (
         <Stack spacing={0}>
             <ScreenHeader height={SCREEN_HEADER_HEIGHT} noBackground={RENDER_APP_BACKGROUND_IMAGE}>
                 <PlaylistControls scrollToCurrent={scrollToCurrent} />
