@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Center, createStyles, Flex, Image, Loader, Text } from "@mantine/core";
+import { Badge, Box, createStyles, Flex, Image, Stack } from "@mantine/core";
 import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../app/types";
 import { RootState } from "../../app/store/store";
 import { useAppSelector } from "../../app/hooks";
 import { useSeekMutation } from "../../app/services/vibinTransport";
+import { useGetRMSQuery } from "../../app/services/vibinTracks";
 
 // TODO: This component could perform optimistic playhead display updates to ensure that dropping
 //  a new playhead position doesn't result in a brief delay before the update is displayed.
@@ -13,7 +14,7 @@ import { useSeekMutation } from "../../app/services/vibinTransport";
 const useStyles = createStyles((theme) => ({
     waveformContainer: {
         position: "relative",
-        border: `1px solid #105010`,
+        opacity: 0.35,
         borderRadius: 5,
     },
     waveformProgress: {
@@ -118,17 +119,35 @@ type WaveformProps = {
     showProgress?: boolean;
 };
 
-const Waveform: FC<WaveformProps> = ({ trackId, width = 800, height = 250, showProgress = true }) => {
+const Waveform: FC<WaveformProps> = ({
+    trackId,
+    width = 800,
+    height = 250,
+    showProgress = true,
+}) => {
     const { classes } = useStyles();
+    const { data: rms, isSuccess: haveRMS } = useGetRMSQuery(trackId);
 
     return (
-        <Box className={classes.waveformContainer}>
-            <Image
-                src={`/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
-                radius={5}
-            />
-            {showProgress && <WaveformProgress />}
-        </Box>
+        <Stack spacing={10}>
+            <Box className={classes.waveformContainer}>
+                <Image
+                    color="rgb(0, 0, 1)"
+                    src={`/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
+                    radius={5}
+                    sx={{
+                        filter: "sepia(70%) saturate(100%) brightness(85%) hue-rotate(110deg)",
+                    }}
+                />
+                {showProgress && <WaveformProgress />}
+            </Box>
+
+            {haveRMS && (
+                <Flex sx={{ alignSelf: "flex-end" }}>
+                    <Badge>{`rms to peak: ${Math.round(rms.rms_to_peak * 100)}`}</Badge>
+                </Flex>
+            )}
+        </Stack>
     );
 };
 
