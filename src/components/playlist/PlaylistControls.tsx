@@ -5,7 +5,6 @@ import {
     Box,
     Button,
     Center,
-    Checkbox,
     Flex,
     Group,
     Indicator,
@@ -32,6 +31,7 @@ import {
     IconMenu2,
 } from "@tabler/icons";
 
+import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
     PlaylistViewMode,
@@ -42,7 +42,7 @@ import {
     useLazyActivateStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
 } from "../../app/services/vibinStoredPlaylists";
-import { RootState } from "../../app/store/store";
+import { useLazyPowerToggleQuery } from "../../app/services/vibinSystem";
 import StoredPlaylistsEditor from "./StoredPlaylistsEditor";
 import CurrentlyPlayingButton from "../shared/CurrentlyPlayingButton";
 import {
@@ -53,6 +53,7 @@ import {
     showSuccessNotification,
 } from "../../app/utils";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import FollowCurrentlyPlayingToggle from "../shared/FollowCurrentlyPlayingToggle";
 
 // ------------------------------------------------------------------------------------------------
 
@@ -180,7 +181,9 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
         activating_stored_playlist: activatingStoredPlaylist,
         stored_playlists: storedPlaylists,
     } = useAppSelector((state: RootState) => state.storedPlaylists);
-    const { current_track_index } = useAppSelector((state: RootState) => state.playlist);    
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
+    const { current_track_index } = useAppSelector((state: RootState) => state.playlist);
+    const [togglePower, togglePowerStatus] = useLazyPowerToggleQuery();
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();
@@ -285,6 +288,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
 
     // --------------------------------------------------------------------------------------------
 
+    const isStreamerOff = streamerPower === "off";
     const isPlaylistPersisted = !!activeStoredPlaylistId;
 
     return (
@@ -312,7 +316,19 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                                 value={activeStoredPlaylistId}
                                 w={250}
                                 maxDropdownHeight={700}
-                                onChange={(value) => value && activateStoredPlaylistId(value)}
+                                onChange={(value) => {
+                                    if (!value) {
+                                        return;
+                                    }
+
+                                    if (isStreamerOff) {
+                                        togglePower().then(() => {
+                                            activateStoredPlaylistId(value);
+                                        });
+                                    } else {
+                                        activateStoredPlaylistId(value);
+                                    }
+                                }}
                             />
 
                             {/* Playlist save options */}
@@ -433,14 +449,17 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
 
                 <PlaylistDuration />
 
-                <Flex gap={10} align="center">
-                    <CurrentlyPlayingButton onClick={scrollToCurrent} />
+                <Flex gap={5} align="center">
+                    <CurrentlyPlayingButton
+                        tooltipLabel="Show currently playing Entry"
+                        onClick={scrollToCurrent}
+                    />
 
-                    <Checkbox
-                        label="Follow"
-                        checked={followCurrentlyPlaying}
-                        onChange={(event) =>
-                            dispatch(setPlaylistFollowCurrentlyPlaying(event.currentTarget.checked))
+                    <FollowCurrentlyPlayingToggle
+                        isOn={followCurrentlyPlaying}
+                        tooltipLabel="Follow currently playing Entry"
+                        onClick={() =>
+                            dispatch(setPlaylistFollowCurrentlyPlaying(!followCurrentlyPlaying))
                         }
                     />
                 </Flex>

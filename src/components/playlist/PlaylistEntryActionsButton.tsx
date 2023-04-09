@@ -173,6 +173,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         <Menu.Label>Playlist</Menu.Label>
 
                         <Menu.Item
+                            disabled={isStreamerOff}
                             icon={<IconArrowBarToUp size={14} />}
                             onClick={() => {
                                 moveEntry({
@@ -191,6 +192,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
 
                         <Menu.Item
+                            disabled={isStreamerOff}
                             icon={
                                 <IconPlayerPlay
                                     size={14}
@@ -213,7 +215,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
 
                         <Menu.Item
-                            disabled={!currentlyPlayingIndex}
+                            disabled={isStreamerOff || !currentlyPlayingIndex}
                             icon={<IconCornerDownRightDouble size={14} />}
                             onClick={() => {
                                 if (!currentlyPlayingIndex) {
@@ -238,6 +240,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
 
                         <Menu.Item
+                            disabled={isStreamerOff}
                             icon={<IconArrowBarToDown size={12} />}
                             onClick={() => {
                                 moveEntry({
@@ -256,6 +259,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
 
                         <Menu.Item
+                            disabled={isStreamerOff}
                             icon={<IconTrash size={14} />}
                             onClick={() => {
                                 deletePlaylistId({ playlistId: entry.id });
