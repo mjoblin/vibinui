@@ -145,8 +145,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
-    const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
-    const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
+    const [addFavorite] = useAddFavoriteMutation();
+    const [deleteFavorite] = useDeleteFavoriteMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);

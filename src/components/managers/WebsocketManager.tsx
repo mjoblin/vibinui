@@ -1,9 +1,9 @@
-import React, { FC } from "react";
+import { FC } from "react";
 
 import { useGetMessagesQuery } from "../../app/services/vibinWebsocket";
 
 const WebsocketManager: FC = () => {
-    const { data } = useGetMessagesQuery(); // Trigger the websocket connection
+    useGetMessagesQuery(); // Trigger the websocket connection
 
     return null;
 };

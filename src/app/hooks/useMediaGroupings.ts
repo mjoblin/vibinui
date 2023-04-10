@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useState } from "react";
+import { useEffect, useMemo, useReducer, useState } from "react";
 
 import { Album, Artist, Track } from "../types";
 import { useAppDispatch } from "./useInterval";
@@ -64,13 +64,10 @@ const localReducer = (state: LocalState, action: LocalAction): LocalState => {
 export const useMediaGroupings = () => {
     const [state, localDispatch] = useReducer(localReducer, { computing: [] });
     const dispatch = useAppDispatch();
-    const { data: allAlbums, error: albumsError, isSuccess: albumsIsSuccess } = useGetAlbumsQuery();
-    const {
-        data: allArtists,
-        error: artistsError,
-        isSuccess: artistsIsSuccess,
-    } = useGetArtistsQuery();
-    const { data: allTracks, error: tracksError, isSuccess: tracksIsSuccess } = useGetTracksQuery();
+    // TODO: Handle error states from API requests
+    const { data: allAlbums } = useGetAlbumsQuery();
+    const { data: allArtists } = useGetArtistsQuery();
+    const { data: allTracks } = useGetTracksQuery();
     const [albumsByArtistName, setAlbumsByArtistName] = useState<Record<string, Album[]>>({});
     const [albumById, setAlbumById] = useState<Record<string, Album>>({});
     const [artistByName, setArtistByName] = useState<Record<string, Artist>>({});

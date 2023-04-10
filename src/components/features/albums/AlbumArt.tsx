@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Flex, Image, useMantineTheme } from "@mantine/core";
+import { Box, createStyles, Flex, Image } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconPlayerPlay } from "@tabler/icons";
 

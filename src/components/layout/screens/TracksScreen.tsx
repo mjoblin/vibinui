@@ -14,9 +14,6 @@ import ScreenHeader from "../ScreenHeader";
 const TracksScreen: FC = () => {
     const dispatch = useAppDispatch();
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
-    const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
-    );
     const [currentTrackRef, setCurrentTrackRef] = useState<RefObject<HTMLDivElement>>();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.tracks);
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
@@ -47,7 +44,7 @@ const TracksScreen: FC = () => {
             (HEADER_HEIGHT + SCREEN_HEADER_HEIGHT + buffer);
 
         window.scrollTo({ top: currentTrackTop });
-    }, [currentTrackMediaId, currentTrackRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, dispatch]);
+    }, [currentTrackRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, dispatch]);
 
     return (
         <Stack spacing={0}>

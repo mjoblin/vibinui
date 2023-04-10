@@ -22,7 +22,7 @@ import {
     ShuffleState,
     TransportAction,
 } from "../store/playbackSlice";
-import { isDev, WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
+import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";

@@ -33,7 +33,7 @@ import SelfUpdatingRelativeDate from "../../shared/dataDisplay/SelfUpdatingRelat
 const StatusScreen: FC = () => {
     const dispatch = useAppDispatch();
     const { colors } = useMantineTheme();
-    const [clearMediaCache, clearMediaCacheStatus] = useLazyClearMediaCachesQuery();
+    const [clearMediaCache] = useLazyClearMediaCachesQuery();
     const { refetch: refetchAlbums } = useGetAlbumsQuery();
     const { refetch: refetchNewAlbums } = useGetNewAlbumsQuery();
     const { refetch: refetchArtists } = useGetArtistsQuery();

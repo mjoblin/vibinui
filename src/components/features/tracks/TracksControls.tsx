@@ -24,7 +24,7 @@ import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton"
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
-const stripParens = new RegExp(/^\(?([^\)]+)\)?$/);
+const stripParens = new RegExp(/^\(?([^)]+)\)?$/);
 
 type TracksControlsProps = {
     scrollToCurrent?: () => void;
