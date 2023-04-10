@@ -97,15 +97,12 @@ const PlaylistScreen: FC = () => {
     /**
      *
      */
-    const throttledPlaylistPositionChange = useCallback(
-        throttle(
-            (value) => {
-                dispatch(setPlaylistScrollPosition(value.y));
-            },
-            SCROLL_POS_DISPATCH_RATE,
-            { leading: false }
-        ),
-        []
+    const throttledPlaylistPositionChange = throttle(
+        (value) => {
+            dispatch(setPlaylistScrollPosition(value.y));
+        },
+        SCROLL_POS_DISPATCH_RATE,
+        { leading: false }
     );
 
     // --------------------------------------------------------------------------------------------

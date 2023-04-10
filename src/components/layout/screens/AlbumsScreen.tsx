@@ -20,6 +20,7 @@ const AlbumsScreen: FC = () => {
 
     useEffect(() => {
         setTimeout(() => scrollTo({ y: scrollPosition }), 1);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {

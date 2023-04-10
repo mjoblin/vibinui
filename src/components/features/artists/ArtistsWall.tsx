@@ -148,37 +148,28 @@ const ArtistsWall: FC = () => {
     // recorded position.
 
     // Store the current scroll positions.
-    const throttledArtistsPosChange = useCallback(
-        throttle(
-            (value) => {
-                dispatch(setArtistsScrollPos({ category: "artists", pos: value.y }));
-            },
-            SCROLL_POS_DISPATCH_RATE,
-            { leading: false }
-        ),
-        []
+    const throttledArtistsPosChange = throttle(
+        (value) => {
+            dispatch(setArtistsScrollPos({ category: "artists", pos: value.y }));
+        },
+        SCROLL_POS_DISPATCH_RATE,
+        { leading: false }
     );
 
-    const throttledAlbumsPosChange = useCallback(
-        throttle(
-            (value) => {
-                dispatch(setArtistsScrollPos({ category: "albums", pos: value.y }));
-            },
-            SCROLL_POS_DISPATCH_RATE,
-            { leading: false }
-        ),
-        []
+    const throttledAlbumsPosChange = throttle(
+        (value) => {
+            dispatch(setArtistsScrollPos({ category: "albums", pos: value.y }));
+        },
+        SCROLL_POS_DISPATCH_RATE,
+        { leading: false }
     );
 
-    const throttledTracksPosChange = useCallback(
-        throttle(
-            (value) => {
-                dispatch(setArtistsScrollPos({ category: "tracks", pos: value.y }));
-            },
-            SCROLL_POS_DISPATCH_RATE,
-            { leading: false }
-        ),
-        []
+    const throttledTracksPosChange = throttle(
+        (value) => {
+            dispatch(setArtistsScrollPos({ category: "tracks", pos: value.y }));
+        },
+        SCROLL_POS_DISPATCH_RATE,
+        { leading: false }
     );
 
     // When the Artist Wall mounts, do one of the follow:
@@ -227,6 +218,7 @@ const ArtistsWall: FC = () => {
                     tracksViewport.current.scrollTo({ top: tracksScrollPos });
             }, 1);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const scrollSelectedIntoView = useCallback(() => {

@@ -247,7 +247,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
                     })
                 );
         }
-    }, [cardRef, isVisible, cardSize, showDetails]);
+    }, [cardRef, isVisible, cardSize, showDetails, latestVisibleRenderSize, dispatch]);
 
     const visibilityOffset = type === "art_focused" ? -1000 : -200;
 

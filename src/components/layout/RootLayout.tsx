@@ -66,19 +66,16 @@ const RootLayout: FC = () => {
         `${window.innerWidth}x${window.innerHeight}`
     );
 
-    const screenName = (): string | undefined => {
+    useEffect(() => {
         const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}/([^/]+)`));
 
         if (!screenNameMatch) {
-            return undefined;
+            return;
         }
 
-        return screenNameMatch[1] || "";
-    }
-
-    useEffect(() => {
-        dispatch(setCurrentScreen(screenName() || ""));
-    }, [location, dispatch, APP_URL_PREFIX]);
+        const screenName = screenNameMatch[1] || "";
+        dispatch(setCurrentScreen(screenName || ""));
+    }, [location, APP_URL_PREFIX, dispatch]);
 
     // Create a key unique to the current screen and window dimensions. If any of those things
     // change (e.g. a window resize) then the key is changed. This key then becomes the key prop
@@ -146,7 +143,7 @@ const RootLayout: FC = () => {
                 {/* Enable the background image manager for select screens. Enabling it on all
                     screens results in unwanted full renders of those other screens when the
                     current track changes. */}
-                {["current", "playlist"].includes(screenName() || "") && <BackgroundImageManager />}
+                {["current", "playlist"].includes(currentScreen) && <BackgroundImageManager />}
 
                 {/* The Debug pane */}
                 <Box

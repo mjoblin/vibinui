@@ -76,6 +76,7 @@ const StoredPlaylistsEditor: FC = () => {
     }, [
         updateStoredPlaylistNameStatus.isSuccess,
         updateStoredPlaylistNameStatus.isError,
+        updateStoredPlaylistNameStatus.error,
         storedPlaylists,
     ]);
 
