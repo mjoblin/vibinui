@@ -246,7 +246,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
-    }, [activatePlaylistStatus.isSuccess, activatePlaylistStatus.isError]);
+    }, [activatePlaylistStatus, storedPlaylists, activeStoredPlaylistId]);
 
     /**
      *
@@ -267,7 +267,14 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
-    }, [storePlaylistStatus.isSuccess, storePlaylistStatus.isError, newPlaylistName]);
+    }, [
+        storePlaylistStatus.isSuccess,
+        storePlaylistStatus.isError,
+        newPlaylistName,
+        storePlaylistStatus,
+        activeStoredPlaylistName,
+        activatePlaylistStatus.error,
+    ]);
 
     // --------------------------------------------------------------------------------------------
 

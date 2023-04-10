@@ -45,7 +45,7 @@ export function useWindowScroll(options?: Partial<{ delay: number }>) {
 
     useEffect(() => {
         setPosition(getScrollPosition());
-    }, []);
+    }, [setPosition]);
 
     return [position, scrollTo] as const;
 }

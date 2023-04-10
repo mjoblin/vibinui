@@ -45,7 +45,7 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
 
     useEffect(() => {
         onNewCurrentTrackRef(currentTrackRef);
-    }, []);
+    }, [onNewCurrentTrackRef]);
 
 
     useEffect(() => {

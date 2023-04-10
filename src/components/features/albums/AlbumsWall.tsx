@@ -43,7 +43,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
 
     useEffect(() => {
         onNewCurrentAlbumRef(currentAlbumRef);
-    }, []);
+    }, [onNewCurrentAlbumRef]);
 
     useEffect(() => {
         if (!allAlbums || allAlbums.length <= 0) {

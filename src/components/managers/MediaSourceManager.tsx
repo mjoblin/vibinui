@@ -38,6 +38,12 @@ const MediaSourceManager: FC = () => {
         else {
             currentSource?.name && setHaveIgnoredInitialState(true);
         }
+
+        // TODO: Figure out how to not require eslint-disable-next-line. It's there because this
+        //  component does not want to notify the user of the media source whenever the app is
+        //  first loaded, which doesn't work when haveIgnoredInitialState is in the dependency list.
+        //
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [dispatch, currentSource]);
 
     return null;
