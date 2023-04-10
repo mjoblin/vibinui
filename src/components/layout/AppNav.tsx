@@ -23,10 +23,10 @@ import {
     TablerIcon,
 } from "@tabler/icons";
 
-import Settings from "./Settings";
-import WaitingOnAPIIndicator from "../shared/WaitingOnAPIIndicator";
+import SettingsMenu from "../app/SettingsMenu";
+import WaitingOnAPIIndicator from "../shared/dataDisplay/WaitingOnAPIIndicator";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import StandbyMode from "../shared/StandbyMode";
+import StandbyMode from "../shared/buttons/StandbyMode";
 
 // Taken from: https://ui.mantine.dev/category/navbars
 
@@ -195,7 +195,7 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
 
             <Navbar.Section className={classes.footer}>
                 <Flex justify="space-between" align="center">
-                    <Settings />
+                    <SettingsMenu />
                     <Flex gap={10} align="center">
                         <WaitingOnAPIIndicator stealth />
                         <StandbyMode type="compact" />

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Album, Artist, Track } from "../types";
-import { NowPlayingTab } from "../../components/layout/NowPlayingScreen";
+import { CurrentTrackTab } from "../../components/layout/screens/CurrentTrackScreen";
 
 export const minCardGap = 0;
 export const maxCardGap = 50;
@@ -29,7 +29,7 @@ const DEFAULT_FAVORITES_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_FAVORITES_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_FAVORITES_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_FAVORITES_SHOW_DETAILS = true;
-const DEFAULT_NOWPLAYING_ACTIVETAB = "lyrics";
+const DEFAULT_CURRENTTRACK_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
 const DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = true;
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
@@ -65,7 +65,7 @@ export const LSKEY_FAVORITES_CARD_GAP = "favorites.cardGap";
 export const LSKEY_FAVORITES_CARD_SIZE = "favorites.cardSize";
 export const LSKEY_FAVORITES_FILTER_TEXT = "favorites.filterText";
 export const LSKEY_FAVORITES_SHOW_DETAILS = "favorites.showDetails";
-export const LSKEY_NOWPLAYING_ACTIVETAB = "nowPlaying.activeTab";
+export const LSKEY_CURRENTTRACK_ACTIVETAB = "currentTrack.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = "playlist.followCurrentlyPlaying";
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
@@ -119,8 +119,8 @@ export interface UserSettingsState {
         filterText: string;
         showDetails: boolean;
     };
-    nowPlaying: {
-        activeTab: NowPlayingTab;
+    currentTrack: {
+        activeTab: CurrentTrackTab;
     };
     playlist: {
         editor: {
@@ -215,8 +215,8 @@ const initialState: UserSettingsState = {
             DEFAULT_FAVORITES_SHOW_DETAILS
         ),
     },
-    nowPlaying: {
-        activeTab: getLocalStorageValue(LSKEY_NOWPLAYING_ACTIVETAB, DEFAULT_NOWPLAYING_ACTIVETAB),
+    currentTrack: {
+        activeTab: getLocalStorageValue(LSKEY_CURRENTTRACK_ACTIVETAB, DEFAULT_CURRENTTRACK_ACTIVETAB),
     },
     playlist: {
         editor: {
@@ -348,8 +348,8 @@ export const userSettingsSlice = createSlice({
         setFavoritesShowDetails: (state, action: PayloadAction<boolean>) => {
             state.favorites.showDetails = action.payload;
         },
-        setNowPlayingActiveTab: (state, action: PayloadAction<NowPlayingTab>) => {
-            state.nowPlaying.activeTab = action.payload;
+        setCurrentTrackActiveTab: (state, action: PayloadAction<CurrentTrackTab>) => {
+            state.currentTrack.activeTab = action.payload;
         },
         setPlaylistEditorSortField: (state, action: PayloadAction<PlaylistEditorSortField>) => {
             state.playlist.editor.sortField = action.payload;
@@ -423,7 +423,7 @@ export const {
     setFavoritesCardSize,
     setFavoritesFilterText,
     setFavoritesShowDetails,
-    setNowPlayingActiveTab,
+    setCurrentTrackActiveTab,
     setPlaylistEditorSortField,
     setPlaylistFollowCurrentlyPlaying,
     setPlaylistViewMode,

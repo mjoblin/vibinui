@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import type { RootState } from "../../app/store/store";
-import { useAppSelector, useInterval } from "../../app/hooks";
+import { useAppSelector, useInterval } from "../../app/hooks/useInterval";
 import { setPlayheadPositionNormalized } from "../../app/store/playbackSlice";
 
 const PLAYHEAD_UPDATE_INTERVAL = 250;

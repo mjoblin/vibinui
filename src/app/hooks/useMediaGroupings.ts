@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useReducer, useState } from "react";
 
 import { Album, Artist, Track } from "../types";
-import { useAppDispatch } from "../hooks";
+import { useAppDispatch } from "./useInterval";
 import { setIsComputingInBackground } from "../store/internalSlice";
 import { useGetAlbumsQuery } from "../services/vibinAlbums";
 import { useGetArtistsQuery } from "../services/vibinArtists";

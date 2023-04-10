@@ -3,11 +3,11 @@ import { Box, Flex, Header, useMantineTheme } from "@mantine/core";
 
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks";
-import MiniController from "../currentlyPlaying/MiniController";
-import StylizedLabel from "../shared/StylizedLabel";
-import VibinLogo from "./VibinLogo";
-import StreamerOffWarning from "../shared/StreamerOffWarning";
+import { useAppSelector } from "../../app/hooks/useInterval";
+import PlaybackControls from "../app/playbackControls/PlaybackControls";
+import StylizedLabel from "../shared/textDisplay/StylizedLabel";
+import VibinLogo from "../shared/VibinLogo";
+import StreamerOffWarning from "../shared/textDisplay/StreamerOffWarning";
 
 type AppHeaderProps = {
     noBackground?: boolean;
@@ -47,7 +47,7 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                         <StylizedLabel>{currentScreen}</StylizedLabel>
                     </Box>
                     <Box sx={{ flexGrow: 1, minWidth: 0 }}>
-                        <MiniController />
+                        <PlaybackControls />
                     </Box>
                 </Flex>
 

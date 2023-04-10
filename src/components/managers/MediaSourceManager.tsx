@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
 import type { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks/useInterval";
 import {
     restartPlayhead,
     setCurrentAlbumMediaId,
