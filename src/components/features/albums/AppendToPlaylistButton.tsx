@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Box, createStyles, Tooltip } from "@mantine/core";
-import { showNotification, updateNotification } from "@mantine/notifications";
+import { updateNotification } from "@mantine/notifications";
 import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons";
 
 import { Album, Track } from "../../../app/types";

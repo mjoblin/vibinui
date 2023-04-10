@@ -35,7 +35,7 @@ type AlbumTracksProps = {
 };
 
 const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
-    const { data: albumTracks, error, isLoading } = useGetAlbumTracksQuery(album.id);
+    const { data: albumTracks, isLoading } = useGetAlbumTracksQuery(album.id);
     const { classes } = useStyles();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<string | undefined>(undefined);
 

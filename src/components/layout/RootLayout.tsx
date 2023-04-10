@@ -24,11 +24,7 @@ import WelcomeMessage from "../app/WelcomeMessage";
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/useInterval";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import {
-    setCurrentlyPlayingArtUrl,
-    setCurrentScreen,
-    setShowCurrentTrackLyrics,
-} from "../../app/store/internalSlice";
+import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../app/store/internalSlice";
 import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
 
 const useStyles = createStyles((theme) => ({
@@ -71,7 +67,7 @@ const RootLayout: FC = () => {
     );
 
     const screenName = (): string | undefined => {
-        const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}\/([^\/]+)`));
+        const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}/([^/]+)`));
 
         if (!screenNameMatch) {
             return undefined;

@@ -183,7 +183,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const { current_track_index } = useAppSelector((state: RootState) => state.playlist);
-    const [togglePower, togglePowerStatus] = useLazyPowerToggleQuery();
+    const [togglePower] = useLazyPowerToggleQuery();
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();

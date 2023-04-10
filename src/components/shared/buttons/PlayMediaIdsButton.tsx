@@ -42,7 +42,7 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
     const theme = useMantineTheme();
     const menuStyles = useMenuStyles();
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
-    const [setPlaylistIds, setPlaylistIdsStatus] = useSetPlaylistMediaIdsMutation();
+    const [setPlaylistIds] = useSetPlaylistMediaIdsMutation();
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     const isLocalMedia = currentSource ? currentSource.class === "stream.media" : false;

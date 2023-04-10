@@ -18,7 +18,7 @@ import {
     IconWaveSine,
 } from "@tabler/icons";
 
-import { PlaylistEntry, Track } from "../../../app/types";
+import { PlaylistEntry } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
 import { RootState } from "../../../app/store/store";
 import {
@@ -104,8 +104,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [moveEntry, moveEntryStatus] = useMovePlaylistEntryIdMutation();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
-    const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
-    const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
+    const [addFavorite] = useAddFavoriteMutation();
+    const [deleteFavorite] = useDeleteFavoriteMutation();
     const [playPlaylistId, playStatus] = usePlayPlaylistEntryIdMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { albumById, artistByName, trackById } = useAppSelector(

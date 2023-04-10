@@ -96,7 +96,7 @@ const ArtistsControls: FC = () => {
         }
 
         // currentTrackMediaId && emitNewSelection(currentTrackMediaId);
-    }, [currentTrackMediaId, dispatch]);
+    }, [dispatch]);
 
     // --------------------------------------------------------------------------------------------
 

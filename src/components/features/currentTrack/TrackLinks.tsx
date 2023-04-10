@@ -75,7 +75,7 @@ type TrackLinksProps = {
 };
 
 const TrackLinks: FC<TrackLinksProps> = ({ trackId, artist, album, title }) => {
-    const { data, error, isFetching } = useGetLinksQuery({ trackId, artist, album, title, allTypes: true });
+    const { data, isFetching } = useGetLinksQuery({ trackId, artist, album, title, allTypes: true });
 
     if (isFetching) {
         return <LoadingDataMessage message="Retrieving links..." />;

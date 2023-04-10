@@ -1,12 +1,11 @@
 import React, { FC } from "react";
 import { Box, Center, MantineColor, Text, useMantineTheme } from "@mantine/core";
 
-type NoArtPlaceholder = {
+type NoArtPlaceholderProps = {
     artSize: number;
     backgroundColor?: MantineColor;
-}
-
-const NoArtPlaceholder: FC<NoArtPlaceholder> = ({ artSize, backgroundColor }) => {
+};
+const NoArtPlaceholder: FC<NoArtPlaceholderProps> = ({ artSize, backgroundColor }) => {
     const { colors } = useMantineTheme();
 
     return (

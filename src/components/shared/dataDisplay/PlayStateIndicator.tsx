@@ -1,5 +1,5 @@
 import React, { FC, ReactElement } from "react";
-import { Flex, Loader, Text, Tooltip, useMantineTheme } from "@mantine/core";
+import { Flex, Loader, Text, useMantineTheme } from "@mantine/core";
 import { IconPlayerPlay, IconPlayerPause } from "@tabler/icons";
 
 import { useAppSelector } from "../../../app/hooks/useInterval";

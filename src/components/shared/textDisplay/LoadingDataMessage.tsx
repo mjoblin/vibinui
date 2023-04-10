@@ -9,7 +9,7 @@ type LoadingDataMessageProps = {
 
 const LoadingDataMessage: FC<LoadingDataMessageProps> = ({ message, delay = 500 }) => {
     const [show, setShow] = useState<boolean>(false);
-    const { start, clear } = useTimeout(() => setShow(true), delay, { autoInvoke: true });
+    useTimeout(() => setShow(true), delay, { autoInvoke: true });
 
     return show ? (
         <Flex gap="sm" align="center">

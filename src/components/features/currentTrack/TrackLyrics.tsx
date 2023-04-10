@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Button, Center, createStyles, Flex, Highlight, Stack, Text } from "@mantine/core";
+import { Box, Button, createStyles, Flex, Highlight, Stack, Text } from "@mantine/core";
 
 import {
     LyricChunk,
@@ -29,7 +29,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     const [maxLineWidth, setMaxLineWidth] = useState<number>(0);
     const [showInvalidLyrics, setShowInvalidLyrics] = useState<boolean>(false);
     const { lyricsSearchText } = useAppSelector((state: RootState) => state.userSettings.tracks);
-    const [validateLyrics, validateLyricsStatus] = useLazyValidateLyricsQuery();
+    const [validateLyrics] = useLazyValidateLyricsQuery();
     const [getLyrics, getLyricsStatus] = useLazyGetLyricsQuery();
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
