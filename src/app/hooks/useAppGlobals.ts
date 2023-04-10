@@ -2,7 +2,7 @@ import React from "react";
 import { useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import { useAppSelector } from "../hooks";
+import { useAppSelector } from "./useInterval";
 import { RootState } from "../store/store";
 
 export const useAppGlobals = () => {

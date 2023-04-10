@@ -16,13 +16,13 @@ import { useWindowEvent } from "@mantine/hooks";
 
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
-import Debug from "./Debug";
+import DebugPanel from "../app/DebugPanel";
 import BackgroundImageManager from "../managers/BackgroundImageManager";
-import KeyboardShortcutsManager from "./KeyboardShortcutsManager";
-import TrackLyricsModal from "../tracks/TrackLyricsModal";
-import WelcomeMessage from "./WelcomeMessage";
+import KeyboardShortcutsManager from "../managers/KeyboardShortcutsManager";
+import TrackLyricsModal from "../features/tracks/TrackLyricsModal";
+import WelcomeMessage from "../app/WelcomeMessage";
 import { RootState } from "../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/useInterval";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import {
     setCurrentlyPlayingArtUrl,
@@ -163,7 +163,7 @@ const RootLayout: FC = () => {
                         pointerEvents: "none",
                     }}
                 >
-                    <Debug />
+                    <DebugPanel />
                 </Box>
 
                 {/* Overlay the UI when the websocket connection is being re-established */}

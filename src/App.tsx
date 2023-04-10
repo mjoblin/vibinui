@@ -4,23 +4,23 @@ import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core
 import { Notifications } from "@mantine/notifications";
 
 import { RootState } from "./app/store/store";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "./app/hooks/useInterval";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
 import { useAppGlobals } from "./app/hooks/useAppGlobals";
 import RootLayout from "./components/layout/RootLayout";
-import AlbumsScreen from "./components/layout/AlbumsScreen";
-import ArtistsScreen from "./components/layout/ArtistsScreen";
-import FavoritesScreen from "./components/layout/FavoritesScreen";
-import NowPlayingScreen from "./components/layout/NowPlayingScreen";
-import PresetsScreen from "./components/layout/PresetsScreen";
-import PlaylistScreen from "./components/layout/PlaylistScreen";
+import AlbumsScreen from "./components/layout/screens/AlbumsScreen";
+import ArtistsScreen from "./components/layout/screens/ArtistsScreen";
+import FavoritesScreen from "./components/layout/screens/FavoritesScreen";
+import CurrentTrackScreen from "./components/layout/screens/CurrentTrackScreen";
+import PresetsScreen from "./components/layout/screens/PresetsScreen";
+import PlaylistScreen from "./components/layout/screens/PlaylistScreen";
 import PlayheadManager from "./components/managers/PlayheadManager";
 import MediaGroupsManager from "./components/managers/MediaGroupsManager";
 import MediaSourceManager from "./components/managers/MediaSourceManager";
-import TracksScreen from "./components/layout/TracksScreen";
+import TracksScreen from "./components/layout/screens/TracksScreen";
 import WebsocketManager from "./components/managers/WebsocketManager";
-import ErrorBoundary from "./components/shared/ErrorBoundary";
-import StatusScreen from "./components/layout/StatusScreen";
+import ErrorBoundary from "./components/app/ErrorBoundary";
+import StatusScreen from "./components/layout/screens/StatusScreen";
 
 export default function App() {
     const dispatch = useAppDispatch();
@@ -43,7 +43,7 @@ export default function App() {
             children: [
                 {
                     path: "current",
-                    element: <NowPlayingScreen />,
+                    element: <CurrentTrackScreen />,
                 },
                 {
                     path: "playlist",
