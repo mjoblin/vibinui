@@ -38,16 +38,18 @@ import {
     setPlaylistFollowCurrentlyPlaying,
     setPlaylistViewMode,
 } from "../../../app/store/userSettingsSlice";
+import { setHaveReceivedInitialState } from "../../../app/store/playlistSlice";
 import {
     useLazyActivateStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
 } from "../../../app/services/vibinStoredPlaylists";
 import { useLazyPowerToggleQuery } from "../../../app/services/vibinSystem";
-import StoredPlaylistsEditor from "./StoredPlaylistsEditor";
+import StoredPlaylistsManager from "./StoredPlaylistsManager";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import {
     epochSecondsToStringRelative,
     hmsToSecs,
+    playlistDuration,
     secstoHms,
     showErrorNotification,
     showSuccessNotification,
@@ -77,12 +79,7 @@ const PlaylistDuration: FC = () => {
             return;
         }
 
-        const totalDuration = activePlaylistEntries.reduce(
-            (totalDuration, entry) => totalDuration + hmsToSecs(entry.duration),
-            0
-        );
-
-        setActivePlaylistDuration(totalDuration);
+        setActivePlaylistDuration(playlistDuration(activePlaylistEntries));
     }, [activePlaylistEntries]);
 
     useEffect(() => {
@@ -221,33 +218,42 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     }, [followCurrentlyPlaying, current_track_index, scrollToCurrent]);
 
     useEffect(() => {
-        setActiveStoredPlaylistName(
-            storedPlaylists.find((playlist) => playlist.id === activeStoredPlaylistId)?.name
-        );
+        if (!activeStoredPlaylistId) {
+            return;
+        }
+        
+        const thisPlaylistName =
+            storedPlaylists.find((storedPlaylist) => storedPlaylist.id === activeStoredPlaylistId)
+                ?.name || "Unknown name";
+        
+        setActiveStoredPlaylistName(thisPlaylistName);
     }, [activeStoredPlaylistId, storedPlaylists]);
 
     /**
-     *
+     * Handle an attempt to activate a playlist (successful or unsuccessful).
      */
     useEffect(() => {
-        if (activatePlaylistStatus.isSuccess) {
-            showSuccessNotification({
-                title: "Playlist activated",
-                message:
-                    storedPlaylists.find(
-                        (storedPlaylist) => storedPlaylist.id === activeStoredPlaylistId
-                    )?.name || "Unknown name",
-            });
-        } else if (activatePlaylistStatus.isError) {
+        if (activatePlaylistStatus.isError) {
             const { status, data } = activatePlaylistStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
-                title: "Error switching to Playlist",
+                title: "Error activating Playlist",
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
-    }, [activatePlaylistStatus, storedPlaylists, activeStoredPlaylistId]);
-
+        else if (activatePlaylistStatus.isSuccess) {
+            showSuccessNotification({
+                title: "Playlist activated",
+                message: activeStoredPlaylistName,
+            });
+        }
+    }, [
+        activatePlaylistStatus.isSuccess,
+        activatePlaylistStatus.isError,
+        activatePlaylistStatus.error,
+        activeStoredPlaylistName,
+    ]);
+    
     /**
      *
      */
@@ -255,12 +261,18 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
         const replacing = !!storePlaylistStatus.originalArgs?.replace;
 
         if (storePlaylistStatus.isSuccess) {
-            showSuccessNotification({
-                title: replacing ? "Playlist saved" : "New Playlist created",
-                message: replacing ? activeStoredPlaylistName : newPlaylistName || "Unknown name",
-            });
+            if (replacing) {
+                showSuccessNotification({
+                    title: "Playlist saved",
+                });
+            } else {
+                showSuccessNotification({
+                    title: "New Playlist created",
+                    message: newPlaylistName,
+                });
+            }
         } else if (storePlaylistStatus.isError) {
-            const { status, data } = activatePlaylistStatus.error as FetchBaseQueryError;
+            const { status, data } = storePlaylistStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
                 title: `Error ${replacing ? "saving" : "creating new"} Playlist`,
@@ -270,10 +282,9 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     }, [
         storePlaylistStatus.isSuccess,
         storePlaylistStatus.isError,
+        storePlaylistStatus.error,
+        storePlaylistStatus.originalArgs,
         newPlaylistName,
-        storePlaylistStatus,
-        activeStoredPlaylistName,
-        activatePlaylistStatus.error,
     ]);
 
     // --------------------------------------------------------------------------------------------
@@ -296,6 +307,20 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
 
     const isStreamerOff = streamerPower === "off";
     const isPlaylistPersisted = !!activeStoredPlaylistId;
+
+    /**
+     * Activate the given playlist id.
+     *
+     * setHaveReceivedInitialState(false) is dispatched here to put the playlist state into
+     * "waiting for playlist from the back-end" mode. This will in turn result in the playlist
+     * display going into its "loading..." phase (like it does when the app is first loaded). Once
+     * the new playlist details are received from the back-end over the websocket,
+     * haveReceivedIntialState will be set back to true by the websocket message handler.
+     */
+    const activatePlaylist = (id: string) => {
+        dispatch(setHaveReceivedInitialState(false));
+        activateStoredPlaylistId(id);
+    };
 
     return (
         <Flex h="100%" align="center" justify="space-between">
@@ -329,10 +354,10 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
 
                                     if (isStreamerOff) {
                                         togglePower().then(() => {
-                                            activateStoredPlaylistId(value);
+                                            activatePlaylist(value);
                                         });
                                     } else {
-                                        activateStoredPlaylistId(value);
+                                        activatePlaylist(value);
                                     }
                                 }}
                             />
@@ -491,7 +516,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                 title="Playlists Manager"
                 onClose={() => setShowEditor(false)}
             >
-                <StoredPlaylistsEditor />
+                <StoredPlaylistsManager />
             </Modal>
 
             {/* Request name for new Stored Playlist */}
@@ -509,6 +534,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                         setNewPlaylistName(formValues.name);
                         storePlaylist({ name: formValues.name, replace: false });
                         setShowNameNewPlaylistDialog(false);
+                        formValues.name = "";
                     })}
                 >
                     <Flex gap="md" align="flex-end">

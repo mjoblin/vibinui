@@ -6,6 +6,8 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 
+import { Playlist } from "./types";
+
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
 
@@ -134,6 +136,11 @@ export const showErrorNotification = ({
         autoClose,
     });
 
+// TODO: This does not need to be specific to playlists. It would be nice to have it support arrays
+//  Of any object with a "duration" key (e.g. Track). Currently Track and PlaylistEntry have
+//  different duration formats, which would ideally be standardized in the back end first.
+export const playlistDuration = (playlist: Playlist) =>
+    playlist.reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
 
 const filterTokenizerRegex = /(\S+):(\([^)]+?\)|[^( ]+)/g;
 const parentStripperRegex = /^\(?(.*?)\)?$/;
