@@ -32,10 +32,14 @@ export const playlistSlice = createSlice({
             updateIfDifferent(state, "entries", action.payload);
             state.haveReceivedInitialState = true;
         },
+        setHaveReceivedInitialState: (state, action: PayloadAction<boolean>) => {
+            state.haveReceivedInitialState = action.payload;
+        },
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { setCurrentTrackIndex, setEntries } = playlistSlice.actions;
+export const { setCurrentTrackIndex, setEntries, setHaveReceivedInitialState } =
+    playlistSlice.actions;
 
 export default playlistSlice.reducer;

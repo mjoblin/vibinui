@@ -6,7 +6,6 @@ import {
     createStyles,
     Flex,
     Loader,
-    Overlay,
     Stack,
     Text,
     useMantineTheme,
@@ -149,6 +148,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
     const playlist = useAppSelector((state: RootState) => state.playlist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const {
         activating_stored_playlist: activatingStoredPlaylist,
@@ -257,7 +257,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         return <StandbyMode />;
     }
     
-    if (!playlist.haveReceivedInitialState) {
+    if (!playlist.haveReceivedInitialState || activatingStoredPlaylist) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
@@ -385,7 +385,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     index === playlist.current_track_index && playStatus === "pause"
                                         ? resumePlayback()
                                         : index === playlist.current_track_index &&
-                                          playStatus === "play"
+                                          playStatus === "play" &&
+                                          streamerPower === "on"
                                         ? pausePlayback()
                                         : playPlaylistId({ playlistId: entry.id });
                                 }}
@@ -436,7 +437,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     {/* Entry Play button. If the entry is the current entry,
                                         then instead implement Pause/Resume behavior. */}
                                     {index === playlist.current_track_index ? (
-                                        playStatus === "play" ? (
+                                        playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}
                                                 container={false}
@@ -502,7 +503,6 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
 
     return (
         <>
-            {activatingStoredPlaylist && <Overlay opacity={0.5} color="#000000" radius={5} />}
             <DragDropContext
                 onDragStart={() => onPlaylistModified && onPlaylistModified()}
                 onDragEnd={({ draggableId, source, destination }) => {
