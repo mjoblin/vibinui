@@ -7,7 +7,7 @@ import { useAppSelector } from "../../app/hooks/useInterval";
 import PlaybackControls from "../app/playbackControls/PlaybackControls";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
 import VibinLogo from "../shared/VibinLogo";
-import StreamerOffWarning from "../shared/textDisplay/StreamerOffWarning";
+import WarningMessage from "../shared/textDisplay/WarningMessage";
 
 type AppHeaderProps = {
     noBackground?: boolean;
@@ -17,6 +17,8 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const theme = useMantineTheme();
     const { HEADER_HEIGHT, APP_PADDING, NAVBAR_WIDTH } = useAppGlobals();
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const streamerName = useAppSelector((state: RootState) => state.system.streamer.name);
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );
@@ -51,7 +53,12 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                     </Box>
                 </Flex>
 
-                {streamerPower === "off" && <StreamerOffWarning />}
+                {streamerPower === "off" && (
+                    <WarningMessage message={`${streamerName || "streamer"} is in standby`} />
+                )}
+                {streamerPower === "on" && playStatus === "ready" && (
+                    <WarningMessage message="Nothing currently playing" />
+                )}
             </Flex>
         </Header>
     );
