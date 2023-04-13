@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setArtistCardRenderDimensions } from "../../../app/store/internalSlice";
 import { MediaViewMode } from "../../../app/store/userSettingsSlice";
-import CompactArtCard from "../../shared/CompactArtCard";
+import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
 
 // ================================================================================================
 // A card representing a single Artist.

@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Album, Artist, Track } from "../types";
-import { CurrentTrackTab } from "../../components/layout/screens/CurrentTrackScreen";
+import { CurrentTrackTab } from "../../components/features/CurrentTrackScreen";
 
 // ================================================================================================
 // Application state for user settings.

@@ -17,7 +17,7 @@ import { RootState } from "../../../app/store/store";
 import { IconPlayerPlay } from "@tabler/icons";
 import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import NoArtPlaceholder from "../../shared/NoArtPlaceholder";
+import NoArtPlaceholder from "../../shared/mediaDisplay/NoArtPlaceholder";
 
 // ================================================================================================
 // A card representing a single Preset.

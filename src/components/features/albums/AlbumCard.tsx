@@ -12,7 +12,7 @@ import { secstoHms } from "../../../app/utils";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "./AlbumTracksModal";
-import CompactArtCard from "../../shared/CompactArtCard";
+import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 
 // ================================================================================================

@@ -3,18 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { Modal, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 
-import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
-import { RootState } from "../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
+import { RootState } from "../../../app/store/store";
 import {
     useNextTrackMutation,
     usePauseMutation,
     usePlayMutation,
     usePreviousTrackMutation,
     useSeekMutation,
-} from "../../app/services/vibinTransport";
-import FieldValueList from "../shared/dataDisplay/FieldValueList";
-import { setShowCurrentTrackLyrics, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+} from "../../../app/services/vibinTransport";
+import FieldValueList from "../../shared/dataDisplay/FieldValueList";
+import { setShowCurrentTrackLyrics, setShowKeyboardShortcuts } from "../../../app/store/internalSlice";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 const SEEK_OFFSET_SECS = 10;
 

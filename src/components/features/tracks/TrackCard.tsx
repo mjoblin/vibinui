@@ -8,7 +8,7 @@ import { RootState } from "../../../app/store/store";
 import { setTrackCardRenderDimensions } from "../../../app/store/internalSlice";
 import { secstoHms, yearFromDate } from "../../../app/utils";
 import TrackArt from "./TrackArt";
-import CompactArtCard from "../../shared/CompactArtCard";
+import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 import { MediaViewMode } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";

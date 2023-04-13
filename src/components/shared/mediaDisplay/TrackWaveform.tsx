@@ -45,7 +45,7 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-const WaveformProgress: FC = () => {
+const TrackWaveformProgress: FC = () => {
     const { classes } = useStyles();
     const [seek] = useSeekMutation();
     const { position_normalized } = useAppSelector((state: RootState) => state.playback.playhead);
@@ -117,14 +117,14 @@ const WaveformProgress: FC = () => {
     );
 };
 
-type WaveformProps = {
+type TrackWaveformProps = {
     trackId: MediaId;
     width?: number;
     height?: number;
     showProgress?: boolean;
 };
 
-const Waveform: FC<WaveformProps> = ({
+const TrackWaveform: FC<TrackWaveformProps> = ({
     trackId,
     width = 800,
     height = 250,
@@ -144,7 +144,7 @@ const Waveform: FC<WaveformProps> = ({
                         filter: "sepia(70%) saturate(100%) brightness(85%) hue-rotate(110deg)",
                     }}
                 />
-                {showProgress && <WaveformProgress />}
+                {showProgress && <TrackWaveformProgress />}
             </Box>
 
             {haveRMS && (
@@ -156,4 +156,4 @@ const Waveform: FC<WaveformProps> = ({
     );
 };
 
-export default Waveform;
+export default TrackWaveform;

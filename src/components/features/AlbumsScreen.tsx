@@ -1,18 +1,20 @@
 import React, { FC, RefObject, useCallback, useEffect, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { RootState } from "../../../app/store/store";
-import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../../app/store/userSettingsSlice";
-import { useWindowScroll } from "../../../app/hooks/useWindowScroll";
-import { setAlbumsScrollPosition } from "../../../app/store/internalSlice";
-import AlbumsControls from "../../features/albums/AlbumsControls";
-import AlbumsWall from "../../features/albums/AlbumsWall";
-import ScreenHeader from "../ScreenHeader";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { RootState } from "../../app/store/store";
+import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../app/store/userSettingsSlice";
+import { useWindowScroll } from "../../app/hooks/useWindowScroll";
+import { setAlbumsScrollPosition } from "../../app/store/internalSlice";
+import AlbumsControls from "./albums/AlbumsControls";
+import AlbumsWall from "./albums/AlbumsWall";
+import ScreenHeader from "../app/layout/ScreenHeader";
 
 // ================================================================================================
 // Albums screen top-level layout.
+//
+// Contains a <ScreenHeader>, <AlbumsControls>, and <AlbumsWall>.
 // ================================================================================================
 
 const AlbumsScreen: FC = () => {

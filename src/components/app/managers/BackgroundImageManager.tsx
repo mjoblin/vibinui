@@ -1,9 +1,9 @@
 import { FC, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import type { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks/store";
-import { setCurrentlyPlayingArtUrl } from "../../app/store/internalSlice";
+import type { RootState } from "../../../app/store/store";
+import { useAppSelector } from "../../../app/hooks/store";
+import { setCurrentlyPlayingArtUrl } from "../../../app/store/internalSlice";
 
 // ================================================================================================
 // Manage the setting of the currently-playing art URL in application state, based on whatever is

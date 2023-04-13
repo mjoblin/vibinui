@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@mantine/core";
 
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import NoArtPlaceholder from "./NoArtPlaceholder";
 
 // ================================================================================================

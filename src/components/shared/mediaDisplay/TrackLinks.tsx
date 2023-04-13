@@ -3,8 +3,8 @@ import { Anchor, Button, Flex, Image, Stack, Text } from "@mantine/core";
 import { IconExternalLink } from "@tabler/icons";
 
 import { useGetLinksQuery } from "../../../app/services/vibinTracks";
-import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
-import SadLabel from "../../shared/textDisplay/SadLabel";
+import LoadingDataMessage from "../textDisplay/LoadingDataMessage";
+import SadLabel from "../textDisplay/SadLabel";
 import DiscogsLogoImage from "../../../assets/images/discogs_logo.svg";
 import GeniusLogoImage from "../../../assets/images/genius_logo.png";
 import RateYourMusicImage from "../../../assets/images/rateyourmusic_logo.png";

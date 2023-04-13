@@ -44,9 +44,9 @@ import {
     setArtistsScrollToSelectedOnScreenEnter,
 } from "../../../app/store/internalSlice";
 import { setTracksFilterText } from "../../../app/store/userSettingsSlice";
-import TrackLyricsModal from "../tracks/TrackLyricsModal";
-import TrackWaveformModal from "../tracks/TrackWaveformModal";
-import TrackLinksModal from "../tracks/TrackLinksModal";
+import TrackLyricsModal from "../../shared/mediaDisplay/TrackLyricsModal";
+import TrackWaveformModal from "../../shared/mediaDisplay/TrackWaveformModal";
+import TrackLinksModal from "../../shared/mediaDisplay/TrackLinksModal";
 
 // ================================================================================================
 // Button which reveals an overlay menu of actions that can be performed on the Playlist entry.

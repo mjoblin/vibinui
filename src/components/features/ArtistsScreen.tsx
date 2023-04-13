@@ -1,13 +1,15 @@
 import React, { FC } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import ArtistsControls from "../../features/artists/ArtistsControls";
-import ArtistsWall from "../../features/artists/ArtistsWall";
-import ScreenHeader from "../ScreenHeader";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import ArtistsControls from "./artists/ArtistsControls";
+import ArtistsWall from "./artists/ArtistsWall";
+import ScreenHeader from "../app/layout/ScreenHeader";
 
 // ================================================================================================
 // Artists screen top-level layout.
+//
+// Contains a <ScreenHeader>, <ArtistsControls>, and <ArtistsWall>.
 // ================================================================================================
 
 const ArtistsScreen: FC = () => {

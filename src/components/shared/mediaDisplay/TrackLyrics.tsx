@@ -7,8 +7,8 @@ import {
     useLazyGetLyricsQuery,
     useLazyValidateLyricsQuery,
 } from "../../../app/services/vibinTracks";
-import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
-import SadLabel from "../../shared/textDisplay/SadLabel";
+import LoadingDataMessage from "../textDisplay/LoadingDataMessage";
+import SadLabel from "../textDisplay/SadLabel";
 import { getTextWidth } from "../../../app/utils";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppSelector } from "../../../app/hooks/store";

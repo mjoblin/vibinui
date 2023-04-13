@@ -27,9 +27,9 @@ import {
     useDeleteFavoriteMutation,
 } from "../../../app/services/vibinFavorites";
 import AlbumTracksModal from "../../features/albums/AlbumTracksModal";
-import TrackLinksModal from "../../features/tracks/TrackLinksModal";
-import TrackLyricsModal from "../../features/tracks/TrackLyricsModal";
-import TrackWaveformModal from "../../features/tracks/TrackWaveformModal";
+import TrackLinksModal from "../mediaDisplay/TrackLinksModal";
+import TrackLyricsModal from "../mediaDisplay/TrackLyricsModal";
+import TrackWaveformModal from "../mediaDisplay/TrackWaveformModal";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";

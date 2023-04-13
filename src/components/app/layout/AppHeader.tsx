@@ -1,13 +1,13 @@
 import React, { FC } from "react";
 import { Box, Flex, Header, useMantineTheme } from "@mantine/core";
 
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks/store";
-import PlaybackControls from "../app/playbackControls/PlaybackControls";
-import StylizedLabel from "../shared/textDisplay/StylizedLabel";
-import VibinLogo from "../shared/VibinLogo";
-import WarningMessage from "../shared/textDisplay/WarningMessage";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { RootState } from "../../../app/store/store";
+import { useAppSelector } from "../../../app/hooks/store";
+import PlaybackControls from "../../shared/playbackControls/PlaybackControls";
+import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
+import VibinLogo from "../../shared/VibinLogo";
+import WarningMessage from "../../shared/textDisplay/WarningMessage";
 
 // ================================================================================================
 // Top application header.

@@ -8,7 +8,7 @@ import { Album } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlaylist";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
-import NoArtPlaceholder from "../../shared/NoArtPlaceholder";
+import NoArtPlaceholder from "../../shared/mediaDisplay/NoArtPlaceholder";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
@@ -52,7 +52,6 @@ type AlbumArtProps = {
     showControls?: boolean;
     enabledActions?: EnabledActions;
     size?: number;
-    showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
     onActionsMenuOpen?: () => void;
     onActionsMenuClosed?: () => void;
