@@ -16,6 +16,8 @@ import RateYourMusicImage from "../../../assets/images/rateyourmusic_logo.png";
 // AirPlay). Lyrics can be marked as invalid, or can be re-retrieved from the backend.
 // ================================================================================================
 
+// TODO: Fix these logos in Firefox.
+
 const DiscogsLogo: FC = () => {
     return <Image src={DiscogsLogoImage} width="fit-content" height={20} radius={3} />;
 };

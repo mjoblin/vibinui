@@ -41,6 +41,12 @@ const SettingsMenu: FC = () => {
     );
     const previousPowerState = useRef<PowerStatus>(streamer.power);
 
+    /**
+     * Notify the user when the power has been turned on/off.
+     *
+     * TODO: This feels a little hidden here in the SettingsMenu, since it's notifying about a
+     *  fairly global app-wide notion. Might be good to extract this out into a device manager.
+     */
     useEffect(() => {
         if (previousPowerState.current === undefined) {
             previousPowerState.current = streamer.power;

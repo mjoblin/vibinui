@@ -4,14 +4,14 @@ import { Box, createStyles, Flex, Image } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconPlayerPlay } from "@tabler/icons";
 
+import { RootState } from "../../../app/store/store";
+import { useAppSelector } from "../../../app/hooks/store";
 import { Album } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlaylist";
+import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import NoArtPlaceholder from "../../shared/mediaDisplay/NoArtPlaceholder";
-import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
-import { useAppSelector } from "../../../app/hooks/store";
-import { RootState } from "../../../app/store/store";
 
 // ================================================================================================
 // Show the art for an Album.

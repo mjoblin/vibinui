@@ -14,6 +14,11 @@ import {
 } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 
+import { RootState } from "../../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../../app/store/internalSlice";
+import { setApplicationHaveShownWelcomeMessage } from "../../../app/store/userSettingsSlice";
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
 import DebugPanel from "../DebugPanel";
@@ -21,11 +26,6 @@ import BackgroundImageManager from "../managers/BackgroundImageManager";
 import KeyboardShortcutsManager from "../managers/KeyboardShortcutsManager";
 import TrackLyricsModal from "../../shared/mediaDisplay/TrackLyricsModal";
 import WelcomeMessage from "../WelcomeMessage";
-import { RootState } from "../../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../../app/store/internalSlice";
-import { setApplicationHaveShownWelcomeMessage } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Root application layout.
@@ -80,6 +80,9 @@ const RootLayout: FC = () => {
         `${window.innerWidth}x${window.innerHeight}`
     );
 
+    /**
+     * Set the current screen name in application state whenever the location changes.
+     */
     useEffect(() => {
         const screenNameMatch = location.pathname.match(new RegExp(`^${APP_URL_PREFIX}/([^/]+)`));
 

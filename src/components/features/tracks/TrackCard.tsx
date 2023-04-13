@@ -2,16 +2,16 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { Box, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
-import { Track } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { Track } from "../../../app/types";
+import { MediaViewMode } from "../../../app/store/userSettingsSlice";
 import { setTrackCardRenderDimensions } from "../../../app/store/internalSlice";
 import { secstoHms, yearFromDate } from "../../../app/utils";
 import TrackArt from "./TrackArt";
 import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
-import { MediaViewMode } from "../../../app/store/userSettingsSlice";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 // ================================================================================================
 // A card representing a single Track.

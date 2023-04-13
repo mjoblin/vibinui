@@ -19,6 +19,9 @@ import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { MediaSourceClass, Track } from "../../app/types";
+import { yearFromDate } from "../../app/utils";
 import { setArtistsScrollToCurrentOnScreenEnter } from "../../app/store/internalSlice";
 import {
     setArtistsActiveCollection,
@@ -39,9 +42,6 @@ import SadLabel from "../shared/textDisplay/SadLabel";
 import StandbyMode from "../shared/buttons/StandbyMode";
 import MediaActionsButton from "../shared/buttons/MediaActionsButton";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
-import { yearFromDate } from "../../app/utils";
-import { MediaSourceClass, Track } from "../../app/types";
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 // ================================================================================================
 // Current Track screen.

@@ -1,11 +1,11 @@
 import React, { FC } from "react";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Tooltip } from "@mantine/core";
 import { updateNotification } from "@mantine/notifications";
 import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons";
 
 import { Album, Track } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlaylist";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { showSuccessNotification } from "../../../app/utils";
 
 // ================================================================================================

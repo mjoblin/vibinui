@@ -3,7 +3,10 @@ import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
 
+import { RootState } from "../../../app/store/store";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
+import { useGetTracksQuery } from "../../../app/services/vibinTracks";
 import {
     resetTracksToDefaults,
     setTracksCardGap,
@@ -13,9 +16,6 @@ import {
     setTracksLyricsSearchText,
     setTracksShowDetails,
 } from "../../../app/store/userSettingsSlice";
-import { RootState } from "../../../app/store/store";
-import { useGetTracksQuery } from "../../../app/services/vibinTracks";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import CardControls from "../../shared/buttons/CardControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";

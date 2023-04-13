@@ -1,5 +1,6 @@
 import React, { FC } from "react";
 import { ActionIcon, Flex, TextInput } from "@mantine/core";
+import { IconSquareX } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
@@ -13,7 +14,6 @@ import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import CardControls from "../../shared/buttons/CardControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
-import { IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 
 // ================================================================================================

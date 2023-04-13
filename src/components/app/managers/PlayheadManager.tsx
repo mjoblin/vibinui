@@ -40,7 +40,9 @@ const PlayheadManager: FC = () => {
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
     const [lastBackendSyncTime, setLastBackendSyncTime] = useState<number>(Date.now());
 
-    // Resync to updates coming in from the backend.
+    /**
+     * Resync to updates coming in from the backend.
+     */
     useEffect(() => {
         setLastBackendSyncTime(Date.now());
 
@@ -51,7 +53,9 @@ const PlayheadManager: FC = () => {
             );
     }, [dispatch, position, currentTrack]);
 
-    // Perform more fine-grained updates in between updates from the backend.
+    /**
+     * Perform more fine-grained updates in between the coarser updates coming from the backend.
+     */
     useInterval(() => {
         if (playStatus !== "play") {
             return;
