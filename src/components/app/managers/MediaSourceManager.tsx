@@ -1,14 +1,14 @@
 import { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import type { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks/store";
+import type { RootState } from "../../../app/store/store";
+import { useAppSelector } from "../../../app/hooks/store";
 import {
     restartPlayhead,
     setCurrentAlbumMediaId,
     setCurrentTrackMediaId,
-} from "../../app/store/playbackSlice";
-import { showSuccessNotification } from "../../app/utils";
+} from "../../../app/store/playbackSlice";
+import { showSuccessNotification } from "../../../app/utils";
 
 // ================================================================================================
 // Manage the handling of a change to the media source (e.g. AirPlay, Internet Radio, etc).

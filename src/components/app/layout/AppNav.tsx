@@ -23,10 +23,10 @@ import {
     TablerIcon,
 } from "@tabler/icons";
 
-import SettingsMenu from "../app/SettingsMenu";
-import WaitingOnAPIIndicator from "../shared/dataDisplay/WaitingOnAPIIndicator";
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import StandbyMode from "../shared/buttons/StandbyMode";
+import SettingsMenu from "../SettingsMenu";
+import WaitingOnAPIIndicator from "../../shared/dataDisplay/WaitingOnAPIIndicator";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import StandbyMode from "../../shared/buttons/StandbyMode";
 
 // ================================================================================================
 // Application navigation menu.

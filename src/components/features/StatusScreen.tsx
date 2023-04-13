@@ -13,25 +13,31 @@ import {
 } from "@mantine/core";
 import { IconMoodSmile, IconRefresh } from "@tabler/icons";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
-import { RootState } from "../../../app/store/store";
-import { useLazyClearMediaCachesQuery } from "../../../app/services/vibinVibin";
-import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
-import { useGetArtistsQuery } from "../../../app/services/vibinArtists";
-import { useGetTracksQuery } from "../../../app/services/vibinTracks";
-import { showSuccessNotification } from "../../../app/utils";
-import { setApplicationUseImageBackground } from "../../../app/store/userSettingsSlice";
-import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
-import FieldValueList from "../../shared/dataDisplay/FieldValueList";
-import BackgroundComputeIndicator from "../../shared/dataDisplay/BackgroundComputeIndicator";
-import WaitingOnAPIIndicator from "../../shared/dataDisplay/WaitingOnAPIIndicator";
-import WebsocketIndicator from "../../shared/dataDisplay/WebsocketIndicator";
-import PlayStateIndicator from "../../shared/dataDisplay/PlayStateIndicator";
-import MediaSourceBadge from "../../shared/dataDisplay/MediaSourceBadge";
-import SelfUpdatingRelativeDate from "../../shared/dataDisplay/SelfUpdatingRelativeDate";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
+import { RootState } from "../../app/store/store";
+import { useLazyClearMediaCachesQuery } from "../../app/services/vibinVibin";
+import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
+import { useGetArtistsQuery } from "../../app/services/vibinArtists";
+import { useGetTracksQuery } from "../../app/services/vibinTracks";
+import { showSuccessNotification } from "../../app/utils";
+import { setApplicationUseImageBackground } from "../../app/store/userSettingsSlice";
+import StylizedLabel from "../shared/textDisplay/StylizedLabel";
+import FieldValueList from "../shared/dataDisplay/FieldValueList";
+import BackgroundComputeIndicator from "../shared/dataDisplay/BackgroundComputeIndicator";
+import WaitingOnAPIIndicator from "../shared/dataDisplay/WaitingOnAPIIndicator";
+import WebsocketIndicator from "../shared/dataDisplay/WebsocketIndicator";
+import PlayStateIndicator from "../shared/dataDisplay/PlayStateIndicator";
+import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
+import SelfUpdatingRelativeDate from "../shared/dataDisplay/SelfUpdatingRelativeDate";
 
 // ================================================================================================
 // Status screen.
+//
+// Contents:
+//  - User settings
+//  - Web application status
+//  - Device information
+//  - Server (backend) status
 // ================================================================================================
 
 const StatusScreen: FC = () => {

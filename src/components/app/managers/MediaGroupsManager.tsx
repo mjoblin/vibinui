@@ -8,8 +8,8 @@ import {
     setTrackById,
     setTracksByAlbumId,
     setTracksByArtistName,
-} from "../../app/store/mediaGroupsSlice";
-import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
+} from "../../../app/store/mediaGroupsSlice";
+import { useMediaGroupings } from "../../../app/hooks/useMediaGroupings";
 
 // ================================================================================================
 // Manage the storage of the various media groupings (exposed by useMediaGroupings()) in

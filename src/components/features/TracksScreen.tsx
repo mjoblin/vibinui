@@ -1,18 +1,20 @@
 import React, { FC, RefObject, useCallback, useEffect, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { RootState } from "../../../app/store/store";
-import { setTracksFilterText } from "../../../app/store/userSettingsSlice";
-import { useWindowScroll } from "../../../app/hooks/useWindowScroll";
-import { setTracksScrollPosition } from "../../../app/store/internalSlice";
-import TracksControls from "../../features/tracks/TracksControls";
-import TracksWall from "../../features/tracks/TracksWall";
-import ScreenHeader from "../ScreenHeader";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { RootState } from "../../app/store/store";
+import { setTracksFilterText } from "../../app/store/userSettingsSlice";
+import { useWindowScroll } from "../../app/hooks/useWindowScroll";
+import { setTracksScrollPosition } from "../../app/store/internalSlice";
+import TracksControls from "./tracks/TracksControls";
+import TracksWall from "./tracks/TracksWall";
+import ScreenHeader from "../app/layout/ScreenHeader";
 
 // ================================================================================================
 // Tracks screen top-level layout.
+//
+// Contains a <ScreenHeader>, <TracksControls>, and <TracksWall>.
 // ================================================================================================
 
 const TracksScreen: FC = () => {

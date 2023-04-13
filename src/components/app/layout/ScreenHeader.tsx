@@ -1,7 +1,7 @@
 import React, { FC, ReactNode } from "react";
 import { Box, createStyles, rem } from "@mantine/core";
 
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 // ================================================================================================
 // A per-screen/feature Header. Often used to hold screen-specific user controls like filters,

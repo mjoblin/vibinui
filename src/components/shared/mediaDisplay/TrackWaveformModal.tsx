@@ -1,29 +1,33 @@
 import React, { FC } from "react";
-import { Box, Modal, Stack } from "@mantine/core";
+import { Modal, Stack } from "@mantine/core";
 
 import { Track } from "../../../app/types";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
-import TrackLinks from "../currentTrack/TrackLinks";
+import MediaSummaryBanner from "../textDisplay/MediaSummaryBanner";
+import TrackWaveform from "./TrackWaveform";
 
 // ================================================================================================
-// Show a Track's links as a modal.
+// Show a Track's waveform as a modal.
 // ================================================================================================
 
-type TrackLinksModalProps = {
+type TrackWaveformModalProps = {
     track: Track;
     opened: boolean;
     onClose?: () => void;
 };
 
-const TrackLinksModal: FC<TrackLinksModalProps> = ({ track, opened, onClose = undefined }) => {
+const TrackWaveformModal: FC<TrackWaveformModalProps> = ({
+    track,
+    opened,
+    onClose = undefined,
+}) => {
     const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
         <Modal
             title={track.title}
             centered
-            size="md"
+            size="xl"
             radius={7}
             overlayProps={{ blur: APP_MODAL_BLUR }}
             opened={opened}
@@ -31,12 +35,10 @@ const TrackLinksModal: FC<TrackLinksModalProps> = ({ track, opened, onClose = un
         >
             <Stack>
                 <MediaSummaryBanner media={track} />
-                <Box pt={10} pb={10}>
-                    <TrackLinks trackId={track.id} />
-                </Box>
+                <TrackWaveform trackId={track.id} width={2048} height={700} showProgress={false} />
             </Stack>
         </Modal>
     );
 };
 
-export default TrackLinksModal;
+export default TrackWaveformModal;

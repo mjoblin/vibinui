@@ -1,10 +1,10 @@
 import { FC, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 
-import type { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks/store";
-import { useInterval } from "../../app/hooks/useInterval";
-import { setPlayheadPositionNormalized } from "../../app/store/playbackSlice";
+import type { RootState } from "../../../app/store/store";
+import { useAppSelector } from "../../../app/hooks/store";
+import { useInterval } from "../../../app/hooks/useInterval";
+import { setPlayheadPositionNormalized } from "../../../app/store/playbackSlice";
 
 // ================================================================================================
 // Manage the normalized (0-1) position of the playback head.

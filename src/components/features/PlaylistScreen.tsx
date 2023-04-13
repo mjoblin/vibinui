@@ -3,17 +3,19 @@ import { Box, ScrollArea, Stack } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 import throttle from "lodash/throttle";
 
-import { useAppDispatch } from "../../../app/hooks/store";
-import { store } from "../../../app/store/store";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { setPlaylistScrollPosition } from "../../../app/store/internalSlice";
-import { setPlaylistFollowCurrentlyPlaying } from "../../../app/store/userSettingsSlice";
-import Playlist from "../../features/playlist/Playlist";
-import PlaylistControls from "../../features/playlist/PlaylistControls";
-import ScreenHeader from "../ScreenHeader";
+import { useAppDispatch } from "../../app/hooks/store";
+import { store } from "../../app/store/store";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
+import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
+import Playlist from "./playlist/Playlist";
+import PlaylistControls from "./playlist/PlaylistControls";
+import ScreenHeader from "../app/layout/ScreenHeader";
 
 // ================================================================================================
 // Playlist screen top-level layout.
+//
+// Contains a <ScreenHeader>, <PlaylistControls>, and <Playlist>.
 // ================================================================================================
 
 type WindowDimensions = {

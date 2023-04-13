@@ -1,29 +1,29 @@
 import React, { FC } from "react";
-import { Modal, ScrollArea, Stack } from "@mantine/core";
+import { Box, Modal, Stack } from "@mantine/core";
 
 import { Track } from "../../../app/types";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
-import TrackLyrics from "../currentTrack/TrackLyrics";
+import MediaSummaryBanner from "../textDisplay/MediaSummaryBanner";
+import TrackLinks from "./TrackLinks";
 
 // ================================================================================================
-// Show a Track's lyrics as a modal.
+// Show a Track's links as a modal.
 // ================================================================================================
 
-type TrackLyricsModalProps = {
+type TrackLinksModalProps = {
     track: Track;
     opened: boolean;
     onClose?: () => void;
 };
 
-const TrackLyricsModal: FC<TrackLyricsModalProps> = ({ track, opened, onClose = undefined }) => {
+const TrackLinksModal: FC<TrackLinksModalProps> = ({ track, opened, onClose = undefined }) => {
     const { APP_MODAL_BLUR } = useAppGlobals();
 
     return (
         <Modal
             title={track.title}
             centered
-            size="lg"
+            size="md"
             radius={7}
             overlayProps={{ blur: APP_MODAL_BLUR }}
             opened={opened}
@@ -31,13 +31,12 @@ const TrackLyricsModal: FC<TrackLyricsModalProps> = ({ track, opened, onClose = 
         >
             <Stack>
                 <MediaSummaryBanner media={track} />
-
-                <ScrollArea h={`calc(80vh - 275px)`}>
-                    <TrackLyrics trackId={track.id} />
-                </ScrollArea>
+                <Box pt={10} pb={10}>
+                    <TrackLinks trackId={track.id} />
+                </Box>
             </Stack>
         </Modal>
     );
 };
 
-export default TrackLyricsModal;
+export default TrackLinksModal;

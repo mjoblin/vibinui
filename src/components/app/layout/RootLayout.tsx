@@ -16,16 +16,16 @@ import { useWindowEvent } from "@mantine/hooks";
 
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
-import DebugPanel from "../app/DebugPanel";
+import DebugPanel from "../DebugPanel";
 import BackgroundImageManager from "../managers/BackgroundImageManager";
 import KeyboardShortcutsManager from "../managers/KeyboardShortcutsManager";
-import TrackLyricsModal from "../features/tracks/TrackLyricsModal";
-import WelcomeMessage from "../app/WelcomeMessage";
-import { RootState } from "../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
-import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../app/store/internalSlice";
-import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
+import TrackLyricsModal from "../../shared/mediaDisplay/TrackLyricsModal";
+import WelcomeMessage from "../WelcomeMessage";
+import { RootState } from "../../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../../app/store/internalSlice";
+import { setApplicationHaveShownWelcomeMessage } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Root application layout.

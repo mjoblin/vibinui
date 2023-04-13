@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { useGetMessagesQuery } from "../../app/services/vibinWebsocket";
+import { useGetMessagesQuery } from "../../../app/services/vibinWebsocket";
 
 // ================================================================================================
 // Initiate the WebSocket connection to the vibin backend.

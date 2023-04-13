@@ -8,7 +8,7 @@ import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlayli
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
-import NoArtPlaceholder from "../../shared/NoArtPlaceholder";
+import NoArtPlaceholder from "../../shared/mediaDisplay/NoArtPlaceholder";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
@@ -53,7 +53,6 @@ type TrackArtProps = {
     enabledActions?: EnabledActions;
     hidePlayButton?: boolean;
     size?: number;
-    showArtStub?: boolean;
     actionsMenuPosition?: FloatingPosition;
     onActionsMenuOpen?: () => void;
     onActionsMenuClosed?: () => void;

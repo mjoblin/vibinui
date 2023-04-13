@@ -17,34 +17,48 @@ import {
 import { useDebouncedValue, useWindowEvent } from "@mantine/hooks";
 import { IconPlayerPlay } from "@tabler/icons";
 
-import { RootState } from "../../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
-import { setArtistsScrollToCurrentOnScreenEnter } from "../../../app/store/internalSlice";
+import { RootState } from "../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
+import { setArtistsScrollToCurrentOnScreenEnter } from "../../app/store/internalSlice";
 import {
     setArtistsActiveCollection,
     setArtistsSelectedAlbum,
     setArtistsSelectedArtist,
     setArtistsSelectedTrack,
     setCurrentTrackActiveTab,
-} from "../../../app/store/userSettingsSlice";
-import { usePlayMutation } from "../../../app/services/vibinTransport";
-import { useLazyGetTrackByIdQuery } from "../../../app/services/vibinTracks";
-import TrackArt from "../../features/tracks/TrackArt";
-import FieldValueList from "../../shared/dataDisplay/FieldValueList";
-import CurrentMediaControls from "../../app/playbackControls/CurrentMediaControls";
-import TrackLinks from "../../features/currentTrack/TrackLinks";
-import TrackLyrics from "../../features/currentTrack/TrackLyrics";
-import Waveform from "../../features/currentTrack/Waveform";
-import SadLabel from "../../shared/textDisplay/SadLabel";
-import StandbyMode from "../../shared/buttons/StandbyMode";
-import MediaActionsButton from "../../shared/buttons/MediaActionsButton";
-import MediaSourceBadge from "../../shared/dataDisplay/MediaSourceBadge";
-import { yearFromDate } from "../../../app/utils";
-import { MediaSourceClass, Track } from "../../../app/types";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+} from "../../app/store/userSettingsSlice";
+import { usePlayMutation } from "../../app/services/vibinTransport";
+import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
+import TrackArt from "./tracks/TrackArt";
+import FieldValueList from "../shared/dataDisplay/FieldValueList";
+import CurrentMediaControls from "../shared/playbackControls/CurrentMediaControls";
+import TrackLinks from "../shared/mediaDisplay/TrackLinks";
+import TrackLyrics from "../shared/mediaDisplay/TrackLyrics";
+import TrackWaveform from "../shared/mediaDisplay/TrackWaveform";
+import SadLabel from "../shared/textDisplay/SadLabel";
+import StandbyMode from "../shared/buttons/StandbyMode";
+import MediaActionsButton from "../shared/buttons/MediaActionsButton";
+import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
+import { yearFromDate } from "../../app/utils";
+import { MediaSourceClass, Track } from "../../app/types";
+import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 // ================================================================================================
 // Current Track screen.
+//
+// Contains:
+//  - LHS:
+//      - Current Media Source
+//      - Currently-playing media year and genre
+//      - Currently-playing media art
+//      - Playhead
+//      - Media actions button
+//  - RHS:
+//      - Currently-playing media summary
+//      - Tabs for more information on currently-playing media
+//          - Lyrics
+//          - Waveform
+//          - Links
 // ================================================================================================
 
 export type CurrentTrackTab = "links" | "lyrics" | "waveform";
@@ -395,7 +409,7 @@ const CurrentTrackScreen: FC = () => {
                                 <Tabs.Panel value="waveform">
                                     <ScrollArea h={tabContentHeight}>
                                         {currentTrackId && (
-                                            <Waveform
+                                            <TrackWaveform
                                                 trackId={currentTrackId}
                                                 width={2048}
                                                 height={700}
