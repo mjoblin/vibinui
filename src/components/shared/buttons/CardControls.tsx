@@ -1,25 +1,15 @@
 import React, { FC, useState } from "react";
 import { ActionCreator } from "@reduxjs/toolkit";
-import {
-    Box,
-    Button,
-    Checkbox,
-    Flex,
-    Popover,
-    Slider,
-    Stack,
-    Text,
-    Tooltip,
-} from "@mantine/core";
+import { Box, Button, Checkbox, Flex, Popover, Slider, Stack, Text, Tooltip } from "@mantine/core";
+import { IconSettings } from "@tabler/icons";
+
+import { useAppDispatch } from "../../../app/hooks/store";
 import {
     maxCardGap,
     maxCardSize,
     minCardGap,
     minCardSize,
 } from "../../../app/store/userSettingsSlice";
-import { IconSettings } from "@tabler/icons";
-
-import { useAppDispatch } from "../../../app/hooks/store";
 
 // ================================================================================================
 // Button revealing a panel showing controls for art card display (art size, separation size, etc).

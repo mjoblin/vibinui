@@ -13,7 +13,10 @@ import {
     useSeekMutation,
 } from "../../../app/services/vibinTransport";
 import FieldValueList from "../../shared/dataDisplay/FieldValueList";
-import { setShowCurrentTrackLyrics, setShowKeyboardShortcuts } from "../../../app/store/internalSlice";
+import {
+    setShowCurrentTrackLyrics,
+    setShowKeyboardShortcuts,
+} from "../../../app/store/internalSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 const SEEK_OFFSET_SECS = 10;

@@ -16,6 +16,9 @@ const PowerButton: FC = () => {
     const { name: streamerName, power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [togglePower, togglePowerStatus] = useLazyPowerToggleQuery();
 
+    /**
+     * Display an error notification if the attempt to toggle power failed.
+     */
     useEffect(() => {
         if (togglePowerStatus.isError) {
             const { status, data } = togglePowerStatus.error as FetchBaseQueryError;

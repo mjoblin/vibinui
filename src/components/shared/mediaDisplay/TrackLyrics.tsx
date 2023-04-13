@@ -54,6 +54,10 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
         },
     }))();
 
+    /**
+     * Retrieve new lyrics whenever the current Track changes -- either by Id (for local media)
+     * or by artist/title (for other sources like AirPlay)..
+     */
     useEffect(() => {
         getLyrics({ trackId, artist, title });
     }, [getLyrics, trackId, artist, title]);

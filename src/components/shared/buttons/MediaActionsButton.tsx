@@ -40,7 +40,7 @@ import {
     setArtistsSelectedAlbum,
     setArtistsSelectedArtist,
     setArtistsSelectedTrack,
-    setTracksFilterText
+    setTracksFilterText,
 } from "../../../app/store/userSettingsSlice";
 import {
     setArtistsScrollToCurrentOnScreenEnter,
@@ -173,6 +173,9 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
+    /**
+     * Notify the user if the attempt to add the media to the playlist failed.
+     */
     useEffect(() => {
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;

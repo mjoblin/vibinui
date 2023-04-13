@@ -55,6 +55,10 @@ const TrackWaveformProgress: FC = () => {
     const [dragHandleKey, setDragHandleKey] = useState<number>(Math.random());
     const nodeRef = useRef(null);
 
+    /**
+     * Set the position of the drag handle, relative to the far right of the waveform. This gets
+     * done whenever the playhead position updates (unless the user is dragging the handle).
+     */
     useEffect(() => {
         if (!isDragging) {
             setDragHandleRightOffset(`${(1 - position_normalized) * 100}%`);

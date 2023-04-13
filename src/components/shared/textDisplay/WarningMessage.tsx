@@ -10,9 +10,6 @@ type WarningMessageProps = {
     message: string;
 };
 
-/**
- *
- */
 const WarningMessage: FC<WarningMessageProps> = ({ message }) => {
     const { colors } = useMantineTheme();
 

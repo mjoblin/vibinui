@@ -23,9 +23,9 @@ import {
     TablerIcon,
 } from "@tabler/icons";
 
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import SettingsMenu from "../SettingsMenu";
 import WaitingOnAPIIndicator from "../../shared/dataDisplay/WaitingOnAPIIndicator";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import StandbyMode from "../../shared/buttons/StandbyMode";
 
 // ================================================================================================
