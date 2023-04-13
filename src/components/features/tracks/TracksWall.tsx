@@ -47,15 +47,26 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         },
     }))();
 
+    /**
+     * Inform the caller of the currentTrackRef on mount. The currentTrackRef will be attached to
+     * the card representing the currently-playing Track. This ref will move from card to card
+     * over time (as the Track changes).
+     */
     useEffect(() => {
         onNewCurrentTrackRef(currentTrackRef);
     }, [onNewCurrentTrackRef]);
 
-
+    /**
+     * Perform a lyrics search.
+     */
     useEffect(() => {
         lyricsSearchText !== "" && searchLyrics({ query: lyricsSearchText });
     }, [lyricsSearchText, searchLyrics]);
-    
+
+    /**
+     * Determine which Tracks to display. This takes into account any filter text, and the results
+     * of any lyrics search.
+     */
     useEffect(() => {
         if (!allTracks || allTracks.length <= 0) {
             return;
@@ -72,11 +83,13 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
             return;
         }
 
+        // First restrict the filtering to any tracks associated with a current lyrics search.
         const tracksToFilter =
             lyricsSearchText !== "" && tracksMatchingLyrics
                 ? allTracks.filter((track) => tracksMatchingLyrics.matches.includes(track.id))
                 : allTracks;
 
+        // Perform any filtering based on user input.
         const tracksToDisplay = collectionFilter(tracksToFilter, debouncedFilterText, "title");
 
         dispatch(setFilteredTrackMediaIds(tracksToDisplay.map((track) => track.id)));

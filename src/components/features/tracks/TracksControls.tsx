@@ -25,6 +25,13 @@ import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPl
 
 // ================================================================================================
 // Controls for the <TracksWall>.
+//
+// Contains:
+//  - Filter input
+//  - Button to scroll to currently-playing Track
+//  - Toggle to follow currently-playing Track
+//  - Play filtered Tracks
+//  - Card controls
 // ================================================================================================
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
@@ -69,8 +76,11 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
         }
     }, [filterText, dispatch]);
 
-    // If the filter text includes something like "lyric:(some lyric search)" then store
-    // "some lyric search" in application state.
+    /**
+     * If the filter text includes something like "lyric:(some lyric search)" then store "some
+     * lyric search" separately in application state. This state will be used by the TracksWall to
+     * inform what Tracks will be displayed.
+     */
     useEffect(() => {
         const lyricSearch = debouncedFilterText.toLocaleLowerCase().match(lyricsSearchFinder);
 
@@ -84,6 +94,8 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             dispatch(setTracksLyricsSearchText(""));
         }
     }, [debouncedFilterText, dispatch]);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Flex gap={25} align="center">

@@ -21,6 +21,12 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 
 // ================================================================================================
 // Controls for the <FavoritesWall>.
+//
+// Contains:
+//  - Selector for Favorites to show (Album, Track, or Both)
+//  - Filter input
+//  - Play favorites
+//  - Card controls
 // ================================================================================================
 
 const FavoritesControls: FC = () => {

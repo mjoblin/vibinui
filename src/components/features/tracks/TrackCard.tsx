@@ -98,6 +98,8 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
     );
 };
 
+// ------------------------------------------------------------------------------------------------
+
 const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
     track,
     enabledActions,

@@ -22,14 +22,22 @@ const PresetsScreen: FC = () => {
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.presets);
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
+    /**
+     * Scroll to last-known scroll position when the screen mounts.
+     */
     useEffect(() => {
         setTimeout(() => scrollTo({ y: scrollPosition }), 1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    /**
+     * Update the last-known scroll position when the window scrolls.
+     */
     useEffect(() => {
         dispatch(setPresetsScrollPosition(scroll.y));
     }, [scroll, dispatch]);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Stack spacing={0}>

@@ -18,6 +18,10 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 
 // ================================================================================================
 // Controls for the <PresetsWall>.
+//
+// Contains:
+//  - Filter input
+//  - Card controls
 // ================================================================================================
 
 const PresetsControls: FC = () => {

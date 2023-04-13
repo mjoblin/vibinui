@@ -63,22 +63,6 @@ type AlbumArtProps = {
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-/**
- *
- * Either `album` or `artUri` should be passed.
- *
- * @param album
- * @param artUri
- * @param alt
- * @param radius
- * @param showControls
- * @param actionCategories
- * @param size
- * @param actionsMenuPosition
- * @param onActionsMenuOpen
- * @param onActionsMenuClosed
- * @constructor
- */
 const AlbumArt: FC<AlbumArtProps> = ({
     album,
     artUri,
@@ -101,6 +85,10 @@ const AlbumArt: FC<AlbumArtProps> = ({
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
+    /**
+     * Notify the user if there was an error playing the Album (playing an Album actually involves
+     * replacing the Playlist with the Album).
+     */
     useEffect(() => {
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;
@@ -114,6 +102,8 @@ const AlbumArt: FC<AlbumArtProps> = ({
 
     const artUrl = artUri ? artUri : album ? album.album_art_uri : undefined;
     const isStreamerOff = streamerPower === "off";
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Box className={classes.albumArtContainer}>

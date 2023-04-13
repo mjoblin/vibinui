@@ -6,7 +6,7 @@ import { Album, Track } from "../../../app/types";
 import { secstoHms } from "../../../app/utils";
 import MediaActionsButton from "../../shared/buttons/MediaActionsButton";
 import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
-import AppendToPlaylistButton from "./AppendToPlaylistButton";
+import AppendAlbumTrackToPlaylistButton from "./AppendAlbumTrackToPlaylistButton";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 
@@ -147,7 +147,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                             onClose={() => setActionsMenuOpenFor(undefined)}
                                         />
 
-                                        <AppendToPlaylistButton item={track} />
+                                        <AppendAlbumTrackToPlaylistButton item={track} />
                                     </Flex>
                                 </Flex>
                             </Paper>

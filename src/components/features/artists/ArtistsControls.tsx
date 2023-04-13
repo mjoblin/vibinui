@@ -23,6 +23,12 @@ import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton"
 
 // ================================================================================================
 // Controls for the <ArtistsWall>.
+//
+// Contains:
+//  - Selector for Artists to show (all, or just Artists with Albums)
+//  - Filter input
+//  - Button to scroll to currently-playing Artist/Album/Track
+//  - Button to scroll to currently-selected Artist/Album/Track
 // ================================================================================================
 
 const ArtistsControls: FC = () => {

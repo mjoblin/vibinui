@@ -122,11 +122,12 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
-    // For notifications, we assume that any playlist changes are successful. If we do get some
-    // sort of error though then a second notification is created. This is done instead of
-    // attempting to track the success/fail state of each playlist update separately and modifying
-    // the update's notification to reflect success/fail.
-
+    /**
+     * For notifications, we assume that any playlist changes are successful. If we do get some
+     * sort of error though then a second notification is created. This is done instead of
+     * attempting to track the success/fail state of each playlist update separately and modifying
+     * the update's notification to reflect success/fail.
+     */
     useEffect(() => {
         if (moveEntryStatus.isError || deleteStatus.isError || playStatus.isError) {
             const { status, data } = moveEntryStatus.error as FetchBaseQueryError;
@@ -143,6 +144,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
     const isStreamerOff = streamerPower === "off";
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === entry.trackMediaId);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Box>

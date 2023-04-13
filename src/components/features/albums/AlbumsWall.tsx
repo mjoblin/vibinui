@@ -45,10 +45,19 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         },
     }))();
 
+    /**
+     * Inform the caller of the currentAlbumRef on mount. The currentAlbumRef will be attached to
+     * the card representing the currently-playing Album. This ref will move from card to card
+     * over time (as the Album changes).
+     */
     useEffect(() => {
         onNewCurrentAlbumRef(currentAlbumRef);
     }, [onNewCurrentAlbumRef]);
 
+    /**
+     * Determine which Albums to display. This takes into account the current "All Albums"/"New
+     * Albums" selection, and any filter text
+     */
     useEffect(() => {
         if (!allAlbums || allAlbums.length <= 0) {
             return;

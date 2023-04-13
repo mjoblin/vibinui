@@ -226,6 +226,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         }
     })();
 
+    // --------------------------------------------------------------------------------------------
+
+    /**
+     * Inform the user if there was an error while attempting to remove a Playlist Entry.
+     */
     useEffect(() => {
         if (deleteStatus.isError) {
             const { status, data } = deleteStatus.error as FetchBaseQueryError;
@@ -237,29 +242,38 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         }
     }, [deleteStatus]);
 
-    // Notes on playlist re-ordering and optimistic UI updates:
-    //
-    // This component uses the playlist from Redux state *and* a local copy of that state (in
-    // optimisticPlaylistEntries) to support optimistic UI updates when playlist entries are
-    // reordered. When reordering, this component will reorder optimisticPlaylistEntries for
-    // immediate rendering updates, as well as request the reordering in the backend (using
-    // useMovePlaylistEntryIdMutation()). The backend will then announce the new playlist order,
-    // which will update the Redux playlist state, which will in turn reset
-    // optimisticPlaylistEntries to now reflect the backend's playlist order.
-    //
-    // Note also that Mantine has a useListState() hook which provides convenient ways to interface
-    // with lists, including a reorder() method. That approach is not being used here, but might
-    // be useful in the future. See: https://mantine.dev/hooks/use-list-state/
+    /**
+     * Handle Playlist reordering and optimistic UI updates.
+     *
+     * Notes on optimistic updates:
+     *
+     * This component uses the playlist from Redux state *and* a local copy of that state (in
+     * optimisticPlaylistEntries) to support optimistic UI updates when playlist entries are
+     * reordered. When reordering, this component will reorder optimisticPlaylistEntries for
+     * immediate rendering updates, as well as request the reordering in the backend (using
+     * useMovePlaylistEntryIdMutation()). The backend will then announce the new playlist order,
+     * which will update the Redux playlist state, which will in turn reset
+     * optimisticPlaylistEntries to now reflect the backend's playlist order.
+     *
+     * Note also that Mantine has a useListState() hook which provides convenient ways to interface
+     * with lists, including a reorder() method. That approach is not being used here, but might
+     * be useful in the future. See: https://mantine.dev/hooks/use-list-state/
+     */
 
     useEffect(() => {
         setOptimisticPlaylistEntries(playlist?.entries || []);
     }, [playlist?.entries]);
 
+    /**
+     * Inform the parent component when the current Playlist entry changes.
+     */
     useEffect(() => {
         if (onNewCurrentEntryRef && currentEntryRef && currentEntryRef.current) {
             onNewCurrentEntryRef(currentEntryRef.current);
         }
     }, [currentEntryRef, onNewCurrentEntryRef, playlist.current_track_index]);
+
+    // --------------------------------------------------------------------------------------------
 
     if (playStatus === "not_ready") {
         return <StandbyMode />;
@@ -272,7 +286,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
             </Center>
         );
     }
-    
+
     const playlistEntries: PlaylistEntry[] =
         optimisticPlaylistEntries.length > 0
             ? optimisticPlaylistEntries
@@ -319,11 +333,10 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         return album ? yearFromDate(album.date) : undefined;
     };
 
+    // ============================================================================================
+
     /**
      * Generate an array of table rows; one row per playlist entry.
-     *
-     * TODO: Consider per-row interactivity and feedback. Currently, clicking the title or artist
-     *  (but no other columns, aside from the play button) will play the entry.
      */
     const renderedPlaylistEntries = playlistEntries
         // .sort((a, b) => a.index - b.index)

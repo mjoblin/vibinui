@@ -24,17 +24,24 @@ const AlbumsScreen: FC = () => {
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.albums);
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
+    /**
+     * Scroll to last-known scroll position when the screen mounts.
+     */
     useEffect(() => {
         setTimeout(() => scrollTo({ y: scrollPosition }), 1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    /**
+     * Update the last-known scroll position when the window scrolls.
+     */
     useEffect(() => {
         dispatch(setAlbumsScrollPosition(scroll.y));
     }, [scroll, dispatch]);
 
     /**
-     *
+     * Scroll to currently-playing Album. Requires the AlbumsWall to provide a new currentAlbumRef
+     * whenever the currently-playing Album changes.
      */
     const scrollToCurrent = useCallback(() => {
         if (!currentAlbumRef?.current) {
@@ -53,6 +60,8 @@ const AlbumsScreen: FC = () => {
 
         window.scrollTo({ top: currentAlbumTop });
     }, [currentAlbumRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, dispatch]);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Stack spacing={0}>
