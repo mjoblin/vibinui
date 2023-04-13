@@ -40,7 +40,7 @@ const PlaylistScreen: FC = () => {
     });
 
     /**
-     *
+     * Scroll to last-known scroll position when the screen mounts.
      */
     useEffect(() => {
         const lastScrollPos = store.getState().internal.playlist.scrollPosition;
@@ -52,7 +52,8 @@ const PlaylistScreen: FC = () => {
     }, []);
 
     /**
-     *
+     * Whenever the window dimensions change, re-calculate the height available to display the
+     * Playlist contents.
      */
     useEffect(() => {
         const bottomPadding = 20;
@@ -64,7 +65,7 @@ const PlaylistScreen: FC = () => {
     }, [windowDimensions, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT]);
 
     /**
-     *
+     * Scroll to the currently-playing Playlist Entry.
      */
     const scrollToCurrent = useCallback((options?: { offset?: number }) => {
         // TODO: This is a pretty disappointing way to find the top of the playlist (it assumes
@@ -88,8 +89,7 @@ const PlaylistScreen: FC = () => {
     }, [playlistViewportRef, currentEntryRef]);
 
     /**
-     *
-     * @param event
+     * Keep track of the window dimensions if the window is resized.
      */
     const windowResizeHandler = (event: UIEvent) =>
         event.target &&
@@ -101,7 +101,7 @@ const PlaylistScreen: FC = () => {
     useWindowEvent("resize", windowResizeHandler);
 
     /**
-     *
+     * Keep track of the last-known Playlist scroll position.
      */
     const throttledPlaylistPositionChange = throttle(
         (value) => {

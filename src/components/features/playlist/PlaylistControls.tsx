@@ -11,7 +11,6 @@ import {
     Loader,
     Menu,
     Modal,
-    RingProgress,
     SegmentedControl,
     Select,
     Stack,
@@ -48,89 +47,24 @@ import StoredPlaylistsManager from "./StoredPlaylistsManager";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import {
     epochSecondsToStringRelative,
-    hmsToSecs,
-    playlistDuration,
-    secstoHms,
     showErrorNotification,
     showSuccessNotification,
 } from "../../../app/utils";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
+import PlaylistDuration from "./PlaylistDuration";
 
 // ================================================================================================
 // Controls for the <Playlist>.
+//
+// Contains:
+//  - Selector to choose a Stored Playlist to activate
+//  - Dropdown menu to save a Stored Playlist and enable the Stored Playlists Manager
+//  - Two-state selector to switch between Simple and Detailed Playlist views
+//  - Playlist duration information
+//  - Button to scroll to currently-playing Entry
+//  - Toggle to follow currently-playing Track
 // ================================================================================================
-
-const PlaylistDuration: FC = () => {
-    const { colors } = useMantineTheme();
-    const [activePlaylistDuration, setActivePlaylistDuration] = useState<number>(0);
-    const [completedEntriesProgress, setCompletedEntriesProgress] = useState<number>(0);
-    const [totalProgress, setTotalProgress] = useState<number>(0);
-    const { current_track_index, entries: activePlaylistEntries } = useAppSelector(
-        (state: RootState) => state.playlist
-    );
-    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const playheadPosition = useAppSelector((state: RootState) => state.playback.playhead.position);
-    const playheadPositionNormalized = useAppSelector(
-        (state: RootState) => state.playback.playhead.position_normalized
-    );
-
-    useEffect(() => {
-        if (!activePlaylistEntries || activePlaylistEntries.length <= 0) {
-            setActivePlaylistDuration(0);
-            return;
-        }
-
-        setActivePlaylistDuration(playlistDuration(activePlaylistEntries));
-    }, [activePlaylistEntries]);
-
-    useEffect(() => {
-        if (!current_track_index || !activePlaylistEntries || activePlaylistEntries.length <= 0) {
-            setCompletedEntriesProgress(0);
-            return;
-        }
-
-        const progress = activePlaylistEntries
-            .filter((entry) => entry.index < current_track_index)
-            .reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
-
-        setCompletedEntriesProgress(progress);
-    }, [activePlaylistEntries, current_track_index, playStatus]);
-    
-    useEffect(() => {
-        // The check for buffering and playheadPositionNormalized is to reduce the chances that
-        // the totalProgress will (briefly) add the progress of the *next* playlist entry to the
-        // *end time* of the previous track. This results in the totalProgress skipping ahead by
-        // a full track duration before being reset back to where it should be.
-        playStatus !== "buffering" &&
-            playheadPositionNormalized < 0.95 &&
-            setTotalProgress(completedEntriesProgress + playheadPosition);
-    }, [completedEntriesProgress, playheadPosition, playheadPositionNormalized, playStatus]);
-
-    const completed = (totalProgress / activePlaylistDuration) * 100;
-
-    return (
-        <Flex align="center" pl={10}>
-            <Text size="xs" pr={5} color={colors.dark[2]}>
-                duration:
-            </Text>
-            <Text size="xs" pr={10} color={colors.dark[2]} weight="bold">{`${secstoHms(
-                activePlaylistDuration
-            )}s`}</Text>
-
-            {!isNaN(completed) && (
-                <>
-                    <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
-                    <Text size="xs" color={colors.blue[5]} weight="bold" miw="1.80rem">{`${completed.toFixed(
-                        0
-                    )}%`}</Text>
-                </>
-            )}
-        </Flex>
-    );
-};
-
-// ------------------------------------------------------------------------------------------------
 
 type PlaylistSelectItemProps = {
     label: string;
@@ -139,7 +73,8 @@ type PlaylistSelectItemProps = {
 };
 
 /**
- *
+ * A single entry in the Stored Playlists dropdown. Shows Stored Playlist name and (underneath) the
+ * entry count and time since it was last modified.
  */
 const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
     ({ label, entryCount, updated, ...others }: PlaylistSelectItemProps, ref) => {
@@ -163,7 +98,7 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
     }
 );
 
-// ------------------------------------------------------------------------------------------------
+// ================================================================================================
 
 type PlaylistControlsProps = {
     scrollToCurrent?: (options?: { offset?: number }) => void;
@@ -219,6 +154,10 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
             scrollToCurrent({ offset: 45 }); // Offset results in previous track still being visible
     }, [followCurrentlyPlaying, current_track_index, scrollToCurrent]);
 
+    /**
+     * Whenever the active stored playlist id changes, store the name of that playlist in component
+     * state for later use.
+     */
     useEffect(() => {
         if (!activeStoredPlaylistId) {
             return;
@@ -232,7 +171,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     }, [activeStoredPlaylistId, storedPlaylists]);
 
     /**
-     * Handle an attempt to activate a playlist (successful or unsuccessful).
+     * Handle an attempt to activate a Stored Playlist (successful or unsuccessful).
      */
     useEffect(() => {
         if (activatePlaylistStatus.isError) {
@@ -257,7 +196,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     ]);
     
     /**
-     *
+     * Handle an attempt to save a Stored Playlist (successful or unsuccessful).
      */
     useEffect(() => {
         const replacing = !!storePlaylistStatus.originalArgs?.replace;
@@ -291,6 +230,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
 
     // --------------------------------------------------------------------------------------------
 
+    // Array of information about Stored Playlists (used to generate the Stored Playlist selector)
     const playlistDetails: { value: string; label: string }[] =
         storedPlaylists && storedPlaylists.length > 0
             ? [...storedPlaylists]

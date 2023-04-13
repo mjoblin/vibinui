@@ -76,7 +76,7 @@ const StoredPlaylistsManager: FC = () => {
         useLazyUpdateStoredPlaylistNameQuery();
 
     /**
-     * Handle playlist update (e.g. renaming).
+     * Handle Stored Playlist update (e.g. renaming).
      */
     useEffect(() => {
         if (updateStoredPlaylistNameStatus.isLoading || updateStoredPlaylistNameStatus.isFetching) {
@@ -94,7 +94,7 @@ const StoredPlaylistsManager: FC = () => {
     }, [updateStoredPlaylistNameStatus]);
 
     /**
-     * Handle playlist deletion.
+     * Handle Stored Playlist deletion.
      */
     useEffect(() => {
         if (deleteStoredPlaylistStatus.isLoading || deleteStoredPlaylistStatus.isFetching) {
@@ -111,6 +111,9 @@ const StoredPlaylistsManager: FC = () => {
         }
     }, [deleteStoredPlaylistStatus]);
 
+    // --------------------------------------------------------------------------------------------
+
+    // Create a table row for each Stored Playlist.
     const storedPlaylistRows =
         storedPlaylists && storedPlaylists.length > 0
             ? [...storedPlaylists]
@@ -211,6 +214,7 @@ const StoredPlaylistsManager: FC = () => {
                   })
             : [];
 
+    // Return instructions if no Stored Playlists exist.
     if (storedPlaylistRows.length <= 0) {
         return (
             <Paper withBorder p={20}>
@@ -227,6 +231,8 @@ const StoredPlaylistsManager: FC = () => {
             </Paper>
         );
     }
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Stack spacing="md">

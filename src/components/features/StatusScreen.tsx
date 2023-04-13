@@ -62,7 +62,9 @@ const StatusScreen: FC = () => {
     } = useAppSelector((state: RootState) => state.vibinStatus);
     const { useImageBackground } = useAppSelector(
         (state: RootState) => state.userSettings.application
-    );    
+    );
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Stack>

@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useEffect } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Tooltip } from "@mantine/core";
 import { updateNotification } from "@mantine/notifications";
@@ -20,11 +20,11 @@ const useStyles = createStyles((theme) => ({
     },
 }));
 
-type AppendToPlaylistButtonProps = {
+type AppendAlbumTrackToPlaylistButtonProps = {
     item: Track | Album;
 };
 
-const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
+const AppendAlbumTrackToPlaylistButton: FC<AppendAlbumTrackToPlaylistButtonProps> = ({ item }) => {
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
     const { classes } = useStyles();
 
@@ -33,7 +33,14 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
     // TODO: This is effectively a runtime type check. Consider adding user-defined type guards.
     const itemType = (item as any).album === undefined ? "Album" : "Track";
 
-    React.useEffect(() => {
+    /**
+     * Notify the user whether appending the Track to the Playlist was successful or not.
+     *
+     * NOTE: This is an experiment in using Mantine's ability to update an existing notification.
+     *  The flow goes from "Updating" (in the onClick() handler in the render), to either
+     *  "appended" or an error state (here in the effect).
+     */
+    useEffect(() => {
         if (addStatus.isSuccess) {
             updateNotification({
                 id: notificationId,
@@ -60,6 +67,8 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
             });
         }
     }, [item, itemType, notificationId, addStatus]);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Box>
@@ -88,4 +97,4 @@ const AppendToPlaylistButton: FC<AppendToPlaylistButtonProps> = ({ item }) => {
     );
 };
 
-export default AppendToPlaylistButton;
+export default AppendAlbumTrackToPlaylistButton;

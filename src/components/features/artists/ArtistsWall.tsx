@@ -46,6 +46,18 @@ import { store } from "../../../app/store/store";
 // The Artist wall differs from the other walls (Albums, Tracks, etc) in that it uses the
 // <CompactArtCard>, and provides a means to drill down from Artist to Albums to Tracks all within
 // the same UI.
+//
+// "Currently-playing" vs. "Selected":
+//
+// This component shares the same concept of "currently-playing" as other components: it shows
+// which Artist/Album/Track is currently playing by highlighting those cards, and it allows the
+// user to scroll to what's currently playing.
+//
+// This component is also unique in that it supports another concept: the current *selection*.
+// The user is able to select an Artist to view that Artist's Albums. The user can also select an
+// Album to view that Album's Tracks. These selections are represented differently from the
+// highlighting of what's currently playing. This selection concept results from this component's
+// approach to drilling down from an Artist to a Track.
 // ================================================================================================
 
 const safeGet = (mediaData: Record<string, any>, key: string) => get(mediaData, key, []);
@@ -92,19 +104,20 @@ const ArtistsWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
-    
+
+    /**
+     * Determine which artists to display. This is triggered by the "Show" dropdown in the
+     * <ArtistsControls> component, and will be one of:
+     *
+     * 1. All artists.
+     * 2. Only artists with 1 or more albums.
+     * 3. What's currently playing, in which case limit the artist list to the selected artist
+     *      (the ArtistsControls will have set this artist in application state).
+     */
     useEffect(() => {
         if (!allArtists) {
             return;
         }
-
-        // Determine which artists to display. This is triggered by the "Show" dropdown in the
-        // <ArtistsControls> component, and will be one of:
-        //
-        // 1. All artists.
-        // 2. Only artists with 1 or more albums.
-        // 3. What's currently playing, in which case limit the artist list to the selected artist
-        //      (the ArtistsControls will have set this artist in application state).
 
         const artistsToDisplay: Artist[] = allArtists
             .filter((artist: Artist) => {
@@ -126,7 +139,7 @@ const ArtistsWall: FC = () => {
     }, [allArtists, filterText, activeCollection, artistIdsWithAlbums, dispatch]);
 
     /**
-     *
+     * Determine which Artists have at least one album.
      */
     useEffect(() => {
         if (!allArtists || artistIdsWithAlbums.length > 0) {
@@ -180,11 +193,13 @@ const ArtistsWall: FC = () => {
         { leading: false }
     );
 
-    // When the Artist Wall mounts, do one of the follow:
-    //  * Scroll to the current track if requested.
-    //  * Scroll to the selected Artist/Album/Track if requested (this is used by the
-    //      navigation options, like "View in Artists" from the Album/Track/etc screens.
-    //  * Restore the last-recorded manual scroll positions.
+    /**
+     * When the Artist Wall mounts, do one of the follow:
+     *  * Scroll to the current track if requested.
+     *  * Scroll to the selected Artist/Album/Track if requested (this is used by the navigation
+     *    options, like "View in Artists" from the Album/Track/etc screens.
+     *  * Restore the last-recorded manual scroll positions.
+     */
     useEffect(() => {
         const { scrollToCurrentOnScreenEnter, scrollToSelectedOnScreenEnter } =
             store.getState().internal.artists;
@@ -229,6 +244,9 @@ const ArtistsWall: FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    /**
+     * Define a handler to scroll the selected Artist/Album/Track into view.
+     */
     const scrollSelectedIntoView = useCallback(() => {
         artistsViewport.current?.scrollTo({ top: artistSelectedScrollRef.current?.offsetTop });
         albumsViewport.current?.scrollTo({ top: albumSelectedScrollRef.current?.offsetTop });
@@ -242,10 +260,17 @@ const ArtistsWall: FC = () => {
         trackSelectedScrollRef,
     ]);
 
+    /**
+     * Store the "selected" scrollIntoView handler in application state for use by the
+     * ArtistsControls.
+     */
     useEffect(() => {
         dispatch(setArtistsScrollSelectedIntoView(scrollSelectedIntoView));
     }, [dispatch, scrollSelectedIntoView]);
 
+    /**
+     * Define a handler to scroll the currently-playing Artist/Album/Track into view.
+     */
     const scrollCurrentIntoView = useCallback(() => {
         artistsViewport.current?.scrollTo({ top: artistCurrentScrollRef.current?.offsetTop });
         albumsViewport.current?.scrollTo({ top: albumCurrentScrollRef.current?.offsetTop });
@@ -259,6 +284,10 @@ const ArtistsWall: FC = () => {
         trackCurrentScrollRef,
     ]);
 
+    /**
+     * Store the "currently-playing" scrollIntoView handler in application state for use by the
+     * ArtistsControls.
+     */
     useEffect(() => {
         dispatch(setArtistsScrollCurrentIntoView(scrollCurrentIntoView));
     }, [dispatch, scrollCurrentIntoView]);

@@ -37,6 +37,9 @@ const PresetsWall: FC = () => {
         },
     }))();
 
+    /**
+     * Determine which Presets to display based on the current filter text.
+     */
     useEffect(() => {
         const presetsToDisplay = collectionFilter(presets, filterText, "name");
 

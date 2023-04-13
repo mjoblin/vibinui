@@ -45,6 +45,10 @@ const FavoritesWall: FC = () => {
         },
     }))();
 
+    /**
+     * Determine which Favorites to display, based on any filter text and whether the user has
+     * chosen to view Album or Track Favorites (or both).
+     */
     useEffect(() => {
         const albumFavorites = favorites.filter((favorite) => favorite.type === "album");
         const trackFavorites = favorites.filter((favorite) => favorite.type === "track");

@@ -62,23 +62,6 @@ type TrackArtProps = {
 //  a prop to switch this to "contain" which will show the entire non-square art (and add
 //  top/bottom or left/right bars as appropriate).
 
-/**
- *
- * Either `track` or `artUri` should be passed.
- *
- * @param track
- * @param artUri
- * @param alt
- * @param radius
- * @param showControls
- * @param actionCategories
- * @param hidePlayButton
- * @param size
- * @param actionsMenuPosition
- * @param onActionsMenuOpen
- * @param onActionsMenuClosed
- * @constructor
- */
 const TrackArt: FC<TrackArtProps> = ({
     track,
     artUri,
@@ -102,6 +85,10 @@ const TrackArt: FC<TrackArtProps> = ({
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
 
+    /**
+     * Notify the user if there was an error playing the Track (playing a Track actually involves
+     * replacing the Playlist with the Track).
+     */
     useEffect(() => {
         if (addStatus.isError) {
             const { status, data } = addStatus.error as FetchBaseQueryError;
@@ -114,6 +101,8 @@ const TrackArt: FC<TrackArtProps> = ({
     }, [addStatus]);
 
     const isStreamerOff = streamerPower === "off";
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Box className={classes.trackArtContainer}>

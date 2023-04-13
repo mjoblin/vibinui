@@ -24,17 +24,24 @@ const TracksScreen: FC = () => {
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.tracks);
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
+    /**
+     * Scroll to last-known scroll position when the screen mounts.
+     */
     useEffect(() => {
         setTimeout(() => scrollTo({ y: scrollPosition }), 1);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    /**
+     * Update the last-known scroll position when the window scrolls.
+     */
     useEffect(() => {
         dispatch(setTracksScrollPosition(scroll.y));
     }, [scroll, dispatch]);
 
     /**
-     *
+     * Scroll to currently-playing Track. Requires the TracksWall to provide a new currentTrackRef
+     * whenever the currently-playing Track changes.
      */
     const scrollToCurrent = useCallback(() => {
         if (!currentTrackRef?.current) {
@@ -52,6 +59,8 @@ const TracksScreen: FC = () => {
 
         window.scrollTo({ top: currentTrackTop });
     }, [currentTrackRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, dispatch]);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Stack spacing={0}>

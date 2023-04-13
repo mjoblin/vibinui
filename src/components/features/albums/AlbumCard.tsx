@@ -115,6 +115,8 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
     );
 };
 
+// ------------------------------------------------------------------------------------------------
+
 const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     album,
     enabledActions,

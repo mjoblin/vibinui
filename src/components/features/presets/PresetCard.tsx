@@ -66,20 +66,20 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
     const previousPlayState = useRef(playState);
     const previousIsPlayingState = useRef(preset.is_playing);
 
-    // --------------------------------------------------------------------------------------------
-    // The following two effects are in place to ensure that the preset's "active" state (i.e. that
-    // it's currently being listened to) is correct. Ideally preset.is_playing could be relied on,
-    // and it mostly can *except* for when a new preset is started. When a new preset is started,
-    // there's a brief period where the preset's is_playing is true but *before* the playState is
-    // "connecting". These two effects prevent a flash of the active border just before the
-    // connecting playState is registered.
-    //
-    // TODO: This still flickers the active border when changing from a non-stream.radio preset
-    //  to a stream-radio preset.
-    //
-    // TODO: When the UI is refreshed, a stream.media.upnp preset will have an is_playing of false,
-    //  even if it was playing.
-
+    /**
+     * The following two effects are in place to ensure that the Preset's "active" state (i.e. that
+     * it's currently being listened to) is correct. Ideally preset.is_playing could be relied on,
+     * and it mostly can *except* for when a new Preset is started. When a new Preset is started,
+     * there's a brief period where the Preset's is_playing is true but *before* the playState is
+     * "connecting". These two effects prevent a flash of the active border just before the
+     * connecting playState is registered.
+     *
+     * TODO: This still flickers the active border when changing from a non-stream.radio preset
+     *  to a stream-radio preset.
+     *
+     * TODO: When the UI is refreshed, a stream.media.upnp preset will have an is_playing of false,
+     *  even if it was playing.
+     */
     useEffect(() => {
         if (preset.is_playing !== previousIsPlayingState.current) {
             setWaitingForConnection(preset.is_playing);

@@ -25,6 +25,13 @@ import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPl
 
 // ================================================================================================
 // Controls for the <AlbumsWall>.
+//
+// Contains:
+//  - Filter input
+//  - Button to scroll to currently-playing Album
+//  - Toggle to follow currently-playing Album
+//  - Play filtered Albums
+//  - Card controls
 // ================================================================================================
 
 type AlbumsControlsProps = {
@@ -63,6 +70,8 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
             dispatch(setAlbumsFollowCurrentlyPlaying(false));
         }
     }, [activeCollection, filterText, dispatch]);
+
+    // --------------------------------------------------------------------------------------------
 
     return (
         <Flex gap={25} align="center">

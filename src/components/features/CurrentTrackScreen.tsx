@@ -146,7 +146,9 @@ const CurrentTrackScreen: FC = () => {
     }))();
 
     /**
-     *
+     * Whenever the currently-playing Track changes, either request the Track's details from the
+     * backend (for local media with a Track Id); or (for other sources like AirPlay) "fake" a
+     * currentTrack from the information known.
      */
     useEffect(() => {
         setTrackYearAndGenre(undefined);
@@ -154,7 +156,7 @@ const CurrentTrackScreen: FC = () => {
         if (currentTrackId) {
             getTrack(currentTrackId);
         } else if (currentPlaybackTrack) {
-            // currentPlaybackTrack gets populated from sources like Airplay. When it looks like
+            // currentPlaybackTrack gets populated from sources like AirPlay. When it looks like
             // a currentPlaybackTrack is available (and the currentTrackId -- from a local media
             // source -- is not), then a "fake" Track is created. This is fine so long as nothing
             // down the line is expecting any keys that aren't being provided here.
@@ -171,7 +173,8 @@ const CurrentTrackScreen: FC = () => {
     }, [currentTrackId, currentPlaybackTrack, getTrack]);
 
     /**
-     *
+     * When a new Track's details have been retrieved from the backend (for local media), update
+     * the currentTrack state.
      */
     useEffect(() => {
         if (getTrackResult.isSuccess) {
@@ -191,7 +194,8 @@ const CurrentTrackScreen: FC = () => {
     }, [getTrackResult]);
 
     /**
-     *
+     * Manage setting the height available to display the tab contents (lyrics, etc). This is used
+     * later by the <ScrollArea> component.
      */
     useEffect(() => {
         if (!tabListRef?.current || !currentTrack) {
@@ -209,12 +213,14 @@ const CurrentTrackScreen: FC = () => {
         setTabContentHeight(tabContentHeight);
     }, [tabListRef, currentTrack, windowHeight]);
 
+    // --------------------------------------------------------------------------------------------
+
     const windowResizeHandler = (event: UIEvent) =>
         event.target && setWindowHeight((event.target as Window).innerHeight);
     
     useWindowEvent("resize", windowResizeHandler);
 
-    // Airplay sets the play status to "paused" between tracks, which makes the UI briefly display
+    // AirPlay sets the play status to "paused" between tracks, which makes the UI briefly display
     // an awkward paused state.
     const playStatusDisplay =
         currentSource?.class === "stream.service.airplay" ? debouncedPlayStatus : playStatus;
@@ -258,7 +264,9 @@ const CurrentTrackScreen: FC = () => {
     const tabsToDisplay = currentSource
         ? sourcesSupportingDetailsTabs[currentSource.class]
         : undefined;
-    
+
+    // --------------------------------------------------------------------------------------------
+
     return (
         <Flex gap={30} pt={7} pb={10}>
             {/* LHS stack: Album art, playhead, etc */}
