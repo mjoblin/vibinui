@@ -2,9 +2,15 @@ import React, { FC } from "react";
 import { ColorSwatch, List, Popover, Text, Tooltip, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+
+// ================================================================================================
+// An indicator showing whether any API calls to the vibin backend are currently active. If any
+// calls are active then the active count is shown, and hovering over the indicator will show the
+// currently-active API call endpoints.
+// ================================================================================================
 
 // All vibin API calls are managed by RTK Query APIs found under app/services/. These APIs are all
 // named "vibin<Something>Api".

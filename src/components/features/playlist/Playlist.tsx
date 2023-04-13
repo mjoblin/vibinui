@@ -21,7 +21,7 @@ import {
     yearFromDate,
 } from "../../../app/utils";
 import { RootState } from "../../../app/store/store";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { usePauseMutation, usePlayMutation } from "../../../app/services/vibinTransport";
 import {
@@ -35,6 +35,14 @@ import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import StandbyMode from "../../shared/buttons/StandbyMode";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+
+// ================================================================================================
+// Shows the active streamer Playlist.
+//
+// Each Playlist Entry is shown as a row in a table. Each entry summarizes its associated media,
+// and provides a <PlaylistEntryActionsButton> to perform actions on the Media. Entries can be
+// reordered. Each Entry can be played by clicking it.
+// ================================================================================================
 
 const DIMMED = "#808080";
 const TITLE_AND_ALBUM_COLUMN_GAP = 40;

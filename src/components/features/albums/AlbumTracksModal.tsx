@@ -5,6 +5,10 @@ import { Album } from "../../../app/types";
 import AlbumTracks from "./AlbumTracks";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
+// ================================================================================================
+// Show all of an Album's Tracks in a modal.
+// ================================================================================================
+
 type AlbumTracksModalProps = {
     album: Album;
     opened: boolean;

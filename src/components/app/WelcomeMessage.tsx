@@ -4,6 +4,10 @@ import { createStyles, Flex, List, Modal, Paper, Stack, Text } from "@mantine/co
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import VibinLogo from "../shared/VibinLogo";
 
+// ================================================================================================
+// Welcome message to show first-time users.
+// ================================================================================================
+
 const useStyles = createStyles((theme) => ({
     sky: {
         paddingLeft: 35,

@@ -4,6 +4,11 @@ import { useInterval } from "@mantine/hooks";
 
 import { epochSecondsToStringRelative } from "../../../app/utils";
 
+// ================================================================================================
+// Display the given epochSeconds as a relative string (e.g. "10 seconds ago"). Auto-update the
+// displayed string at the provided interval.
+// ================================================================================================
+
 type UpdatingRelativeDateProps = {
     epochSeconds: number;
     interval?: number;

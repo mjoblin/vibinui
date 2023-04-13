@@ -7,6 +7,16 @@ import AlbumArt from "../../features/albums/AlbumArt";
 import TrackArt from "../../features/tracks/TrackArt";
 import MediaActionsButton from "../buttons/MediaActionsButton";
 
+// ================================================================================================
+// A banner/header intended to summarize an item of media (will likely be used as a header to be
+// paired with some additional details about the media).
+//
+// Contents:
+//  - Media art on the left.
+//  - Media summary details on the right (title, artist, date, etc).
+//  - An optional separate actions button (to invoke actions on the media).
+// ================================================================================================
+
 type MediaSummaryBannerProps = {
     media: Album | Track;
     showArtControls?: boolean;

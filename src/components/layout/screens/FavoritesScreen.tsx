@@ -2,13 +2,17 @@ import React, { FC, useEffect } from "react";
 import { Box, Stack } from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useWindowScroll } from "../../../app/hooks/useWindowScroll";
 import { setFavoritesScrollPosition } from "../../../app/store/internalSlice";
 import FavoritesControls from "../../features/favorites/FavoritesControls";
 import FavoritesWall from "../../features/favorites/FavoritesWall";
 import ScreenHeader from "../ScreenHeader";
+
+// ================================================================================================
+// Favorites screen top-level layout.
+// ================================================================================================
 
 const FavoritesScreen: FC = () => {
     const dispatch = useAppDispatch();

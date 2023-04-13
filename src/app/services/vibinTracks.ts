@@ -4,6 +4,12 @@ import { MediaId, Track } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 import { BackendTrack, trackTransformer } from "./vibinAlbums";
 
+// ================================================================================================
+// Interact with the vibin backend's /tracks endpoint.
+//
+// Features: Retrieve Tracks, get Track links/waveform/etc, get lyrics, invalidate lyrics, etc.
+// ================================================================================================
+
 export type LyricChunk = {
     header: string | undefined;
     body: string[];

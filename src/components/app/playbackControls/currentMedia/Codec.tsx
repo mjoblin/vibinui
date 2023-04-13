@@ -3,6 +3,10 @@ import { Text } from "@mantine/core";
 
 import { Format } from "../../../../app/types";
 
+// ================================================================================================
+// Codec string, e.g. "44.1kHz/16bit FLAC".
+// ================================================================================================
+
 /**
  * Return a string describing the provided encoding format.
  *

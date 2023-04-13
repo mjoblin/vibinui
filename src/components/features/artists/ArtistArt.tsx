@@ -10,7 +10,11 @@ import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import { showErrorNotification } from "../../../app/utils";
 
-// NOTE: TrackArt and AlbumArt are very similar.
+// ================================================================================================
+// Show the art for an Artist.
+//
+// NOTE: This component is not used.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     artistArtContainer: {

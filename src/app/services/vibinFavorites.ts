@@ -3,6 +3,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { Album, Artist, MediaId, Track } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /favorites endpoint.
+//
+// Features: Retrieve, add, and remove Favorites.
+// ================================================================================================
+
 export type FavoriteType = "album" | "artist" | "track";
 
 export type Favorite = {

@@ -19,7 +19,7 @@ import {
 } from "@tabler/icons";
 
 import { PlaylistEntry } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
     useDeletePlaylistEntryIdMutation,
@@ -48,9 +48,13 @@ import TrackLyricsModal from "../tracks/TrackLyricsModal";
 import TrackWaveformModal from "../tracks/TrackWaveformModal";
 import TrackLinksModal from "../tracks/TrackLinksModal";
 
+// ================================================================================================
+// Button which reveals an overlay menu of actions that can be performed on the Playlist entry.
+//
 // NOTE: This component is very similar to <MediaActionsButton>. Currently, the two components are
 //  separate as they differ enough to make generalizing them a little unwieldy -- but that may not
 //  always be the case.
+// ================================================================================================
 
 // TODO: See if these dark/light enabled/disabled are exposed in the mantine theme somewhere
 const darkDisabled = "#5C5F6B";

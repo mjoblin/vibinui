@@ -3,7 +3,7 @@ import { Box, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Track } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setTrackCardRenderDimensions } from "../../../app/store/internalSlice";
 import { secstoHms, yearFromDate } from "../../../app/utils";
@@ -12,6 +12,12 @@ import CompactArtCard from "../../shared/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 import { MediaViewMode } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+
+// ================================================================================================
+// A card representing a single Track.
+//
+// See <AlbumCard> for more information on media cards.
+// ================================================================================================
 
 // ------------------------------------------------------------------------------------------------
 // Helpers

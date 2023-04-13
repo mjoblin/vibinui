@@ -4,9 +4,23 @@ import { useHotkeys } from "@mantine/hooks";
 import Draggable from "react-draggable";
 
 import { RootState } from "../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { setShowDebugPanel } from "../../app/store/internalSlice";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
+
+// ================================================================================================
+// Debug panel. Activated via keyboard shortcut.
+//
+// The goal for this component to show information which is often useful to see, without having to
+// open the browser developer tools.
+//
+// Contents:
+//  - Websocket connection status.
+//  - System information (streamer name, media device name, etc).
+//  - Playback status (play mode, active transport controls, current track/album ids, etc).
+//  - Current Playlist information.
+//  - Stored Playlists information.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     debugContainer: {

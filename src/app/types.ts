@@ -1,4 +1,10 @@
-// TODO: A lot of these sub-types are strings, which can perhaps be changed to something more
+// ================================================================================================
+// General application-wide types.
+//
+// Note: Other types are defined in files under app/services and app/store.
+// ================================================================================================
+
+// TODO: A lot of these type keys are strings, which can perhaps be changed to something more
 //  suitable (e.g. bit_rate could be a number). They're currently strings because that's the type
 //  returned by the backend. Changing the types should perhaps be a backend change, after which
 //  these UI types could be updated to match.

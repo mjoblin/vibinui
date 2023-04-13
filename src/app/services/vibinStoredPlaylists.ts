@@ -3,6 +3,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { MediaId } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /playlists endpoint.
+//
+// Features: Retrieve, store, update, and activate Stored Playlists.
+// ================================================================================================
+
 export type StoredPlaylistId = string;
 
 export type StoredPlaylist = {

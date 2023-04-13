@@ -4,6 +4,13 @@ import { Stack, Text, useMantineTheme } from "@mantine/core";
 
 import VibinLogo from "../shared/VibinLogo";
 
+// ================================================================================================
+// Top-level React error boundary. This will be displayed whenever an uncaught exception occurs
+// within the React context.
+//
+// https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary
+// ================================================================================================
+
 const ErrorBoundary: FC = () => {
     const { colors } = useMantineTheme();
     const error = useRouteError();

@@ -6,6 +6,10 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
 import Waveform from "../currentTrack/Waveform";
 
+// ================================================================================================
+// Show a Track's waveform as a modal.
+// ================================================================================================
+
 type TrackWaveformModalProps = {
     track: Track;
     opened: boolean;

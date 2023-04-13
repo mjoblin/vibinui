@@ -1,12 +1,6 @@
 import { FC, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-// TODO: If this approach of munging the infrequently-changing list of albums and tracks and
-//  storing the result in application state is preferred, then other consumers of
-//  useMediaGroupings() should switch over to using the mediaGroups slice instead.
-//  useMediaGroupings() could also set application state itself, although this Manager (or
-//  something like it) would still need to exist so that something is using useMediaGroupings().
-
 import {
     setAlbumById,
     setAlbumsByArtistName,
@@ -16,6 +10,14 @@ import {
     setTracksByArtistName,
 } from "../../app/store/mediaGroupsSlice";
 import { useMediaGroupings } from "../../app/hooks/useMediaGroupings";
+
+// ================================================================================================
+// Manage the storage of the various media groupings (exposed by useMediaGroupings()) in
+// application state.
+//
+// TODO: Currently this component is the only consumer of useMediaGroupings(), so perhaps that
+//  hook and this manager should be combined.
+// ================================================================================================
 
 const MediaGroupsManager: FC = () => {
     const dispatch = useDispatch();

@@ -1,8 +1,15 @@
 import React, { FC } from "react";
 import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconArrowAutofitHeight } from "@tabler/icons";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
+
+// ================================================================================================
+// Button to toggle whether the consuming component should automatically scroll to show the
+// currently-playing media when the media changes.
+//
+// This button does not manage the actual scrolling (that's managed by the consuming component).
+// ================================================================================================
 
 type CurrentlyPlayingToggleProps = {
     isOn: boolean;

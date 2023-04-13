@@ -2,9 +2,21 @@ import React, { FC, useState } from "react";
 import { Flex, Slider, Text } from "@mantine/core";
 
 import type { RootState } from "../../../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../../app/hooks/store";
 import { setPlayheadPosition } from "../../../../app/store/playbackSlice";
 import { useSeekMutation } from "../../../../app/services/vibinTransport";
+
+// ================================================================================================
+// Playhead for the currently-playing media.
+//
+// Contents:
+//  - Duration into media.
+//  - Total media duration or time left for current media (toggle).
+//  - Playhead slider:
+//      - Update frequently to show current position in media.
+//      - Seek into media on drag.
+//      - May be disable for some sources (like Internet Radio).
+// ================================================================================================
 
 const leadingZeros = new RegExp("^00:");
 const negativeTimeScreenSize = 5;  // Allow for minus sign when end time style is timeRemaining

@@ -1,6 +1,13 @@
 import React, { FC } from "react";
 import { Global } from "@mantine/core";
 
+// ================================================================================================
+// Custom fonts.
+//
+// Note: These get preloaded in the public/index.html to ensure they're available before the
+//  application renders.
+// ================================================================================================
+
 // @ts-ignore
 import extraLight from "./kanit-v12-latin-200.woff2";
 // @ts-ignore

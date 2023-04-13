@@ -30,6 +30,22 @@ import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 import { setVibinStatusState, VibinStatusState } from "../store/vibinStatusSlice";
 
+// ================================================================================================
+// Handle the WebSocket connection to the vibin backend.
+//
+// Key features:
+//  * Connect to the backend and handle reconnecting when required.
+//  * Handle incoming WebSocket messages.
+//  * Dispatch any useful information from these messages to application state, for use elsewhere
+//    in the application.
+//
+// Note:
+//  * Messages only flow from the backend to the UI, and not the other way.
+//  * When the UI connects to the backend, the backend will automatically send messages describing
+//    the backend state at connection time. The UI does not need to pre-fetch this initial state;
+//    the initial state is instead handled like any other message.
+// ================================================================================================
+
 const MAX_MESSAGE_COUNT = 10;
 
 // TODO: Consider how to more clearly handle vaguely-defined incoming message payloads. These
@@ -167,7 +183,7 @@ const purifyData = (
 };
 
 /**
- * Handle an incoming Websocket message from the vibin backend.
+ * Handle an incoming WebSocket message from the vibin backend.
  *
  * @param updateCachedData
  * @param getState
@@ -191,9 +207,9 @@ const purifyData = (
  *
  * TODO: The backend currently supports two message types (state var updates, and play state
  *  updates). Should these even be treated differently? (Their backend realities are different --
- *  UPNP vs. Websocket updates from the streamer -- but that distinction could be abstracted away).
+ *  UPNP vs. WebSocket updates from the streamer -- but that distinction could be abstracted away).
  *  If continued to treat differently, then maybe the Client/UI could decide whether they want to
- *  receive one or both types -- perhaps by connecting to a Websocket channel per type; or sending
+ *  receive one or both types -- perhaps by connecting to a WebSocket channel per type; or sending
  *  a connect message where they say which type(s) they want to receive.
  *
  * TODO: Handle defining the current playhead position. Store it as normalized 0-1 in application

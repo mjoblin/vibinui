@@ -10,8 +10,20 @@ import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaAc
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import NoArtPlaceholder from "../../shared/NoArtPlaceholder";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
+
+// ================================================================================================
+// Show the art for an Album.
+//
+// Contents:
+//  - Art image
+//  - Optional overlays:
+//      - <MediaActionsButton>; actions can be enabled/disabled as via enabledActions prop.
+//      - Play button.
+//
+// NOTE: AlbumArt and TrackArt are very similar.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     albumArtContainer: {

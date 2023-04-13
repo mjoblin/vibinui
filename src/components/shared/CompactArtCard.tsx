@@ -4,6 +4,11 @@ import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import NoArtPlaceholder from "./NoArtPlaceholder";
 
+// ================================================================================================
+// A compact media card. Shows art on the left, and children (likely media details like title and
+// artist) on the right.
+// ================================================================================================
+
 type CompactArtCardProps = {
     artUrl?: string;
     actions?: ReactNode;

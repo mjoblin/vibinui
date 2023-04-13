@@ -1,9 +1,14 @@
 import React, { FC } from "react";
 import { ColorSwatch, Tooltip, useMantineTheme } from "@mantine/core";
 
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+
+// ================================================================================================
+// Indicator showing when the application is computing something in the background (likely in a
+// web worker).
+// ================================================================================================
 
 const BackgroundComputeIndicator: FC = () => {
     const theme = useMantineTheme();

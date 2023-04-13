@@ -8,6 +8,10 @@ import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlayli
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { showSuccessNotification } from "../../../app/utils";
 
+// ================================================================================================
+// Button to append the given Media (Track or Album) to the current Playlist.
+// ================================================================================================
+
 const useStyles = createStyles((theme) => ({
     pointerOnHover: {
         "&:hover": {

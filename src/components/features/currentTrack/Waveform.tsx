@@ -4,9 +4,14 @@ import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { useSeekMutation } from "../../../app/services/vibinTransport";
 import { useGetRMSQuery } from "../../../app/services/vibinTracks";
+
+// ================================================================================================
+// Display a waveform for a Track. Optionally displays the current playhead progress over the
+// waveform, which can be dragged to seek into the track.
+// ================================================================================================
 
 // TODO: This component could perform optimistic playhead display updates to ensure that dropping
 //  a new playhead position doesn't result in a brief delay before the update is displayed.

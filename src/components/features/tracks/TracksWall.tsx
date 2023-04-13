@@ -3,7 +3,7 @@ import { Box, Center, createStyles, Loader } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { Track } from "../../../app/types";
 import { useGetTracksQuery, useSearchLyricsMutation } from "../../../app/services/vibinTracks";
@@ -12,6 +12,10 @@ import { collectionFilter } from "../../../app/utils";
 import TrackCard from "./TrackCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
+
+// ================================================================================================
+// Show a wall of Track art. Reacts to display properties configured via <TracksControls>.
+// ================================================================================================
 
 type TrackWallProps = {
     onNewCurrentTrackRef: (ref: RefObject<HTMLDivElement>) => void;

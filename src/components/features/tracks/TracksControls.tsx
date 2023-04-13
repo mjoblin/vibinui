@@ -3,7 +3,7 @@ import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     resetTracksToDefaults,
     setTracksCardGap,
@@ -22,6 +22,10 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
+
+// ================================================================================================
+// Controls for the <TracksWall>.
+// ================================================================================================
 
 const lyricsSearchFinder = new RegExp(/(lyrics?):(\([^)]+?\)|[^( ]+)/);
 const stripParens = new RegExp(/^\(?([^)]+)\)?$/);

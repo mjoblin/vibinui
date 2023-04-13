@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { Box, Center, createStyles, Loader, Stack, useMantineTheme } from "@mantine/core";
 
 import { Album, Track } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { collectionFilter } from "../../../app/utils";
@@ -12,6 +12,16 @@ import AlbumCard from "../albums/AlbumCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
 import TrackCard from "../tracks/TrackCard";
+
+// ================================================================================================
+// Show a wall of Favorites art. Reacts to display properties configured via <FavoritesControls>.
+//
+// Favorites can be Albums or Tracks.
+//
+// NOTE: The FavoritesWall differs from the Artists/Albums/Tracks walls in that it gets its data
+//  (the favorites) directly from the redux state, not from an API call. This is because Favorites
+//  are likely to update more often than Artists/Albums/Tracks.
+// ================================================================================================
 
 const FavoritesWall: FC = () => {
     const dispatch = useAppDispatch();
@@ -25,10 +35,6 @@ const FavoritesWall: FC = () => {
         (state: RootState) => state.userSettings.favorites
     );
     const [favoritesToDisplay, setFavoritesToDisplay] = useState<Favorite[]>([]);
-
-    // NOTE: The FavoritesWall differs from the Artists/Albums/Tracks walls in that it gets its data
-    //  (the favorites) directly from the redux state, not from an API call. This is because
-    //  Favorites are likely to update more often than Artists/Albums/Tracks.
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         favoritesWall: {

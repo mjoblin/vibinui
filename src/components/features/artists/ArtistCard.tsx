@@ -3,11 +3,20 @@ import { Box, Card, createStyles, Flex, Image, Stack, Text, useMantineTheme } fr
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Album, Artist, Track } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setArtistCardRenderDimensions } from "../../../app/store/internalSlice";
 import { MediaViewMode } from "../../../app/store/userSettingsSlice";
 import CompactArtCard from "../../shared/CompactArtCard";
+
+// ================================================================================================
+// A card representing a single Artist.
+//
+// See <AlbumCard> for more information on media cards.
+//
+// NOTE: <ArtistCard> has an emphasis on the compact style as the application currently does not
+//  render art-focused cards for Artists.
+// ================================================================================================
 
 // ------------------------------------------------------------------------------------------------
 // Helpers

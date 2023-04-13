@@ -16,7 +16,7 @@ import throttle from "lodash/throttle";
 
 import { Album, Artist, MediaId, Track } from "../../../app/types";
 import type { RootState } from "../../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetArtistsQuery } from "../../../app/services/vibinArtists";
 import {
     setArtistsScrollCurrentIntoView,
@@ -39,6 +39,14 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useGetTracksQuery } from "../../../app/services/vibinTracks";
 import { store } from "../../../app/store/store";
+
+// ================================================================================================
+// Show a wall of Artist details. Reacts to display properties configured via <ArtistsControls>.
+//
+// The Artist wall differs from the other walls (Albums, Tracks, etc) in that it uses the
+// <CompactArtCard>, and provides a means to drill down from Artist to Albums to Tracks all within
+// the same UI.
+// ================================================================================================
 
 const safeGet = (mediaData: Record<string, any>, key: string) => get(mediaData, key, []);
 

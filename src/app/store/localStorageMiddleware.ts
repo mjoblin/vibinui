@@ -73,6 +73,11 @@ import {
     setTracksShowDetails,
 } from "./userSettingsSlice";
 
+// ================================================================================================
+// Store user settings in local storage so they will persist between multiple sessions of the same
+// browser.
+// ================================================================================================
+
 // ------------------------------------------------------------------------------------------------
 // TO STORE A USER SETTING IN LOCAL STORAGE:
 //

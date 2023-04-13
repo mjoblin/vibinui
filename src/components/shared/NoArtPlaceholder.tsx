@@ -1,10 +1,15 @@
 import React, { FC } from "react";
 import { Box, Center, MantineColor, Text, useMantineTheme } from "@mantine/core";
 
+// ================================================================================================
+// Placeholder for when no art is available for a media item.
+// ================================================================================================
+
 type NoArtPlaceholderProps = {
     artSize: number;
     backgroundColor?: MantineColor;
 };
+
 const NoArtPlaceholder: FC<NoArtPlaceholderProps> = ({ artSize, backgroundColor }) => {
     const { colors } = useMantineTheme();
 

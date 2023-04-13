@@ -2,7 +2,7 @@ import React, { FC, useEffect } from "react";
 import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
 import { IconSquareX } from "@tabler/icons";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     AlbumCollection,
     resetAlbumsToDefaults,
@@ -22,6 +22,10 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
+
+// ================================================================================================
+// Controls for the <AlbumsWall>.
+// ================================================================================================
 
 type AlbumsControlsProps = {
     scrollToCurrent?: () => void;

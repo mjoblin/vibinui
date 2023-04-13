@@ -17,9 +17,13 @@ import {
     minCardGap,
     minCardSize,
 } from "../../../app/store/userSettingsSlice";
-
-import { useAppDispatch } from "../../../app/hooks/useInterval";
 import { IconSettings } from "@tabler/icons";
+
+import { useAppDispatch } from "../../../app/hooks/store";
+
+// ================================================================================================
+// Button revealing a panel showing controls for art card display (art size, separation size, etc).
+// ================================================================================================
 
 type CardSettingsProps = {
     cardSize: number;

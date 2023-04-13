@@ -3,6 +3,11 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { MediaId } from "../types";
 
+// ================================================================================================
+// State for tracking internal application information such as scroll positions, art card
+// dimensions, etc.
+// ================================================================================================
+
 export type WebsocketStatus = "disconnected" | "connecting" | "connected" | "waiting_to_reconnect";
 
 export interface InternalState {

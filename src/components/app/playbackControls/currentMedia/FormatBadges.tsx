@@ -3,6 +3,10 @@ import { Badge, Flex } from "@mantine/core";
 
 import { Format } from "../../../../app/types";
 
+// ================================================================================================
+// Media format badges (e.g. "LOSSLESS").
+// ================================================================================================
+
 type FormatBadgesProps = {
     format: Format;
 };

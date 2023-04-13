@@ -6,6 +6,10 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
 import TrackLinks from "../currentTrack/TrackLinks";
 
+// ================================================================================================
+// Show a Track's links as a modal.
+// ================================================================================================
+
 type TrackLinksModalProps = {
     track: Track;
     opened: boolean;

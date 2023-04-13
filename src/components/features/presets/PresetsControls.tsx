@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { ActionIcon, Flex, TextInput } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     resetPresetsToDefaults,
     setPresetsCardGap,
@@ -15,6 +15,10 @@ import CardControls from "../../shared/buttons/CardControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import { IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
+
+// ================================================================================================
+// Controls for the <PresetsWall>.
+// ================================================================================================
 
 const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();

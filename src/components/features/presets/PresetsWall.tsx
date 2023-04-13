@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { Box, Center, createStyles, Loader } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { Preset } from "../../../app/services/vibinPresets";
@@ -9,6 +9,12 @@ import { setFilteredPresetIds } from "../../../app/store/internalSlice";
 import { collectionFilter } from "../../../app/utils";
 import PresetCard from "./PresetCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
+
+// ================================================================================================
+// Show a wall of Presets art. Reacts to display properties configured via <PresetsControls>.
+//
+// Presets can be a mix of various media, such as Internet Radio, Albums, etc.
+// ================================================================================================
 
 const PresetsWall: FC = () => {
     const dispatch = useAppDispatch();

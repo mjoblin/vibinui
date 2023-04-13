@@ -3,6 +3,10 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { updateIfDifferent } from "./helpers";
 
+// ================================================================================================
+// Application state for the status of the vibin backend.
+// ================================================================================================
+
 export type ClientWebsocketClient = {
     id: string;
     when_connected: number;

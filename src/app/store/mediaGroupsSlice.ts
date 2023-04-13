@@ -3,6 +3,14 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { Album, Artist, Track } from "../types";
 
+// ================================================================================================
+// Application state for holding the media groupings, as handled by useMediaGroupings() and
+// <MediaGroupsManager>. This state is intended for use by whatever other components need access
+// to this information.
+//
+// This state is not expected to change during a user session.
+// ================================================================================================
+
 export interface MediaGroupsState {
     albumById: Record<string, Album>,
     albumsByArtistName: Record<string, Album[]>,

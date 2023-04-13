@@ -2,7 +2,16 @@ import React, { FC } from "react";
 import { Box, Center, Flex, Image, Text, useMantineTheme } from "@mantine/core";
 
 import type { RootState } from "../../../app/store/store";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
+
+// ================================================================================================
+// Details about the currently-playing media.
+//
+// Contents:
+//  - Media art.
+//  - Currently-playing title.
+//  - Currently-playing artist.
+// ================================================================================================
 
 const CurrentMediaDetails: FC = () => {
     const { colors } = useMantineTheme();

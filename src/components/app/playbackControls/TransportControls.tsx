@@ -17,8 +17,19 @@ import {
     useToggleRepeatMutation,
     useToggleShuffleMutation,
 } from "../../../app/services/vibinTransport";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
+
+// ================================================================================================
+// Transport controls.
+//
+// Contents:
+//  - Previous Track.
+//  - Play/Pause.
+//  - Next Track.
+//  - Repeat.
+//  - Shuffle.
+// ================================================================================================
 
 const TransportControls: FC = () => {
     const theme = useMantineTheme();

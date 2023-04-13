@@ -11,11 +11,17 @@ import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import { getTextWidth } from "../../../app/utils";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 
-// TODO: This component should take a track, but the current_track in Redux doesn't contain the
-//  trackId. So instead the component expects *either* a trackId *or* artist and title.
+// ================================================================================================
+// Show lyrics for the provided Track.
+//
+// Accepts either a track id (for local media) or an artist/title pair (for alternate sources like
+// AirPlay). Lyrics can be marked as invalid, or can be re-retrieved from the backend.
+//
+// Lyrics are rendered in a CSS grid, which should add columns if the container is widened.
+// ================================================================================================
 
 type TrackLyricsProps = {
     trackId?: string;
@@ -58,9 +64,6 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
      * Also, calculate the maximum line length, which will be used to set the column width. This
      * means that all columns will be the width of the widest line (regardless of column), which
      * isn't ideal -- especially if there's one very long line relative to the others.
-     *
-     * TODO: Investigate ways to render multiple columns while making better use of the available
-     *  space.
      */
     useEffect(() => {
         if (!getLyricsStatus.data) {

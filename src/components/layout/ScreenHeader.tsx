@@ -3,6 +3,11 @@ import { Box, createStyles, rem } from "@mantine/core";
 
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
+// ================================================================================================
+// A per-screen/feature Header. Often used to hold screen-specific user controls like filters,
+// toggles, etc.
+// ================================================================================================
+
 type ScreenHeaderProps = {
     height: number;
     noBackground?: boolean;

@@ -1,13 +1,16 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
 
 import { Album, Artist, Track } from "../types";
-import { useAppDispatch } from "./useInterval";
+import { useAppDispatch } from "./store";
 import { setIsComputingInBackground } from "../store/internalSlice";
 import { useGetAlbumsQuery } from "../services/vibinAlbums";
 import { useGetArtistsQuery } from "../services/vibinArtists";
 import { useGetTracksQuery } from "../services/vibinTracks";
 
 // ================================================================================================
+// Expose information about Artists, Albums, Tracks, etc, munged in ways which are more targeted
+// to the needs of the UI.
+// ------------------------------------------------------------------------------------------------
 //
 // This hook exists as an attempt to improve performance. The goal is to provide information about
 // grouped media items (Artists, Albums, Tracks) quickly enough to enable a somewhat responsive UI.
@@ -27,12 +30,10 @@ import { useGetTracksQuery } from "../services/vibinTracks";
 //
 // NOTE: Every component which uses this hook will have its own copy of this hooks' state. This
 //  means the hook shouldn't be used by many components (assuming memory is a concern, which it may
-//  not be); or a different singleton-style approach could be used instead -- perhaps exposing this
-//  hook's purpose via Redux.
+//  not be).
 //
-// TODO: Examine the architecture of the app through a performance-focused lens, to see if there's
-//  more elegant ways to approach UI responsiveness.
-//
+// TODO: Currently this component is only used by <MediaGroupsManager>, so perhaps that component
+//  and this hook should be combined.
 // ================================================================================================
 
 interface LocalState {

@@ -3,10 +3,14 @@ import { ActionIcon, Box, createStyles, Menu, Tooltip, useMantineTheme } from "@
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { MediaId } from "../../../app/types";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useSetPlaylistMediaIdsMutation } from "../../../app/services/vibinPlaylist";
 import { showSuccessNotification } from "../../../app/utils";
+
+// ================================================================================================
+// Button to replace the current Playlist with the provided mediaIds.
+// ================================================================================================
 
 const darkEnabled = "#C1C2C5";
 const lightEnabled = "#000";

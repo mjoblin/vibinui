@@ -31,7 +31,7 @@ import TrackLinksModal from "../../features/tracks/TrackLinksModal";
 import TrackLyricsModal from "../../features/tracks/TrackLyricsModal";
 import TrackWaveformModal from "../../features/tracks/TrackWaveformModal";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
     setAlbumsActiveCollection,
@@ -46,6 +46,19 @@ import {
     setArtistsScrollToCurrentOnScreenEnter,
     setArtistsScrollToSelectedOnScreenEnter,
 } from "../../../app/store/internalSlice";
+
+// ================================================================================================
+// Button which reveals an overlay menu of actions that can be performed on the given media.
+//
+// Supported action categories:
+//  - Playlist (add media to the current Playlist).
+//  - Details (show media information like lyrics, etc).
+//  - Favorites (add/remove media from Favorites).
+//  - Navigation (view media in another screen like Albums, Tracks, etc).
+//
+// Some actions will be disabled based on current state. E.g. Playlist actions are not supported
+// while the streamer is powered off.
+// ================================================================================================
 
 export type MediaType = "album" | "track";
 

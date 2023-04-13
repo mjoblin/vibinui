@@ -1,7 +1,7 @@
 import React, { FC, RefObject, useCallback, useEffect, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { setTracksFilterText } from "../../../app/store/userSettingsSlice";
@@ -10,6 +10,10 @@ import { setTracksScrollPosition } from "../../../app/store/internalSlice";
 import TracksControls from "../../features/tracks/TracksControls";
 import TracksWall from "../../features/tracks/TracksWall";
 import ScreenHeader from "../ScreenHeader";
+
+// ================================================================================================
+// Tracks screen top-level layout.
+// ================================================================================================
 
 const TracksScreen: FC = () => {
     const dispatch = useAppDispatch();

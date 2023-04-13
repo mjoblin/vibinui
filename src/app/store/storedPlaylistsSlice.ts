@@ -3,6 +3,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { StoredPlaylist, StoredPlaylistId } from "../services/vibinStoredPlaylists";
 
+// ================================================================================================
+// Application state for Stored Playlists.
+//
+// Note: This is distinct from the active streamer Playlist.
+// ================================================================================================
+
 export interface StoredPlaylistsState {
     active_stored_playlist_id: StoredPlaylistId | undefined;
     active_synced_with_store: boolean;

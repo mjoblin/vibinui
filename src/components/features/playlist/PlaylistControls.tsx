@@ -32,7 +32,7 @@ import {
 } from "@tabler/icons";
 
 import { RootState } from "../../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     PlaylistViewMode,
     setPlaylistFollowCurrentlyPlaying,
@@ -57,7 +57,9 @@ import {
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
 
-// ------------------------------------------------------------------------------------------------
+// ================================================================================================
+// Controls for the <Playlist>.
+// ================================================================================================
 
 const PlaylistDuration: FC = () => {
     const { colors } = useMantineTheme();

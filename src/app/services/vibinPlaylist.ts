@@ -3,6 +3,17 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { MediaId } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /playlist endpoint.
+//
+// Features: Interact with the current Playlist (add entries, move entries, delete entries, play
+//  entries, etc).
+//
+// NOTE: The current streamer Playlist is the source of truth for what is currently playing and
+//  what is to be played next. Simple actions like playing an Album are actually implemented on the
+//  streamer by replacing the current playlist with all the Tracks in the Album.
+// ================================================================================================
+
 /**
  * NOTE: Changes made to the playlist should result in the streamer re-announcing the new playlist
  * state, which should be received via the vibinWebsocket connection (which in turn should update

@@ -4,7 +4,7 @@ import { ColorScheme, ColorSchemeProvider, MantineProvider } from "@mantine/core
 import { Notifications } from "@mantine/notifications";
 
 import { RootState } from "./app/store/store";
-import { useAppDispatch, useAppSelector } from "./app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "./app/hooks/store";
 import { setApplicationTheme } from "./app/store/userSettingsSlice";
 import { useAppGlobals } from "./app/hooks/useAppGlobals";
 import RootLayout from "./components/layout/RootLayout";
@@ -119,6 +119,8 @@ export default function App() {
                 <PlayheadManager />
                 <MediaGroupsManager />
                 <MediaSourceManager />
+
+                {/* The user's view of the application lives under here */}
                 <RouterProvider router={router} />
             </MantineProvider>
         </ColorSchemeProvider>

@@ -8,10 +8,12 @@ import relativeTime from "dayjs/plugin/relativeTime";
 
 import { Playlist } from "./types";
 
+// ================================================================================================
+// Various utility functions.
+// ================================================================================================
+
 dayjs.extend(localizedFormat);
 dayjs.extend(relativeTime);
-
-// TODO: Write tests
 
 /**
  *
@@ -95,6 +97,7 @@ interface VibinNotification {
 }
 
 /**
+ * Show a success notification.
  */
 export const showSuccessNotification = ({
     id,
@@ -116,6 +119,7 @@ export const showSuccessNotification = ({
     });
 
 /**
+ * Show an error notification.
  */
 export const showErrorNotification = ({
     id,
@@ -139,6 +143,9 @@ export const showErrorNotification = ({
 // TODO: This does not need to be specific to playlists. It would be nice to have it support arrays
 //  Of any object with a "duration" key (e.g. Track). Currently Track and PlaylistEntry have
 //  different duration formats, which would ideally be standardized in the back end first.
+/**
+ * Compute the duration (in seconds) of the given Playlist.
+ */
 export const playlistDuration = (playlist: Playlist) =>
     playlist.reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
 
@@ -147,10 +154,23 @@ const parentStripperRegex = /^\(?(.*?)\)?$/;
 const emptyStringRegex = /^\s*$/;
 
 /**
+ * Determine which objects in the collection match the given filterText.
  *
- * @param collection
- * @param filterText
- * @param defaultKey
+ * Example filterText:
+ *
+ *  - "some text"
+ *  - "genre:jazz"
+ *  - "lyrics:(not the one) artist:cars"
+ *  - "mood date:2012 genre:electronic"
+ *
+ * Filter keys and values are input as "key:value". The key is expected to be a key on the objects
+ * in the collection (e.g. Album has a "genre" key). Multiple keys can be specified. Multi-word
+ * values are specified using parentheses. Any text which is not associated with a key is assumed
+ * to be associated with the default key.
+ *
+ * @param collection An array of Artists, Tracks, etc.
+ * @param filterText The text filter to apply.
+ * @param defaultKey The key to apply the filter to, if the key is not explicitly stated.
  */
 export function collectionFilter<T extends Object>(
     collection: T[],

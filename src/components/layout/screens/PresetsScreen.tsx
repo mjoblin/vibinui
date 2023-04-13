@@ -2,13 +2,17 @@ import React, { FC, useEffect } from "react";
 import { Box, Stack } from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useWindowScroll } from "../../../app/hooks/useWindowScroll";
 import { setPresetsScrollPosition } from "../../../app/store/internalSlice";
 import PresetsControls from "../../features/presets/PresetsControls";
 import PresetsWall from "../../features/presets/PresetsWall";
 import ScreenHeader from "../ScreenHeader";
+
+// ================================================================================================
+// Presets screen top-level layout.
+// ================================================================================================
 
 const PresetsScreen: FC = () => {
     const dispatch = useAppDispatch();

@@ -3,11 +3,20 @@ import { Box, Flex, Header, useMantineTheme } from "@mantine/core";
 
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks/useInterval";
+import { useAppSelector } from "../../app/hooks/store";
 import PlaybackControls from "../app/playbackControls/PlaybackControls";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
 import VibinLogo from "../shared/VibinLogo";
 import WarningMessage from "../shared/textDisplay/WarningMessage";
+
+// ================================================================================================
+// Top application header.
+//
+// Contents:
+//  - Application logo.
+//  - Playback controls.
+//  - Occasional warning messages.
+// ================================================================================================
 
 type AppHeaderProps = {
     noBackground?: boolean;

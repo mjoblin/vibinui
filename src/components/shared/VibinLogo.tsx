@@ -5,6 +5,10 @@ import { IconPlant2 } from "@tabler/icons";
 import CustomFonts from "../app/customFonts/CustomFonts";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
+// ================================================================================================
+// Application logo.
+// ================================================================================================
+
 const useStyles = createStyles((theme) => ({
     outline: {
         border: "1px solid green",

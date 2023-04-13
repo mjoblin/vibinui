@@ -1,6 +1,10 @@
 import React, { FC } from "react";
 import { Flex, Text } from "@mantine/core";
 
+// ================================================================================================
+// A label paired with a sad face emoji.
+// ================================================================================================
+
 type SadLabelProps = {
     label: string;
     labelSize?: number;

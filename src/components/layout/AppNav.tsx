@@ -28,6 +28,15 @@ import WaitingOnAPIIndicator from "../shared/dataDisplay/WaitingOnAPIIndicator";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import StandbyMode from "../shared/buttons/StandbyMode";
 
+// ================================================================================================
+// Application navigation menu.
+//
+// Contents:
+//  - Links to all application features (Albums, Tracks, etc).
+//  - Settings menu.
+//  - Streamer standby indicator (which acts as power button when streamer is off).
+// ================================================================================================
+
 // Taken from: https://ui.mantine.dev/category/navbars
 
 const useStyles = createStyles((theme) => ({
