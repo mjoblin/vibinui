@@ -5,6 +5,12 @@ import { hmsToSecs } from "../utils";
 import { MediaId } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /albums endpoint.
+//
+// Features: Retrieve Albums.
+// ================================================================================================
+
 // TODO: Consider refactoring these multiple API slices (Albums, Playlist, etc) into a single slice.
 //  https://redux-toolkit.js.org/rtk-query/api/createApi
 

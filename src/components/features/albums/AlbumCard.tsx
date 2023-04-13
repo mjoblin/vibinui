@@ -3,7 +3,7 @@ import { Box, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Album, Track } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../../app/store/internalSlice";
 import { MediaViewMode } from "../../../app/store/userSettingsSlice";
@@ -14,6 +14,26 @@ import AlbumArt from "./AlbumArt";
 import AlbumTracksModal from "./AlbumTracksModal";
 import CompactArtCard from "../../shared/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
+
+// ================================================================================================
+// A card representing a single Album.
+//
+// Contains:
+//  - Album art (with overlays for media actions and media play).
+//  - Album details (title, artist, etc).
+//
+// Card will highlight if the Album is currently playing.
+//
+// <AlbumCardArtFocused> renders a card with the art up top and the Album details (optionally)
+// underneath. <AlbumCardCompact> renders a smaller card with the art on the left and the Album
+// details to the right.
+//
+// The card renders as a simple div if it's not currently visible. This is done for performance
+// reasons. The stand-in div (when not visible) is rendered with the dimensions of a recently-
+// rendered visible card. This means the not-visible cards consume roughly (but not exactly) the
+// space they would consume if all cards were fully rendered. This has consequences for things
+// which might care about how much space the cards consume (such as scroll restoration).
+// ================================================================================================
 
 // ------------------------------------------------------------------------------------------------
 // Helpers

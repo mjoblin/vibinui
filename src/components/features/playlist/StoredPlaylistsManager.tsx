@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     useLazyDeleteStoredPlaylistQuery,
     useLazyUpdateStoredPlaylistNameQuery,
@@ -32,6 +32,15 @@ import {
     PlaylistEditorSortField,
     setPlaylistEditorSortField,
 } from "../../../app/store/userSettingsSlice";
+
+// ================================================================================================
+// Manage Stored Playlists.
+//
+// Contains:
+//  - List of Stored Playlists.
+//      - List can be sorted by various properties.
+//      - Stored Playlists can be deleted and renamed.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     editorTable: {

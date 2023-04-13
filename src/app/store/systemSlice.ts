@@ -3,6 +3,10 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { updateIfDifferent } from "./helpers";
 
+// ================================================================================================
+// Application state for the streaming system (streamer and media device names, power status).
+// ================================================================================================
+
 export type PowerStatus = "on" | "off" | undefined;
 
 export interface SystemState {

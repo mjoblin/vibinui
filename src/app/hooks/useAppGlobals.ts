@@ -1,8 +1,15 @@
 import { useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 
-import { useAppSelector } from "./useInterval";
+import { useAppSelector } from "./store";
 import { RootState } from "../store/store";
+
+// ================================================================================================
+// Application globals.
+//
+// Globals which don't update during the session (i.e. constants) arguably do not belong here and
+// could be factored out.
+// ================================================================================================
 
 export const useAppGlobals = () => {
     const theme = useMantineTheme();

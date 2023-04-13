@@ -1,10 +1,14 @@
 import React, { FC } from "react";
 import { ColorSwatch, MantineColor, Tooltip, useMantineTheme } from "@mantine/core";
 
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { WebsocketStatus } from "../../../app/store/internalSlice";
+
+// ================================================================================================
+// Indicator showing the current state of the WebSocket connection to the vibin backend.
+// ================================================================================================
 
 const WebsocketIndicator: FC = () => {
     const { colors } = useMantineTheme();

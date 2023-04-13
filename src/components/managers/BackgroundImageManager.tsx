@@ -2,8 +2,15 @@ import { FC, useEffect } from "react";
 import { useDispatch } from "react-redux";
 
 import type { RootState } from "../../app/store/store";
-import { useAppSelector } from "../../app/hooks/useInterval";
+import { useAppSelector } from "../../app/hooks/store";
 import { setCurrentlyPlayingArtUrl } from "../../app/store/internalSlice";
+
+// ================================================================================================
+// Manage the setting of the currently-playing art URL in application state, based on whatever is
+// currently playing.
+//
+// Note: The actual background image rendering is done in <RootLayout>. This manager renders null.
+// ================================================================================================
 
 const BackgroundImageManager: FC = () => {
     const dispatch = useDispatch();

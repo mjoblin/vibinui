@@ -4,6 +4,10 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { Preset } from "../services/vibinPresets";
 import { updateIfDifferent } from "./helpers";
 
+// ================================================================================================
+// Application state for Presets.
+// ================================================================================================
+
 export interface PresetsState {
     start: number;
     end: number;

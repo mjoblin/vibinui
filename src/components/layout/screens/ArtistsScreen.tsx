@@ -6,6 +6,10 @@ import ArtistsControls from "../../features/artists/ArtistsControls";
 import ArtistsWall from "../../features/artists/ArtistsWall";
 import ScreenHeader from "../ScreenHeader";
 
+// ================================================================================================
+// Artists screen top-level layout.
+// ================================================================================================
+
 const ArtistsScreen: FC = () => {
     const { SCREEN_HEADER_HEIGHT } = useAppGlobals();
 

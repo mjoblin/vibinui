@@ -3,6 +3,10 @@ import { createStyles, MantineColor, Text } from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
+// ================================================================================================
+// A text label using the application's alternate font.
+// ================================================================================================
+
 type StylizedLabelProps = {
     color?: MantineColor;
     children: ReactNode;

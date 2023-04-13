@@ -1,6 +1,10 @@
 import React, { FC } from "react";
 import { Flex, MediaQuery, Text, useMantineTheme } from "@mantine/core";
 
+// ================================================================================================
+// Text label "showing {x} of {y} {type}" e.g. "showing 12 of 197 albums".
+// ================================================================================================
+
 type ShowCountLabelProps = {
     showing: number;
     of: number;

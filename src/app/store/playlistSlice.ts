@@ -4,6 +4,12 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { Playlist } from "../types";
 import { updateIfDifferent } from "./helpers";
 
+// ================================================================================================
+// Application state for the active streamer Playlist.
+//
+// Note: This is distinct from Stored Playlists.
+// ================================================================================================
+
 /**
  * TODO: Determine whether both store/playlistSlice and services/vibinPlaylist should coexists.
  *  Perhaps everything should be managed in services/vibinPlaylist.

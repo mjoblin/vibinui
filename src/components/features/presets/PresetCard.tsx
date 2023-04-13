@@ -12,12 +12,21 @@ import {
 } from "@mantine/core";
 
 import { Preset } from "../../../app/services/vibinPresets";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { IconPlayerPlay } from "@tabler/icons";
 import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import NoArtPlaceholder from "../../shared/NoArtPlaceholder";
+
+// ================================================================================================
+// A card representing a single Preset.
+//
+// Preset cards are different from Album/Track/Artist cards. Preset cards a simpler. They show the
+// Preset art along with some details and a play button. Since Preset cards also represent
+// non-local sources (such as Internet Radio), they're aware of the "connecting" state when preset
+// play is initiated.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     playPreset: {

@@ -1,6 +1,8 @@
+// ================================================================================================
 // NOTE: Most constants (especially ones that depend on React hooks) are defined in
-// useAppConstants(). This file contains mostly constants which need to be accessible from outside
-// the React flow.
+//  useAppConstants(). This file contains mostly constants which need to be accessible from outside
+//  the React flow.
+// ================================================================================================
 
 const { NODE_ENV, REACT_APP_USING_SSL_PROXY } = process.env;
 

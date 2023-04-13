@@ -2,7 +2,7 @@ import React, { FC, useCallback } from "react";
 import { ActionIcon, Box, Flex, Select, TextInput, Tooltip } from "@mantine/core";
 
 import { Album, Artist, MediaId, Track } from "../../../app/types";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     ArtistCollection,
     setArtistsActiveCollection,
@@ -20,6 +20,10 @@ import { useGetTracksQuery } from "../../../app/services/vibinTracks";
 import { IconHandFinger, IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
+
+// ================================================================================================
+// Controls for the <ArtistsWall>.
+// ================================================================================================
 
 const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();

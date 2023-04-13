@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { IconMoodSmile, IconRefresh } from "@tabler/icons";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useLazyClearMediaCachesQuery } from "../../../app/services/vibinVibin";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
@@ -29,6 +29,10 @@ import WebsocketIndicator from "../../shared/dataDisplay/WebsocketIndicator";
 import PlayStateIndicator from "../../shared/dataDisplay/PlayStateIndicator";
 import MediaSourceBadge from "../../shared/dataDisplay/MediaSourceBadge";
 import SelfUpdatingRelativeDate from "../../shared/dataDisplay/SelfUpdatingRelativeDate";
+
+// ================================================================================================
+// Status screen.
+// ================================================================================================
 
 const StatusScreen: FC = () => {
     const dispatch = useAppDispatch();

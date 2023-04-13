@@ -3,6 +3,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Artist, MediaId } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /artists endpoint.
+//
+// Features: Retrieve Artists.
+// ================================================================================================
+
 export const vibinArtistsApi = createApi({
     reducerPath: "vibinArtistsApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/artists" }),

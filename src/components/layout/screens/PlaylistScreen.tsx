@@ -3,7 +3,7 @@ import { Box, ScrollArea, Stack } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 import throttle from "lodash/throttle";
 
-import { useAppDispatch } from "../../../app/hooks/useInterval";
+import { useAppDispatch } from "../../../app/hooks/store";
 import { store } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { setPlaylistScrollPosition } from "../../../app/store/internalSlice";
@@ -11,6 +11,10 @@ import { setPlaylistFollowCurrentlyPlaying } from "../../../app/store/userSettin
 import Playlist from "../../features/playlist/Playlist";
 import PlaylistControls from "../../features/playlist/PlaylistControls";
 import ScreenHeader from "../ScreenHeader";
+
+// ================================================================================================
+// Playlist screen top-level layout.
+// ================================================================================================
 
 type WindowDimensions = {
     height: number;

@@ -2,7 +2,7 @@ import React, { FC } from "react";
 import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
 import { IconSquareX } from "@tabler/icons";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import {
@@ -18,6 +18,10 @@ import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import CardControls from "../../shared/buttons/CardControls";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
+
+// ================================================================================================
+// Controls for the <FavoritesWall>.
+// ================================================================================================
 
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();

@@ -4,6 +4,10 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { Album, Artist, Track } from "../types";
 import { CurrentTrackTab } from "../../components/layout/screens/CurrentTrackScreen";
 
+// ================================================================================================
+// Application state for user settings.
+// ================================================================================================
+
 export const minCardGap = 0;
 export const maxCardGap = 50;
 export const minCardSize = 100;

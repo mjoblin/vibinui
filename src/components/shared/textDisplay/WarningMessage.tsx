@@ -2,6 +2,10 @@ import React, { FC } from "react";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
 
+// ================================================================================================
+// Warning message with an alert icon.
+// ================================================================================================
+
 type WarningMessageProps = {
     message: string;
 };

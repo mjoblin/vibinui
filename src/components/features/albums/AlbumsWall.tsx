@@ -6,11 +6,15 @@ import type { RootState } from "../../../app/store/store";
 import AlbumCard from "./AlbumCard";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import SadLabel from "../../shared/textDisplay/SadLabel";
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { collectionFilter } from "../../../app/utils";
+
+// ================================================================================================
+// Show a wall of Album art. Reacts to display properties configured via <AlbumsControls>.
+// ================================================================================================
 
 type AlbumWallProps = {
     onNewCurrentAlbumRef: (ref: RefObject<HTMLDivElement>) => void;

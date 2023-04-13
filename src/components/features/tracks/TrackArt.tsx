@@ -10,10 +10,20 @@ import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import NoArtPlaceholder from "../../shared/NoArtPlaceholder";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 
+// ================================================================================================
+// Show the art for a Track.
+//
+// Contents:
+//  - Art image
+//  - Optional overlays:
+//      - <MediaActionsButton>; actions can be enabled/disabled as via enabledActions prop.
+//      - Play button.
+//
 // NOTE: TrackArt and AlbumArt are very similar.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     trackArtContainer: {

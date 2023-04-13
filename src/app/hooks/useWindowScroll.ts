@@ -1,11 +1,15 @@
+import { useEffect } from "react";
+import { useDebouncedState, useWindowEvent } from "@mantine/hooks";
+
+// ================================================================================================
+// Provide access to window scroll information.
+//
 // This is mostly taken from Mantine's useWindowScroll():
 //  https://github.com/mantinedev/mantine/blob/master/src/mantine-hooks/src/use-window-scroll/use-window-scroll.ts
 //
-// This exists to add support for debouncing the window scroll events, and to use "auto" (instant)
-// scroll behavior (instead of "smooth").
-
-import { useEffect } from "react";
-import { useDebouncedState, useWindowEvent } from "@mantine/hooks";
+// This hook exists to add support for debouncing the window scroll events, and to use "auto"
+// (instant) scroll behavior (instead of "smooth").
+// ================================================================================================
 
 interface ScrollPosition {
     x: number;

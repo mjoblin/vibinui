@@ -1,7 +1,7 @@
 import React, { FC, RefObject, useCallback, useEffect, useState } from "react";
 import { Box, Stack } from "@mantine/core";
 
-import { useAppDispatch, useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../../app/store/userSettingsSlice";
@@ -10,6 +10,10 @@ import { setAlbumsScrollPosition } from "../../../app/store/internalSlice";
 import AlbumsControls from "../../features/albums/AlbumsControls";
 import AlbumsWall from "../../features/albums/AlbumsWall";
 import ScreenHeader from "../ScreenHeader";
+
+// ================================================================================================
+// Albums screen top-level layout.
+// ================================================================================================
 
 const AlbumsScreen: FC = () => {
     const dispatch = useAppDispatch();

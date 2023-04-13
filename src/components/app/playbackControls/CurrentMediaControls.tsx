@@ -2,10 +2,19 @@ import React, { FC } from "react";
 import { Flex } from "@mantine/core";
 
 import type { RootState } from "../../../app/store/store";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import Codec from "./currentMedia/Codec";
 import FormatBadges from "./currentMedia/FormatBadges";
 import Playhead from "./currentMedia/Playhead";
+
+// ================================================================================================
+// Controls for the currently-playing media.
+//
+// Contents:
+//  - Playhead.
+//  - Media format(s).
+//  - Codec information.
+// ================================================================================================
 
 type CurrentMediaControlsProps = {
     playheadWidth?: number;

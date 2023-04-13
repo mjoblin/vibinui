@@ -9,9 +9,12 @@ import DiscogsLogoImage from "../../../assets/images/discogs_logo.svg";
 import GeniusLogoImage from "../../../assets/images/genius_logo.png";
 import RateYourMusicImage from "../../../assets/images/rateyourmusic_logo.png";
 
-// TODO: This component should take a track, but the current_track in Redux doesn't contain the
-//  trackId. So instead the component expects *either* a trackId *or* artist and title.
-
+// ================================================================================================
+// Show buttons to external sources relevant to the provided Track.
+//
+// Accepts either a track id (for local media) or an artist/title pair (for alternate sources like
+// AirPlay). Lyrics can be marked as invalid, or can be re-retrieved from the backend.
+// ================================================================================================
 
 const DiscogsLogo: FC = () => {
     return <Image src={DiscogsLogoImage} width="fit-content" height={20} radius={3} />;

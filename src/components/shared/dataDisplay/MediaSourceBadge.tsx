@@ -2,8 +2,14 @@ import React, { FC } from "react";
 import { Badge } from "@mantine/core";
 
 import { MediaSourceClass } from "../../../app/types";
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
+
+// ================================================================================================
+// Badge showing the current Media Source. Each Media Source has its own badge color. The AirPlay
+// Media Source also shows the name of the source providing the AirPlay stream (e.g. a laptop or
+// phone).
+// ================================================================================================
 
 const sourceClassToColor: Record<MediaSourceClass, string> = {
     "stream.radio": "red",

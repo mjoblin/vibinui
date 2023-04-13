@@ -12,12 +12,22 @@ import {
 import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { useLazyPowerToggleQuery, useLazySetSourceQuery } from "../../app/services/vibinSystem";
 import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { showSuccessNotification } from "../../app/utils";
 import { PowerStatus } from "../../app/store/systemSlice";
 import { AudioSource } from "../../app/store/playbackSlice";
+
+// ================================================================================================
+// Application settings.
+//
+// Contents:
+//  - Streamer power switch.
+//  - Media Source selector.
+//  - Dark/light mode toggle.
+//  - Access application-wide modals (keyboard shortcuts, debug).
+// ================================================================================================
 
 const SettingsMenu: FC = () => {
     const dispatch = useAppDispatch();

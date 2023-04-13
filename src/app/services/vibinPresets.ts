@@ -2,6 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /presets endpoint.
+//
+// Features: Retrieve and play Presets.
+// ================================================================================================
+
 export type PresetId = number;
 
 export type PresetType = "Radio" | "UPnP";

@@ -3,6 +3,10 @@ import { Popover, Stack, Text, ThemeIcon, useMantineTheme } from "@mantine/core"
 import { useDisclosure } from "@mantine/hooks";
 import { IconQuestionMark } from "@tabler/icons";
 
+// ================================================================================================
+// A popover describing the supported syntax of the screen filter input text.
+// ================================================================================================
+
 type FilterInstructionsProps = {
     defaultKey: string;
     supportedKeys?: string[];

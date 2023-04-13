@@ -2,6 +2,12 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 import { API_REFRESH_INTERVAL } from "../constants";
 
+// ================================================================================================
+// Interact with the vibin backend's /system endpoint.
+//
+// Features: Toggle power on/off, set media source.
+// ================================================================================================
+
 export const vibinSystemApi = createApi({
     reducerPath: "vibinSystemApi",
     baseQuery: fetchBaseQuery({ baseUrl: "/system" }),

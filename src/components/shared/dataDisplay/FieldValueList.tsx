@@ -1,6 +1,10 @@
 import React, { FC, ReactNode } from "react";
 import { createStyles } from "@mantine/core";
 
+// ================================================================================================
+// Display an object of keys/fields and values as a two-column table.
+// ================================================================================================
+
 interface FieldValueListProps {
     fieldValues: {
         [key: string]: string | number | boolean | ReactNode;

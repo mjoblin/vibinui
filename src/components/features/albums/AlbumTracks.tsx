@@ -10,6 +10,16 @@ import AppendToPlaylistButton from "./AppendToPlaylistButton";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 
+// ================================================================================================
+// Show all the Tracks associated with the given Album.
+//
+// Contains:
+//  - Album summary.
+//  - List of Tracks.
+//  - Each Track has a <MediaActionsButton>.
+//  - One-click option to append a Track to the Playlist.
+// ================================================================================================
+
 const DIMMED = "#808080";
 
 const useStyles = createStyles((theme) => ({

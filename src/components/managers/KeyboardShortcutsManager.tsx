@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Modal, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 
-import { useAppDispatch, useAppSelector } from "../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { RootState } from "../../app/store/store";
 import {
     useNextTrackMutation,
@@ -17,6 +17,11 @@ import { setShowCurrentTrackLyrics, setShowKeyboardShortcuts } from "../../app/s
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 
 const SEEK_OFFSET_SECS = 10;
+
+// ================================================================================================
+// Manage the application-wide keyboard shortcuts. Listen for hotkey triggers, and display the
+// information about the shortcuts when requested.
+// ================================================================================================
 
 const KeyboardShortcutsManager: FC = () => {
     const dispatch = useAppDispatch();

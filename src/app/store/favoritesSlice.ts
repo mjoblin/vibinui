@@ -5,6 +5,10 @@ import { MediaId } from "../types";
 import { Favorite } from "../services/vibinFavorites";
 import { updateIfDifferent } from "./helpers";
 
+// ================================================================================================
+// Application state for Favorites.
+// ================================================================================================
+
 export interface FavoritesState {
     favorites: Favorite[];
     favoriteAlbumMediaIds: MediaId[];

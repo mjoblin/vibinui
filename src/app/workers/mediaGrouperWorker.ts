@@ -1,5 +1,13 @@
 import { Album, Artist, Track } from "../types";
 
+// ================================================================================================
+// A web worker for generating media groupings without blocking the main UI thread.
+//
+// Media groupings take existing Album/Track/etc data, and munge it into new shapes to make it
+// easier for the UI to answer questions like "what is the Album by this id", or "what are all
+// the Albums by this Artist".
+// ================================================================================================
+
 type MediaGrouperMessageType =
     | "albumById"
     | "allAlbumsByArtistName"

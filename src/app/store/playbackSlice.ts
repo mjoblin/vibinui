@@ -4,10 +4,11 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import { Format, MediaId, MediaSourceClass, Stream, Track } from "../types";
 import { updateIfDifferent } from "./helpers";
 
-/**
- * The Playback slice is intended to contain information about the current playback status of the
- * streamer. e.g. Whether it's playing or not; what the current track is; etc.
- */
+// ================================================================================================
+// Application state for the current streamer playback status. (Current play status, playhead
+// position, currently-valid transport actions, current track and album ids, active media source,
+// etc).
+// ================================================================================================
 
 export type PlayStatus =
     | "buffering"

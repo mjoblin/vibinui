@@ -22,10 +22,24 @@ import KeyboardShortcutsManager from "../managers/KeyboardShortcutsManager";
 import TrackLyricsModal from "../features/tracks/TrackLyricsModal";
 import WelcomeMessage from "../app/WelcomeMessage";
 import { RootState } from "../../app/store/store";
-import { useAppDispatch, useAppSelector } from "../../app/hooks/useInterval";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../app/store/internalSlice";
 import { setApplicationHaveShownWelcomeMessage } from "../../app/store/userSettingsSlice";
+
+// ================================================================================================
+// Root application layout.
+//
+// Contents:
+//  - The main application shell (which holds the header, navigation, and active feature/screen).
+//  - The background image based on currently-playing art (for Current Track and Playlist screens).
+//  - Occasional components which want to render on top of the base application:
+//      - Keyboard shortcuts.
+//      - Debug panel.
+//      - Lyrics modal for currently-playing Track.
+//      - Overlay when reconnecting to a disconnected websocket.
+//      - Welcome message for first-time users.
+// ================================================================================================
 
 const useStyles = createStyles((theme) => ({
     artBackground: {

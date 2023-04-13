@@ -1,12 +1,23 @@
 import React, { FC } from "react";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
 
-import { useAppSelector } from "../../../app/hooks/useInterval";
+import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import TransportControls from "./TransportControls";
 import CurrentMediaControls from "./CurrentMediaControls";
 import CurrentMediaDetails from "./CurrentMediaDetails";
+
+// ================================================================================================
+// Top-level playback controls.
+//
+// Contents:
+//  - Transport controls (play/pause, prev/next, shuffle, repeat).
+//  - Media controls for the current track (playhead, codec details, etc).
+//  - Details on the current track (art, title, artist).
+//  - Replaces controls with message if playback controls don't make sense given the current play
+//    status.
+// ================================================================================================
 
 const PlaybackControls: FC = () => {
     const { colors } = useMantineTheme();
