@@ -1,61 +1,153 @@
-# NOTES
+# vibinui
 
-To enable support for running the UI behind an SSL reverse proxy, build the app with:
+`vibinui` is a browser-based UI for [StreamMagic] audio streamers. `vibinui` also requires
+installation of the `vibin` backend.
 
-```base
-REACT_APP_USING_SSL_PROXY=true npm run build
-```
+Vibin was developed for one person's specific music streaming needs (mine). It should however work
+for anyone with a StreamMagic streamer, but has only been tested with the following:
 
-Using `@hello-pangea/dnd` instead of `react-beautiful-dnd` due to issue outlined
-[here](https://stackoverflow.com/a/72355197).
+* Cambridge Audio CXNv2 streamer.
+* Local media stored on a NAS running [Asset UPnP].
+* AirPlay running on a Mac.
 
-The `react-visibility-sensor` dependency is causing `findDOMNode is deprecated in StrictMode`
-warnings. See the GibHub issues [141](https://github.com/joshwnj/react-visibility-sensor/pull/141)
-and [142](https://github.com/joshwnj/react-visibility-sensor/pull/142).
+Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
+features such as browsing internet radio, and has no support for TIDAL or Qobuz.
 
-# Getting Started with Create React App
+![Vibin]
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Installation
 
-## Available Scripts
+See the [Vibin backend documentation] for information on how to install both the backend and this
+UI.
 
-In the project directory, you can run:
+## Developers
 
-### `npm start`
+See the [Developers README] for more information.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Features
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
-### `npm test`
+Vibin supports:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+* **Currently-playing information**
+  * Lyrics
+  * Waveform
+  * Links to external sites
+* **Playlists**
+  * View the active playlist
+  * Modify the active playlist
+  * Save and switch between playlists
+* **Browse local media**
+  * Artists, Albums, Tracks
+  * Search by title, date, genre, etc.
+  * Search for lyrics
+  * Find the currently-playing track
+* **Presets** (like internet radio)
+* **Favorites**
 
-### `npm run build`
+### Currently-playing information
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+#### Lyrics
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+![Current track lyrics]
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+#### Lyrics from AirPlay source
 
-### `npm run eject`
+![Current track airplay]
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### Waveform
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![Current track waveform]
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Playlists
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+#### Detailed view
 
-## Learn More
+![Playlist detailed view]
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### Summary view
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+![Playlist summary view]
+
+#### Playlist entry actions
+
+![Playlist entry actions]
+
+#### Playlist management
+
+![Playlist manager]
+
+### Browse local media
+
+#### View all albums
+
+![Albums]
+
+#### View albums as a tiny wall
+
+![Albums tiny wall]
+
+#### Filter tracks by title
+
+![Tracks filtered by title]
+
+#### Filter tracks by lyrics
+
+![Tracks filtered by lyrics]
+
+### Presets
+
+![Presets]
+
+### Favorites
+
+![Favorites]
+
+### General features
+
+#### Media filtering
+
+![Media filtering]
+
+#### Art card display settings
+
+![Art card display settings]
+
+#### Input switching
+
+![Input Switching]
+
+[//]: # "--- Links -------------------------------------------------------------------------------"
+
+[StreamMagic]: https://www.cambridgeaudio.com/row/en/products/streammagic
+[Asset UPnP]: https://dbpoweramp.com/asset-upnp-dlna.htm
+[Vibin]: ../media/vibin/images/playlist_detailed.jpg
+[overview video]: ../media/vibin/video/vibin.mp4
+[Vibin backend documentation]: https://github.com/mjoblin/vibin
+[Developers README]: README_DEV.md
+[Current track lyrics]: ../media/vibin/images/current_lyrics.jpg
+[Current track AirPlay]: ../media/vibin/images/current_airplay.jpg
+[Current track waveform]: ../media/vibin/images/current_waveform.jpg
+[Playlist detailed view]: ../media/vibin/images/playlist_detailed.jpg
+[Playlist summary view]: ../media/vibin/images/playlist_summary.jpg
+[Playlist entry actions]: ../media/vibin/images/playlist_entry_actions.jpg
+[Playlist manager]: ../media/vibin/images/playlist_manager.jpg
+[Albums]: ../media/vibin/images/albums.jpg
+[Albums tiny wall]: ../media/vibin/images/albums_tiny_wall.jpg
+[Tracks filtered by lyrics]: ../media/vibin/images/tracks_filtered_happy.jpg
+[Tracks filtered by title]: ../media/vibin/images/tracks_filtered_love.jpg
+[Favorites]: ../media/vibin/images/favorites.jpg
+[Presets]: ../media/vibin/images/presets.jpg
+[Media filtering]: ../media/vibin/images/general_search.jpg
+[Art card display settings]: ../media/vibin/images/general_card_display.jpg
+[Input Switching]: ../media/vibin/images/general_input_switching.jpg
+
+[//]: # "--- Styles ------------------------------------------------------------------------------"
+
+<style>
+img[alt="Playlist entry actions"] { width: 250px }
+img[alt="Media filtering"] { width: 400px }
+img[alt="Art card display settings"] { width: 250px }
+img[alt="Input Switching"] { width: 200px }
+</style>
