@@ -1,5 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useState, useEffect } from "react";
 import {
+    Box,
     Button,
     Center,
     Checkbox,
@@ -8,6 +9,7 @@ import {
     Stack,
     Table,
     Text,
+    TextInput,
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
@@ -15,11 +17,16 @@ import { IconMoodSmile, IconRefresh } from "@tabler/icons";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { RootState } from "../../app/store/store";
-import { useLazyClearMediaCachesQuery } from "../../app/services/vibinVibin";
+import {
+    useLazyClearMediaCachesQuery,
+    useLazySettingsQuery,
+    useLazyUpdateSettingsQuery,
+    VibinSettings,
+} from "../../app/services/vibinVibin";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibinAlbums";
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
-import { showSuccessNotification } from "../../app/utils";
+import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import { setApplicationUseImageBackground } from "../../app/store/userSettingsSlice";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
@@ -37,6 +44,7 @@ import SelfUpdatingRelativeDate from "../shared/dataDisplay/SelfUpdatingRelative
 //  - User settings
 //  - Web application status
 //  - Device information
+//  - Media paths
 //  - Server (backend) status
 // ================================================================================================
 
@@ -63,6 +71,50 @@ const StatusScreen: FC = () => {
     const { useImageBackground } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );
+    const [getSettings, getSettingsResult] = useLazySettingsQuery();
+    const [updateSettings, updateSettingsResult] = useLazyUpdateSettingsQuery();
+    const [allAlbumsPath, setAllAlbumsPath] = useState<string>()
+    const [newAlbumsPath, setNewAlbumsPath] = useState<string>()
+    const [allArtistsPath, setAllArtistsPath] = useState<string>();
+
+    /**
+     * Retrieve the current settings when the component mounts.
+     */
+    useEffect(() => {
+        getSettings();
+    }, [getSettings]);
+
+    /**
+     * When the current settings are received, set their values in component state to drive the
+     * input field values.
+     */
+    useEffect(() => {
+        if (getSettingsResult.isFetching) {
+            return;
+        } else if (getSettingsResult.isSuccess) {
+            setAllAlbumsPath(getSettingsResult.data.all_albums_path);
+            setNewAlbumsPath(getSettingsResult.data.new_albums_path);
+            setAllArtistsPath(getSettingsResult.data.all_artists_path);
+        } else if (getSettingsResult.isError) {
+            showErrorNotification({ title: "Could not retrieve media path details" });
+        }
+    }, [getSettingsResult]);
+
+    /**
+     * When the settings are updated, notify the user of success/error. If it was successful then
+     * call getSettings() again to reset the local state to the new settings values.
+     */
+    useEffect(() => {
+        if (updateSettingsResult.isFetching) {
+            return;
+        } else if (updateSettingsResult.isSuccess) {
+            showSuccessNotification({ title: "Media path details updated" });
+            getSettings();
+        }
+        else if (updateSettingsResult.isError) {
+            showErrorNotification({ title: "Could not update media path details" });
+        }
+    }, [updateSettingsResult, getSettings]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -77,7 +129,7 @@ const StatusScreen: FC = () => {
                     <Checkbox
                         checked={useImageBackground}
                         label="Show art image background in Now Playing screens (dark mode only)"
-                        onClick={() =>
+                        onChange={() =>
                             dispatch(setApplicationUseImageBackground(!useImageBackground))
                         }
                     />
@@ -132,7 +184,7 @@ const StatusScreen: FC = () => {
                             rowHeight={1.3}
                             fieldValues={{
                                 Streamer: streamer.name || "",
-                                Media: mediaDevice.name || "",
+                                "Media Server": mediaDevice.name || "",
                                 "Play State": <PlayStateIndicator />,
                                 Source: <MediaSourceBadge />,
                             }}
@@ -158,6 +210,118 @@ const StatusScreen: FC = () => {
                             Refresh Media
                         </Button>
                     </Flex>
+                </Stack>
+            </Paper>
+
+            {/* Media paths -------------------------------------------------------------------- */}
+
+            <Paper pt={5} p={15} shadow="xs">
+                <Stack spacing={10}>
+                    <StylizedLabel color={colors.dark[3]}>media paths</StylizedLabel>
+                    <Text size="sm" color={colors.dark[2]}>
+                        Where to find media on the Media Server{" "}
+                        {mediaDevice.name && `(${mediaDevice.name})`}. Track details  will be
+                        retrieved from the All Albums path.
+                    </Text>
+                    <Text size="sm" weight="bold" color={colors.dark[2]}>
+                        After changing paths, click "Refresh Media" above to force a refresh.
+                    </Text>
+
+                    <Stack spacing={10} pt={10}>
+                        {/* All Albums */}
+                        <Flex gap={10} align="center">
+                            <Flex w="6rem" justify="flex-end">
+                                <Text size="sm" color={colors.dark[3]}>
+                                    All Albums
+                                </Text>
+                            </Flex>
+                            <Box w="20rem">
+                                <TextInput
+                                    disabled={getSettingsResult.isFetching}
+                                    value={allAlbumsPath}
+                                    onChange={(event) =>
+                                        setAllAlbumsPath(event.currentTarget.value)
+                                    }
+                                    onBlur={() => {
+                                        if (
+                                            allAlbumsPath ===
+                                            getSettingsResult?.data?.all_albums_path
+                                        ) {
+                                            return;
+                                        }
+
+                                        updateSettings({
+                                            ...getSettingsResult.data,
+                                            all_albums_path: allAlbumsPath,
+                                        } as VibinSettings);
+                                    }}
+                                />
+                            </Box>
+                        </Flex>
+
+                        {/* New Albums */}
+                        <Flex gap={10} align="center">
+                            <Flex w="6rem" justify="flex-end">
+                                <Text size="sm" color={colors.dark[3]}>
+                                    New Albums
+                                </Text>
+                            </Flex>
+                            <Box w="20rem">
+                                <TextInput
+                                    disabled={getSettingsResult.isFetching}
+                                    value={newAlbumsPath}
+                                    onChange={(event) =>
+                                        setNewAlbumsPath(event.currentTarget.value)
+                                    }
+                                    onBlur={() => {
+                                        if (
+                                            newAlbumsPath ===
+                                            getSettingsResult?.data?.new_albums_path
+                                        ) {
+                                            return;
+                                        }
+
+                                        updateSettings({
+                                            ...getSettingsResult.data,
+                                            new_albums_path: newAlbumsPath,
+                                        } as VibinSettings);
+                                    }}
+                                />
+                            </Box>
+                        </Flex>
+
+                        {/* All Artists */}
+                        <Flex gap={10} align="center">
+                            <Flex w="6rem" justify="flex-end">
+                                <Text size="sm" color={colors.dark[3]}>
+                                    All Artists
+                                </Text>
+                            </Flex>
+                            <Box w="20rem">
+                                <TextInput
+                                    disabled={getSettingsResult.isFetching}
+                                    value={allArtistsPath}
+                                    onChange={(event) =>
+                                        setAllArtistsPath(event.currentTarget.value)
+                                    }
+                                    onBlur={() => {
+                                        if (
+                                            allArtistsPath ===
+                                            getSettingsResult?.data?.all_artists_path
+                                        ) {
+                                            return;
+                                        }
+
+                                        updateSettings({
+                                            ...getSettingsResult.data,
+                                            all_artists_path: allArtistsPath,
+                                        } as VibinSettings);
+                                    }}
+                                />
+                            </Box>
+
+                        </Flex>
+                    </Stack>
                 </Stack>
             </Paper>
 

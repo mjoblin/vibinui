@@ -1,4 +1,5 @@
 import React, { FC, RefObject, useEffect, useRef, useState } from "react";
+import { QueryStatus } from "@reduxjs/toolkit/query";
 import { Box, Center, createStyles, Loader } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
@@ -33,7 +34,7 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
-    const { data: allTracks, error, isLoading } = useGetTracksQuery();
+    const { data: allTracks, error, isLoading, status: allTracksStatus } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] = useSearchLyricsMutation();
     const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
@@ -68,6 +69,13 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
      * of any lyrics search.
      */
     useEffect(() => {
+        if (allTracksStatus === QueryStatus.rejected) {
+            // Inability to retrieve All Tracks is considered a significant-enough problem to stop
+            // trying to proceed.
+            setCalculatingTracksToDisplay(false);
+            return;
+        }
+
         if (!allTracks || allTracks.length <= 0) {
             return;
         }
@@ -97,6 +105,7 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         setCalculatingTracksToDisplay(false);
     }, [
         allTracks,
+        allTracksStatus,
         tracksMatchingLyrics,
         filterText,
         debouncedFilterText,
@@ -110,6 +119,19 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
+            </Center>
+        );
+    }
+
+    if (allTracksStatus === QueryStatus.rejected) {
+        return (
+            <Center pt="xl">
+                <SadLabel
+                    label={
+                        "Could not locate All Tracks. Is the Media Server path for All Albums " +
+                        "(where Track details are derived from) correct?"
+                    }
+                />
             </Center>
         );
     }

@@ -1,10 +1,10 @@
 import React, { FC, RefObject, useEffect, useRef, useState } from "react";
+import { QueryStatus } from "@reduxjs/toolkit/query";
 import { Box, Center, createStyles, Loader } from "@mantine/core";
 
 import { Album } from "../../../app/types";
 import type { RootState } from "../../../app/store/store";
 import AlbumCard from "./AlbumCard";
-import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
@@ -31,8 +31,18 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
-    const { data: allAlbums, error: allError, isLoading: allIsLoading } = useGetAlbumsQuery();
-    const { data: newAlbums, error: newError, isLoading: newIsLoading } = useGetNewAlbumsQuery();
+    const {
+        data: allAlbums,
+        error: allError,
+        isLoading: allIsLoading,
+        status: allStatus,
+    } = useGetAlbumsQuery();
+    const {
+        data: newAlbums,
+        error: newError,
+        isLoading: newIsLoading,
+        status: newStatus,
+    } = useGetNewAlbumsQuery();
     const [calculatingAlbumsToDisplay, setCalculatingAlbumsToDisplay] = useState<boolean>(true);
     const [albumsToDisplay, setAlbumsToDisplay] = useState<Album[]>([]);
 
@@ -44,6 +54,14 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
             paddingBottom: 15,
         },
     }))();
+
+    useEffect(() => {
+        setCalculatingAlbumsToDisplay(true);
+    }, [activeCollection]);
+
+    useEffect(() => {
+        setCalculatingAlbumsToDisplay(false);
+    }, [albumsToDisplay]);
 
     /**
      * Inform the caller of the currentAlbumRef on mount. The currentAlbumRef will be attached to
@@ -59,9 +77,18 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
      * Albums" selection, and any filter text
      */
     useEffect(() => {
-        if (!allAlbums || allAlbums.length <= 0) {
+        if (allStatus === QueryStatus.rejected) {
+            // Inability to retrieve All Albums is considered a significant-enough problem to stop
+            // trying to proceed. Inability to retrieve New Albums isn't as severe.
+            setCalculatingAlbumsToDisplay(false);
             return;
         }
+
+        if (!allAlbums) {
+            return;
+        }
+
+        setCalculatingAlbumsToDisplay(true);
 
         // Decide which collection to show. This will either be all albums; new albums; or just the
         // album currently playing.
@@ -73,12 +100,11 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
 
         dispatch(setFilteredAlbumMediaIds(albumsToDisplay.map((album) => album.id)));
         setAlbumsToDisplay(albumsToDisplay);
-        setCalculatingAlbumsToDisplay(false);
-    }, [allAlbums, newAlbums, filterText, activeCollection, dispatch]);
+    }, [allAlbums, allStatus, newAlbums, filterText, activeCollection, dispatch]);
 
     // --------------------------------------------------------------------------------------------
 
-    if (calculatingAlbumsToDisplay) {
+    if (calculatingAlbumsToDisplay || allIsLoading || newIsLoading) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
@@ -86,10 +112,18 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         );
     }
 
-    if ((activeCollection === "all" && allIsLoading) || (activeCollection === "new" && newIsLoading)) {
+    if (allStatus === QueryStatus.rejected) {
         return (
-            <Center pt={SCREEN_LOADING_PT}>
-                <LoadingDataMessage message="Retrieving albums..." />
+            <Center pt="xl">
+                <SadLabel label="Could not locate All Albums. Is the Media Server path correct?" />
+            </Center>
+        );
+    }
+
+    if (activeCollection === "new" && newStatus === QueryStatus.rejected) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="Could not locate New Albums. Is the Media Server path correct?" />
             </Center>
         );
     }
@@ -97,7 +131,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     if ((activeCollection === "all" && allError) || (activeCollection === "new" && newError)) {
         return (
             <Center pt="xl">
-                <SadLabel label="Could not retrieve album details" />
+                <SadLabel label="Error retrieving Album details" />
             </Center>
         );
     }
