@@ -1,4 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
+import { QueryStatus } from "@reduxjs/toolkit/query";
 import {
     Box,
     Center,
@@ -67,7 +68,7 @@ const ArtistsWall: FC = () => {
     const dispatch = useAppDispatch();
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, SCREEN_LOADING_PT, SCROLL_POS_DISPATCH_RATE } =
         useAppGlobals();
-    const { data: allArtists, error, isLoading } = useGetArtistsQuery();
+    const { data: allArtists, error, isLoading, status: allArtistsStatus } = useGetArtistsQuery();
     const { data: allTracks } = useGetTracksQuery();
     const { activeCollection, selectedAlbum, selectedArtist, selectedTrack, viewMode } =
         useAppSelector((state: RootState) => state.userSettings.artists);
@@ -115,6 +116,13 @@ const ArtistsWall: FC = () => {
      *      (the ArtistsControls will have set this artist in application state).
      */
     useEffect(() => {
+        if (allArtistsStatus === QueryStatus.rejected) {
+            // Inability to retrieve All Artists is considered a significant-enough problem to stop
+            // trying to proceed.
+            setCalculatingArtistsToDisplay(false);
+            return;
+        }
+
         if (!allArtists) {
             return;
         }
@@ -136,7 +144,7 @@ const ArtistsWall: FC = () => {
         dispatch(setFilteredArtistMediaIds(artistsToDisplay.map((artist) => artist.id)));
         setArtistsToDisplay(artistsToDisplay);
         setCalculatingArtistsToDisplay(false);
-    }, [allArtists, filterText, activeCollection, artistIdsWithAlbums, dispatch]);
+    }, [allArtists, allArtistsStatus, filterText, activeCollection, artistIdsWithAlbums, dispatch]);
 
     /**
      * Determine which Artists have at least one album.
@@ -298,6 +306,14 @@ const ArtistsWall: FC = () => {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
+            </Center>
+        );
+    }
+
+    if (allArtistsStatus === QueryStatus.rejected) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="Could not locate All Artists. Is the Media Server path correct?" />
             </Center>
         );
     }
