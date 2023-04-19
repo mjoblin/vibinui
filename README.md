@@ -1,4 +1,4 @@
-# vibinui
+# `vibinui`
 
 `vibinui` is a browser-based UI for [StreamMagic] audio streamers. `vibinui` also requires
 installation of the `vibin` backend.
