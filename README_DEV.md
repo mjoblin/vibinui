@@ -133,29 +133,32 @@ the streamer itself.
 or from the streamer being interacted with in person.** This is considered a feature.
 
 One exception is changes made to the media on the NAS, which are not announced over the WebSocket.
-To get those updates, a Vibin UI needs to request a refresh of its Album/Track/Artist data (which
-can be done from the Settings screen).
+To get those updates, a Vibin UI instance needs to request a refresh of its Album/Track/Artist data
+(which can be done from the Settings screen).
 
 ### WebSocket messages
 
 The UI receives most of its runtime information over a persistent WebSocket connection to the
-backend. These messages are used to make updates to application state (Redux).
-
-When the UI's WebSocket connection is established, **the back-end will send a batch of messages**
-(one each of most types) so the UI will know the current state of everything.
-
-Subsequent messages of a given type are usually being sent because something has **changed** (e.g.
-a Playlist Entry was added; a new Stored Playlist was created, a Track was favorited, etc).
-
-WebSocket messages usually describe **the entire state of the data the message represents**. For
-example, the `Favorites` message always lists all Favorites, not just the latest _change_ to the
-Favorites. This means the UI can always rely on a message providing all the information it needs,
-at the expense of larger messages (and not necessarily knowing exactly what has changed, just that
-a change has occurred).
+backend. These messages are used to make updates to application state (Redux), which then drives UI
+updates.
 
 > *NOTE:* To see all the messages, open the developer tools in a new browser tab and load the
-> application. The Network tab's WS (WebSocket) filter can then be used to view all incoming
+> Vibin application. The Network tab's WebSocket filter can then be used to view all incoming
 > messages.
+
+When the UI's WebSocket connection is first established, **the back-end will send a batch of
+messages** (one each of most types) so the UI will know the current state of everything.
+
+From that point on, subsequent messages of a given type are usually being sent only because
+something has **changed** (e.g. a Playlist Entry was added; a new Stored Playlist was created, a
+Track was favorited, etc).
+
+However, even though messages are usually being sent because something has _changed_, the message
+itself will usually describe **the entire state of the data the message represents**. For example,
+the `Favorites` message always describes _all_ Favorites, not just the latest _change_ to the
+Favorites. This means the UI can always rely on a message providing all the information it needs,
+at the expense of larger messages -- and not necessarily knowing exactly what has changed (just
+that a change has occurred).
 
 #### Example message
 
@@ -210,8 +213,9 @@ The following message types are received:
 
 #### Common message-based data flow
 
-There are two causes for a message being received by the UI: The backend is automatically announcing
-something unrelated to user input; or the backend is responding to something the user has done.
+There are two primary causes for a message being received by the UI: The backend is automatically
+announcing something unrelated to user input; or the backend is responding to something the user
+has done.
 
 ##### Automatic
 
@@ -223,24 +227,27 @@ messages announcing playhead updates, or announcing when the track has changed.
 Sometimes a user action will trigger one or more messages from the backend. A common sequence of
 events is:
 
-1. The user does something (e.g. clicks "pause").
-2. A REST API call is made to perform the pause on the backend.
-3. The backend sends a WebSocket message to all clients, announcing the new pause state.
-4. The UI's `vibinWebsocket.ts` receives this message and updates the application state
+1. The user does something in the UI (e.g. clicks "pause").
+1. The UI makes a REST API call to the backend to act on the pause request.
+1. The backend instructs the streamer to pause.
+1. The backend sends a WebSocket message to all clients, announcing the new pause state.
+1. The UI's `vibinWebsocket.ts` receives this message and updates the application state
    appropriately.
-5. The new application state drives visual updates to the UI.
+1. The new application state drives a visual update in the UI (changing the play/pause icon).
 
-This means that the code running in response to a user action does not know anything about what
-will happen as a result of that action, nor is it responsible for updating the UI accordingly. A
-downside to this is that it may not be obvious exactly what will happen next (it depends entirely
-on how the backend responds, and what message(s) it ends up sending back).
+This means that **the UI code running in response to a user action does not control what will
+happen in the UI as a result of that action** (that will happen later after the response message is
+received). A downside to this is that it may not be obvious -- when looking at the code which
+triggers an action (i.e. #1 above) -- exactly what will happen next, as that depends entirely on
+how the backend responds, and what message(s) it ends up sending back.
 
 ### REST API calls
 
 The UI also makes REST calls, usually to trigger an action on the backend -- or to bulk-retrieve 
 information it won't receive over the WebSocket (such as full Album/Track/Artist information).
 
-The REST API documentation is available at the backend's `http://<host>:7669/docs` endpoint.
+The REST API documentation is available at the backend's `http://<host>:7669/docs` endpoint, and
+the UI's API handlers are found under `src/app/services/`.
 
 ## Additional notes
 
