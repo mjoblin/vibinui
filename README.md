@@ -1,6 +1,6 @@
 # `vibinui`
 
-`vibinui` is a browser-based UI for [StreamMagic] audio streamers. `vibinui` also requires
+`vibinui` is a browser-based application for [StreamMagic] audio streamers. `vibinui` also requires
 installation of the `vibin` backend.
 
 Vibin was developed for one person's specific music streaming needs (mine). It should however work
@@ -9,6 +9,7 @@ for anyone with a StreamMagic streamer, but has only been tested with the follow
 * Cambridge Audio CXNv2 streamer.
 * Local media stored on a NAS running [Asset UPnP].
 * AirPlay running on a Mac.
+* Application running in Chrome on a MacBook and iPad.
 
 Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
 features such as browsing internet radio, and has no support for TIDAL or Qobuz.
@@ -123,19 +124,20 @@ Vibin supports:
 
 [StreamMagic]: https://www.cambridgeaudio.com/row/en/products/streammagic
 [Asset UPnP]: https://dbpoweramp.com/asset-upnp-dlna.htm
-[Vibin]: ../media/vibin/images/playlist_detailed.jpg
+
+[Vibin]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_detailed.jpg?raw=true
 [overview video]: https://www.youtube.com/watch?v=5fEWAWSNico
 [Vibin backend documentation]: https://github.com/mjoblin/vibin
 [Developers README]: README_DEV.md
-[Current track lyrics]: ../media/vibin/images/current_lyrics.jpg
-[Current track AirPlay]: ../media/vibin/images/current_airplay.jpg
-[Current track waveform]: ../media/vibin/images/current_waveform.jpg
-[Playlist detailed view]: ../media/vibin/images/playlist_detailed.jpg
-[Playlist summary view]: ../media/vibin/images/playlist_summary.jpg
-[Playlist manager]: ../media/vibin/images/playlist_manager.jpg
-[Albums]: ../media/vibin/images/albums.jpg
-[Albums tiny wall]: ../media/vibin/images/albums_tiny_wall.jpg
-[Tracks filtered by lyrics]: ../media/vibin/images/tracks_filtered_happy.jpg
-[Tracks filtered by title]: ../media/vibin/images/tracks_filtered_love.jpg
-[Favorites]: ../media/vibin/images/favorites.jpg
-[Presets]: ../media/vibin/images/presets.jpg
+[Current track lyrics]: https://github.com/mjoblin/media/blob/main/vibin/images/current_lyrics.jpg?raw=true
+[Current track AirPlay]: https://github.com/mjoblin/media/blob/main/vibin/images/current_airplay.jpg?raw=true
+[Current track waveform]: https://github.com/mjoblin/media/blob/main/vibin/images/current_waveform.jpg?raw=true
+[Playlist detailed view]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_detailed.jpg?raw=true
+[Playlist summary view]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_summary.jpg?raw=true
+[Playlist manager]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_manager.jpg?raw=true
+[Albums]: https://github.com/mjoblin/media/blob/main/vibin/images/albums.jpg?raw=true
+[Albums tiny wall]: https://github.com/mjoblin/media/blob/main/vibin/images/albums_tiny_wall.jpg?raw=true
+[Tracks filtered by lyrics]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_happy.jpg?raw=true
+[Tracks filtered by title]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_love.jpg?raw=true
+[Favorites]: https://github.com/mjoblin/media/blob/main/vibin/images/favorites.jpg?raw=true
+[Presets]: https://github.com/mjoblin/media/blob/main/vibin/images/presets.jpg?raw=true
