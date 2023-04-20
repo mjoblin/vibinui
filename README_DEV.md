@@ -266,7 +266,7 @@ The Debug panel (activated with the "d" hotkey) can be helpful for tracking what
 application without having to use the browser's developer tools. It is intended as a raw data view
 into the application, can be extended to display additional details as required.
 
-![Debug]
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/debug.jpg" width="400" />
 
 ## Additional notes
 
@@ -293,4 +293,3 @@ into the application, can be extended to display additional details as required.
 
 [Data Flow]: media/vibinui_dataflow.svg
 [Components]: media/vibinui_components.svg
-[Debug]: https://github.com/mjoblin/media/blob/main/vibin/images/debug.jpg?raw=true
