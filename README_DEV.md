@@ -266,6 +266,8 @@ The Debug panel (activated with the "d" hotkey) can be helpful for tracking what
 application without having to use the browser's developer tools. It is intended as a raw data view
 into the application, can be extended to display additional details as required.
 
+![Debug]
+
 ## Additional notes
 
 * The app uses `@hello-pangea/dnd` instead of `react-beautiful-dnd` due to an issue outlined
@@ -291,3 +293,4 @@ into the application, can be extended to display additional details as required.
 
 [Data Flow]: media/vibinui_dataflow.svg
 [Components]: media/vibinui_components.svg
+[Debug]: https://github.com/mjoblin/media/blob/main/vibin/images/debug.jpg?raw=true
