@@ -7,7 +7,8 @@
 * [Redux Tookit] (for state management, including RTK Query for talking to the backend).
 * [Mantine] (a React components library).
 * [Tabler] (for icons).
-* [TypeScript].
+
+The app also uses [TypeScript] and [Prettier].
 
 ## Available Scripts
 
@@ -41,13 +42,19 @@ REACT_APP_USING_SSL_PROXY=true npm run build
 
 This can be paired with the `vibin` backend's `--proxy-media-server` flag to run everything behind
 an SSL proxy, where the browser wants everything to be https (not http) and the browser does not
-have direct network access to the media server.
+have direct network access to the media server (to retrieve album art).
 
 ## Component structure
 
-The high-level React component structure is shown below:
+The high-level React component structure is shown below.
 
 ![Components]
+
+### Notes
+
+1. The `FeatureScreen` code lives under `src/components/features/`.
+1. The `AppHeader` and `AppNav` code lives under `src/components/app/layout/`.
+1. The App Managers live under `src/components/app/managers/`.
 
 ## File structure
 
@@ -99,8 +106,10 @@ The high-level data flow between the UI and the backend is shown below:
    * Playhead position.
    * The current Track.
    * The current Playlist.
-   * Favorites, Stored Playlists, etc.
+   * Favorites.
+   * Stored Playlists.
    * Media source.
+   * etc...
 1. WebSocket message handling can be found in `src/app/services/vibinWebsocket.ts`.
 1. Updates received by the UI from the WebSocket connection to the backend are used to update the
    application state (stored in Redux). The rest of the UI will then react to those updates.
@@ -113,10 +122,40 @@ The high-level data flow between the UI and the backend is shown below:
 1. The REST API handlers can be found in `src/app/services/vibin*.ts`.
 1. The Redux store definitions can be found in `src/app/store`.
 
+### Multiple client instances
+
+All Vibin UI client sessions will have their own WebSocket connection to the back-end. Also, all
+changes made to the streamer will be announced to all clients over their WebSocket -- even changes
+made by other apps such as the StreamMagic app, or changes made by a person pressing the buttons on
+the streamer itself.
+
+**This means that an instance of the Vibin UI might get updates triggered from another application,
+or from the streamer being interacted with in person.** This is considered a feature.
+
+One exception is changes made to the media on the NAS, which are not announced over the WebSocket.
+To get those updates, a Vibin UI needs to request a refresh of its Album/Track/Artist data (which
+can be done from the Settings screen).
+
 ### WebSocket messages
 
 The UI receives most of its runtime information over a persistent WebSocket connection to the
 backend. These messages are used to make updates to application state (Redux).
+
+When the UI's WebSocket connection is established, **the back-end will send a batch of messages**
+(one each of most types) so the UI will know the current state of everything.
+
+Subsequent messages of a given type are usually being sent because something has **changed** (e.g.
+a Playlist Entry was added; a new Stored Playlist was created, a Track was favorited, etc).
+
+WebSocket messages usually describe **the entire state of the data the message represents**. For
+example, the `Favorites` message always lists all Favorites, not just the latest _change_ to the
+Favorites. This means the UI can always rely on a message providing all the information it needs,
+at the expense of larger messages (and not necessarily knowing exactly what has changed, just that
+a change has occurred).
+
+> *NOTE:* To see all the messages, open the developer tools in a new browser tab and load the
+> application. The Network tab's WS (WebSocket) filter can then be used to view all incoming
+> messages.
 
 #### Example message
 
@@ -146,18 +185,25 @@ their `payload` shape will be different.
 
 #### Message types
 
+> **NOTE:** These message types have evolved significantly over time, and would benefit from a
+> cleanup pass.
+
 The following message types are received:
 
-* `ActiveTransportControls`
-* `DeviceDisplay`
-* `Favorites`
-* `PlayState`
-* `Position`
-* `Presets`
-* `StateVars`
-* `StoredPlaylists`
-* `System`
-* `VibinStatus`
+* `ActiveTransportControls`: Which transport controls are currently available (e.g. play, pause,
+  next track, etc). These will vary based on the current media source, and current player state.
+* `DeviceDisplay`: What is currently being displayed on the streamer's display.
+* `Favorites`: Information on Favorite Albums and Tracks.
+* `PlayState`: Information about the current player state (playing, paused, etc), and the currently-
+  playing media (including Album and Track IDs).
+* `Position`: Playhead position.
+* `Presets`: Information on Presets (e.g. Internet Radio stations).
+* `StateVars`:
+* `StoredPlaylists`: Information on Stored Playlists.
+* `System`: Information about the hardware devices (streamer name and power status; media server
+  name).
+* `VibinStatus`: Information about the Vibin back-end (start time, system information, connected
+  clients, etc).
 
 #### Common message-based data flow
 
@@ -211,6 +257,7 @@ The REST API documentation is available at the backend's `http://<host>:7669/doc
 [Mantine]: https://mantine.dev/
 [Tabler]: https://tabler-icons.io/
 [TypeScript]: https://www.typescriptlang.org/
+[Prettier]: https://prettier.io/
 [running tests]: https://facebook.github.io/create-react-app/docs/running-tests
 
 [//]: # "--- Images ------------------------------------------------------------------------------"

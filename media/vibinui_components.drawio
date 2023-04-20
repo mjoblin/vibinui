@@ -1,22 +1,22 @@
-<mxfile host="Electron" modified="2023-04-19T23:55:50.171Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="jJd3Dzvb7Rp0L6KE47M5" version="21.1.2" type="device">
+<mxfile host="Electron" modified="2023-04-20T01:34:20.305Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/21.1.2 Chrome/106.0.5249.199 Electron/21.4.3 Safari/537.36" etag="qAq-CYimmT4XRmK5n4y1" version="21.1.2" type="device">
   <diagram name="Page-1" id="fxVtz6rAhoFoqieGj_HZ">
     <mxGraphModel dx="840" dy="1115" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-6" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#4C5966;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-6" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#4C5966;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="240" y="80" width="760" height="830" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-1" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-1" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="260" y="120" width="720" height="700" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-9" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-9" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="280" y="190" width="680" height="610" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-2" value="&lt;font color=&quot;#666666&quot;&gt;Screen&lt;br&gt;navigator&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-2" value="&lt;font color=&quot;#666666&quot;&gt;Screen&lt;br&gt;navigator&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="300" y="342.5" width="130" height="437.5" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-3" value="&lt;font color=&quot;#666666&quot;&gt;Contains &lt;b style=&quot;&quot;&gt;AppLogo&lt;/b&gt;&amp;nbsp;and &lt;b style=&quot;&quot;&gt;PlaybackControls&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-3" value="&lt;font color=&quot;#666666&quot;&gt;Contains &lt;b style=&quot;&quot;&gt;AppLogo&lt;/b&gt;&amp;nbsp;and &lt;b style=&quot;&quot;&gt;PlaybackControls&lt;/b&gt;&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#fff2cc;strokeColor=#d6b656;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="300" y="237.5" width="640" height="90" as="geometry" />
         </mxCell>
         <mxCell id="FBGZLGpXqu1U4v_5k71J-7" value="&lt;font color=&quot;#ffffff&quot;&gt;App&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
@@ -28,13 +28,13 @@
         <mxCell id="FBGZLGpXqu1U4v_5k71J-10" value="&lt;font color=&quot;#ffffff&quot;&gt;AppShell&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="290" y="190" width="80" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-11" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#73899C;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-11" value="" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#73899C;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="450" y="342.5" width="490" height="437.5" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-4" value="&lt;font color=&quot;#666666&quot;&gt;Usually screen-level controls (filters, card display settings, etc).&lt;br&gt;Will not be present for some screens (like &lt;b style=&quot;&quot;&gt;CurrentTrack&lt;/b&gt; and&amp;nbsp;&lt;b style=&quot;&quot;&gt;Settings&lt;/b&gt;).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingLeft=0;spacing=2;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-4" value="&lt;font color=&quot;#666666&quot;&gt;Usually screen-level controls (filters, card display settings, etc).&lt;br&gt;Will not be present for some screens (like &lt;b style=&quot;&quot;&gt;CurrentTrack&lt;/b&gt; and&amp;nbsp;&lt;b style=&quot;&quot;&gt;Settings&lt;/b&gt;).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#d5e8d4;strokeColor=#82b366;spacingLeft=0;spacing=2;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="470" y="377.5" width="450" height="90" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-5" value="&lt;font color=&quot;#666666&quot;&gt;The main Feature/Screen display. Usually a grid/wall of media art, but&lt;br&gt;differs for some screens (like &lt;b style=&quot;&quot;&gt;CurrentTrack&lt;/b&gt;,&amp;nbsp;&lt;b style=&quot;&quot;&gt;Playlist,&lt;/b&gt; and &lt;b style=&quot;&quot;&gt;Settings&lt;/b&gt;).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-5" value="&lt;font color=&quot;#666666&quot;&gt;The main Feature/Screen display. Usually a grid/wall of media art, but&lt;br&gt;differs for some screens (like &lt;b style=&quot;&quot;&gt;CurrentTrack&lt;/b&gt;,&amp;nbsp;&lt;b style=&quot;&quot;&gt;Playlist,&lt;/b&gt; and &lt;b style=&quot;&quot;&gt;Settings&lt;/b&gt;).&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="470" y="482.5" width="450" height="277.5" as="geometry" />
         </mxCell>
         <mxCell id="FBGZLGpXqu1U4v_5k71J-12" value="&lt;font color=&quot;#000000&quot;&gt;AppHeader&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontStyle=1" parent="1" vertex="1">
@@ -55,13 +55,13 @@
         <mxCell id="FBGZLGpXqu1U4v_5k71J-18" value="&lt;font color=&quot;#e6e6e6&quot;&gt;The router&#39;s root layout. Renders the current route&#39;s&amp;nbsp;&lt;b style=&quot;&quot;&gt;&lt;i&gt;Feature&lt;/i&gt;Screen&lt;/b&gt;&amp;nbsp;to &amp;lt;Outlet&amp;gt;.&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="396.25" y="140" width="447.5" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-20" value="&lt;b&gt;WebsocketManager&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-20" value="&lt;b&gt;WebsocketManager&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="260" y="840" width="160" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-21" value="&lt;b&gt;PlayheadManager&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-21" value="&lt;b&gt;PlayheadManager&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="430" y="840" width="160" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="FBGZLGpXqu1U4v_5k71J-22" value="... other App Managers" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;dashed=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=2;" parent="1" vertex="1">
+        <mxCell id="FBGZLGpXqu1U4v_5k71J-22" value="... other App Managers" style="rounded=1;whiteSpace=wrap;html=1;absoluteArcSize=1;dashed=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;strokeWidth=1;" parent="1" vertex="1">
           <mxGeometry x="600" y="840" width="160" height="50" as="geometry" />
         </mxCell>
         <mxCell id="FBGZLGpXqu1U4v_5k71J-23" value="Sections in color" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
