@@ -73,7 +73,7 @@ Vibin supports:
 
 #### Playlist entry actions
 
-<img src="../media/vibin/images/playlist_entry_actions.jpg" width="250" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/playlist_entry_actions.jpg" width="250" />
 
 #### Playlist management
 
@@ -109,15 +109,15 @@ Vibin supports:
 
 #### Media filtering
 
-<img src="../media/vibin/images/general_search.jpg" width="400" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_search.jpg" width="400" />
 
 #### Art card display settings
 
-<img src="../media/vibin/images/general_card_display.jpg" width="250" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_card_display.jpg" width="250" />
 
 #### Input switching
 
-<img src="../media/vibin/images/general_input_switching.jpg" width="200" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_input_switching.jpg" width="200" />
 
 
 [//]: # "--- Links -------------------------------------------------------------------------------"
@@ -125,7 +125,7 @@ Vibin supports:
 [StreamMagic]: https://www.cambridgeaudio.com/row/en/products/streammagic
 [Asset UPnP]: https://dbpoweramp.com/asset-upnp-dlna.htm
 
-[Vibin]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_detailed.jpg?raw=true
+[Vibin]: https://github.com/mjoblin/media/blob/main/vibin/images/albums.jpg?raw=true
 [overview video]: https://www.youtube.com/watch?v=5fEWAWSNico
 [Vibin backend documentation]: https://github.com/mjoblin/vibin
 [Developers README]: README_DEV.md
