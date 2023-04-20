@@ -31,8 +31,6 @@ See the [Developers README] for more information.
 
 Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
-Vibin supports:
-
 * **Currently-playing information**.
   * Lyrics.
   * Waveform.
@@ -49,7 +47,7 @@ Vibin supports:
 * **Presets** (like internet radio).
 * **Favorites**.
 
-Additional features:
+### Additional features
 
 * Display settings are remembered between browser sessions.
 * Keyboard shortcuts for transport controls, lyrics display, etc.
@@ -101,7 +99,7 @@ Vibin supports custom Playlist creation. Playlists can be saved for later use.
 ### Browse local media
 
 Local media (stored on a NAS) can be browsed by Artist, Album, and Track. Media browsing supports
-filtering. Art display settings can be changed.
+filtering.
 
 #### View all albums
 
@@ -127,13 +125,14 @@ Vibin supports playing of StreamMagic Presets, like internet radio stations.
 
 ### Favorites
 
-Tracks and Albums can be favorited.
+Albums and Tracks can be favorited.
 
 ![Favorites]
 
 ### General features
 
-Vibin supports additional features including filtering, art display settings, input switching, etc.
+Vibin supports additional features including filtering, art display settings, input switching, and
+more.
 
 #### Media filtering
 
