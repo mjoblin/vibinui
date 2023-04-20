@@ -30,21 +30,21 @@ Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
 Vibin supports:
 
-* **Currently-playing information**
-  * Lyrics
-  * Waveform
-  * Links to external sites
-* **Playlists**
-  * View the active playlist
-  * Modify the active playlist
-  * Save and switch between playlists
-* **Browse local media**
-  * Artists, Albums, Tracks
+* **Currently-playing information**.
+  * Lyrics.
+  * Waveform.
+  * Links to external sites.
+* **Playlists**.
+  * View the active playlist.
+  * Modify the active playlist.
+  * Save and switch between playlists.
+* **Browse local media**.
+  * Artists, Albums, Tracks.
   * Search by title, date, genre, etc.
-  * Search for lyrics
-  * Find the currently-playing track
-* **Presets** (like internet radio)
-* **Favorites**
+  * Search for lyrics.
+  * Find the currently-playing track.
+* **Presets** (like internet radio).
+* **Favorites**.
 
 ### Currently-playing information
 
@@ -72,7 +72,7 @@ Vibin supports:
 
 #### Playlist entry actions
 
-![Playlist entry actions]
+<img src="../media/vibin/images/playlist_entry_actions.jpg" width="250" />
 
 #### Playlist management
 
@@ -108,22 +108,23 @@ Vibin supports:
 
 #### Media filtering
 
-![Media filtering]
+<img src="../media/vibin/images/general_search.jpg" width="400" />
 
 #### Art card display settings
 
-![Art card display settings]
+<img src="../media/vibin/images/general_card_display.jpg" width="250" />
 
 #### Input switching
 
-![Input Switching]
+<img src="../media/vibin/images/general_input_switching.jpg" width="200" />
+
 
 [//]: # "--- Links -------------------------------------------------------------------------------"
 
 [StreamMagic]: https://www.cambridgeaudio.com/row/en/products/streammagic
 [Asset UPnP]: https://dbpoweramp.com/asset-upnp-dlna.htm
 [Vibin]: ../media/vibin/images/playlist_detailed.jpg
-[overview video]: ../media/vibin/video/vibin.mp4
+[overview video]: https://www.youtube.com/watch?v=5fEWAWSNico
 [Vibin backend documentation]: https://github.com/mjoblin/vibin
 [Developers README]: README_DEV.md
 [Current track lyrics]: ../media/vibin/images/current_lyrics.jpg
@@ -131,7 +132,6 @@ Vibin supports:
 [Current track waveform]: ../media/vibin/images/current_waveform.jpg
 [Playlist detailed view]: ../media/vibin/images/playlist_detailed.jpg
 [Playlist summary view]: ../media/vibin/images/playlist_summary.jpg
-[Playlist entry actions]: ../media/vibin/images/playlist_entry_actions.jpg
 [Playlist manager]: ../media/vibin/images/playlist_manager.jpg
 [Albums]: ../media/vibin/images/albums.jpg
 [Albums tiny wall]: ../media/vibin/images/albums_tiny_wall.jpg
@@ -139,15 +139,3 @@ Vibin supports:
 [Tracks filtered by title]: ../media/vibin/images/tracks_filtered_love.jpg
 [Favorites]: ../media/vibin/images/favorites.jpg
 [Presets]: ../media/vibin/images/presets.jpg
-[Media filtering]: ../media/vibin/images/general_search.jpg
-[Art card display settings]: ../media/vibin/images/general_card_display.jpg
-[Input Switching]: ../media/vibin/images/general_input_switching.jpg
-
-[//]: # "--- Styles ------------------------------------------------------------------------------"
-
-<style>
-img[alt="Playlist entry actions"] { width: 250px }
-img[alt="Media filtering"] { width: 400px }
-img[alt="Art card display settings"] { width: 250px }
-img[alt="Input Switching"] { width: 200px }
-</style>
