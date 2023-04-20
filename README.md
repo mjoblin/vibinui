@@ -9,7 +9,7 @@ for anyone with a StreamMagic streamer, but has only been tested with the follow
 * Cambridge Audio CXNv2 streamer.
 * Local media stored on a NAS running [Asset UPnP].
 * AirPlay running on a Mac.
-* Application running in Chrome on a MacBook and iPad.
+* Running Vibin in Chrome on a MacBook and iPad.
 
 Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
 features such as browsing internet radio, and has no support for TIDAL or Qobuz.
