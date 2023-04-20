@@ -51,13 +51,12 @@ Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
 * Display settings are remembered between browser sessions.
 * Keyboard shortcuts for transport controls, lyrics display, etc.
-* Changes made in other apps (like the StreamMagic app) will be automatically reflected in Vibin.
+* Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
+  Vibin.
 * Streamer can be powered on/off, and the media source can be changed.
 * Configure the UPnP media paths for the media server used by the backend.
 * Toggle whether the currently-playing art is displayed in the background of the Current Track and
   Playlist screens.
-* The WebSocket connection to the back-end is automatically re-established after returning from
-  sleep.
 
 ### Currently-playing information
 
