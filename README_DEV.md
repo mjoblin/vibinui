@@ -44,14 +44,15 @@ This can be paired with the `vibin` backend's `--proxy-media-server` flag to run
 an SSL proxy, where the browser wants everything to be https (not http) and the browser does not
 have direct network access to the media server (to retrieve album art).
 
-## Component structure
+## React components
 
 The high-level React component structure is shown below.
 
 ![Components]
 
-### Notes
+### Component overview
 
+1. See `App.tsx` for the route/component configuration.
 1. The `FeatureScreen` code lives under `src/components/features/`.
 1. The `AppHeader` and `AppNav` code lives under `src/components/app/layout/`.
 1. The App Managers live under `src/components/app/managers/`.
@@ -110,7 +111,7 @@ The high-level data flow between the UI and the backend is shown below:
 
 ![Data Flow]
 
-### Notes
+### Data flow overview
 
 1. The UI receives most of its runtime information from its WebSocket connection to the backend.
    This includes changes to:

@@ -49,7 +49,22 @@ Vibin supports:
 * **Presets** (like internet radio).
 * **Favorites**.
 
+Additional features:
+
+* Display settings are remembered between browser sessions.
+* Keyboard shortcuts for transport controls, lyrics display, etc.
+* Changes made in other apps (like the StreamMagic app) will be automatically reflected in Vibin.
+* Streamer can be powered on/off, and the media source can be changed.
+* Configure the UPnP media paths for the media server used by the backend.
+* Toggle whether the currently-playing art is displayed in the background of the Current Track and
+  Playlist screens.
+* The WebSocket connection to the back-end is automatically re-established after returning from
+  sleep.
+
 ### Currently-playing information
+
+Vibin shows information on the currently-playing track. This works for both local media and AirPlay
+(although the waveform is not shown for AirPlay).
 
 #### Lyrics
 
@@ -64,6 +79,8 @@ Vibin supports:
 ![Current track waveform]
 
 ### Playlists
+
+Vibin supports custom Playlist creation. Playlists can be saved for later use.
 
 #### Detailed view
 
@@ -83,6 +100,9 @@ Vibin supports:
 
 ### Browse local media
 
+Local media (stored on a NAS) can be browsed by Artist, Album, and Track. Media browsing supports
+filtering. Art display settings can be changed.
+
 #### View all albums
 
 ![Albums]
@@ -101,13 +121,19 @@ Vibin supports:
 
 ### Presets
 
+Vibin supports playing of StreamMagic Presets, like internet radio stations.
+
 ![Presets]
 
 ### Favorites
 
+Tracks and Albums can be favorited.
+
 ![Favorites]
 
 ### General features
+
+Vibin supports additional features including filtering, art display settings, input switching, etc.
 
 #### Media filtering
 
