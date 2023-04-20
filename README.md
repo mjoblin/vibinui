@@ -14,7 +14,9 @@ for anyone with a StreamMagic streamer, but has only been tested with the follow
 Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
 features such as browsing internet radio, and has no support for TIDAL or Qobuz.
 
+&ensp;<br />
 ![Vibin]
+&ensp;<br />
 
 ## Installation
 
