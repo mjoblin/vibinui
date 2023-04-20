@@ -198,7 +198,10 @@ The following message types are received:
   playing media (including Album and Track IDs).
 * `Position`: Playhead position.
 * `Presets`: Information on Presets (e.g. Internet Radio stations).
-* `StateVars`:
+* `StateVars`: A general kitchen-sink message. Mostly used for extracting audio source information,
+  and some details on the current audio (including stream details like codec). **This message's
+  usefulness has largely been replaced by other message types and should be deprecated (once its
+  remaining usefulness has been extracted)**.
 * `StoredPlaylists`: Information on Stored Playlists.
 * `System`: Information about the hardware devices (streamer name and power status; media server
   name).
