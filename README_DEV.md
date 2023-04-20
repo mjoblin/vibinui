@@ -56,6 +56,17 @@ The high-level React component structure is shown below.
 1. The `AppHeader` and `AppNav` code lives under `src/components/app/layout/`.
 1. The App Managers live under `src/components/app/managers/`.
 
+#### Manager components
+
+There's a number of manager components in `src/components/app/managers/`. These managers want to be
+part of the React component flow, but usually don't render anything and are instead tasked with
+managing some high-level aspect of the application (so they're injected fairly high up in the
+React hierarchy).
+
+These managers handle things like: initiating the WebSocket connection to the backend; retrieving
+information on all Albums/Tracks/Artists from the backend; determining which art to use as a
+background image across multiple screens; handling keyboard shortcuts; etc.
+
 ## File structure
 
 The `src/` directory is broadly laid out as follows:
@@ -202,9 +213,9 @@ The following message types are received:
 * `Position`: Playhead position.
 * `Presets`: Information on Presets (e.g. Internet Radio stations).
 * `StateVars`: A general kitchen-sink message. Mostly used for extracting audio source information,
-  and some details on the current audio (including stream details like codec). **This message's
-  usefulness has largely been replaced by other message types and should be deprecated (once its
-  remaining usefulness has been extracted)**.
+  and some details on the current audio (including stream details like codec). **This message
+  type's usefulness has largely been replaced by other message types and should be deprecated (once
+  its remaining usefulness has been extracted)**.
 * `StoredPlaylists`: Information on Stored Playlists.
 * `System`: Information about the hardware devices (streamer name and power status; media server
   name).
@@ -248,6 +259,12 @@ information it won't receive over the WebSocket (such as full Album/Track/Artist
 
 The REST API documentation is available at the backend's `http://<host>:7669/docs` endpoint, and
 the UI's API handlers are found under `src/app/services/`.
+
+## Debug panel
+
+The Debug panel (activated with the "d" hotkey) can be helpful for tracking what's happening in the
+application without having to use the browser's developer tools. It is intended as a raw data view
+into the application, can be extended to display additional details as required.
 
 ## Additional notes
 
