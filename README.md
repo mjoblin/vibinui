@@ -8,11 +8,11 @@ for anyone with a StreamMagic streamer, but has only been tested with the follow
 
 * Cambridge Audio CXNv2 streamer.
 * Local media stored on a NAS running [Asset UPnP].
-* AirPlay running on a Mac.
+* AirPlay from a MacBook.
 * Running Vibin in Chrome on a MacBook and iPad.
 
 Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
-features such as browsing internet radio, and has no support for TIDAL or Qobuz.
+features like browsing internet radio, and has no support for TIDAL or Qobuz.
 
 &ensp;<br />
 ![Vibin]
@@ -36,14 +36,14 @@ Watch the [overview video] (4m:15s) to see Vibin's features in action.
   * Waveform.
   * Links to external sites.
 * **Playlists**.
-  * View the active playlist.
-  * Modify the active playlist.
-  * Save and switch between playlists.
+  * View the active Playlist.
+  * Modify the active Playlist.
+  * Save and switch between Playlists.
 * **Browse local media**.
   * Artists, Albums, Tracks.
   * Search by title, date, genre, etc.
   * Search for lyrics.
-  * Find the currently-playing track.
+  * Find the currently-playing Track.
 * **Presets** (like internet radio).
 * **Favorites**.
 
