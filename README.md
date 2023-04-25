@@ -1,7 +1,7 @@
 # `vibinui`
 
 `vibinui` is a browser-based application for [StreamMagic] audio streamers. `vibinui` also requires
-installation of the `vibin` backend.
+installation of the [`vibin`](https://github.com/mjoblin/vibin) backend.
 
 Vibin was developed for one person's specific music streaming needs (mine). It should however work
 for anyone with a StreamMagic streamer, but has only been tested with the following:
