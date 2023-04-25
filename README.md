@@ -11,8 +11,10 @@ for anyone with a StreamMagic streamer, but has only been tested with the follow
 * AirPlay from a MacBook.
 * Running Vibin in Chrome on a MacBook and iPad.
 
-Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
-features like browsing internet radio, and has no support for TIDAL or Qobuz.
+> Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
+> features like browsing internet radio, and has no support for TIDAL or Qobuz.
+
+Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
 &ensp;<br />
 ![Vibin]
@@ -28,8 +30,6 @@ UI.
 See the [Developers README] for more information.
 
 ## Features
-
-Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
 * **Currently-playing information**.
   * Lyrics.
