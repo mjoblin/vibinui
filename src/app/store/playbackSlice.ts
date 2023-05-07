@@ -77,10 +77,8 @@ export type ShuffleState = "off" | "all";
 export interface PlaybackState {
     play_status: PlayStatus | undefined;
     active_transport_actions: TransportAction[];
-    audio_sources: {
-        // TODO: Audio Sources doesn't belong in current playback slice
-        [key: number]: AudioSource;
-    };
+    // TODO: Audio Sources doesn't belong in current playback slice
+    audio_sources: AudioSource[];
     current_audio_source: AudioSource | undefined;
     current_track: Track | undefined;
     // TODO: For the "current ids", consider adding Artist -- and also storing full
@@ -106,7 +104,7 @@ export interface PlaybackState {
 const initialState: PlaybackState = {
     play_status: undefined,
     active_transport_actions: [],
-    audio_sources: {},
+    audio_sources: [],
     current_audio_source: undefined,
     current_track: undefined,
     current_track_media_id: undefined,

@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "homepage": "/ui",
-    "proxy": "http://192.168.1.30:7669",
+    "proxy": "http://localhost:8080",
     "dependencies": {
         "@emotion/react": "^11.10.5",
         "@hello-pangea/dnd": "^16.2.0",

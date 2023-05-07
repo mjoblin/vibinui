@@ -93,7 +93,7 @@ const SettingsMenu: FC = () => {
                         dropdownPosition="top"
                         maxDropdownHeight={500}
                         onChange={(value) => value && setSource(value)}
-                        data={Object.values(audioSources).map((source: AudioSource) => ({
+                        data={audioSources.map((source: AudioSource) => ({
                             value: source.id,
                             label: source.name,
                         }))}
