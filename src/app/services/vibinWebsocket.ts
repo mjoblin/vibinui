@@ -24,11 +24,13 @@ import {
 } from "../store/playbackSlice";
 import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
+import { AudioSource } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 import { setVibinStatusState, VibinStatusState } from "../store/vibinStatusSlice";
+import { MediaId, PlaylistEntry } from "../types";
 
 // ================================================================================================
 // Handle the WebSocket connection to the vibin backend.
@@ -54,17 +56,58 @@ type SimpleObject = { [key: string | number]: any };
 
 type MessageType =
     | "ActiveTransportControls"
+    | "CurrentlyPlaying"
     | "DeviceDisplay"
     | "Favorites"
     | "PlayState"
     | "Position"
     | "Presets"
-    | "StateVars"
     | "StoredPlaylists"
     | "System"
+    | "UPnPProperties"
     | "VibinStatus";
 
 type ActiveTransportControlsPayload = TransportAction[];
+
+// ------------------------------------------------------------------------------------------------
+// TODO: Figure out where these new types should live
+
+type ActiveTrack = {
+    title: string;
+    artist: string;
+    album: string;
+    art_url: string;
+    duration: number;
+};
+
+type MediaFormat = {
+    sample_format: string;
+    mqa: string;
+    codec: string;
+    lossless: boolean,
+    sample_rate: number;
+    bit_depth: number;
+    encoding: string;
+};
+
+type MediaStream = {
+    url: string;
+};
+
+type CurrentlyPlayingPayload = {
+    album_media_id: MediaId;
+    track_media_id: MediaId;
+    active_track: ActiveTrack;
+    playlist: {
+        current_track_index: number;
+        entries: PlaylistEntry[];
+    };
+    format: MediaFormat;
+    stream: MediaStream;
+};
+
+// TODO: End new types
+// ------------------------------------------------------------------------------------------------
 
 type DeviceDisplayPayload = DeviceDisplay;
 
@@ -72,16 +115,21 @@ type SystemPayload = {
     streamer: {
         name: string;
         power: "on" | "off";
+        sources: {
+            active: AudioSource,
+            available: AudioSource[],
+        }
     };
     media: {
         name: string;
     };
 };
 
-type StateVarsPayload = {
+type UPnPPropertiesPayload = {
     streamer_name: string; // TODO: Should streamer_name and media_source_name be on VibinMessage?
     media_source_name: string;
     streamer: SimpleObject;
+    media_server: SimpleObject;
     vibin: SimpleObject;
 };
 
@@ -140,14 +188,15 @@ export type VibinMessage = {
     type: MessageType;
     payload:
         | ActiveTransportControlsPayload
+        | CurrentlyPlayingPayload
         | DeviceDisplayPayload
         | FavoritesPayload
         | PlayStatePayload
         | PositionPayload
         | PresetsPayload
-        | StateVarsPayload
         | StoredPlaylistsPayload
         | SystemPayload
+        | UPnPPropertiesPayload
         | VibinStatusPayload;
 };
 
@@ -250,20 +299,27 @@ function messageHandler(
             dispatch(setMediaDeviceName(system.media?.name));
             dispatch(setStreamerName(system.streamer?.name));
             dispatch(setStreamerPower(system.streamer?.power));
-        } else if (data.type === "StateVars") {
-            const stateVars = data.payload as StateVarsPayload;
-            const streamerName = stateVars.streamer_name;
+            dispatch(setAudioSources(system.streamer?.sources.available))
+            dispatch(setCurrentAudioSource(system.streamer?.sources.active))
+        } else if (data.type === "CurrentlyPlaying") {
+            const currentlyPlaying = data.payload as CurrentlyPlayingPayload;
+
+            dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
+            dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
+        } else if (data.type === "UPnPProperties") {
+            const upnpProperties = data.payload as UPnPPropertiesPayload;
+            const streamerName = upnpProperties.streamer_name;
 
             if (!streamerName) {
                 return;
             }
 
             // Set list of audio sources, and currently-set audio source.
-            dispatch(setAudioSources(stateVars.vibin[streamerName]?.audio_sources || {}));
-            dispatch(setCurrentAudioSource(stateVars.vibin[streamerName]?.current_audio_source));
+            // dispatch(setAudioSources(upnpProperties.vibin.streamer?.audio_sources || {}));
+            // dispatch(setCurrentAudioSource(upnpProperties.vibin.streamer?.current_audio_source));
 
             // Set stream information.
-            const streamInfo = stateVars.vibin[streamerName]?.current_playback_details?.stream;
+            const streamInfo = upnpProperties.vibin.streamer?.current_playback_details?.stream;
 
             streamInfo &&
                 dispatch(
@@ -277,33 +333,33 @@ function messageHandler(
             // Extract track genre, checking to ensure that the message's track matches the track
             // in application state.
             //
-            // NOTE: This assumes we'll be getting a StateVars message for the track *after* we've
-            //  seen a PlayState message defining the new track.
-            const stateVarsTrack =
-                stateVars.vibin[streamerName]?.current_playback_details?.playlist_entry;
+            // NOTE: This assumes we'll be getting a UPnPProperties message for the track *after*
+            // we've seen a PlayState message defining the new track.
+            const upnpPropertiesTrack =
+                upnpProperties.vibin.streamer?.current_playback_details?.playlist_entry;
             const appStateTrack = appState[setCurrentTrack.type];
 
             if (
-                stateVarsTrack &&
+                upnpPropertiesTrack &&
                 appStateTrack &&
-                stateVarsTrack.genre &&
-                appStateTrack.title === stateVarsTrack.title &&
-                appStateTrack.album === stateVarsTrack.album &&
-                appStateTrack.artist === stateVarsTrack.artist
+                upnpPropertiesTrack.genre &&
+                appStateTrack.title === upnpPropertiesTrack.title &&
+                appStateTrack.album === upnpPropertiesTrack.album &&
+                appStateTrack.artist === upnpPropertiesTrack.artist
             ) {
                 dispatch(
                     setCurrentTrack({
                         ...appState[setCurrentTrack.type],
-                        genre: stateVarsTrack.genre,
+                        genre: upnpPropertiesTrack.genre,
                     })
                 );
             }
 
             // Set current playlist track index and entries.
             dispatch(
-                setCurrentTrackIndex(stateVars.vibin[streamerName]?.current_playlist_track_index)
+                setCurrentTrackIndex(upnpProperties.vibin.streamer?.current_playlist_track_index)
             );
-            dispatch(setEntries(stateVars.vibin[streamerName]?.current_playlist));
+            dispatch(setEntries(upnpProperties.vibin.streamer?.current_playlist));
         } else if (data.type === "Position") {
             dispatch({
                 type: setPlayheadPosition.type,
@@ -316,19 +372,19 @@ function messageHandler(
             dispatch(setPlayStatus((data.payload as PlayStatePayload).state));
 
             // Set current Track and Album Media IDs.
-            dispatch(
-                setCurrentTrackMediaId(
-                    (data.payload as PlayStatePayload).metadata?.current_track_media_id
-                )
-            );
-            dispatch(
-                setCurrentAlbumMediaId(
-                    (data.payload as PlayStatePayload).metadata?.current_album_media_id
-                )
-            );
+            // dispatch(
+            //     setCurrentTrackMediaId(
+            //         (data.payload as PlayStatePayload).metadata?.current_track_media_id
+            //     )
+            // );
+            // dispatch(
+            //     setCurrentAlbumMediaId(
+            //         (data.payload as PlayStatePayload).metadata?.current_album_media_id
+            //     )
+            // );
 
             // Set track information.
-            // NOTE: genre comes later from a StateVars message.
+            // NOTE: genre comes later from a UPnPProperties message.
             metadata &&
                 dispatch(
                     setCurrentTrack({
