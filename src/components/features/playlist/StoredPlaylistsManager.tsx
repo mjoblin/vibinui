@@ -66,8 +66,10 @@ const StoredPlaylistsManager: FC = () => {
     const dispatch = useAppDispatch();
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
-    const { stored_playlists: storedPlaylists, active_stored_playlist_id: activeStoredPlaylistId } =
-        useAppSelector((state: RootState) => state.storedPlaylists);
+    const {
+        playlists: storedPlaylists,
+        status: { active_id: activeStoredPlaylistId },
+    } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { sortField: playlistEditorSortField } = useAppSelector(
         (state: RootState) => state.userSettings.playlist.editor
     );

@@ -25,7 +25,7 @@ import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
-} from "../../../app/services/vibinPlaylist";
+} from "../../../app/services/vibinActivePlaylist";
 import {
     useAddFavoriteMutation,
     useDeleteFavoriteMutation,

@@ -21,8 +21,8 @@ import { API_REFRESH_INTERVAL } from "../constants";
  */
 
 /**
- * TODO: Determine whether both store/playlistSlice and services/vibinPlaylist should coexists.
- *  Perhaps everything should be managed in services/vibinPlaylist.
+ * TODO: Determine whether both store/playlistSlice and services/vibinActivePlaylist should
+ *  coexist. Perhaps everything should be managed in services/vibinActivePlaylist.
  */
 
 type PlaylistAddMediaAction =
@@ -35,9 +35,9 @@ type PlaylistAddMediaAction =
 type PlaylistEntryId = number;
 type PlaylistEntryIndex = number;
 
-export const vibinPlaylistApi = createApi({
-    reducerPath: "vibinPlaylistApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/playlist" }),
+export const vibinActivePlaylistApi = createApi({
+    reducerPath: "vibinActivePlaylistApi",
+    baseQuery: fetchBaseQuery({ baseUrl: "/active_playlist" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         addMediaToPlaylist: builder.mutation<
@@ -132,4 +132,4 @@ export const {
     usePlayPlaylistEntryIdMutation,
     usePlayPlaylistEntryIndexMutation,
     useSetPlaylistMediaIdsMutation,
-} = vibinPlaylistApi;
+} = vibinActivePlaylistApi;

@@ -14,7 +14,7 @@ import { setCurrentlyPlayingArtUrl } from "../../../app/store/internalSlice";
 
 const BackgroundImageManager: FC = () => {
     const dispatch = useDispatch();
-    const playlist = useAppSelector((state: RootState) => state.playlist);
+    const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
@@ -32,20 +32,20 @@ const BackgroundImageManager: FC = () => {
         if (currentTrackId && trackById[currentTrackId]) {
             dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
         } else if (
-            playlist &&
-            playlist.entries &&
-            playlist.current_track_index !== undefined &&
-            playlist.current_track_index !== -1
+            activePlaylist &&
+            activePlaylist.entries &&
+            activePlaylist.current_track_index !== undefined &&
+            activePlaylist.current_track_index !== -1
         ) {
             dispatch(
                 setCurrentlyPlayingArtUrl(
-                    playlist.entries[playlist.current_track_index]?.albumArtURI
+                    activePlaylist.entries[activePlaylist.current_track_index]?.albumArtURI
                 )
             );
         } else if (currentPlaybackTrack?.art_url) {
             dispatch(setCurrentlyPlayingArtUrl(currentPlaybackTrack.art_url));
         }
-    }, [dispatch, currentTrackId, trackById, playlist, currentPlaybackTrack]);
+    }, [dispatch, currentTrackId, trackById, activePlaylist, currentPlaybackTrack]);
 
     return null;
 };

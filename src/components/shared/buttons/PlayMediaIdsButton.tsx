@@ -5,7 +5,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 import { MediaId } from "../../../app/types";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
-import { useSetPlaylistMediaIdsMutation } from "../../../app/services/vibinPlaylist";
+import { useSetPlaylistMediaIdsMutation } from "../../../app/services/vibinActivePlaylist";
 import { showSuccessNotification } from "../../../app/utils";
 
 // ================================================================================================
