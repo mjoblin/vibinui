@@ -162,7 +162,7 @@ const CurrentTrackScreen: FC = () => {
             // down the line is expecting any keys that aren't being provided here.
             setCurrentTrack({
                 artist: currentPlaybackTrack.artist,
-                album: currentPlaybackTrack.artist,
+                album: currentPlaybackTrack.album,
                 title: currentPlaybackTrack.title,
                 art_url: currentPlaybackTrack.art_url,
                 album_art_uri: currentPlaybackTrack.art_url,
