@@ -68,7 +68,6 @@ const RootLayout: FC = () => {
     const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
     const { currentlyPlayingArtUrl, currentScreen, showCurrentTrackLyrics, websocketStatus } =
         useAppSelector((state: RootState) => state.internal.application);
-    // const playlist = useAppSelector((state: RootState) => state.playlist);
     const { haveShownWelcomeMessage } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );    

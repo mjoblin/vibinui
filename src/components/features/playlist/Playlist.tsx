@@ -28,7 +28,7 @@ import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
-} from "../../../app/services/vibinPlaylist";
+} from "../../../app/services/vibinActivePlaylist";
 import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
@@ -154,12 +154,12 @@ type PlaylistProps = {
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
-    const playlist = useAppSelector((state: RootState) => state.playlist);
+    const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const {
-        activating_stored_playlist: activatingStoredPlaylist,
+        status: { is_activating_playlist: isActivatingPlaylist },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { data: albums } = useGetAlbumsQuery();
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
@@ -189,8 +189,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
 
     const { classes: dynamicClasses } = createStyles((theme) => {
         if (
-            typeof playlist.current_track_index === "undefined" ||
-            isNaN(playlist.current_track_index)
+            typeof activePlaylist.current_track_index === "undefined" ||
+            isNaN(activePlaylist.current_track_index)
         ) {
             return {
                 table: {},
@@ -208,7 +208,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
             border: `1px solid ${CURRENTLY_PLAYING_COLOR} !important`,
         };
 
-        if (playlist.current_track_index === 0) {
+        if (activePlaylist.current_track_index === 0) {
             return {
                 table: {
                     "thead > tr": previousRowCSS,
@@ -218,8 +218,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         } else {
             return {
                 table: {
-                    [`tbody > tr:nth-of-type(${playlist.current_track_index})`]: previousRowCSS,
-                    [`tbody > tr:nth-of-type(${playlist.current_track_index + 1})`]:
+                    [`tbody > tr:nth-of-type(${activePlaylist.current_track_index})`]: previousRowCSS,
+                    [`tbody > tr:nth-of-type(${activePlaylist.current_track_index + 1})`]:
                         currentlyPlayingRowCSS,
                 },
             };
@@ -261,8 +261,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
      */
 
     useEffect(() => {
-        setOptimisticPlaylistEntries(playlist?.entries || []);
-    }, [playlist?.entries]);
+        setOptimisticPlaylistEntries(activePlaylist?.entries || []);
+    }, [activePlaylist?.entries]);
 
     /**
      * Inform the parent component when the current Playlist entry changes.
@@ -271,7 +271,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         if (onNewCurrentEntryRef && currentEntryRef && currentEntryRef.current) {
             onNewCurrentEntryRef(currentEntryRef.current);
         }
-    }, [currentEntryRef, onNewCurrentEntryRef, playlist.current_track_index]);
+    }, [currentEntryRef, onNewCurrentEntryRef, activePlaylist.current_track_index]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -279,7 +279,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         return <StandbyMode />;
     }
     
-    if (!playlist.haveReceivedInitialState || activatingStoredPlaylist) {
+    if (!activePlaylist.haveReceivedInitialState || isActivatingPlaylist) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
@@ -290,8 +290,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const playlistEntries: PlaylistEntry[] =
         optimisticPlaylistEntries.length > 0
             ? optimisticPlaylistEntries
-            : playlist?.entries && playlist.entries.length > 0
-            ? playlist.entries
+            : activePlaylist?.entries && activePlaylist.entries.length > 0
+            ? activePlaylist.entries
             : [];
 
     if (playlistEntries.length <= 0) {
@@ -363,7 +363,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                             {...provided.draggableProps}
                             key={entry.id.toString()}
                             className={`${
-                                index !== playlist.current_track_index && actionsMenuOpenFor
+                                index !== activePlaylist.current_track_index && actionsMenuOpenFor
                                     ? actionsMenuOpenFor === entry.id
                                         ? classes.highlight
                                         : ""
@@ -378,7 +378,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     "scroll to current" feature has something to work with. */}
                                 <Box
                                     ref={
-                                        index === playlist.current_track_index
+                                        index === activePlaylist.current_track_index
                                             ? currentEntryRef
                                             : undefined
                                     }
@@ -403,9 +403,9 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     //      - If currently paused, resume playback
                                     //  - If it's not the current track, play track from beginning
                                     // entryCanBePlayed(index) &&
-                                    index === playlist.current_track_index && playStatus === "pause"
+                                    index === activePlaylist.current_track_index && playStatus === "pause"
                                         ? resumePlayback()
-                                        : index === playlist.current_track_index &&
+                                        : index === activePlaylist.current_track_index &&
                                           playStatus === "play" &&
                                           streamerPower === "on"
                                         ? pausePlayback()
@@ -427,13 +427,13 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                             </td>
                             <td
                                 className={
-                                    index !== playlist.current_track_index
+                                    index !== activePlaylist.current_track_index
                                         ? classes.pointerOnHover
                                         : ""
                                 }
                                 style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    index !== playlist.current_track_index &&
+                                    index !== activePlaylist.current_track_index &&
                                         playPlaylistId({ playlistId: entry.id });
                                 }}
                             >
@@ -457,7 +457,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                 <Flex pl={5} gap={5} align="center">
                                     {/* Entry Play button. If the entry is the current entry,
                                         then instead implement Pause/Resume behavior. */}
-                                    {index === playlist.current_track_index ? (
+                                    {index === activePlaylist.current_track_index ? (
                                         playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}
@@ -503,7 +503,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     <PlaylistEntryActionsButton
                                         entry={entry}
                                         entryCount={renderedPlaylistEntries.length}
-                                        currentlyPlayingIndex={playlist.current_track_index}
+                                        currentlyPlayingIndex={activePlaylist.current_track_index}
                                         onOpen={() => setActionsMenuOpenFor(entry.id)}
                                         onClose={() => setActionsMenuOpenFor(undefined)}
                                     />

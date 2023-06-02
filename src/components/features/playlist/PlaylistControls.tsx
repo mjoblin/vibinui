@@ -37,7 +37,7 @@ import {
     setPlaylistFollowCurrentlyPlaying,
     setPlaylistViewMode,
 } from "../../../app/store/userSettingsSlice";
-import { setHaveReceivedInitialState } from "../../../app/store/playlistSlice";
+import { setHaveReceivedInitialState } from "../../../app/store/activePlaylistSlice";
 import {
     useLazyActivateStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
@@ -102,21 +102,27 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
 
 type PlaylistControlsProps = {
     scrollToCurrent?: (options?: { offset?: number }) => void;
-}
+};
 
 const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     const { APP_MODAL_BLUR, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
-    const { followCurrentlyPlaying, viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
+    const { followCurrentlyPlaying, viewMode } = useAppSelector(
+        (state: RootState) => state.userSettings.playlist
+    );
     const {
-        active_stored_playlist_id: activeStoredPlaylistId,
-        active_synced_with_store: activeSyncedWithStore,
-        activating_stored_playlist: activatingStoredPlaylist,
-        stored_playlists: storedPlaylists,
+        playlists: storedPlaylists,
+        status: {
+            active_id: activeStoredPlaylistId,
+            is_active_synced_with_store: isActiveSyncedWithStore,
+            is_activating_playlist: isActivatingPlaylist,
+        },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
-    const { current_track_index } = useAppSelector((state: RootState) => state.playlist);
+    const { current_track_index: activePlaylistTrackIndex } = useAppSelector(
+        (state: RootState) => state.activePlaylist
+    );
     const [togglePower] = useLazyPowerToggleQuery();
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
@@ -149,10 +155,10 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
      */
     useEffect(() => {
         followCurrentlyPlaying &&
-            current_track_index !== undefined &&
+            activePlaylistTrackIndex !== undefined &&
             scrollToCurrent &&
             scrollToCurrent({ offset: 45 }); // Offset results in previous track still being visible
-    }, [followCurrentlyPlaying, current_track_index, scrollToCurrent]);
+    }, [followCurrentlyPlaying, activePlaylistTrackIndex, scrollToCurrent]);
 
     /**
      * Whenever the active stored playlist id changes, store the name of that playlist in component
@@ -162,11 +168,11 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
         if (!activeStoredPlaylistId) {
             return;
         }
-        
+
         const thisPlaylistName =
             storedPlaylists.find((storedPlaylist) => storedPlaylist.id === activeStoredPlaylistId)
                 ?.name || "Unknown name";
-        
+
         setActiveStoredPlaylistName(thisPlaylistName);
     }, [activeStoredPlaylistId, storedPlaylists]);
 
@@ -181,8 +187,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                 title: "Error activating Playlist",
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
-        }
-        else if (activatePlaylistStatus.isSuccess) {
+        } else if (activatePlaylistStatus.isSuccess) {
             showSuccessNotification({
                 title: "Playlist activated",
                 message: activeStoredPlaylistName,
@@ -194,7 +199,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
         activatePlaylistStatus.error,
         activeStoredPlaylistName,
     ]);
-    
+
     /**
      * Handle an attempt to save a Stored Playlist (successful or unsuccessful).
      */
@@ -267,8 +272,8 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     return (
         <Flex h="100%" align="center" justify="space-between">
             <Flex gap={25} align="center">
-                <Flex gap={5} w={275} align="center">
-                    {activatingStoredPlaylist && (
+                <Flex gap={5} w={295} align="center">
+                    {isActivatingPlaylist && (
                         <Flex gap={10} align="center">
                             <Loader size="sm" />
                             <Text size="xs" weight="bold">
@@ -277,7 +282,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                         </Flex>
                     )}
 
-                    {!activatingStoredPlaylist && (
+                    {!isActivatingPlaylist && (
                         <>
                             {/* Playlist names (selecting a Playlist name will activate it) */}
                             <Select
@@ -287,7 +292,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                                 data={playlistDetails}
                                 limit={10}
                                 value={activeStoredPlaylistId}
-                                w={250}
+                                w={270}
                                 maxDropdownHeight={700}
                                 onChange={(value) => {
                                     if (!value) {
@@ -307,7 +312,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                             {/* Playlist save options */}
                             <Indicator
                                 size={7}
-                                disabled={isPlaylistPersisted && activeSyncedWithStore}
+                                disabled={isPlaylistPersisted && isActiveSyncedWithStore}
                                 position="top-start"
                                 offset={3}
                             >
@@ -330,7 +335,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                                         <Menu.Label>Save</Menu.Label>
                                         <Menu.Item
                                             disabled={
-                                                !activeStoredPlaylistId || activeSyncedWithStore
+                                                !activeStoredPlaylistId || isActiveSyncedWithStore
                                             }
                                             icon={
                                                 <Indicator
@@ -338,7 +343,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                                                     disabled={
                                                         !isPlaylistPersisted ||
                                                         (isPlaylistPersisted &&
-                                                            activeSyncedWithStore)
+                                                            isActiveSyncedWithStore)
                                                     }
                                                     position="top-start"
                                                     offset={-4}
@@ -439,7 +444,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
             </Flex>
 
             {/* Inform the user if the current persisted playlist has changed */}
-            {isPlaylistPersisted && !activeSyncedWithStore && (
+            {isPlaylistPersisted && !isActiveSyncedWithStore && (
                 <Tooltip label="Playlist has unsaved changes" position="bottom">
                     <ThemeIcon color={colors.yellow[4]} size={20} radius={10}>
                         <IconExclamationMark size={17} stroke={2} color={colors.dark[7]} />

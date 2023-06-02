@@ -25,7 +25,7 @@ import {
 import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
 import { AudioSource } from "../store/playbackSlice";
-import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
+import { setCurrentTrackIndex, setEntries } from "../store/activePlaylistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";

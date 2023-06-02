@@ -17,7 +17,7 @@ export const vibinSystemApi = createApi({
             query: () => ({ url: "streamer/power_toggle", method: "POST" }),
         }),
         setSource: builder.query<void, string>({
-            query: (source) => ({ url: "streamer/source", method: "POST", params: { source } }),
+            query: (source) => ({ url: "streamer/audio_source", method: "POST", params: { source } }),
         }),
     }),
 });

@@ -10,17 +10,21 @@ import { StoredPlaylist, StoredPlaylistId } from "../services/vibinStoredPlaylis
 // ================================================================================================
 
 export interface StoredPlaylistsState {
-    active_stored_playlist_id: StoredPlaylistId | undefined;
-    active_synced_with_store: boolean;
-    activating_stored_playlist: boolean;
-    stored_playlists: StoredPlaylist[];
+    playlists: StoredPlaylist[];
+    status: {
+        active_id: StoredPlaylistId | undefined;
+        is_active_synced_with_store: boolean;
+        is_activating_playlist: boolean;
+    };
 }
 
 const initialState: StoredPlaylistsState = {
-    active_stored_playlist_id: undefined,
-    active_synced_with_store: false,
-    activating_stored_playlist: false,
-    stored_playlists: [],
+    playlists: [],
+    status: {
+        active_id: undefined,
+        is_active_synced_with_store: false,
+        is_activating_playlist: false,
+    },
 };
 
 export const storedPlaylistsSlice = createSlice({
@@ -28,10 +32,10 @@ export const storedPlaylistsSlice = createSlice({
     initialState,
     reducers: {
         setStoredPlaylistsState: (state, action: PayloadAction<StoredPlaylistsState>) => {
-            state.active_stored_playlist_id = action.payload.active_stored_playlist_id;
-            state.active_synced_with_store = action.payload.active_synced_with_store;
-            state.activating_stored_playlist = action.payload.activating_stored_playlist;
-            state.stored_playlists = action.payload.stored_playlists;
+            state.playlists = action.payload.playlists;
+            state.status.active_id = action.payload.status.active_id;
+            state.status.is_active_synced_with_store = action.payload.status.is_active_synced_with_store;
+            state.status.is_activating_playlist = action.payload.status.is_activating_playlist;
         },
     },
 });

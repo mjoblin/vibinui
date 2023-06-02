@@ -10,6 +10,10 @@
 
 The app also uses [TypeScript] and [Prettier].
 
+> `vibinui` expects to be running on a low-latency, high-speed local network. It will still work in
+> slower network environments (like over the internet), but it does little to mitigate the effects
+> of slower network connections.
+
 ## Available Scripts
 
 In the project directory, you can run:

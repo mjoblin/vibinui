@@ -15,20 +15,20 @@ import { updateIfDifferent } from "./helpers";
  *  Perhaps everything should be managed in services/vibinPlaylist.
  */
 
-export interface PlaylistState {
+export interface ActivePlaylistState {
     entries: Playlist | undefined;
     current_track_index: number | undefined;
     haveReceivedInitialState: boolean;
 }
 
-const initialState: PlaylistState = {
+const initialState: ActivePlaylistState = {
     entries: undefined,
     current_track_index: undefined,
     haveReceivedInitialState: false,
 };
 
-export const playlistSlice = createSlice({
-    name: "playlist",
+export const activePlaylistSlice = createSlice({
+    name: "activePlaylist",
     initialState,
     reducers: {
         setCurrentTrackIndex: (state, action: PayloadAction<number | undefined>) => {
@@ -46,6 +46,6 @@ export const playlistSlice = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { setCurrentTrackIndex, setEntries, setHaveReceivedInitialState } =
-    playlistSlice.actions;
+    activePlaylistSlice.actions;
 
-export default playlistSlice.reducer;
+export default activePlaylistSlice.reducer;
