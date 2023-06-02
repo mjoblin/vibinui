@@ -63,8 +63,6 @@ export type Format = {
 
 // A file being streamed for playback.
 export type Stream = {
-    type: string;
-    source_name: string;
     url: string;
 }
 
