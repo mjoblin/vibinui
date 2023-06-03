@@ -280,38 +280,15 @@ function messageHandler(
             dispatch(setRepeat(payload.repeat));
             dispatch(setShuffle(payload.shuffle));
         } else if (data.type === "UPnPProperties") {
-            // TODO: This is still used for active track genre. Need to refactor this.
-            const upnpProperties = data.payload as UPnPPropertiesPayload;
-            const streamerName = upnpProperties.streamer_name;
-
-            if (!streamerName) {
-                return;
-            }
-
-            // Extract track genre, checking to ensure that the message's track matches the track
-            // in application state.
+            // TODO: This is where the current track's genre used to be extracted from. Investigate
+            //  where best to find genre now. The ultimate dispatch for genre looked like:
             //
-            // NOTE: This assumes we'll be getting a UPnPProperties message for the track *after*
-            // we've seen a PlayState message defining the new track.
-            const upnpPropertiesTrack =
-                upnpProperties.vibin.streamer?.current_playback_details?.playlist_entry;
-            const appStateTrack = appState[setCurrentTrack.type];
-
-            if (
-                upnpPropertiesTrack &&
-                appStateTrack &&
-                upnpPropertiesTrack.genre &&
-                appStateTrack.title === upnpPropertiesTrack.title &&
-                appStateTrack.album === upnpPropertiesTrack.album &&
-                appStateTrack.artist === upnpPropertiesTrack.artist
-            ) {
-                dispatch(
-                    setCurrentTrack({
-                        ...appState[setCurrentTrack.type],
-                        genre: upnpPropertiesTrack.genre,
-                    })
-                );
-            }
+            // dispatch(
+            //     setCurrentTrack({
+            //         ...appState[setCurrentTrack.type],
+            //         genre: upnpPropertiesTrack.genre,
+            //     })
+            // );
         } else if (data.type === "VibinStatus") {
             dispatch(setVibinStatusState(data.payload as VibinStatusPayload));
 
