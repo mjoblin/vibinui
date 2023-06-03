@@ -19,7 +19,8 @@ const BackgroundImageManager: FC = () => {
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
-    const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
+    const { current_track: currentPlaybackTrack, current_audio_source: currentAudioSource } =
+        useAppSelector((state: RootState) => state.playback);
 
     /**
      * Set the background image URL. This will change whenever the current track changes. If
@@ -32,6 +33,7 @@ const BackgroundImageManager: FC = () => {
         if (currentTrackId && trackById[currentTrackId]) {
             dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
         } else if (
+            currentAudioSource?.class === "stream.media" &&
             activePlaylist &&
             activePlaylist.entries &&
             activePlaylist.current_track_index !== undefined &&
