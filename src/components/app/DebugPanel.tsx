@@ -53,7 +53,7 @@ const DebugPanel: FC = () => {
     const { classes } = useStyles();
     const system = useAppSelector((state: RootState) => state.system);
     const playback = useAppSelector((state: RootState) => state.playback);
-    const playlist = useAppSelector((state: RootState) => state.playlist);
+    const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
     const { showDebugPanel, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application
@@ -140,11 +140,11 @@ const DebugPanel: FC = () => {
                         </Title>
                         <FieldValueList
                             fieldValues={{
-                                entryCount: playlist.entries?.length || 0,
+                                entryCount: activePlaylist.entries?.length || 0,
                                 currentTrackIndex:
-                                    typeof playlist.current_track_index === "undefined"
+                                    typeof activePlaylist.current_track_index === "undefined"
                                         ? "undefined"
-                                        : playlist.current_track_index,
+                                        : activePlaylist.current_track_index,
                             }}
                             keySize={fontSize}
                             valueSize={fontSize}
@@ -159,14 +159,14 @@ const DebugPanel: FC = () => {
                         <FieldValueList
                             fieldValues={{
                                 activeStoredPlaylistId:
-                                    storedPlaylists.active_stored_playlist_id || "undefined",
-                                activeSyncedWithStore: storedPlaylists.active_synced_with_store
+                                    storedPlaylists.status.active_id || "undefined",
+                                activeSyncedWithStore: storedPlaylists.status.is_active_synced_with_store
                                     ? "True"
                                     : "False",
-                                activatingStoredPlaylist: storedPlaylists.activating_stored_playlist
+                                activatingStoredPlaylist: storedPlaylists.status.is_activating_playlist
                                     ? "True"
                                     : "False",
-                                count: storedPlaylists.stored_playlists.length,
+                                count: storedPlaylists.playlists.length,
                             }}
                             keySize={fontSize}
                             valueSize={fontSize}

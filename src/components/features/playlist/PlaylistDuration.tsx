@@ -14,9 +14,8 @@ const PlaylistDuration: FC = () => {
     const [activePlaylistDuration, setActivePlaylistDuration] = useState<number>(0);
     const [completedEntriesProgress, setCompletedEntriesProgress] = useState<number>(0);
     const [totalProgress, setTotalProgress] = useState<number>(0);
-    const { current_track_index, entries: activePlaylistEntries } = useAppSelector(
-        (state: RootState) => state.playlist
-    );
+    const { current_track_index: activePlaylistTrackIndex, entries: activePlaylistEntries } =
+        useAppSelector((state: RootState) => state.activePlaylist);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const playheadPosition = useAppSelector((state: RootState) => state.playback.playhead.position);
     const playheadPositionNormalized = useAppSelector(
@@ -40,17 +39,17 @@ const PlaylistDuration: FC = () => {
      * into the current Playlist Entry (see next effect).
      */
     useEffect(() => {
-        if (!current_track_index || !activePlaylistEntries || activePlaylistEntries.length <= 0) {
+        if (!activePlaylistTrackIndex || !activePlaylistEntries || activePlaylistEntries.length <= 0) {
             setCompletedEntriesProgress(0);
             return;
         }
 
         const progress = activePlaylistEntries
-            .filter((entry) => entry.index < current_track_index)
+            .filter((entry) => entry.index < activePlaylistTrackIndex)
             .reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
 
         setCompletedEntriesProgress(progress);
-    }, [activePlaylistEntries, current_track_index, playStatus]);
+    }, [activePlaylistEntries, activePlaylistTrackIndex, playStatus]);
 
     /**
      * Calculate the total progress through the Playlist, which is the sum of the completed Entries

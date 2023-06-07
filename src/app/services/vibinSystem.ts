@@ -14,10 +14,10 @@ export const vibinSystemApi = createApi({
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         powerToggle: builder.query<void, void>({
-            query: () => ({ url: "power/toggle", method: "POST" }),
+            query: () => ({ url: "streamer/power_toggle", method: "POST" }),
         }),
         setSource: builder.query<void, string>({
-            query: (source) => ({ url: "source", method: "POST", params: { source } }),
+            query: (source) => ({ url: "streamer/audio_source", method: "POST", params: { source } }),
         }),
     }),
 });

@@ -24,11 +24,13 @@ import {
 } from "../store/playbackSlice";
 import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
-import { setCurrentTrackIndex, setEntries } from "../store/playlistSlice";
+import { AudioSource } from "../store/playbackSlice";
+import { setCurrentTrackIndex, setEntries } from "../store/activePlaylistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 import { setVibinStatusState, VibinStatusState } from "../store/vibinStatusSlice";
+import { MediaId, PlaylistEntry } from "../types";
 
 // ================================================================================================
 // Handle the WebSocket connection to the vibin backend.
@@ -53,72 +55,60 @@ const MAX_MESSAGE_COUNT = 10;
 type SimpleObject = { [key: string | number]: any };
 
 type MessageType =
-    | "ActiveTransportControls"
-    | "DeviceDisplay"
+    | "CurrentlyPlaying"
     | "Favorites"
-    | "PlayState"
     | "Position"
     | "Presets"
-    | "StateVars"
     | "StoredPlaylists"
     | "System"
+    | "TransportState"
+    | "UPnPProperties"
     | "VibinStatus";
 
-type ActiveTransportControlsPayload = TransportAction[];
+// ------------------------------------------------------------------------------------------------
+// TODO: Figure out where these new types should live
 
-type DeviceDisplayPayload = DeviceDisplay;
-
-type SystemPayload = {
-    streamer: {
-        name: string;
-        power: "on" | "off";
-    };
-    media: {
-        name: string;
-    };
+type ActiveTrack = {
+    title: string;
+    artist: string;
+    album: string;
+    art_url: string;
+    duration: number;
 };
 
-type StateVarsPayload = {
-    streamer_name: string; // TODO: Should streamer_name and media_source_name be on VibinMessage?
-    media_source_name: string;
-    streamer: SimpleObject;
-    vibin: SimpleObject;
+type MediaFormat = {
+    sample_format: string;
+    mqa: string;
+    codec: string;
+    lossless: boolean,
+    sample_rate: number;
+    bit_depth: number;
+    encoding: string;
 };
 
-// TODO: Figure out if any of these are not optional. Making them all optional makes usage a little
-//  awkward (having to always allow for their optionality on reference). Also investigate
-//  formalizing some of these types, and find a suitable place fro those types to live.
-type PlayStatePayload = {
-    state?: PlayStatus;
-    position?: number;
-    presettable?: boolean;
-    queue_index?: number;
-    queue_length?: number;
-    queue_id?: number;
-    mode_repeat?: RepeatState;
-    mode_shuffle?: ShuffleState;
-    metadata?: {
-        class?: string;
-        source?: string;
-        name?: string;
-        playback_source?: string;
-        track_number?: number;
-        duration?: number;
-        album?: string;
-        artist?: string;
-        title?: string;
-        art_url?: string;
-        sample_format?: string;
-        mqa?: string;
-        codec?: string;
-        lossless?: boolean;
-        sample_rate?: number;
-        bit_depth?: number;
-        encoding?: string;
-        current_track_media_id: string | undefined;
-        current_album_media_id: string | undefined;
-    };
+type MediaStream = {
+    url: string;
 };
+
+// TODO: End new types
+// ------------------------------------------------------------------------------------------------
+
+// ------------------------------------------------------------------------------------------------
+// Message payload shapes.
+
+type CurrentlyPlayingPayload = {
+    album_media_id: MediaId;
+    track_media_id: MediaId;
+    active_track: ActiveTrack;
+    playlist: {
+        current_track_index: number;
+        entries: PlaylistEntry[];
+    };
+    format: MediaFormat;
+    stream: MediaStream;
+};
+
+type FavoritesPayload = FavoritesState;
 
 type PositionPayload = {
     position: number;
@@ -126,30 +116,61 @@ type PositionPayload = {
 
 type PresetsPayload = PresetsState;
 
-type FavoritesPayload = FavoritesState;
-
 type StoredPlaylistsPayload = StoredPlaylistsState;
+
+type SystemPayload = {
+    streamer: {
+        name: string;
+        power: "on" | "off";
+        sources: {
+            active: AudioSource,
+            available: AudioSource[],
+        };
+        display: DeviceDisplay;
+    };
+    media: {
+        name: string;
+    };
+};
+
+type TransportStatePayload = {
+    play_state: PlayStatus,
+    active_controls: TransportAction[],
+    repeat: RepeatState,
+    shuffle: ShuffleState,
+};
+
+type UPnPPropertiesPayload = {
+    streamer_name: string; // TODO: Should streamer_name and media_source_name be on VibinMessage?
+    media_source_name: string;
+    streamer: SimpleObject;
+    media_server: SimpleObject;
+    vibin: SimpleObject;
+};
 
 type VibinStatusPayload = VibinStatusState;
 
-// TODO: More clearly define the vibin backend message format.
+// ------------------------------------------------------------------------------------------------
+// The overall message shape.
+
 export type VibinMessage = {
     id: string;
     client_id: string;
     time: number;
     type: MessageType;
     payload:
-        | ActiveTransportControlsPayload
-        | DeviceDisplayPayload
+        | CurrentlyPlayingPayload
         | FavoritesPayload
-        | PlayStatePayload
         | PositionPayload
         | PresetsPayload
-        | StateVarsPayload
         | StoredPlaylistsPayload
         | SystemPayload
+        | TransportStatePayload
+        | UPnPPropertiesPayload
         | VibinStatusPayload;
 };
+
+// ------------------------------------------------------------------------------------------------
 
 /**
  * Take some arbitrary input (scalar or SimpleObject) and purify it. Purify in this context means
@@ -190,36 +211,13 @@ const purifyData = (
  * @param dispatch
  *
  *  1. Add the message to the message stream.
- *  2. Extract the following information (if present in the message) and, if the data has changed
- *     from the current application state, then dispatch redux actions to update the state:
- *      * Playback status
- *          * Playback state (paused, playing, etc.)
- *          * List of audio sources.
- *          * Current audio source.
- *          * Current track information (artist, title, etc).
- *          * Current format information (code, bitrate, etc).
- *      * Current playlist
+ *  2. Check the message type ("CurrentlyPlaying", "Favorites", etc) and use the information in the
+ *     message payload to dispatch updates to application state.
  *
  * TODO: updateCachedData is coming from the QueryArg type, defined somewhere in Redux Toolkit. It
  *  would be nice to figure out how to access the proper type and not fall back on "any".
  *  messageHandler() might also benefit at some point from having the entire QueryArg object rather
  *  than just updateCachedData.
- *
- * TODO: The backend currently supports two message types (state var updates, and play state
- *  updates). Should these even be treated differently? (Their backend realities are different --
- *  UPNP vs. WebSocket updates from the streamer -- but that distinction could be abstracted away).
- *  If continued to treat differently, then maybe the Client/UI could decide whether they want to
- *  receive one or both types -- perhaps by connecting to a WebSocket channel per type; or sending
- *  a connect message where they say which type(s) they want to receive.
- *
- * TODO: Handle defining the current playhead position. Store it as normalized 0-1 in application
- *  state. Auto-update at regular interval (say 250ms). Heuristics:
- *      * When current track has changed, set playhead to 0.
- *      * Auto-update playhead position at regular interval.
- *      * Actions to consider (will interrupt regular-interval updates):
- *          * Track paused (pause updates; allow for pause happening mid-interval).
- *          * Track stopped (cancel playhead?).
- *          * Track seek (reset position).
  */
 function messageHandler(
     updateCachedData: any,
@@ -244,130 +242,53 @@ function messageHandler(
 
         const appState = getState();
 
-        if (data.type === "System") {
-            const system = data.payload as SystemPayload;
+        if (data.type === "CurrentlyPlaying") {
+            const currentlyPlaying = data.payload as CurrentlyPlayingPayload;
 
-            dispatch(setMediaDeviceName(system.media?.name));
-            dispatch(setStreamerName(system.streamer?.name));
-            dispatch(setStreamerPower(system.streamer?.power));
-        } else if (data.type === "StateVars") {
-            const stateVars = data.payload as StateVarsPayload;
-            const streamerName = stateVars.streamer_name;
-
-            if (!streamerName) {
-                return;
-            }
-
-            // Set list of audio sources, and currently-set audio source.
-            dispatch(setAudioSources(stateVars.vibin[streamerName]?.audio_sources || {}));
-            dispatch(setCurrentAudioSource(stateVars.vibin[streamerName]?.current_audio_source));
-
-            // Set stream information.
-            const streamInfo = stateVars.vibin[streamerName]?.current_playback_details?.stream;
-
-            streamInfo &&
-                dispatch(
-                    setCurrentStream({
-                        type: streamInfo.type,
-                        source_name: streamInfo.source_name,
-                        url: streamInfo.url,
-                    })
-                );
-
-            // Extract track genre, checking to ensure that the message's track matches the track
-            // in application state.
-            //
-            // NOTE: This assumes we'll be getting a StateVars message for the track *after* we've
-            //  seen a PlayState message defining the new track.
-            const stateVarsTrack =
-                stateVars.vibin[streamerName]?.current_playback_details?.playlist_entry;
-            const appStateTrack = appState[setCurrentTrack.type];
-
-            if (
-                stateVarsTrack &&
-                appStateTrack &&
-                stateVarsTrack.genre &&
-                appStateTrack.title === stateVarsTrack.title &&
-                appStateTrack.album === stateVarsTrack.album &&
-                appStateTrack.artist === stateVarsTrack.artist
-            ) {
-                dispatch(
-                    setCurrentTrack({
-                        ...appState[setCurrentTrack.type],
-                        genre: stateVarsTrack.genre,
-                    })
-                );
-            }
-
-            // Set current playlist track index and entries.
-            dispatch(
-                setCurrentTrackIndex(stateVars.vibin[streamerName]?.current_playlist_track_index)
-            );
-            dispatch(setEntries(stateVars.vibin[streamerName]?.current_playlist));
+            dispatch(setCurrentTrack(currentlyPlaying.active_track));
+            dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
+            dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
+            dispatch(setCurrentFormat(currentlyPlaying.format));
+            dispatch(setCurrentStream(currentlyPlaying.stream));
+            dispatch(setCurrentTrackIndex(currentlyPlaying.playlist.current_track_index));
+            dispatch(setEntries(currentlyPlaying.playlist.entries));
+        } else if (data.type === "Favorites") {
+            dispatch(setFavoritesState(data.payload as FavoritesPayload));
         } else if (data.type === "Position") {
             dispatch({
                 type: setPlayheadPosition.type,
                 payload: (data.payload as PositionPayload).position,
             });
-        } else if (data.type === "PlayState") {
-            const metadata = (data.payload as PlayStatePayload).metadata;
-
-            // Set current play status ("play", "pause", etc).
-            dispatch(setPlayStatus((data.payload as PlayStatePayload).state));
-
-            // Set current Track and Album Media IDs.
-            dispatch(
-                setCurrentTrackMediaId(
-                    (data.payload as PlayStatePayload).metadata?.current_track_media_id
-                )
-            );
-            dispatch(
-                setCurrentAlbumMediaId(
-                    (data.payload as PlayStatePayload).metadata?.current_album_media_id
-                )
-            );
-
-            // Set track information.
-            // NOTE: genre comes later from a StateVars message.
-            metadata &&
-                dispatch(
-                    setCurrentTrack({
-                        track_number: metadata.track_number,
-                        duration: metadata.duration,
-                        album: metadata.album,
-                        artist: metadata.artist,
-                        title: metadata.title,
-                        art_url: metadata.art_url,
-                    })
-                );
-
-            // Set format information.
-            metadata &&
-                dispatch(
-                    setCurrentFormat({
-                        sample_format: metadata.sample_format,
-                        mqa: metadata.mqa,
-                        codec: metadata.codec,
-                        lossless: metadata.lossless,
-                        sample_rate: metadata.sample_rate,
-                        bit_depth: metadata.bit_depth,
-                        encoding: metadata.encoding,
-                    })
-                );
-
-            // Set repeat and shuffle.
-            dispatch(setRepeat((data.payload as PlayStatePayload).mode_repeat));
-            dispatch(setShuffle((data.payload as PlayStatePayload).mode_shuffle));
-        } else if (data.type === "ActiveTransportControls") {
-            dispatch(setActiveTransportActions(data.payload as ActiveTransportControlsPayload));
-        } else if (data.type === "DeviceDisplay") {
-            dispatch(setDeviceDisplay(data.payload as DeviceDisplayPayload));
-        } else if (data.type === "Favorites") {
-            dispatch(setFavoritesState(data.payload as FavoritesPayload));
         } else if (data.type === "Presets") {
             dispatch(setPresetsState(data.payload as PresetsState));
         } else if (data.type === "StoredPlaylists") {
             dispatch(setStoredPlaylistsState(data.payload as StoredPlaylistsPayload));
+        } else if (data.type === "System") {
+            const system = data.payload as SystemPayload;
+
+            dispatch(setMediaDeviceName(system.media?.name));
+            dispatch(setStreamerName(system.streamer?.name));
+            dispatch(setStreamerPower(system.streamer?.power));
+            dispatch(setAudioSources(system.streamer?.sources.available))
+            dispatch(setCurrentAudioSource(system.streamer?.sources.active))
+            dispatch(setDeviceDisplay(system.streamer?.display));
+        } else if (data.type === "TransportState") {
+            const payload = data.payload as TransportStatePayload;
+
+            dispatch(setPlayStatus(payload.play_state));  // "play", "pause", etc
+            dispatch(setActiveTransportActions(payload.active_controls));
+            dispatch(setRepeat(payload.repeat));
+            dispatch(setShuffle(payload.shuffle));
+        } else if (data.type === "UPnPProperties") {
+            // TODO: This is where the current track's genre used to be extracted from. Investigate
+            //  where best to find genre now. The ultimate dispatch for genre looked like:
+            //
+            // dispatch(
+            //     setCurrentTrack({
+            //         ...appState[setCurrentTrack.type],
+            //         genre: upnpPropertiesTrack.genre,
+            //     })
+            // );
         } else if (data.type === "VibinStatus") {
             dispatch(setVibinStatusState(data.payload as VibinStatusPayload));
 

@@ -21,7 +21,7 @@ import {
 } from "@tabler/icons";
 
 import { Album, Track } from "../../../app/types";
-import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlaylist";
+import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
 import {
     useAddFavoriteMutation,
     useDeleteFavoriteMutation,

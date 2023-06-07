@@ -27,6 +27,7 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import SettingsMenu from "../SettingsMenu";
 import WaitingOnAPIIndicator from "../../shared/dataDisplay/WaitingOnAPIIndicator";
 import StandbyMode from "../../shared/buttons/StandbyMode";
+import MediaSourceBadge from "../../shared/dataDisplay/MediaSourceBadge";
 
 // ================================================================================================
 // Application navigation menu.
@@ -201,6 +202,10 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
                     </Stack>
                 </Stack>
             </Navbar.Section>
+
+            <Box>
+                <MediaSourceBadge showSource={true} />
+            </Box>
 
             <Navbar.Section className={classes.footer}>
                 <Flex justify="space-between" align="center">

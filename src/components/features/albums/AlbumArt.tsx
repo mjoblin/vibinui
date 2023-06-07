@@ -7,7 +7,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 import { RootState } from "../../../app/store/store";
 import { useAppSelector } from "../../../app/hooks/store";
 import { Album } from "../../../app/types";
-import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlaylist";
+import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";

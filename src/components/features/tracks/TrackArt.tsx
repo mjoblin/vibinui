@@ -6,7 +6,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 import { Track } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
 import { useAppSelector } from "../../../app/hooks/store";
-import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinPlaylist";
+import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
