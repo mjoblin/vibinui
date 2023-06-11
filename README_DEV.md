@@ -204,26 +204,20 @@ their `payload` shape will be different.
 
 #### Message types
 
-> **NOTE:** These message types have evolved significantly over time, and would benefit from a
-> cleanup pass.
-
 The following message types are received:
 
-* `ActiveTransportControls`: Which transport controls are currently available (e.g. play, pause,
-  next track, etc). These will vary based on the current media source, and current player state.
-* `DeviceDisplay`: What is currently being displayed on the streamer's display.
+* `CurrentlyPlaying`: Information about what's currently playing (current track, current playlist,
+   format details, stream details, etc).
 * `Favorites`: Information on Favorite Albums and Tracks.
-* `PlayState`: Information about the current player state (playing, paused, etc), and the currently-
-  playing media (including Album and Track IDs).
 * `Position`: Playhead position.
 * `Presets`: Information on Presets (e.g. Internet Radio stations).
-* `StateVars`: A general kitchen-sink message. Mostly used for extracting audio source information,
-  and some details on the current audio (including stream details like codec). **This message
-  type's usefulness has largely been replaced by other message types and should be deprecated (once
-  its remaining usefulness has been extracted)**.
 * `StoredPlaylists`: Information on Stored Playlists.
-* `System`: Information about the hardware devices (streamer name and power status; media server
-  name).
+* `System`: Information about the hardware devices (streamer name, power status, audio sources,
+  device display details; media server name).
+* `TransportState`: Current state of the streamer transport (play state, active transport controls,
+  shuffle and repeat state, etc). 
+* `UPnPProperties`: A general kitchen-sink message containing all the UPnP property values received
+* by the streamer and media server.
 * `VibinStatus`: Information about the Vibin back-end (start time, system information, connected
   clients, etc).
 
