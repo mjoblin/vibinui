@@ -7,7 +7,7 @@ Vibin was developed for my specific music streaming needs. It should however wor
 StreamMagic streamer, but has only been tested with the following:
 
 * Cambridge Audio CXNv2 streamer.
-* Local media stored on a NAS running [Asset UPnP].
+* Local media stored on a NAS running [Asset UPnP] (local media is optional).
 * AirPlay from a MacBook.
 * Running Vibin in Chrome on a MacBook and iPad.
 
@@ -103,7 +103,7 @@ Various actions can be performed on each entry in the playlist.
 
 #### Playlist management
 
-Playlists names can be changed, and playlists can be removed.
+Playlist names can be changed, and playlists can be removed.
 
 ![Playlist manager]
 
@@ -121,6 +121,10 @@ filtering.
 The art size can be changed.
 
 ![Albums tiny wall]
+
+#### View artists
+
+The Artists screen shows the selected artist's albums, and the selected album's tracks.
 
 #### Filter tracks by title
 
@@ -187,6 +191,7 @@ The streamer's audio input source can be set.
 [Playlist manager]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_manager.jpg?raw=true
 [Albums]: https://github.com/mjoblin/media/blob/main/vibin/images/albums.jpg?raw=true
 [Albums tiny wall]: https://github.com/mjoblin/media/blob/main/vibin/images/albums_tiny_wall.jpg?raw=true
+[Artists]: https://github.com/mjoblin/media/blob/main/vibin/images/artists.jpg?raw=true
 [Tracks filtered by lyrics]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_happy.jpg?raw=true
 [Tracks filtered by title]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_love.jpg?raw=true
 [Favorites]: https://github.com/mjoblin/media/blob/main/vibin/images/favorites.jpg?raw=true
