@@ -3,8 +3,8 @@
 `vibinui` is a browser-based application for [StreamMagic] audio streamers. `vibinui` also requires
 installation of the [`vibin`](https://github.com/mjoblin/vibin) backend.
 
-Vibin was developed for one person's specific music streaming needs (mine). It should however work
-for anyone with a StreamMagic streamer, but has only been tested with the following:
+Vibin was developed for my specific music streaming needs. It should however work for anyone with a
+StreamMagic streamer, but has only been tested with the following:
 
 * Cambridge Audio CXNv2 streamer.
 * Local media stored on a NAS running [Asset UPnP].
@@ -65,19 +65,27 @@ Vibin shows information on the currently-playing track. This works for both loca
 
 #### Lyrics
 
+Lyrics will be shown for the currently-playing track (when available).
+
 ![Current track lyrics]
 
 #### Lyrics from AirPlay source
+
+Lyrics will also be shown for tracks not coming from local media (such as AirPlay).
 
 ![Current track airplay]
 
 #### Waveform
 
+The waveform will be shown for tracks coming from local media. The playhead position can be changed
+from the waveform.
+
 ![Current track waveform]
 
 ### Playlists
 
-Vibin supports custom Playlist creation. Playlists can be saved for later use.
+Vibin supports custom Playlist creation. Playlists can be saved for later use. The detailed
+Playlist view shows more information than the summary view.
 
 #### Detailed view
 
@@ -89,9 +97,13 @@ Vibin supports custom Playlist creation. Playlists can be saved for later use.
 
 #### Playlist entry actions
 
+Various actions can be performed on each entry in the playlist.
+
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/playlist_entry_actions.jpg" width="250" />
 
 #### Playlist management
+
+Playlists names can be changed, and playlists can be removed.
 
 ![Playlist manager]
 
@@ -106,13 +118,20 @@ filtering.
 
 #### View albums as a tiny wall
 
+The art size can be changed.
+
 ![Albums tiny wall]
 
 #### Filter tracks by title
 
+Media can be filtered by a number of fields, such as title. Additional fields include artist,
+genre, date, etc.
+
 ![Tracks filtered by title]
 
 #### Filter tracks by lyrics
+
+Tracks can be filtered by lyrics.
 
 ![Tracks filtered by lyrics]
 
@@ -139,9 +158,14 @@ more.
 
 #### Art card display settings
 
+The size and spacing of the art cards can be changed independently for Tracks, Albums, etc. These
+settings will be remembered between sessions.
+
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_card_display.jpg" width="250" />
 
 #### Input switching
+
+The streamer's audio input source can be set.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_input_switching.jpg" width="200" />
 
