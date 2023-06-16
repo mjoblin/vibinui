@@ -1,6 +1,7 @@
 {
     "name": "vibinui",
     "version": "0.1.0",
+    "license": "GPL-3.0",
     "private": true,
     "homepage": "/ui",
     "proxy": "http://localhost:8080",
