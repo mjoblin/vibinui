@@ -12,7 +12,8 @@ StreamMagic streamer, but has only been tested with the following:
 * Running Vibin in Chrome on a MacBook and iPad.
 
 > Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
-> features like browsing internet radio, and has no support for TIDAL or Qobuz.
+> features like browsing internet radio, and has no support for TIDAL or Qobuz. Nor is it intended
+> to replace general-purpose solutions like Plex, Audirvana, Roon, etc.
 
 Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
@@ -53,7 +54,7 @@ See the [Developers README] for more information.
 * Keyboard shortcuts for transport controls, lyrics display, etc.
 * Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
   Vibin.
-* Streamer can be powered on/off, and the media source can be changed.
+* Streamer can be powered on/off, and the audio source can be changed.
 * Configure the UPnP media paths for the media server used by the backend.
 * Toggle whether the currently-playing art is displayed in the background of the Current Track and
   Playlist screens.
@@ -78,7 +79,7 @@ Lyrics will also be shown for tracks not coming from local media (such as AirPla
 #### Waveform
 
 The waveform will be shown for tracks coming from local media. The playhead position can be changed
-from the waveform.
+by dragging the playhead over the waveform image.
 
 ![Current track waveform]
 
@@ -130,14 +131,14 @@ The Artists screen shows the selected artist's albums, and the selected album's 
 
 #### Filter tracks by title
 
-Media can be filtered by a number of fields, such as title. Additional fields include artist,
-genre, date, etc.
+Media can be filtered by various fields, such as title, artist, genre, date, etc.
 
 ![Tracks filtered by title]
 
 #### Filter tracks by lyrics
 
-Tracks can be filtered by lyrics.
+Tracks can be filtered by lyrics. The following shows tracks with lyrics containing the word
+"happy".
 
 ![Tracks filtered by lyrics]
 
@@ -164,8 +165,8 @@ more.
 
 #### Art card display settings
 
-The size and spacing of the art cards can be changed independently for Tracks, Albums, etc. These
-settings will be remembered between sessions.
+The size and spacing of the art cards can be changed independently for Tracks, Albums, etc. Text
+details can be turned on and off. These settings will be remembered between sessions.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_card_display.jpg" width="250" />
 
