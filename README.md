@@ -126,6 +126,8 @@ The art size can be changed.
 
 The Artists screen shows the selected artist's albums, and the selected album's tracks.
 
+![Artists]
+
 #### Filter tracks by title
 
 Media can be filtered by a number of fields, such as title. Additional fields include artist,
