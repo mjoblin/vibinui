@@ -23,8 +23,20 @@ Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
 ## Installation
 
-See the [Vibin backend documentation] for information on how to install both the backend and this
-UI.
+See the [Vibin backend documentation] for complete information on how to install both the backend
+and this UI.
+
+In summary:
+
+1. Install the [`vibin`](https://github.com/mjoblin/vibin) backend first.
+2. Use the backend's commandline interface to download and install the UI application onto the
+   backend.
+
+The backend will then be able to serve the UI to a browser running on any other machine on the same
+network (a laptop, iPad, etc), via a URL hosted on the backend such as `http://192.168.1.100/ui`.
+
+In most cases, the backend will run on an always-on machine on the network -- such as a server or
+Raspberry Pi -- so it's always available to any browser which wishes to access the UI.
 
 ## Developers
 
@@ -32,19 +44,23 @@ See the [Developers README] for more information.
 
 ## Features
 
+Vibin supports a variety of features related to what's currently playing on the streamer; transport
+controls; local media browsing; playlists; favorites; etc.
+
 * **Currently-playing information**.
   * Lyrics.
   * Waveform.
   * Links to external sites.
-* **Playlists**.
-  * View the active Playlist.
-  * Modify the active Playlist.
-  * Save and switch between Playlists.
+* **Transport controls**.
+  * Play, pause, next track, previous track, shuffle, repeat, etc.
 * **Browse local media**.
   * Artists, Albums, Tracks.
   * Search by title, date, genre, etc.
   * Search for lyrics.
-  * Find the currently-playing Track.
+* **Playlists**.
+  * View the active Playlist.
+  * Modify the active Playlist.
+  * Save and switch between Playlists.
 * **Presets** (like internet radio).
 * **Favorites**.
 
