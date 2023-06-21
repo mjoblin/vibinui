@@ -15,6 +15,7 @@ export type ClientWebsocketClient = {
 };
 
 export interface VibinStatusState {
+    vibin_version: string;
     start_time: number | undefined;
     system_node: string;
     system_platform: string;
@@ -23,6 +24,7 @@ export interface VibinStatusState {
 }
 
 const initialState: VibinStatusState = {
+    vibin_version: "",
     start_time: undefined,
     system_node: "",
     system_platform: "",
@@ -35,6 +37,7 @@ export const vibinStatusSlice = createSlice({
     initialState,
     reducers: {
         setVibinStatusState: (state, action: PayloadAction<VibinStatusState>) => {
+            updateIfDifferent(state, "vibin_version", action.payload.vibin_version);
             updateIfDifferent(state, "start_time", action.payload.start_time);
             updateIfDifferent(state, "system_node", action.payload.system_node);
             updateIfDifferent(state, "system_platform", action.payload.system_platform);

@@ -63,6 +63,7 @@ const StatusScreen: FC = () => {
         (state: RootState) => state.internal.application
     );
     const {
+        vibin_version: vibinVersion,
         start_time: startTime,
         system_node: systemNode,
         system_platform: systemPlatform,
@@ -143,8 +144,16 @@ const StatusScreen: FC = () => {
                     <StylizedLabel color={colors.dark[3]}>web application</StylizedLabel>
 
                     <Flex gap={25} align="flex-start">
-                        {/* Indicators */}
                         <Stack spacing={10}>
+                            <Box pb={5}>
+                                <FieldValueList
+                                    fieldValues={{
+                                        "UI version": process.env.REACT_APP_VERSION,
+                                    }}
+                                />
+                            </Box>
+
+                            {/* Indicators */}
                             <Flex gap={10}>
                                 <WebsocketIndicator />
                                 <Text size="sm" weight="bold" color={colors.dark[1]}>
@@ -167,8 +176,6 @@ const StatusScreen: FC = () => {
                                 </Text>
                             </Flex>
                         </Stack>
-
-                        {/* Active API calls */}
                     </Flex>
                 </Stack>
             </Paper>
@@ -220,7 +227,7 @@ const StatusScreen: FC = () => {
                     <StylizedLabel color={colors.dark[3]}>media paths</StylizedLabel>
                     <Text size="sm" color={colors.dark[2]}>
                         Where to find media on the Media Server{" "}
-                        {mediaDevice.name && `(${mediaDevice.name})`}. Track details  will be
+                        {mediaDevice.name && `(${mediaDevice.name})`}. Track details will be
                         retrieved from the All Albums path.
                     </Text>
                     <Text size="sm" weight="bold" color={colors.dark[2]}>
@@ -319,7 +326,6 @@ const StatusScreen: FC = () => {
                                     }}
                                 />
                             </Box>
-
                         </Flex>
                     </Stack>
                 </Stack>
@@ -334,6 +340,7 @@ const StatusScreen: FC = () => {
                     <FieldValueList
                         fieldValues={{
                             Host: systemNode,
+                            "Vibin version": vibinVersion,
                             "Start time": startTime ? (
                                 <SelfUpdatingRelativeDate epochSeconds={startTime} />
                             ) : (
