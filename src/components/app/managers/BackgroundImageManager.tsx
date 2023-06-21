@@ -47,7 +47,14 @@ const BackgroundImageManager: FC = () => {
         } else if (currentPlaybackTrack?.art_url) {
             dispatch(setCurrentlyPlayingArtUrl(currentPlaybackTrack.art_url));
         }
-    }, [dispatch, currentTrackId, trackById, activePlaylist, currentPlaybackTrack]);
+    }, [
+        dispatch,
+        currentAudioSource,
+        currentTrackId,
+        trackById,
+        activePlaylist,
+        currentPlaybackTrack,
+    ]);
 
     return null;
 };
