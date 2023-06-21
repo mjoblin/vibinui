@@ -240,8 +240,6 @@ function messageHandler(
             draft.push(data);
         });
 
-        const appState = getState();
-
         if (data.type === "CurrentlyPlaying") {
             const currentlyPlaying = data.payload as CurrentlyPlayingPayload;
 
