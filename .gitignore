@@ -9,7 +9,20 @@
 /coverage
 
 # production
-/build
+#
+# NOTE:
+#
+# We're keeping build files in the repo for now, to ensure that they're
+# included in the release archives on GitHub. This is done (for now) so
+# the backend will be able to install the built UI by downloading the
+# built files directly from GitHub.
+#
+# This could likely be improved in the future; perhaps by setting up a
+# GitHub Actions/CICD flow and storing the built files somewhere as a
+# GitHub artifact. The current approach of manually building the UI and
+# storing the built files in the repository is a good-enough-for-now hack.
+#
+#/build
 
 # misc
 .DS_Store
@@ -30,9 +43,6 @@ yarn-error.log*
 
 # testing
 /coverage
-
-# production
-/build
 
 # misc
 .DS_Store
