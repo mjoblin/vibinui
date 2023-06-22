@@ -1,19 +1,20 @@
 # `vibinui`
 
-`vibinui` is a browser-based application for [StreamMagic] audio streamers. `vibinui` also requires
-installation of the [`vibin`](https://github.com/mjoblin/vibin) backend.
+`vibinui` is a browser-based user interface for [StreamMagic] audio streamers. `vibinui` also
+requires installation of the [`vibin`](https://github.com/mjoblin/vibin) backend.
 
 Vibin was developed for my specific music streaming needs. It should however work for anyone with a
-StreamMagic streamer, but has only been tested with the following:
+StreamMagic audio streamer, but has only been tested with the following:
 
 * Cambridge Audio CXNv2 streamer.
 * Local media stored on a NAS running [Asset UPnP] (local media is optional).
 * AirPlay from a MacBook.
-* Running Vibin in Chrome on a MacBook and iPad.
+* Running the UI in Chrome on a MacBook and iPad.
 
 > Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
-> features like browsing internet radio, and has no support for TIDAL or Qobuz. Nor is it intended
-> to replace general-purpose solutions like Plex, Audirvana, Roon, etc.
+> features like browsing internet radio (although it can play internet radio presets configured in
+> the StreamMagic app), and has no support for TIDAL or Qobuz. Nor is Vibin intended to replace
+> general-purpose solutions like Plex, Audirvana, Roon, etc.
 
 Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
@@ -33,7 +34,7 @@ In summary:
    backend.
 
 The backend will then be able to serve the UI to a browser running on any other machine on the same
-network (a laptop, iPad, etc), via a URL hosted on the backend such as `http://192.168.1.100/ui`.
+network (a laptop, iPad, etc) via a URL hosted on the backend, such as `http://192.168.1.100/ui`.
 
 In most cases, the backend will run on an always-on machine on the network -- such as a server or
 Raspberry Pi -- so it's always available to any browser which wishes to access the UI.
@@ -44,23 +45,24 @@ See the [Developers README] for more information.
 
 ## Features
 
-Vibin supports a variety of features related to what's currently playing on the streamer; transport
-controls; local media browsing; playlists; favorites; etc.
+Vibin's features include:
 
-* **Currently-playing information**.
+* **Showing what's currently playing on the streamer**.
+  * Track details.
+  * Album art.
   * Lyrics.
   * Waveform.
-  * Links to external sites.
-* **Transport controls**.
+  * Related links to external sites.
+* **Streamer transport controls**.
   * Play, pause, next track, previous track, shuffle, repeat, etc.
-* **Browse local media**.
-  * Artists, Albums, Tracks.
-  * Search by title, date, genre, etc.
-  * Search for lyrics.
+* **Browsing local media**.
+  * Viewing Artists, Albums, and Tracks.
+  * Filtering.
+  * Searching by title, date, genre, etc.
+  * Searching for lyrics.
 * **Playlists**.
-  * View the active Playlist.
-  * Modify the active Playlist.
-  * Save and switch between Playlists.
+  * Viewing and interacting with the active streamer Playlist.
+  * Saving and switching between stored Playlists.
 * **Presets** (like internet radio).
 * **Favorites**.
 
@@ -68,12 +70,9 @@ controls; local media browsing; playlists; favorites; etc.
 
 * Display settings are remembered between browser sessions.
 * Keyboard shortcuts for transport controls, lyrics display, etc.
+* Streamer can be powered on/off, and the audio source can be changed.
 * Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
   Vibin.
-* Streamer can be powered on/off, and the audio source can be changed.
-* Configure the UPnP media paths for the media server used by the backend.
-* Toggle whether the currently-playing art is displayed in the background of the Current Track and
-  Playlist screens.
 
 ### Currently-playing information
 
@@ -82,7 +81,7 @@ Vibin shows information on the currently-playing track. This works for both loca
 
 #### Lyrics
 
-Lyrics will be shown for the currently-playing track (when available).
+Lyrics are shown for the currently-playing track (when available).
 
 ![Current track lyrics]
 
@@ -94,8 +93,8 @@ Lyrics will also be shown for tracks not coming from local media (such as AirPla
 
 #### Waveform
 
-The waveform will be shown for tracks coming from local media. The playhead position can be changed
-by dragging the playhead over the waveform image.
+A waveform is shown for tracks sourced from local media. The playhead position can be changed by
+dragging the playhead over the waveform image.
 
 ![Current track waveform]
 
@@ -141,7 +140,7 @@ The art size can be changed.
 
 #### View artists
 
-The Artists screen shows the selected artist's albums, and the selected album's tracks.
+The Artists screen provides an artist-oriented display of albums and tracks.
 
 ![Artists]
 
@@ -181,8 +180,9 @@ more.
 
 #### Art card display settings
 
-The size and spacing of the art cards can be changed independently for Tracks, Albums, etc. Text
-details can be turned on and off. These settings will be remembered between sessions.
+The size and spacing of the art cards can be changed independently for Albums, Tracks, Presets, and
+Favorites. Text details can be turned on and off. These settings will be remembered between
+sessions.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_card_display.jpg" width="250" />
 
