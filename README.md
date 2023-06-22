@@ -71,8 +71,8 @@ Vibin's features include:
 ### Additional features
 
 * Display settings are remembered between browser sessions.
-* Keyboard shortcuts for transport controls, lyrics display, etc.
-* Streamer can be powered on/off, and the audio source can be changed.
+* Supports keyboard shortcuts for transport controls, lyrics display, etc.
+* The streamer can be powered on/off, and the audio source can be changed.
 * Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
   Vibin.
 * Multiple instances of the UI can be running on one or more devices at once. Changes made by one
