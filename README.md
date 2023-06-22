@@ -33,11 +33,13 @@ In summary:
 2. Use the backend's commandline interface to download and install the UI application onto the
    backend.
 
-The backend will then be able to serve the UI to a browser running on any other machine on the same
+The backend will then be able to serve the UI to a browser running on any other device on the same
 network (a laptop, iPad, etc) via a URL hosted on the backend, such as `http://192.168.1.100/ui`.
 
-In most cases, the backend will run on an always-on machine on the network -- such as a server or
-Raspberry Pi -- so it's always available to any browser which wants to access the UI.
+The backend expects to be installed on an always-on machine on the network (such as a server or
+Raspberry Pi), to ensure it's always available to any browser running on any other device on the
+network. This is not strictly required however, and it's possible to run everything on (say) a
+single laptop.
 
 ## Developers
 
@@ -73,6 +75,8 @@ Vibin's features include:
 * Streamer can be powered on/off, and the audio source can be changed.
 * Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
   Vibin.
+* Multiple instances of the UI can be running on one or more devices at once. Changes made by one
+  device will be automatically reflected on the other devices.
 
 ## Examples
 
