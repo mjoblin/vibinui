@@ -37,7 +37,7 @@ The backend will then be able to serve the UI to a browser running on any other 
 network (a laptop, iPad, etc) via a URL hosted on the backend, such as `http://192.168.1.100/ui`.
 
 In most cases, the backend will run on an always-on machine on the network -- such as a server or
-Raspberry Pi -- so it's always available to any browser which wishes to access the UI.
+Raspberry Pi -- so it's always available to any browser which wants to access the UI.
 
 ## Developers
 
@@ -73,6 +73,8 @@ Vibin's features include:
 * Streamer can be powered on/off, and the audio source can be changed.
 * Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
   Vibin.
+
+## Examples
 
 ### Currently-playing information
 
