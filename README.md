@@ -49,14 +49,14 @@ See the [Developers README] for more information.
 
 Vibin's features include:
 
+* **Streamer transport controls**.
+  * Play, pause, next track, previous track, shuffle, repeat, etc.
 * **Showing what's currently playing on the streamer**.
   * Track details.
   * Album art.
   * Lyrics.
   * Waveform.
   * Related links to external sites.
-* **Streamer transport controls**.
-  * Play, pause, next track, previous track, shuffle, repeat, etc.
 * **Browsing local media**.
   * Viewing Artists, Albums, and Tracks.
   * Filtering.
@@ -80,14 +80,16 @@ Vibin's features include:
 
 ## Examples
 
+### Transport controls
+
+Full streamer transport controls are available.
+
+![Streamer transport controls]
+
 ### Currently-playing information
 
 Vibin shows information on the currently-playing track. This works for both local media and AirPlay
 (although the waveform is not shown for AirPlay).
-
-#### Transport controls
-
-Full streamer transport controls are available.
 
 #### Lyrics
 
