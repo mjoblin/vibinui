@@ -85,6 +85,10 @@ Vibin's features include:
 Vibin shows information on the currently-playing track. This works for both local media and AirPlay
 (although the waveform is not shown for AirPlay).
 
+#### Transport controls
+
+Full streamer transport controls are available.
+
 #### Lyrics
 
 Lyrics are shown for the currently-playing track (when available).
@@ -212,6 +216,7 @@ The streamer's audio input source can be set.
 [overview video]: https://www.youtube.com/watch?v=5fEWAWSNico
 [Vibin backend documentation]: https://github.com/mjoblin/vibin
 [Developers README]: README_DEV.md
+[Streamer transport controls]: https://github.com/mjoblin/media/blob/main/vibin/images/transport_controls.jpg?raw=true
 [Current track lyrics]: https://github.com/mjoblin/media/blob/main/vibin/images/current_lyrics.jpg?raw=true
 [Current track lyrics modal]: https://github.com/mjoblin/media/blob/main/vibin/images/current_lyrics_modal.jpg?raw=true
 [Current track AirPlay]: https://github.com/mjoblin/media/blob/main/vibin/images/current_airplay.jpg?raw=true
