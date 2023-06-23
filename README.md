@@ -91,6 +91,10 @@ Lyrics are shown for the currently-playing track (when available).
 
 ![Current track lyrics]
 
+Lyrics for the currently-playing track can be viewed from any screen in the application.
+
+![Current track lyrics modal]
+
 #### Lyrics from AirPlay source
 
 Lyrics will also be shown for tracks not coming from local media (such as AirPlay).
@@ -209,6 +213,7 @@ The streamer's audio input source can be set.
 [Vibin backend documentation]: https://github.com/mjoblin/vibin
 [Developers README]: README_DEV.md
 [Current track lyrics]: https://github.com/mjoblin/media/blob/main/vibin/images/current_lyrics.jpg?raw=true
+[Current track lyrics modal]: https://github.com/mjoblin/media/blob/main/vibin/images/current_lyrics_modal.jpg?raw=true
 [Current track AirPlay]: https://github.com/mjoblin/media/blob/main/vibin/images/current_airplay.jpg?raw=true
 [Current track waveform]: https://github.com/mjoblin/media/blob/main/vibin/images/current_waveform.jpg?raw=true
 [Playlist detailed view]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_detailed.jpg?raw=true
