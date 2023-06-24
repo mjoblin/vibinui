@@ -1,6 +1,15 @@
 import React, { FC, useState } from "react";
-import { ActionIcon, Box, createStyles, Menu, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconPlayerPlay } from "@tabler/icons";
+import {
+    ActionIcon,
+    Box,
+    createStyles,
+    Flex,
+    Menu,
+    Text,
+    Tooltip,
+    useMantineTheme,
+} from "@mantine/core";
+import { IconCircleOff, IconPlayerPlay } from "@tabler/icons";
 
 import { MediaId } from "../../../app/types";
 import { useAppSelector } from "../../../app/hooks/store";
@@ -45,14 +54,25 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
 }) => {
     const theme = useMantineTheme();
     const menuStyles = useMenuStyles();
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [setPlaylistIds] = useSetPlaylistMediaIdsMutation();
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
-    const isLocalMedia = currentSource ? currentSource.class === "stream.media" : false;
+    const isInStandbyMode = streamerPower === "off";
+
+    // TODO: Investigate ways to clearly and consistently let the user know when capabilities are
+    //  unavailable due to the streamer being in standby.
+    const label = isInStandbyMode ? (
+        <Flex gap={5} align="center">
+            <IconCircleOff size={14} />
+            <Text>Streamer is in standby</Text>
+        </Flex>
+    ) : (
+        tooltipLabel
+    );
 
     return (
-        <Tooltip label={tooltipLabel} disabled={menuOpen} position="bottom">
+        <Tooltip label={label} disabled={menuOpen} position="bottom">
             <Box sx={{ alignSelf: "center" }}>
                 <Menu
                     withArrow
@@ -67,13 +87,13 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
                         <ActionIcon
                             variant="light"
                             color={theme.primaryColor}
-                            disabled={disabled || !isLocalMedia || mediaIds.length === 0}
+                            disabled={disabled || mediaIds.length === 0 || isInStandbyMode}
                         >
                             <IconPlayerPlay size="1rem" />
                         </ActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown>
-                        <Menu.Label>Playlist</Menu.Label>
+                        <Menu.Label>Modify Playlist</Menu.Label>
                         <Menu.Item
                             icon={
                                 <IconPlayerPlay

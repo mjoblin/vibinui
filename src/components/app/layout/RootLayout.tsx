@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useState } from "react";
-import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import {
     AppShell,
     Box,
@@ -145,14 +145,6 @@ const RootLayout: FC = () => {
                     {/* The route <Outlet> is the main screen (Albums, Artists, etc) */}
                     <Outlet />
                 </Stack>
-
-                {/* NOTE: Scroll restoration doesn't work screens which use components based on
-                <VisibilitySensor> (which is most screens, including Artists, Albums, Tracks). */}
-                <ScrollRestoration
-                    getKey={(location, matches) => {
-                        return location.pathname;
-                    }}
-                />
 
                 <KeyboardShortcutsManager />
 
