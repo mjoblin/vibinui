@@ -55,13 +55,12 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         },
     }))();
 
+    /**
+     * When the active collection ("All"/"New") changes, trigger the calculating loader.
+     */
     useEffect(() => {
         setCalculatingAlbumsToDisplay(true);
     }, [activeCollection]);
-
-    useEffect(() => {
-        setCalculatingAlbumsToDisplay(false);
-    }, [albumsToDisplay]);
 
     /**
      * Inform the caller of the currentAlbumRef on mount. The currentAlbumRef will be attached to
@@ -74,7 +73,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
 
     /**
      * Determine which Albums to display. This takes into account the current "All Albums"/"New
-     * Albums" selection, and any filter text
+     * Albums" selection, and any filter text.
      */
     useEffect(() => {
         if (allStatus === QueryStatus.rejected) {
@@ -99,6 +98,8 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         const albumsToDisplay = collectionFilter(collection || [], filterText, "title");
 
         dispatch(setFilteredAlbumMediaIds(albumsToDisplay.map((album) => album.id)));
+
+        setCalculatingAlbumsToDisplay(false);
         setAlbumsToDisplay(albumsToDisplay);
     }, [allAlbums, allStatus, newAlbums, filterText, activeCollection, dispatch]);
 
