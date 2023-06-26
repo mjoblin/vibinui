@@ -87,7 +87,7 @@ const TrackLinks: FC<TrackLinksProps> = ({ trackId, artist, album, title }) => {
     }
 
     if (!data || Object.keys(data).length <= 0) {
-        return <SadLabel label="No links found" />;
+        return <SadLabel label="No links found" labelSize={14} weight="normal" />;
     }
 
     return (

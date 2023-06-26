@@ -93,7 +93,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     if (!lyrics || lyrics.chunks.length <= 0) {
         return (
             <Stack spacing={20}>
-                <SadLabel label="No lyrics found" />
+                <SadLabel label="No lyrics found" labelSize={14} weight="normal" />
                 <Button
                     compact
                     variant="light"

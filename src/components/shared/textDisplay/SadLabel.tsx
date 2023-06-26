@@ -9,13 +9,14 @@ type SadLabelProps = {
     label: string;
     labelSize?: number;
     sadSize?: number;
+    weight?: string;
 };
 
-const SadLabel: FC<SadLabelProps> = ({ label, labelSize = 16, sadSize = 26 }) => {
+const SadLabel: FC<SadLabelProps> = ({ label, labelSize = 16, sadSize = 26, weight = "bold" }) => {
     return (
         <Flex gap="0.8rem" align="center" miw="15rem">
             <Text size={sadSize}>😔</Text>
-            <Text size={labelSize} weight="bold" miw="fit-content">{label}</Text>
+            <Text size={labelSize} weight={weight} miw="fit-content">{label}</Text>
         </Flex>
     );
 };

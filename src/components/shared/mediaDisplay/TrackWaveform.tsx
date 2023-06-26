@@ -4,9 +4,11 @@ import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
-import { useAppSelector } from "../../../app/hooks/store";
+import { useAppSelector, useAppDispatch } from "../../../app/hooks/store";
 import { useSeekMutation } from "../../../app/services/vibinTransport";
 import { useGetRMSQuery } from "../../../app/services/vibinTracks";
+import { setWaveformsSupported } from "../../../app/store/internalSlice";
+import SadLabel from "../textDisplay/SadLabel";
 
 // ================================================================================================
 // Display a waveform for a Track. Optionally displays the current playhead progress over the
@@ -134,8 +136,31 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
     height = 250,
     showProgress = true,
 }) => {
+    const dispatch = useAppDispatch();
     const { classes } = useStyles();
-    const { data: rms, isSuccess: haveRMS } = useGetRMSQuery(trackId);
+    const { waveformsSupported } = useAppSelector((state: RootState) => state.internal.application);
+    const { data: rms, isSuccess: haveRMS, isError: gotRMSError } = useGetRMSQuery(trackId);
+
+    /**
+     * If a request for RMS fails, then assume that the backend doesn't support waveforms. This is
+     * a bit hacky. A better solution might involve having the backend announce what features it
+     * supports in its VibinStatus message.
+     */
+    useEffect(() => {
+        if (gotRMSError) {
+            dispatch(setWaveformsSupported(false));
+        }
+    }, [dispatch, gotRMSError]);
+
+    if (!waveformsSupported) {
+        return (
+            <SadLabel
+                label="The Vibin backend does not appear to support waveform generation"
+                labelSize={14}
+                weight="normal"
+            />
+        );
+    }
 
     return (
         <Stack spacing={10}>
