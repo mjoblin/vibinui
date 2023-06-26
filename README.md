@@ -11,10 +11,10 @@ StreamMagic audio streamer, but has only been tested with the following:
 * AirPlay from a MacBook.
 * Running the UI in Chrome on a MacBook and iPad.
 
-> Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
-> features like browsing internet radio (although it can play internet radio presets configured in
-> the StreamMagic app), and has no support for TIDAL or Qobuz. Nor is Vibin intended to replace
-> general-purpose solutions like Plex, Audirvana, Roon, etc.
+> **Vibin is mostly an experiment**. It is not intended to be a complete replacement for the
+> official StreamMagic apps. Vibin lacks features like browsing internet radio (although it can play
+> internet radio presets configured in the StreamMagic app), and has no support for TIDAL or Qobuz.
+> Nor is Vibin intended to replace general-purpose solutions like Plexamp, Audirvana, Roon, etc.
 
 Watch the [overview video] (4m:15s) to see Vibin's features in action.
 
