@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Badge, Box, createStyles, Flex, Image, Stack } from "@mantine/core";
+import { Badge, Box, createStyles, Flex, Image, Stack, Text, useMantineTheme } from "@mantine/core";
 import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../../app/types";
@@ -8,7 +8,6 @@ import { useAppSelector, useAppDispatch } from "../../../app/hooks/store";
 import { useSeekMutation } from "../../../app/services/vibinTransport";
 import { useGetRMSQuery } from "../../../app/services/vibinTracks";
 import { setWaveformsSupported } from "../../../app/store/internalSlice";
-import SadLabel from "../textDisplay/SadLabel";
 
 // ================================================================================================
 // Display a waveform for a Track. Optionally displays the current playhead progress over the
@@ -136,6 +135,7 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
     height = 250,
     showProgress = true,
 }) => {
+    const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { classes } = useStyles();
     const { waveformsSupported } = useAppSelector((state: RootState) => state.internal.application);
@@ -154,11 +154,9 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
 
     if (!waveformsSupported) {
         return (
-            <SadLabel
-                label="The Vibin backend does not appear to support waveform generation"
-                labelSize={14}
-                weight="normal"
-            />
+            <Text size={14} color={colors.dark[2]}>
+                Waveforms are not supported by the Vibin backend.
+            </Text>
         );
     }
 

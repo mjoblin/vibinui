@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Button, createStyles, Flex, Highlight, Stack, Text } from "@mantine/core";
+import { Box, Button, createStyles, Flex, Highlight, Stack, Text, useMantineTheme } from "@mantine/core";
 
 import {
     LyricChunk,
@@ -30,6 +30,7 @@ type TrackLyricsProps = {
 };
 
 const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
+    const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE } = useAppGlobals();
     const [lyrics, setLyrics] = useState<Lyrics | undefined>(undefined);
     const [maxLineWidth, setMaxLineWidth] = useState<number>(0);
@@ -88,6 +89,22 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
 
     if (getLyricsStatus.isFetching || getLyricsStatus.isLoading) {
         return <LoadingDataMessage message="Retrieving lyrics..." />;
+    }
+    
+    if (
+        // TODO: Define vibin's error response types in the RTK Query endpoint definitions.
+        //  https://redux-toolkit.js.org/rtk-query/usage-with-typescript
+        getLyricsStatus.status === "rejected" &&
+        // @ts-ignore
+        getLyricsStatus.error?.status === 404 &&
+        // @ts-ignore
+        getLyricsStatus.error?.data?.detail.includes("missing dependency")
+    ) {
+        return (
+            <Text size={14} color={colors.dark[2]}>
+                Lyrics are not supported by the Vibin backend. Genius token required.
+            </Text>
+        );
     }
 
     if (!lyrics || lyrics.chunks.length <= 0) {
