@@ -1,6 +1,7 @@
 import React, { FC, useEffect } from "react";
 import {
     ActionIcon,
+    Box,
     Button,
     Center,
     createStyles,
@@ -12,6 +13,7 @@ import {
     Table,
     Text,
     TextInput,
+    Tooltip,
     useMantineTheme,
 } from "@mantine/core";
 import { IconTrash } from "@tabler/icons";
@@ -171,44 +173,65 @@ const StoredPlaylistsManager: FC = () => {
                               <td>
                                   {/* Delete Playlist */}
                                   <Center>
-                                      <Popover
-                                          position="bottom"
-                                          withArrow
+                                      <Tooltip
+                                          disabled={storedPlaylist.id !== activeStoredPlaylistId}
+                                          label={
+                                              storedPlaylist.id === activeStoredPlaylistId
+                                                  ? "Cannot delete active playlist"
+                                                  : ""
+                                          }
                                           arrowPosition="center"
-                                          disabled={storedPlaylist.id === activeStoredPlaylistId}
+                                          withinPortal={true}
                                       >
-                                          <Popover.Target>
-                                              <ActionIcon
-                                                  variant="subtle"
+                                          <Box>
+                                              <Popover
+                                                  position="bottom"
+                                                  withArrow
+                                                  arrowPosition="center"
                                                   disabled={
                                                       storedPlaylist.id === activeStoredPlaylistId
                                                   }
                                               >
-                                                  <IconTrash size={16} color={colors.gray[6]} />
-                                              </ActionIcon>
-                                          </Popover.Target>
-                                          <Popover.Dropdown>
-                                              <Stack align="center">
-                                                  <Flex gap={5}>
-                                                      <Text>Delete Playlist</Text>
-                                                      <Text weight="bold">
-                                                          {storedPlaylist.name}
-                                                      </Text>
-                                                      <Text>?</Text>
-                                                  </Flex>
+                                                  <Popover.Target>
+                                                      <ActionIcon
+                                                          variant="subtle"
+                                                          disabled={
+                                                              storedPlaylist.id ===
+                                                              activeStoredPlaylistId
+                                                          }
+                                                      >
+                                                          <IconTrash
+                                                              size={16}
+                                                              color={colors.gray[6]}
+                                                          />
+                                                      </ActionIcon>
+                                                  </Popover.Target>
+                                                  <Popover.Dropdown>
+                                                      <Stack align="center">
+                                                          <Flex gap={5}>
+                                                              <Text>Delete Playlist</Text>
+                                                              <Text weight="bold">
+                                                                  {storedPlaylist.name}
+                                                              </Text>
+                                                              <Text>?</Text>
+                                                          </Flex>
 
-                                                  <Button
-                                                      size="xs"
-                                                      maw="6rem"
-                                                      onClick={() =>
-                                                          deleteStoredPlaylist(storedPlaylist.id)
-                                                      }
-                                                  >
-                                                      Delete
-                                                  </Button>
-                                              </Stack>
-                                          </Popover.Dropdown>
-                                      </Popover>
+                                                          <Button
+                                                              size="xs"
+                                                              maw="6rem"
+                                                              onClick={() =>
+                                                                  deleteStoredPlaylist(
+                                                                      storedPlaylist.id
+                                                                  )
+                                                              }
+                                                          >
+                                                              Delete
+                                                          </Button>
+                                                      </Stack>
+                                                  </Popover.Dropdown>
+                                              </Popover>
+                                          </Box>
+                                      </Tooltip>
                                   </Center>
                               </td>
                           </tr>
