@@ -217,7 +217,7 @@ export function collectionFilter<T extends Object>(
     return collection.filter((item) => {
         for (const [key, searchValue] of matchKeyValues) {
             const thisValue = get(item, key); // Using lodash to support "nested.key.names".
-            if (thisValue && !thisValue.toLocaleLowerCase().includes(searchValue)) {
+            if (!thisValue || (thisValue && !thisValue.toLocaleLowerCase().includes(searchValue))) {
                 return false;
             }
         }
