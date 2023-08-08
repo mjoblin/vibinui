@@ -19,12 +19,14 @@ import MediaActionsButton from "../buttons/MediaActionsButton";
 
 type MediaSummaryBannerProps = {
     media: Album | Track;
+    showArt?: boolean;
     showArtControls?: boolean;
     showSeparateActionsButton?: boolean;
 };
 
 const MediaSummaryBanner: FC<MediaSummaryBannerProps> = ({
     media,
+    showArt = true,
     showArtControls = false,
     showSeparateActionsButton = false,
 }) => {
@@ -34,21 +36,22 @@ const MediaSummaryBanner: FC<MediaSummaryBannerProps> = ({
 
     return (
         <Flex gap="md" justify="space-between">
-            {isTrack ? (
-                <TrackArt
-                    track={media as Track}
-                    size={100}
-                    showControls={showArtControls}
-                    actionsMenuPosition={"bottom"}
-                />
-            ) : (
-                <AlbumArt
-                    album={media as Album}
-                    size={100}
-                    showControls={showArtControls}
-                    actionsMenuPosition={"bottom"}
-                />
-            )}
+            {showArt &&
+                (isTrack ? (
+                    <TrackArt
+                        track={media as Track}
+                        size={100}
+                        showControls={showArtControls}
+                        actionsMenuPosition={"bottom"}
+                    />
+                ) : (
+                    <AlbumArt
+                        album={media as Album}
+                        size={100}
+                        showControls={showArtControls}
+                        actionsMenuPosition={"bottom"}
+                    />
+                ))}
 
             <Stack sx={{ gap: 0, flexGrow: 1 }}>
                 <Text size="lg" weight="bold" sx={{ lineHeight: 1.25 }}>

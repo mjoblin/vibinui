@@ -14,6 +14,7 @@ import {
     IconHeartOff,
     IconList,
     IconMicrophone2,
+    IconPhoto,
     IconPlayerPlay,
     IconPlaylistAdd,
     IconUser,
@@ -27,6 +28,7 @@ import {
     useDeleteFavoriteMutation,
 } from "../../../app/services/vibinFavorites";
 import AlbumTracksModal from "../../features/albums/AlbumTracksModal";
+import ArtModal from "../mediaDisplay/ArtModal";
 import TrackLinksModal from "../mediaDisplay/TrackLinksModal";
 import TrackLyricsModal from "../mediaDisplay/TrackLyricsModal";
 import TrackWaveformModal from "../mediaDisplay/TrackWaveformModal";
@@ -62,7 +64,13 @@ import {
 
 export type MediaType = "album" | "track";
 
-export type DetailsAction = "all" | "ViewLinks" | "ViewLyrics" | "ViewTracks" | "ViewWaveform";
+export type DetailsAction =
+    | "all"
+    | "ViewArt"
+    | "ViewLinks"
+    | "ViewLyrics"
+    | "ViewTracks"
+    | "ViewWaveform";
 export type FavoritesAction = "all" | "AddFavorite" | "RemoveFavorite";
 export type NavigationAction =
     | "all"
@@ -165,6 +173,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [showAlbumTracksModal, setShowAlbumTracksModal] = useState<boolean>(false);
+    const [showArtModal, setShowArtModal] = useState<boolean>(false);
     const [showTrackLinksModal, setShowTrackLinksModal] = useState<boolean>(false);
     const [showTrackLyricsModal, setShowTrackLyricsModal] = useState<boolean>(false);
     const [showTrackWaveformModal, setShowTrackWaveformModal] = useState<boolean>(false);
@@ -292,6 +301,16 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                         onClick={() => setShowTrackLinksModal(true)}
                                     >
                                         View links...
+                                    </Menu.Item>
+                                )}
+
+                            {["album", "track"].includes(mediaType) &&
+                                wantAction(enabledActions.Details!!, "ViewArt") && (
+                                    <Menu.Item
+                                        icon={<IconPhoto size={14} />}
+                                        onClick={() => setShowArtModal(true)}
+                                    >
+                                        View art...
                                     </Menu.Item>
                                 )}
                         </>
@@ -556,6 +575,15 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         track={media as Track}
                         opened={showTrackLinksModal}
                         onClose={() => setShowTrackLinksModal(false)}
+                    />
+                )}
+
+                {/* Albums and Tracks can show their art */}
+                {["album", "track"].includes(mediaType) && (
+                    <ArtModal
+                        media={media}
+                        opened={showArtModal}
+                        onClose={() => setShowArtModal(false)}
                     />
                 )}
             </Menu>
