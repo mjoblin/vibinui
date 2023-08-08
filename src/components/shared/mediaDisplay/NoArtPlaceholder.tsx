@@ -6,7 +6,7 @@ import { Box, Center, MantineColor, Text, useMantineTheme } from "@mantine/core"
 // ================================================================================================
 
 type NoArtPlaceholderProps = {
-    artSize: number;
+    artSize?: number;
     backgroundColor?: MantineColor;
 };
 
@@ -20,7 +20,7 @@ const NoArtPlaceholder: FC<NoArtPlaceholderProps> = ({ artSize, backgroundColor 
                     transform="uppercase"
                     weight="bold"
                     sx={{ textAlign: "center" }}
-                    size={artSize >= 40 ? 11 : 9}
+                    size={artSize && (artSize >= 40 ? 11 : 9)}
                 >
                     no art
                 </Text>
