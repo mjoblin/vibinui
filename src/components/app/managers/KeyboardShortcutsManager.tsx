@@ -47,10 +47,15 @@ const KeyboardShortcutsManager: FC = () => {
         ["J", () => seek(Math.max(position - SEEK_OFFSET_SECS, 0))],
         ["K", () => (playStatus === "play" ? pausePlayback() : resumePlayback())],
         ["L", () => duration && seek(Math.min(position + SEEK_OFFSET_SECS, duration))],
-        [",", () => previousTrack()],
-        [".", () => nextTrack()],
+        ["ArrowLeft", () => previousTrack()],
+        ["ArrowRight", () => nextTrack()],
         ["C", () => navigate("/ui/current")],
         ["P", () => navigate("/ui/playlist")],
+        ["R", () => navigate("/ui/artists")],
+        ["A", () => navigate("/ui/albums")],
+        ["T", () => navigate("/ui/tracks")],
+        ["E", () => navigate("/ui/presets")],
+        ["F", () => navigate("/ui/favorites")],
         ["shift+?", () => dispatch(setShowKeyboardShortcuts(!showKeyboardShortcuts))],
         ["shift+L", () => dispatch(setShowCurrentTrackLyrics(true))],
     ]);
@@ -79,8 +84,8 @@ const KeyboardShortcutsManager: FC = () => {
                                 j: `Seek back ${SEEK_OFFSET_SECS} seconds`,
                                 k: "Play/Pause",
                                 l: `Seek forwards ${SEEK_OFFSET_SECS} seconds`,
-                                ",": "Previous track",
-                                ".": "Next track",
+                                "←": "Previous track",
+                                "→": "Next track",
                             }}
                             columnGap={10}
                             keyFontFamily="courier"
@@ -108,6 +113,11 @@ const KeyboardShortcutsManager: FC = () => {
                             fieldValues={{
                                 c: "Current Track",
                                 p: "Playlist",
+                                r: "Artists",
+                                a: "Albums",
+                                t: "Tracks",
+                                e: "Presets",
+                                f: "Favorites",
                             }}
                             columnGap={10}
                             keySize={16}
