@@ -58,6 +58,7 @@ export const useAppGlobals = () => {
         SCREEN_HEADER_HEIGHT: 70,
         SCROLL_POS_DISPATCH_RATE: 500,
         SELECTED_COLOR: "rgba(25, 113, 194, 0.2)",
+        BUFFERING_AUDIO_NOTIFY_DELAY: 3000,
         STYLE_LABEL_BESIDE_COMPONENT: {
             root: {
                 display: "flex",

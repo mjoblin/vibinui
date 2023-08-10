@@ -7,6 +7,7 @@ import {
     createStyles,
     Flex,
     Loader,
+    LoadingOverlay,
     ScrollArea,
     Stack,
     Tabs,
@@ -14,7 +15,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { useDebouncedValue, useWindowEvent } from "@mantine/hooks";
+import { useDebouncedValue, useTimeout, useWindowEvent } from "@mantine/hooks";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { RootState } from "../../app/store/store";
@@ -32,6 +33,7 @@ import {
 } from "../../app/store/userSettingsSlice";
 import { usePlayMutation } from "../../app/services/vibinTransport";
 import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
+import BufferingLoader from "../shared/textDisplay/BufferingLoader";
 import TrackArt from "./tracks/TrackArt";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
 import CurrentMediaControls from "../shared/playbackControls/CurrentMediaControls";
@@ -114,7 +116,7 @@ const CurrentTrackScreen: FC = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const { colors } = useMantineTheme();
-    const { APP_ALT_FONTFACE, SCREEN_LOADING_PT } = useAppGlobals();
+    const { APP_ALT_FONTFACE, SCREEN_LOADING_PT, BUFFERING_AUDIO_NOTIFY_DELAY } = useAppGlobals();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.currentTrack);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
@@ -133,6 +135,11 @@ const CurrentTrackScreen: FC = () => {
     const tabListRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
     const [preparingForDisplay, setPreparingForDisplay] = useState<boolean>(true);
+    const [showBuffering, setShowBuffering] = useState<boolean>(false);
+    const { start: startBufferTimeout, clear: clearBufferTimeout } = useTimeout(
+        () => setShowBuffering(true),
+        BUFFERING_AUDIO_NOTIFY_DELAY
+    );
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         currentTrackTitle: {
@@ -144,6 +151,20 @@ const CurrentTrackScreen: FC = () => {
             },
         },
     }))();
+
+    /**
+     * If the playStatus has been "buffering" for at least BUFFERING_AUDIO_NOTIFY_DELAY ms, then
+     * display a "buffering" overlay.
+     */
+    useEffect(() => {
+        if (playStatus === "buffering") {
+            startBufferTimeout();
+        } else {
+            clearBufferTimeout();
+            setShowBuffering(false);
+        }
+
+    }, [playStatus, startBufferTimeout, clearBufferTimeout]);
 
     /**
      * Whenever the currently-playing Track changes, either request the Track's details from the
@@ -269,6 +290,13 @@ const CurrentTrackScreen: FC = () => {
 
     return (
         <Flex gap={30} pt={7} pb={10}>
+            <LoadingOverlay
+                visible={showBuffering}
+                loader={<BufferingLoader />}
+                overlayBlur={0.7}
+                overlayOpacity={0.9}
+            />
+
             {/* LHS stack: Album art, playhead, etc */}
             <Stack miw={albumArtWidth} maw={albumArtWidth} spacing={20} align="flex-end">
                 <Stack spacing="xs">
