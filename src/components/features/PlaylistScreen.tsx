@@ -3,13 +3,14 @@ import { Box, ScrollArea, Stack } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 import throttle from "lodash/throttle";
 
-import { useAppDispatch } from "../../app/hooks/store";
-import { store } from "../../app/store/store";
+import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
+import { RootState, store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import Playlist from "./playlist/Playlist";
 import PlaylistControls from "./playlist/PlaylistControls";
+import PlaylistInactiveBanner from "./playlist/PlaylistInactiveBanner";
 import ScreenHeader from "../app/layout/ScreenHeader";
 
 // ================================================================================================
@@ -31,9 +32,12 @@ const PlaylistScreen: FC = () => {
         SCREEN_HEADER_HEIGHT,
         SCROLL_POS_DISPATCH_RATE,
     } = useAppGlobals();
+    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const playlistViewportRef = useRef<HTMLDivElement>(null);
     const [currentEntryRef, setCurrentEntryRef] = useState<HTMLDivElement>();
     const [playlistHeight, setPlaylistHeight] = useState<number>(300);
+    const inactiveBannerRef = useRef<HTMLDivElement>(null);
+    const [inactiveBannerHeight, setInactiveBannerHeight] = useState<number>(0);
     const [windowDimensions, setWindowDimensions] = useState<WindowDimensions>({
         height: window.innerHeight,
         width: window.innerWidth,
@@ -63,6 +67,18 @@ const PlaylistScreen: FC = () => {
 
         setPlaylistHeight(availableHeight);
     }, [windowDimensions, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT]);
+
+    /**
+     * Get the height of the <PlaylistInactiveBanner> component.
+     */
+    useEffect(() => {
+        if (inactiveBannerRef.current) {
+            const height = inactiveBannerRef.current.clientHeight;
+            setInactiveBannerHeight(height);
+        } else {
+            setInactiveBannerHeight(0);
+        }
+    }, []);
 
     /**
      * Scroll to the currently-playing Playlist Entry.
@@ -111,17 +127,34 @@ const PlaylistScreen: FC = () => {
         { leading: false }
     );
 
+    // When the current audio source is not "stream.media" (local media), the playlist is being
+    // ignored by the streamer (due to another source like AirPlay being active). We want to inform
+    // the user of this.
+    const showingInactivePlaylistBanner = currentSource?.class !== "stream.media";
+
     // --------------------------------------------------------------------------------------------
 
     return (
         <Stack spacing={0}>
             <ScreenHeader height={SCREEN_HEADER_HEIGHT} noBackground={RENDER_APP_BACKGROUND_IMAGE}>
-                <PlaylistControls scrollToCurrent={scrollToCurrent} />
+                <Stack spacing={10}>
+                    <PlaylistControls scrollToCurrent={scrollToCurrent} />
+
+                    {showingInactivePlaylistBanner && (
+                        <PlaylistInactiveBanner ref={inactiveBannerRef} />
+                    )}
+                </Stack>
             </ScreenHeader>
 
-            <Box pt={SCREEN_HEADER_HEIGHT - 17}>
+            <Box
+                pt={
+                    SCREEN_HEADER_HEIGHT -
+                    17 +
+                    (showingInactivePlaylistBanner ? inactiveBannerHeight : 0)
+                }
+            >
                 <ScrollArea
-                    h={playlistHeight}
+                    h={playlistHeight - inactiveBannerHeight}
                     viewportRef={playlistViewportRef}
                     onScrollPositionChange={throttledPlaylistPositionChange}
                     offsetScrollbars
