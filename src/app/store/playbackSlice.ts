@@ -80,6 +80,13 @@ export interface PlaybackState {
     // TODO: Audio Sources doesn't belong in current playback slice
     audio_sources: AudioSource[];
     current_audio_source: AudioSource | undefined;
+    // TODO: The current_track will either be a complete Track (when the track is being sourced from
+    //  local media where the complete Track details are known); or a partial Track (when the track
+    //  is being sourced from a non-local source like AirPlay, where only some Track details are
+    //  known. This is a little messy and can result in different keys for things like the art url.
+    //  This should be cleaned up to properly support a more flexible-yet-consistent Track
+    //  definition. That said, the current_track can be assumed to provide as much Track information
+    //  as possible for what is currently playing, regardless of source.
     current_track: Track | undefined;
     // TODO: For the "current ids", consider adding Artist -- and also storing full
     //  Artist/Album/Track objects rather than just ids (so the other information, like title, is
