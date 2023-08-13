@@ -1,8 +1,8 @@
 import React, { FC } from "react";
 import { Modal, ScrollArea, Stack } from "@mantine/core";
 
-import { Track } from "../../../app/types";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { Track } from "../../../app/types";
 import MediaSummaryBanner from "../textDisplay/MediaSummaryBanner";
 import TrackLyrics from "./TrackLyrics";
 
@@ -33,7 +33,7 @@ const TrackLyricsModal: FC<TrackLyricsModalProps> = ({ track, opened, onClose = 
                 <MediaSummaryBanner media={track} />
 
                 <ScrollArea h={`calc(80vh - 275px)`}>
-                    <TrackLyrics trackId={track.id} />
+                    <TrackLyrics trackId={track.id} artist={track.artist} title={track.title} />
                 </ScrollArea>
             </Stack>
         </Modal>

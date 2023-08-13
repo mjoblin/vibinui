@@ -243,7 +243,10 @@ function messageHandler(
         if (data.type === "CurrentlyPlaying") {
             const currentlyPlaying = data.payload as CurrentlyPlayingPayload;
 
-            dispatch(setCurrentTrack(currentlyPlaying.active_track));
+            dispatch(setCurrentTrack({
+                id: currentlyPlaying.track_media_id,  // id will be undefined for non-local media
+                ...currentlyPlaying.active_track
+            }));
             dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
             dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
             dispatch(setCurrentFormat(currentlyPlaying.format));
