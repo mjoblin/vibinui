@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { showNotification } from "@mantine/notifications";
-import { IconCheck, IconX } from "@tabler/icons";
+import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
 import get from "lodash/get";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
@@ -114,6 +114,28 @@ export const showSuccessNotification = ({
         message,
         color: color || "teal",
         icon: icon || IconCheck({ size: 18 }),
+        loading,
+        autoClose,
+    });
+
+/**
+ * Show a warning notification.
+ */
+export const showWarningNotification = ({
+    id,
+    title,
+    message,
+    color,
+    icon,
+    loading = false,
+    autoClose = true,
+}: VibinNotification) =>
+    showNotification({
+        id,
+        title,
+        message,
+        color: color || "yellow",
+        icon: icon || IconAlertCircle({ size: 21, style: { paddingRight: 1, paddingBottom: 2 } }),
         loading,
         autoClose,
     });

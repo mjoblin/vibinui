@@ -19,6 +19,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../../app/store/internalSlice";
 import { setApplicationHaveShownWelcomeMessage } from "../../../app/store/userSettingsSlice";
+import { showWarningNotification } from "../../../app/utils";
 import AppHeader from "./AppHeader";
 import AppNav from "./AppNav";
 import DebugPanel from "../DebugPanel";
@@ -71,13 +72,14 @@ const RootLayout: FC = () => {
     const { haveShownWelcomeMessage } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );    
-    const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
+    const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const [backgroundUniqueKey, setBackgroundUniqueKey] = useState<string>(
         `${window.innerWidth}x${window.innerHeight}`
     );
+    const [willShowTrackLyrics, setWillShowTrackLyrics] = useState<boolean>(false);
 
     /**
      * Set the current screen name in application state whenever the location changes.
@@ -92,6 +94,25 @@ const RootLayout: FC = () => {
         const screenName = screenNameMatch[1] || "";
         dispatch(setCurrentScreen(screenName || ""));
     }, [location, APP_URL_PREFIX, dispatch]);
+
+    /**
+     * When a request is made to show the current track's lyrics (showCurrentTrackLyrics == true),
+     * check whether we actually have a currentPlaybackTrack (which will be valid for both local
+     * media and, say, AirPlay).
+     *
+     * If we can't show lyrics then set the request back to false to prevent the modal from
+     * unexpectedly displaying when a subsequent track has displayable lyrics.
+     */
+    useEffect(() => {
+        if (showCurrentTrackLyrics && currentPlaybackTrack) {
+            setWillShowTrackLyrics(true);
+        } else {
+            showCurrentTrackLyrics && showWarningNotification({ title: "Unable to show lyrics" });
+
+            dispatch(setShowCurrentTrackLyrics(false));
+            setWillShowTrackLyrics(false);
+        }
+    }, [showCurrentTrackLyrics, currentPlaybackTrack, currentTrackId, dispatch]);
 
     // Create a key unique to the current screen and window dimensions. If any of those things
     // change (e.g. a window resize) then the key is changed. This key then becomes the key prop
@@ -190,9 +211,9 @@ const RootLayout: FC = () => {
                 />
 
                 {/* Handle request to show current track's lyrics */}
-                {currentTrackId && trackById[currentTrackId] && (
+                {willShowTrackLyrics && currentPlaybackTrack && (
                     <TrackLyricsModal
-                        track={trackById[currentTrackId]}
+                        track={currentPlaybackTrack}
                         opened={showCurrentTrackLyrics}
                         onClose={() => dispatch(setShowCurrentTrackLyrics(false))}
                     />
