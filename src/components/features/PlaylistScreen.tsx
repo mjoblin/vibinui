@@ -33,6 +33,8 @@ const PlaylistScreen: FC = () => {
         SCROLL_POS_DISPATCH_RATE,
     } = useAppGlobals();
     const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playlistViewportRef = useRef<HTMLDivElement>(null);
     const [currentEntryRef, setCurrentEntryRef] = useState<HTMLDivElement>();
     const [playlistHeight, setPlaylistHeight] = useState<number>(300);
@@ -78,7 +80,7 @@ const PlaylistScreen: FC = () => {
         } else {
             setInactiveBannerHeight(0);
         }
-    }, []);
+    }, [playStatus, streamerPower]);
 
     /**
      * Scroll to the currently-playing Playlist Entry.
@@ -127,10 +129,13 @@ const PlaylistScreen: FC = () => {
         { leading: false }
     );
 
-    // When the current audio source is not "stream.media" (local media), the playlist is being
-    // ignored by the streamer (due to another source like AirPlay being active). We want to inform
-    // the user of this.
-    const showingInactivePlaylistBanner = currentSource?.class !== "stream.media";
+    // When the streamer is powered on and functioning, but the current audio source is not
+    // "stream.media" (local media), then playlist is being ignored by the streamer (due to another
+    // source like AirPlay being active). We want to inform the user of this.
+    const showingInactivePlaylistBanner =
+        streamerPower === "on" &&
+        playStatus !== "not_ready" &&
+        currentSource?.class !== "stream.media";
 
     // --------------------------------------------------------------------------------------------
 
