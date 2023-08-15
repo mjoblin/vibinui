@@ -107,7 +107,7 @@ const TrackArt: FC<TrackArtProps> = ({
     return (
         <Box className={classes.trackArtContainer}>
             <Image
-                src={artUri ? artUri : track ? track.album_art_uri : ""}
+                src={artUri ? artUri : track ? track.album_art_uri || track.art_url : ""}
                 fit="cover"
                 radius={radius}
                 width={size}

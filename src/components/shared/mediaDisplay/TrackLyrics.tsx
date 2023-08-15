@@ -1,5 +1,14 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Button, createStyles, Flex, Highlight, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+    Box,
+    Button,
+    createStyles,
+    Flex,
+    Highlight,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 
 import {
     LyricChunk,
@@ -23,6 +32,8 @@ import { RootState } from "../../../app/store/store";
 // Lyrics are rendered in a CSS grid, which should add columns if the container is widened.
 // ================================================================================================
 
+// TODO: Make these mutually exclusive. The intent is to pass one of either track, trackId, or
+//  artist & title.
 type TrackLyricsProps = {
     trackId?: string;
     artist?: string;

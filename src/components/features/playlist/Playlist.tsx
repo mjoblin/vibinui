@@ -158,6 +158,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
+    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
     const {
         status: { is_activating_playlist: isActivatingPlaylist },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
@@ -170,8 +171,10 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
     const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
     const currentEntryRef = useRef<HTMLDivElement>(null);
-
     const { classes } = useStyles();
+
+    const isPlayingLocalMedia = currentSource?.class === "stream.media";
+    const currentEntryBorderColor = isPlayingLocalMedia ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
 
     // Define some CSS to ensure that the currently-playing playlist entry has an active/highlighted
     // border around it.
@@ -198,14 +201,14 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         }
 
         const previousRowCSS = {
-            borderBottom: `1px solid ${CURRENTLY_PLAYING_COLOR} !important`,
+            borderBottom: `1px solid ${currentEntryBorderColor} !important`,
         };
 
         const currentlyPlayingRowCSS = {
             color: theme.white,
             backgroundColor:
                 theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.yellow[6],
-            border: `1px solid ${CURRENTLY_PLAYING_COLOR} !important`,
+            border: `1px solid ${currentEntryBorderColor} !important`,
         };
 
         if (activePlaylist.current_track_index === 0) {
@@ -401,11 +404,15 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     //  - If it's the current track:
                                     //      - If currently playing, pause the track
                                     //      - If currently paused, resume playback
+                                    //      - If source is not local media, play track from beginning
                                     //  - If it's not the current track, play track from beginning
                                     // entryCanBePlayed(index) &&
-                                    index === activePlaylist.current_track_index && playStatus === "pause"
+                                    index === activePlaylist.current_track_index &&
+                                    isPlayingLocalMedia &&
+                                    playStatus === "pause"
                                         ? resumePlayback()
                                         : index === activePlaylist.current_track_index &&
+                                          isPlayingLocalMedia &&
                                           playStatus === "play" &&
                                           streamerPower === "on"
                                         ? pausePlayback()
@@ -457,7 +464,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                 <Flex pl={5} gap={5} align="center">
                                     {/* Entry Play button. If the entry is the current entry,
                                         then instead implement Pause/Resume behavior. */}
-                                    {index === activePlaylist.current_track_index ? (
+                                    {index ===
+                                    (isPlayingLocalMedia && activePlaylist.current_track_index) ? (
                                         playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}

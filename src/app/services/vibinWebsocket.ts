@@ -30,7 +30,7 @@ import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 import { setVibinStatusState, VibinStatusState } from "../store/vibinStatusSlice";
-import { MediaId, PlaylistEntry } from "../types";
+import { MediaId, PlaylistEntry, Track } from "../types";
 
 // ================================================================================================
 // Handle the WebSocket connection to the vibin backend.
@@ -243,7 +243,19 @@ function messageHandler(
         if (data.type === "CurrentlyPlaying") {
             const currentlyPlaying = data.payload as CurrentlyPlayingPayload;
 
-            dispatch(setCurrentTrack(currentlyPlaying.active_track));
+            // Set the currentTrack details. If a local track is currently playing (i.e. there's
+            // a track_media_id) then set the currentTrack to the Track associated with the Id.
+            // If there's no track_media_id (e.g. currently playing from AirPlay) then set the
+            // currentTrack to a "fake" Track based on active_track (active_track only has some
+            // Track fields defined, as sources like AirPlay do not define all Track fields).
+            const localMediaTrackDetails: Track | undefined =
+                currentlyPlaying.track_media_id &&
+                getState().mediaGroups.trackById[currentlyPlaying.track_media_id];
+            
+            dispatch(
+                setCurrentTrack(localMediaTrackDetails || (currentlyPlaying.active_track as Track))
+            );
+
             dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
             dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
             dispatch(setCurrentFormat(currentlyPlaying.format));

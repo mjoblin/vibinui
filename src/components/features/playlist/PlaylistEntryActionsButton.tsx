@@ -13,6 +13,7 @@ import {
     IconHeart,
     IconHeartOff,
     IconMicrophone2,
+    IconPhoto,
     IconPlayerPlay,
     IconTrash,
     IconWaveSine,
@@ -47,6 +48,7 @@ import { setTracksFilterText } from "../../../app/store/userSettingsSlice";
 import TrackLyricsModal from "../../shared/mediaDisplay/TrackLyricsModal";
 import TrackWaveformModal from "../../shared/mediaDisplay/TrackWaveformModal";
 import TrackLinksModal from "../../shared/mediaDisplay/TrackLinksModal";
+import ArtModal from "../../shared/mediaDisplay/ArtModal";
 
 // ================================================================================================
 // Button which reveals an overlay menu of actions that can be performed on the Playlist entry.
@@ -119,6 +121,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const [showTrackLinksModal, setShowTrackLinksModal] = useState<boolean>(false);
     const [showTrackLyricsModal, setShowTrackLyricsModal] = useState<boolean>(false);
     const [showTrackWaveformModal, setShowTrackWaveformModal] = useState<boolean>(false);
+    const [showArtModal, setShowArtModal] = useState<boolean>(false);
     const { classes } = useStyles();
     const menuStyles = useMenuStyles();
 
@@ -305,6 +308,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             View links...
                         </Menu.Item>
 
+                        <Menu.Item
+                            icon={<IconPhoto size={14} />}
+                            onClick={() => setShowArtModal(true)}
+                        >
+                            View art...
+                        </Menu.Item>
+
                         {/* Favorites actions ------------------------------------------------- */}
 
                         <Menu.Label>Favorites</Menu.Label>
@@ -411,6 +421,12 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             track={trackById[entry.trackMediaId]}
                             opened={showTrackLinksModal}
                             onClose={() => setShowTrackLinksModal(false)}
+                        />
+
+                        <ArtModal
+                            media={trackById[entry.trackMediaId]}
+                            opened={showArtModal}
+                            onClose={() => setShowArtModal(false)}
                         />
                     </>
                 )}
