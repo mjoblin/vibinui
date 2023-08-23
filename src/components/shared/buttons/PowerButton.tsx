@@ -5,7 +5,7 @@ import { IconThumbUp, IconPower } from "@tabler/icons";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
-import { useLazyPowerToggleQuery } from "../../../app/services/vibinSystem";
+import { useLazyStreamerPowerToggleQuery } from "../../../app/services/vibinSystem";
 import { showErrorNotification } from "../../../app/utils";
 
 // ================================================================================================
@@ -14,7 +14,7 @@ import { showErrorNotification } from "../../../app/utils";
 
 const PowerButton: FC = () => {
     const { name: streamerName, power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
-    const [togglePower, togglePowerStatus] = useLazyPowerToggleQuery();
+    const [togglePower, togglePowerStatus] = useLazyStreamerPowerToggleQuery();
 
     /**
      * Display an error notification if the attempt to toggle power failed.

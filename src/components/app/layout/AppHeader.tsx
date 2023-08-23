@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../app/hooks/store";
 import PlaybackControls from "../../shared/playbackControls/PlaybackControls";
 import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
 import VibinLogo from "../../shared/VibinLogo";
+import VolumeControl from "../../shared/buttons/VolumeControl";
 import WarningMessage from "../../shared/textDisplay/WarningMessage";
 
 // ================================================================================================
@@ -68,6 +69,8 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                 {streamerPower === "on" && playStatus === "ready" && (
                     <WarningMessage message="Nothing currently playing" />
                 )}
+
+                <VolumeControl />
             </Flex>
         </Header>
     );

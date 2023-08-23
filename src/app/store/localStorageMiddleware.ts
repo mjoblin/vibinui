@@ -9,6 +9,7 @@ import {
     LSKEY_ALBUMS_CARD_SIZE,
     LSKEY_ALBUMS_FILTER_TEXT,
     LSKEY_ALBUMS_SHOW_DETAILS,
+    LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME,
     LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     LSKEY_APPLICATION_THEME,
     LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
@@ -70,7 +71,7 @@ import {
     setTracksCardGap,
     setTracksCardSize,
     setTracksFilterText,
-    setTracksShowDetails,
+    setTracksShowDetails, setApplicationAmplifierMaxVolume,
 } from "./userSettingsSlice";
 
 // ================================================================================================
@@ -101,6 +102,7 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setAlbumsCardSize.type]: LSKEY_ALBUMS_CARD_SIZE,
     [setAlbumsShowDetails.type]: LSKEY_ALBUMS_SHOW_DETAILS,
     [setAlbumsFilterText.type]: LSKEY_ALBUMS_FILTER_TEXT,
+    [setApplicationAmplifierMaxVolume.type]: LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME,
     [setApplicationHaveShownWelcomeMessage.type]: LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
     [setApplicationUseImageBackground.type]: LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
@@ -140,6 +142,7 @@ localStorageMiddleware.startListening({
         setAlbumsCardGap,
         setAlbumsCardSize,
         setAlbumsShowDetails,
+        setApplicationAmplifierMaxVolume,
         setApplicationHaveShownWelcomeMessage,
         setApplicationTheme,
         setApplicationUseImageBackground,

@@ -1,7 +1,13 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 
-import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
+import {
+    setAmplifierState,
+    setMediaServerName,
+    setMediaServerState,
+    setStreamerName,
+    setStreamerPower, setStreamerState
+} from "../store/systemSlice";
 import {
     DeviceDisplay,
     PlayStatus,
@@ -121,16 +127,26 @@ type StoredPlaylistsPayload = StoredPlaylistsState;
 type SystemPayload = {
     streamer: {
         name: string;
-        power: "on" | "off";
+        power: "on" | "off" | undefined;
         sources: {
             active: AudioSource,
             available: AudioSource[],
-        };
-        display: DeviceDisplay;
+        } | undefined;
+        display: DeviceDisplay | undefined;
     };
     media: {
         name: string;
     };
+    amplifier: {
+        name: string;
+        power: "on" | "off" | undefined;
+        mute: "on" | "off" | undefined;
+        volume: number | undefined;
+        sources: {
+            active: AudioSource,
+            available: AudioSource[],
+        } | undefined;
+    }
 };
 
 type TransportStatePayload = {
@@ -276,11 +292,17 @@ function messageHandler(
         } else if (data.type === "System") {
             const system = data.payload as SystemPayload;
 
-            dispatch(setMediaDeviceName(system.media?.name));
-            dispatch(setStreamerName(system.streamer?.name));
-            dispatch(setStreamerPower(system.streamer?.power));
-            dispatch(setAudioSources(system.streamer?.sources.available))
-            dispatch(setCurrentAudioSource(system.streamer?.sources.active))
+            system.amplifier && dispatch(setAmplifierState(system.amplifier));
+            system.media && dispatch(setMediaServerState(system.media));
+            system.streamer && dispatch(setStreamerState(system.streamer));
+
+            // dispatch(setMediaServerName(system.media?.name));
+            // dispatch(setStreamerName(system.streamer?.name));
+            // dispatch(setStreamerPower(system.streamer?.power));
+
+            // TODO: Move to systemState
+            dispatch(setAudioSources(system.streamer?.sources?.available))
+            dispatch(setCurrentAudioSource(system.streamer?.sources?.active))
             dispatch(setDeviceDisplay(system.streamer?.display));
         } else if (data.type === "TransportState") {
             const payload = data.payload as TransportStatePayload;

@@ -103,7 +103,7 @@ const DebugPanel: FC = () => {
                             fieldValues={{
                                 streamerName: system.streamer.name || "undefined",
                                 streamerPower: system.streamer.power || "undefined",
-                                mediaDeviceName: system.media_device.name || "undefined",
+                                mediaDeviceName: system.media_server.name || "undefined",
                             }}
                             keySize={fontSize}
                             valueSize={fontSize}

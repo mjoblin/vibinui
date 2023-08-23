@@ -30,6 +30,7 @@ export type TransportAction =
     | "shuffle"
     | "stop";
 
+// TODO: Move from playbackSlice to systemSlice
 export type AudioSource = {
     id: string;
     name: string;
@@ -61,7 +62,7 @@ export type AudioSource = {
 //         "duration": 174
 //     }
 // }
-export type DeviceDisplay = Record<string, any>;
+export type DeviceDisplay = Record<string, any>;  // TODO: Deprecated. Moved to systemSlice
 
 export type RepeatState = "off" | "all";
 
@@ -138,7 +139,7 @@ export const playbackSlice = createSlice({
         setActiveTransportActions: (state, action: PayloadAction<TransportAction[]>) => {
             updateIfDifferent(state, "active_transport_actions", action.payload);
         },
-        setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource }>) => {
+        setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource } | undefined>) => {
             updateIfDifferent(state, "audio_sources", action.payload);
         },
         setCurrentAudioSource: (state, action: PayloadAction<AudioSource | undefined>) => {
@@ -159,7 +160,7 @@ export const playbackSlice = createSlice({
         setCurrentAlbumMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
             updateIfDifferent(state, "current_album_media_id", action.payload);
         },
-        setDeviceDisplay: (state, action: PayloadAction<DeviceDisplay>) => {
+        setDeviceDisplay: (state, action: PayloadAction<DeviceDisplay | undefined>) => {
             updateIfDifferent(state, "device_display", action.payload);
         },
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {

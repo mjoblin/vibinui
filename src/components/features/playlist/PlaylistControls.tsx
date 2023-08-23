@@ -42,7 +42,7 @@ import {
     useLazyActivateStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
 } from "../../../app/services/vibinStoredPlaylists";
-import { useLazyPowerToggleQuery } from "../../../app/services/vibinSystem";
+import { useLazyStreamerPowerToggleQuery } from "../../../app/services/vibinSystem";
 import StoredPlaylistsManager from "./StoredPlaylistsManager";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import {
@@ -123,7 +123,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     const { current_track_index: activePlaylistTrackIndex } = useAppSelector(
         (state: RootState) => state.activePlaylist
     );
-    const [togglePower] = useLazyPowerToggleQuery();
+    const [togglePower] = useLazyStreamerPowerToggleQuery();
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
     const [activateStoredPlaylistId, activatePlaylistStatus] = useLazyActivateStoredPlaylistQuery();
     const [storePlaylist, storePlaylistStatus] = useLazyStoreCurrentPlaylistQuery();

@@ -13,10 +13,16 @@ import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
-import { useLazyPowerToggleQuery, useLazySetSourceQuery } from "../../app/services/vibinSystem";
+import {
+    useLazyAmplifierPowerSetQuery,
+    useLazyAmplifierPowerToggleQuery,
+    useLazyAmplifierSourceSetQuery,
+    useLazyStreamerPowerToggleQuery,
+    useLazyStreamerSourceSetQuery
+} from "../../app/services/vibinSystem";
 import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { showSuccessNotification } from "../../app/utils";
-import { PowerStatus } from "../../app/store/systemSlice";
+import { PowerState, setAmplifierState } from "../../app/store/systemSlice";
 import { AudioSource } from "../../app/store/playbackSlice";
 
 // ================================================================================================
@@ -32,14 +38,18 @@ import { AudioSource } from "../../app/store/playbackSlice";
 const SettingsMenu: FC = () => {
     const dispatch = useAppDispatch();
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const [togglePower] = useLazyPowerToggleQuery();
-    const [setSource] = useLazySetSourceQuery();
+    const [amplifierPowerSet] = useLazyAmplifierPowerSetQuery();
+    const [amplifierPowerToggle] = useLazyAmplifierPowerToggleQuery();
+    const [streamerPowerToggle] = useLazyStreamerPowerToggleQuery();
+    const [amplifierSourceSet] = useLazyAmplifierSourceSetQuery();
+    const [streamerSourceSet] = useLazyStreamerSourceSetQuery();
+    const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
     const streamer = useAppSelector((state: RootState) => state.system.streamer);
-    const audioSources = useAppSelector((state: RootState) => state.playback.audio_sources);
-    const currentAudioSource = useAppSelector(
-        (state: RootState) => state.playback.current_audio_source
-    );
-    const previousPowerState = useRef<PowerStatus>(streamer.power);
+    // const audioSources = useAppSelector((state: RootState) => state.playback.audio_sources);
+    // const currentAudioSource = useAppSelector(
+    //     (state: RootState) => state.playback.current_audio_source
+    // );
+    const previousPowerState = useRef<PowerState>(streamer.power);
 
     /**
      * Notify the user when the power has been turned on/off.
@@ -73,14 +83,15 @@ const SettingsMenu: FC = () => {
             </Menu.Target>
 
             <Menu.Dropdown>
+                {/* Streamer ------------------------------------------------------------------ */}
                 <Menu.Label>Streamer</Menu.Label>
 
-                {/* Streamer power toggle */}
-                <Menu.Item>
+                {/* Power */}
+                <Menu.Item closeMenuOnClick={false}>
                     <Switch
                         label="Power"
                         checked={streamer.power === "on"}
-                        onChange={(event) => togglePower()}
+                        onChange={(event) => streamerPowerToggle()}
                         onLabel="on"
                         offLabel="off"
                     />
@@ -89,18 +100,59 @@ const SettingsMenu: FC = () => {
                 {/* Source selector */}
                 <Menu.Item closeMenuOnClick={false}>
                     <Select
-                        value={currentAudioSource?.id}
+                        value={streamer?.sources?.active?.name}
                         dropdownPosition="top"
                         maxDropdownHeight={500}
-                        onChange={(value) => value && setSource(value)}
-                        data={audioSources.map((source: AudioSource) => ({
-                            value: source.id,
-                            label: source.name,
-                        }))}
+                        onChange={(value) => value && streamerSourceSet({ sourceName: value })}
+                        data={
+                            streamer?.sources?.available?.map((source: AudioSource) => ({
+                                value: source.name,
+                                label: source.name,
+                            })) || []
+                        }
                     />
                 </Menu.Item>
 
-                <Menu.Divider />
+                {/* Amplifier ----------------------------------------------------------------- */}
+                {!!amplifier && (
+                    <>
+                        <Menu.Label>Amplifier</Menu.Label>
+
+                        {/* Power */}
+                        <Menu.Item closeMenuOnClick={false}>
+                            <Switch
+                                label="Power"
+                                checked={amplifier?.power === "on"}
+                                onChange={(event) => amplifierPowerToggle()}
+                                onLabel="on"
+                                offLabel="off"
+                            />
+                        </Menu.Item>
+
+                        {/* Source selector */}
+                        <Menu.Item closeMenuOnClick={false}>
+                            <Select
+                                disabled={amplifier.power !== "on"}
+                                value={amplifier?.sources?.active?.name}
+                                dropdownPosition="top"
+                                maxDropdownHeight={500}
+                                onChange={(value) =>
+                                    value && amplifierSourceSet({ sourceName: value })
+                                }
+                                data={
+                                    amplifier?.sources?.available?.map((source: AudioSource) => ({
+                                        value: source.name,
+                                        label: source.name,
+                                    })) || []
+                                }
+                            />
+                        </Menu.Item>
+
+                        <Menu.Divider />
+                    </>
+                )}
+
+                {/* Application --------------------------------------------------------------- */}
                 <Menu.Label>Application</Menu.Label>
                 <Menu.Item
                     icon={<IconKeyboard size={14} />}
