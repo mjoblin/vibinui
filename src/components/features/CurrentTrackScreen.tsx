@@ -125,7 +125,7 @@ const CurrentTrackScreen: FC = () => {
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [debouncedPlayStatus] = useDebouncedValue(playStatus, 1000);

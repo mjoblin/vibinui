@@ -32,8 +32,8 @@ type MediaSourceBadgeProps = {
  *
  */
 const MediaSourceBadge: FC<MediaSourceBadgeProps> = ({ showSource = false }) => {
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
-    const display = useAppSelector((state: RootState) => state.playback.device_display);
+    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
+    const display = useAppSelector((state: RootState) => state.system.streamer.display);
 
     if (!currentSource?.name) {
         return (

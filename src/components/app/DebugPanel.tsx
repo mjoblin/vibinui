@@ -59,7 +59,7 @@ const DebugPanel: FC = () => {
         (state: RootState) => state.internal.application
     );
 
-    useHotkeys([["D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
+    useHotkeys([["shift+D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
 
     const fontSize = 12;
 
@@ -126,7 +126,7 @@ const DebugPanel: FC = () => {
                                         ? playback.active_transport_actions.join(", ")
                                         : "<none>",
                                 currentAudioSourceName:
-                                    playback.current_audio_source?.name || "undefined",
+                                    system.streamer.sources?.active?.name || "undefined",
                                 currentTrackMediaId: playback.current_track_media_id || "<none>",
                                 currentAlbumMediaId: playback.current_album_media_id || "<none>",
                             }}

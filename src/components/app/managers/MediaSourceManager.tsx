@@ -16,7 +16,7 @@ import { showSuccessNotification } from "../../../app/utils";
 
 const MediaSourceManager: FC = () => {
     const dispatch = useDispatch();
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const [haveIgnoredInitialState, setHaveIgnoredInitialState] = useState<boolean>(false);
 
     /**

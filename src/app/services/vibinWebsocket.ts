@@ -2,25 +2,21 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 
 import {
+    AudioSource,
+    DeviceDisplay,
     setAmplifierState,
-    setMediaServerName,
     setMediaServerState,
-    setStreamerName,
-    setStreamerPower, setStreamerState
+    setStreamerState,
 } from "../store/systemSlice";
 import {
-    DeviceDisplay,
     PlayStatus,
     RepeatState,
     setActiveTransportActions,
-    setAudioSources,
-    setCurrentAudioSource,
     setCurrentFormat,
     setCurrentStream,
     setCurrentTrack,
     setCurrentTrackMediaId,
     setCurrentAlbumMediaId,
-    setDeviceDisplay,
     setPlayStatus,
     setPlayheadPosition,
     setRepeat,
@@ -30,7 +26,6 @@ import {
 } from "../store/playbackSlice";
 import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
-import { AudioSource } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/activePlaylistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
@@ -295,11 +290,6 @@ function messageHandler(
             dispatch(setAmplifierState(system.amplifier));
             dispatch(setMediaServerState(system.media));
             dispatch(setStreamerState(system.streamer));
-
-            // TODO: Move to systemState
-            dispatch(setAudioSources(system.streamer?.sources?.available))
-            dispatch(setCurrentAudioSource(system.streamer?.sources?.active))
-            dispatch(setDeviceDisplay(system.streamer?.display));
         } else if (data.type === "TransportState") {
             const payload = data.payload as TransportStatePayload;
 

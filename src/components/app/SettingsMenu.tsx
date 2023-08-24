@@ -21,8 +21,7 @@ import {
 } from "../../app/services/vibinSystem";
 import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { showSuccessNotification } from "../../app/utils";
-import { PowerState } from "../../app/store/systemSlice";
-import { AudioSource } from "../../app/store/playbackSlice";
+import { AudioSource, PowerState } from "../../app/store/systemSlice";
 
 // ================================================================================================
 // Application settings.

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Format, MediaId, MediaSourceClass, Stream, Track } from "../types";
+import { Format, MediaId, Stream, Track } from "../types";
 import { updateIfDifferent } from "./helpers";
 
 // ================================================================================================
@@ -30,40 +30,6 @@ export type TransportAction =
     | "shuffle"
     | "stop";
 
-// TODO: Move from playbackSlice to systemSlice
-export type AudioSource = {
-    id: string;
-    name: string;
-    default_name: string;
-    class: MediaSourceClass;
-    nameable: boolean;
-    ui_selectable: boolean;
-    description: string;
-    description_locale: string;
-    preferred_order: number;
-};
-
-// DeviceDisplay is vaguely defined here, to allow for any arbitrary key/value pairs. This is due
-// to the shape being potentially very different between streamer types; although in a world where
-// this app is specific to CXNv2/StreamMagic, the following shape can be somewhat assumed:
-//
-// {
-//     "line1": "Sooner",
-//     "line2": "slowthai",
-//     "line3": "UGLY",
-//     "format": "44.1kHz/16bit AAC",
-//     "mqa": "none",
-//     "playback_source": "punnet",
-//     "class": "stream.service.airplay",
-//     "art_file": "/tmp/current/AlbumArtFile-20969-20",
-//     "art_url": "http://192.168.1.13:80/album-art-4356?id=1:36",
-//     "progress": {
-//         "position": 0,
-//         "duration": 174
-//     }
-// }
-export type DeviceDisplay = Record<string, any>;  // TODO: Deprecated. Moved to systemSlice
-
 export type RepeatState = "off" | "all";
 
 export type ShuffleState = "off" | "all";
@@ -78,9 +44,6 @@ export type ShuffleState = "off" | "all";
 export interface PlaybackState {
     play_status: PlayStatus | undefined;
     active_transport_actions: TransportAction[];
-    // TODO: Audio Sources doesn't belong in current playback slice
-    audio_sources: AudioSource[];
-    current_audio_source: AudioSource | undefined;
     // TODO: The current_track will either be a complete Track (when the track is being sourced from
     //  local media where the complete Track details are known); or a partial Track (when the track
     //  is being sourced from a non-local source like AirPlay, where only some Track details are
@@ -100,7 +63,6 @@ export interface PlaybackState {
     current_album_media_id: MediaId | undefined;
     current_format: Format | undefined;
     current_stream: Stream | undefined;
-    device_display: DeviceDisplay | undefined;
     repeat: RepeatState | undefined;
     shuffle: ShuffleState | undefined;
     playhead: {
@@ -112,14 +74,11 @@ export interface PlaybackState {
 const initialState: PlaybackState = {
     play_status: undefined,
     active_transport_actions: [],
-    audio_sources: [],
-    current_audio_source: undefined,
     current_track: undefined,
     current_track_media_id: undefined,
     current_album_media_id: undefined,
     current_format: undefined,
     current_stream: undefined,
-    device_display: undefined,
     repeat: undefined,
     shuffle: undefined,
     playhead: {
@@ -139,12 +98,6 @@ export const playbackSlice = createSlice({
         setActiveTransportActions: (state, action: PayloadAction<TransportAction[]>) => {
             updateIfDifferent(state, "active_transport_actions", action.payload);
         },
-        setAudioSources: (state, action: PayloadAction<{ [key: number]: AudioSource } | undefined>) => {
-            updateIfDifferent(state, "audio_sources", action.payload);
-        },
-        setCurrentAudioSource: (state, action: PayloadAction<AudioSource | undefined>) => {
-            updateIfDifferent(state, "current_audio_source", action.payload);
-        },
         setCurrentFormat: (state, action: PayloadAction<Partial<Format> | undefined>) => {
             updateIfDifferent(state, "current_format", action.payload);
         },
@@ -159,9 +112,6 @@ export const playbackSlice = createSlice({
         },
         setCurrentAlbumMediaId: (state, action: PayloadAction<MediaId | undefined>) => {
             updateIfDifferent(state, "current_album_media_id", action.payload);
-        },
-        setDeviceDisplay: (state, action: PayloadAction<DeviceDisplay | undefined>) => {
-            updateIfDifferent(state, "device_display", action.payload);
         },
         setPlayStatus: (state, action: PayloadAction<PlayStatus | undefined>) => {
             updateIfDifferent(state, "play_status", action.payload);
@@ -185,14 +135,11 @@ export const playbackSlice = createSlice({
 export const {
     restartPlayhead,
     setActiveTransportActions,
-    setAudioSources,
-    setCurrentAudioSource,
     setCurrentFormat,
     setCurrentStream,
     setCurrentTrack,
     setCurrentTrackMediaId,
     setCurrentAlbumMediaId,
-    setDeviceDisplay,
     setPlayStatus,
     setPlayheadPosition,
     setPlayheadPositionNormalized,

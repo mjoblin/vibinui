@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { updateIfDifferent } from "./helpers";
-import { AudioSource } from "./playbackSlice";  // TODO: Move from playbackSlice to systemSlice
+import { MediaSourceClass } from "../types";
 
 // ================================================================================================
 // Application state for the streaming system (device names, power status, volume, etc).
@@ -11,6 +11,18 @@ import { AudioSource } from "./playbackSlice";  // TODO: Move from playbackSlice
 export type PowerState = "on" | "off" | undefined;
 
 export type MuteState = "on" | "off" | undefined;
+
+export type AudioSource = {
+    id: string;
+    name: string;
+    default_name: string;
+    class: MediaSourceClass;
+    nameable: boolean;
+    ui_selectable: boolean;
+    description: string;
+    description_locale: string;
+    preferred_order: number;
+};
 
 export type AudioSources = {
     active: AudioSource | undefined;
@@ -45,6 +57,7 @@ export interface DeviceState {
 export interface StreamerState extends DeviceState {
     power: PowerState;
     sources: AudioSources | undefined;
+    display: DeviceDisplay | undefined;
 }
 
 export interface MediaServerState extends DeviceState {
@@ -68,6 +81,7 @@ const initialState: SystemState = {
         name: "",
         power: undefined,
         sources: undefined,
+        display: undefined,
     },
     media_server: {
         name: "",
@@ -80,12 +94,6 @@ const initialState: SystemState = {
         sources: undefined,
     }
 };
-
-// TODO: Think about ways to distinguish between reducers intended for user-driven use, vs. those
-//  intended for infrastructure use. e.g. "setStreamerPower" (and others here) are intended to be
-//  used when a power-related message comes in from the backend over a websocket; it's not intended
-//  to be used by a user-facing component (which should be using useLazyStreamerPowerToggleQuery in
-//  the vibinSystem service).
 
 export const systemSlice = createSlice({
     name: "system",
@@ -100,16 +108,6 @@ export const systemSlice = createSlice({
         setStreamerState: (state, action: PayloadAction<StreamerState>) => {
             updateIfDifferent(state, "streamer", action.payload);
         },
-        // TODO: Deprecate the following
-        setMediaServerName: (state, action: PayloadAction<string>) => {
-            updateIfDifferent(state, "media_server.name", action.payload);
-        },
-        setStreamerName: (state, action: PayloadAction<string>) => {
-            updateIfDifferent(state, "streamer.name", action.payload);
-        },
-        setStreamerPower: (state, action: PayloadAction<PowerState>) => {
-            updateIfDifferent(state, "streamer.power", action.payload);
-        },
     },
 });
 
@@ -118,9 +116,6 @@ export const {
     setAmplifierState,
     setMediaServerState,
     setStreamerState,
-    setMediaServerName,
-    setStreamerName,
-    setStreamerPower,
 } = systemSlice.actions;
 
 export default systemSlice.reducer;
