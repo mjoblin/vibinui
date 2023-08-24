@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useRef } from "react";
+import React, { FC, MutableRefObject, useEffect, useRef } from "react";
 import {
     ActionIcon,
     Box,
@@ -44,7 +44,8 @@ const SettingsMenu: FC = () => {
     const [streamerSourceSet] = useStreamerSourceSetMutation();
     const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
     const streamer = useAppSelector((state: RootState) => state.system.streamer);
-    const previousPowerState = useRef<PowerState>(streamer.power);
+    const previousAmplifierPowerState = useRef<PowerState>(amplifier?.power);
+    const previousStreamerPowerState = useRef<PowerState>(streamer.power);
 
     /**
      * Notify the user when the power has been turned on/off.
@@ -53,21 +54,36 @@ const SettingsMenu: FC = () => {
      *  fairly global app-wide notion. Might be good to extract this out into a device manager.
      */
     useEffect(() => {
-        if (previousPowerState.current === undefined) {
+        const checkIfPowerChanged = (
+            device: string,
+            thisPowerState: PowerState,
+            previousPowerState: MutableRefObject<PowerState>
+        ) => {
+            if (thisPowerState === previousPowerState.current) {
+                return;
+            }
+
+            if (previousPowerState.current !== "on" && previousPowerState.current !== "off") {
+                previousPowerState.current = thisPowerState;
+                return;
+            }
+
+            previousPowerState.current = thisPowerState;
+
+            showSuccessNotification({
+                title: `${device} Power`,
+                color: thisPowerState === "on" ? "teal" : "yellow",
+                message: thisPowerState
+                    ? `${device} has been powered ${thisPowerState}`
+                    : `Unknown ${device.toLocaleLowerCase()} power state`,
+            });
+
             previousPowerState.current = streamer.power;
-            return;
-        }
+        };
 
-        showSuccessNotification({
-            title: "Streamer Power",
-            color: streamer.power === "on" ? "teal" : "yellow",
-            message: streamer.power
-                ? `Streamer has been powered ${streamer.power}`
-                : "Unknown streamer power state",
-        });
-
-        previousPowerState.current = streamer.power;
-    }, [streamer.power]);
+        checkIfPowerChanged("Amplifier", amplifier?.power, previousAmplifierPowerState);
+        checkIfPowerChanged("Streamer", streamer.power, previousStreamerPowerState);
+    }, [amplifier?.power, streamer.power]);
 
     return (
         <Menu shadow="md" width={210} position="top-start" withArrow arrowPosition="center">
