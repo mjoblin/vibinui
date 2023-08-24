@@ -42,7 +42,6 @@ import MediaSourceBadge from "../../shared/dataDisplay/MediaSourceBadge";
 
 const useStyles = createStyles((theme) => ({
     header: {
-        // paddingBottom: theme.spacing.md,
         paddingBottom: 18,
         marginBottom: `calc(${theme.spacing.md} * 1.5)`,
         borderBottom: `${rem(1)} solid ${
@@ -212,7 +211,6 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
                     <SettingsMenu />
                     <Flex gap={10} align="center">
                         <WaitingOnAPIIndicator stealth />
-                        {/*<StandbyMode type="compact" />*/}
                         <SystemPower />
                     </Flex>
                 </Flex>

@@ -46,6 +46,7 @@ import {
     setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsShowDetails,
+    setApplicationAmplifierMaxVolume,
     setApplicationHaveShownWelcomeMessage,
     setApplicationTheme,
     setApplicationUseImageBackground,
@@ -55,12 +56,12 @@ import {
     setArtistsFilterText,
     setArtistsShowDetails,
     setArtistsViewMode,
+    setCurrentTrackActiveTab,
     setFavoritesActiveCollection,
     setFavoritesCardGap,
     setFavoritesCardSize,
     setFavoritesFilterText,
     setFavoritesShowDetails,
-    setCurrentTrackActiveTab,
     setPlaylistEditorSortField,
     setPlaylistFollowCurrentlyPlaying,
     setPlaylistViewMode,
@@ -71,7 +72,7 @@ import {
     setTracksCardGap,
     setTracksCardSize,
     setTracksFilterText,
-    setTracksShowDetails, setApplicationAmplifierMaxVolume,
+    setTracksShowDetails,
 } from "./userSettingsSlice";
 
 // ================================================================================================

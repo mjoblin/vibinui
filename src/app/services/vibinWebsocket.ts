@@ -296,10 +296,6 @@ function messageHandler(
             dispatch(setMediaServerState(system.media));
             dispatch(setStreamerState(system.streamer));
 
-            // dispatch(setMediaServerName(system.media?.name));
-            // dispatch(setStreamerName(system.streamer?.name));
-            // dispatch(setStreamerPower(system.streamer?.power));
-
             // TODO: Move to systemState
             dispatch(setAudioSources(system.streamer?.sources?.available))
             dispatch(setCurrentAudioSource(system.streamer?.sources?.active))
