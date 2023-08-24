@@ -215,7 +215,7 @@ sessions.
 
 #### Input switching
 
-The streamer and amplifier input source can be set.
+The streamer and amplifier input sources can be set.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_input_switching.jpg" width="200" />
 
