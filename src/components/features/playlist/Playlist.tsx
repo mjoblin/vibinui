@@ -33,7 +33,7 @@ import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
-import StandbyMode from "../../shared/buttons/StandbyMode";
+import SystemPower from "../../shared/buttons/SystemPower";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 // ================================================================================================
@@ -279,7 +279,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     // --------------------------------------------------------------------------------------------
 
     if (playStatus === "not_ready") {
-        return <StandbyMode />;
+        return (
+            <Box pt={35}>
+                <SystemPower showPowerOff={false} label="streamer is in standby mode" />
+            </Box>
+        );
     }
     
     if (!activePlaylist.haveReceivedInitialState || isActivatingPlaylist) {

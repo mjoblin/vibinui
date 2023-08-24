@@ -7,7 +7,8 @@ Vibin was developed for my specific music streaming needs. It should however wor
 StreamMagic audio streamer, but has only been tested with the following:
 
 * Cambridge Audio CXNv2 streamer.
-* Local media stored on a NAS running [Asset UPnP] (local media is optional).
+* Local media stored on a NAS running [Asset UPnP] (optional).
+* A [Hegel] amplifier for volume/mute control (optional).
 * AirPlay from a MacBook.
 * Running the UI in Chrome on a MacBook and iPad.
 
@@ -47,10 +48,15 @@ See the [Developers README] for more information.
 
 ## Features
 
+> **Note:** Some features will only be available when a supported media server or amplifier are
+> detected.
+
 Vibin's features include:
 
 * **Streamer transport controls**.
   * Play, pause, next track, previous track, shuffle, repeat, etc.
+* **Amplifier volume and mute controls**.
+* **Streamer and amplifier source selection**.
 * **Showing what's currently playing on the streamer**.
   * Track details.
   * Album art.
@@ -71,8 +77,7 @@ Vibin's features include:
 ### Additional features
 
 * Display settings are remembered between browser sessions.
-* Supports keyboard shortcuts for transport controls, lyrics display, etc.
-* The streamer can be powered on/off, and the audio source can be changed.
+* Supports keyboard shortcuts for transport controls, lyrics display, volume/mute, etc.
 * Streamer changes made by other apps (like the StreamMagic app) will be automatically reflected in
   Vibin.
 * Multiple instances of the UI can be running on one or more devices at once. Changes made by one
@@ -85,6 +90,16 @@ Vibin's features include:
 Full streamer transport controls are available.
 
 ![Streamer transport controls]
+
+#### Amplifier controls
+
+Amplifier controls for volume and mute are available.
+
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/amplifier_controls.jpg" width="200" />
+
+### Volume and mute controls
+
+![Amplifier controls]
 
 ### Currently-playing information
 
@@ -208,11 +223,18 @@ The streamer's audio input source can be set.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_input_switching.jpg" width="200" />
 
+#### Keyboard shortcuts
+
+Application features can be triggered using keyboard shortcuts.
+
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/keyboard_shortcuts.jpg" width="500" />
+
 
 [//]: # "--- Links -------------------------------------------------------------------------------"
 
 [StreamMagic]: https://www.cambridgeaudio.com/row/en/products/streammagic
 [Asset UPnP]: https://dbpoweramp.com/asset-upnp-dlna.htm
+[Hegel]: https://hegel.com
 
 [Vibin]: https://github.com/mjoblin/media/blob/main/vibin/images/albums.jpg?raw=true
 [overview video]: https://www.youtube.com/watch?v=5fEWAWSNico

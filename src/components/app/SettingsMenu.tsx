@@ -14,15 +14,14 @@ import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import {
-    useLazyAmplifierPowerSetQuery,
-    useLazyAmplifierPowerToggleQuery,
-    useLazyAmplifierSourceSetQuery,
-    useLazyStreamerPowerToggleQuery,
-    useLazyStreamerSourceSetQuery
+    useAmplifierPowerToggleMutation,
+    useAmplifierSourceSetMutation,
+    useStreamerPowerToggleMutation,
+    useStreamerSourceSetMutation
 } from "../../app/services/vibinSystem";
 import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
 import { showSuccessNotification } from "../../app/utils";
-import { PowerState, setAmplifierState } from "../../app/store/systemSlice";
+import { PowerState } from "../../app/store/systemSlice";
 import { AudioSource } from "../../app/store/playbackSlice";
 
 // ================================================================================================
@@ -30,7 +29,9 @@ import { AudioSource } from "../../app/store/playbackSlice";
 //
 // Contents:
 //  - Streamer power switch.
-//  - Media Source selector.
+//  - Streamer audio source selector.
+//  - Amplifier power switch.
+//  - Amplifier audio source selector.
 //  - Dark/light mode toggle.
 //  - Access application-wide modals (keyboard shortcuts, debug).
 // ================================================================================================
@@ -38,17 +39,12 @@ import { AudioSource } from "../../app/store/playbackSlice";
 const SettingsMenu: FC = () => {
     const dispatch = useAppDispatch();
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-    const [amplifierPowerSet] = useLazyAmplifierPowerSetQuery();
-    const [amplifierPowerToggle] = useLazyAmplifierPowerToggleQuery();
-    const [streamerPowerToggle] = useLazyStreamerPowerToggleQuery();
-    const [amplifierSourceSet] = useLazyAmplifierSourceSetQuery();
-    const [streamerSourceSet] = useLazyStreamerSourceSetQuery();
+    const [amplifierPowerToggle] = useAmplifierPowerToggleMutation();
+    const [streamerPowerToggle] = useStreamerPowerToggleMutation();
+    const [amplifierSourceSet] = useAmplifierSourceSetMutation();
+    const [streamerSourceSet] = useStreamerSourceSetMutation();
     const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
     const streamer = useAppSelector((state: RootState) => state.system.streamer);
-    // const audioSources = useAppSelector((state: RootState) => state.playback.audio_sources);
-    // const currentAudioSource = useAppSelector(
-    //     (state: RootState) => state.playback.current_audio_source
-    // );
     const previousPowerState = useRef<PowerState>(streamer.power);
 
     /**
@@ -100,10 +96,11 @@ const SettingsMenu: FC = () => {
                 {/* Source selector */}
                 <Menu.Item closeMenuOnClick={false}>
                     <Select
+                        disabled={streamer.power !== "on"}
                         value={streamer?.sources?.active?.name}
                         dropdownPosition="top"
                         maxDropdownHeight={500}
-                        onChange={(value) => value && streamerSourceSet({ sourceName: value })}
+                        onChange={(value) => value && streamerSourceSet(value)}
                         data={
                             streamer?.sources?.available?.map((source: AudioSource) => ({
                                 value: source.name,
@@ -137,7 +134,7 @@ const SettingsMenu: FC = () => {
                                 dropdownPosition="top"
                                 maxDropdownHeight={500}
                                 onChange={(value) =>
-                                    value && amplifierSourceSet({ sourceName: value })
+                                    value && amplifierSourceSet(value)
                                 }
                                 data={
                                     amplifier?.sources?.available?.map((source: AudioSource) => ({

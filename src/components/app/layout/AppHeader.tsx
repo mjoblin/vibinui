@@ -70,7 +70,9 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                     <WarningMessage message="Nothing currently playing" />
                 )}
 
-                <VolumeControl />
+                <Box pl={10}>
+                    <VolumeControl />
+                </Box>
             </Flex>
         </Header>
     );

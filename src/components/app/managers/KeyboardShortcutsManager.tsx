@@ -1,10 +1,15 @@
 import React, { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { Modal, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Flex, Modal, Overlay, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
+import {
+    useAmplifierMuteToggleMutation,
+    useAmplifierVolumeDownMutation,
+    useAmplifierVolumeUpMutation,
+} from "../../../app/services/vibinSystem";
 import {
     useNextTrackMutation,
     usePauseMutation,
@@ -37,6 +42,10 @@ const KeyboardShortcutsManager: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const duration = useAppSelector((state: RootState) => state.playback.current_track?.duration);
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
+    const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
+    const [volumeDown] = useAmplifierVolumeDownMutation();
+    const [volumeUp] = useAmplifierVolumeUpMutation();
+    const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [nextTrack] = useNextTrackMutation();
@@ -49,6 +58,9 @@ const KeyboardShortcutsManager: FC = () => {
         ["L", () => duration && seek(Math.min(position + SEEK_OFFSET_SECS, duration))],
         ["ArrowLeft", () => previousTrack()],
         ["ArrowRight", () => nextTrack()],
+        ["ArrowUp", () => volumeUp()],
+        ["ArrowDown", () => volumeDown()],
+        ["shift+ArrowDown", () => amplifierMuteToggle()],
         ["C", () => navigate("/ui/current")],
         ["P", () => navigate("/ui/playlist")],
         ["R", () => navigate("/ui/artists")],
@@ -63,99 +75,136 @@ const KeyboardShortcutsManager: FC = () => {
     return showKeyboardShortcuts ? (
         <Modal
             opened={showKeyboardShortcuts}
+            size="lg"
             centered
             title="Keyboard Shortcuts"
             overlayProps={{ blur: APP_MODAL_BLUR }}
             onClose={() => dispatch(setShowKeyboardShortcuts(false))}
         >
             <Stack spacing="md">
-                <Paper p="md" radius={5} withBorder>
-                    <Stack spacing="sm">
-                        <Stack spacing={0}>
-                            <Text weight="bold" transform="uppercase">
-                                Playback
-                            </Text>
-                            <Text fz="xs" c="dimmed">
-                                Control the playhead during playback
-                            </Text>
+                <Flex gap="md" w="100%">
+                    {/* Playhead -------------------------------------------------------------- */}
+                    <Paper p="md" radius={5} withBorder  sx={{ flexGrow: 1 }}>
+                        <Stack spacing="sm">
+                            <Stack spacing={0}>
+                                <Text weight="bold" transform="uppercase">
+                                    Playback
+                                </Text>
+                                <Text fz="xs" c="dimmed">
+                                    Control the streamer playhead
+                                </Text>
+                            </Stack>
+                            <FieldValueList
+                                fieldValues={{
+                                    J: `Seek back ${SEEK_OFFSET_SECS} seconds`,
+                                    K: "Play/Pause",
+                                    L: `Seek forwards ${SEEK_OFFSET_SECS} seconds`,
+                                    "←": "Previous track",
+                                    "→": "Next track",
+                                }}
+                                columnGap={10}
+                                keySize={16}
+                                keyWeight="bold"
+                                keyColor={colors.gray[1]}
+                                valueSize={16}
+                                valueWeight="normal"
+                                valueColor={colors.gray[5]}
+                            />
                         </Stack>
-                        <FieldValueList
-                            fieldValues={{
-                                j: `Seek back ${SEEK_OFFSET_SECS} seconds`,
-                                k: "Play/Pause",
-                                l: `Seek forwards ${SEEK_OFFSET_SECS} seconds`,
-                                "←": "Previous track",
-                                "→": "Next track",
-                            }}
-                            columnGap={10}
-                            keyFontFamily="courier"
-                            keySize={16}
-                            keyWeight="bold"
-                            keyColor={colors.gray[1]}
-                            valueSize={16}
-                            valueWeight="normal"
-                            valueColor={colors.gray[5]}
-                        />
-                    </Stack>
-                </Paper>
+                    </Paper>
 
-                <Paper p="md" radius={5} withBorder>
-                    <Stack spacing="sm">
-                        <Stack spacing={0}>
-                            <Text weight="bold" transform="uppercase">
-                                Navigation
-                            </Text>
-                            <Text fz="xs" c="dimmed">
-                                Navigate around the application
-                            </Text>
+                    {/* Amplifier ------------------------------------------------------------- */}
+                    <Paper p="md" radius={5} withBorder sx={{ flexGrow: 1 }}>
+                        <Stack spacing="sm">
+                            <Stack spacing={0}>
+                                <Text weight="bold" transform="uppercase">
+                                    Amplifier
+                                </Text>
+                                <Text fz="xs" c="dimmed">
+                                    Control the amplifier
+                                </Text>
+                                {!amplifier &&
+                                    <Text fz="xs" c="red">
+                                        Requires an amplifier to be registered with Vibin
+                                    </Text>
+                                }
+                            </Stack>
+                            <FieldValueList
+                                fieldValues={{
+                                    "↑": "Volume up",
+                                    "↓": "Volume down",
+                                    "⇧ ↓": "Toggle mute",
+                                }}
+                                columnGap={10}
+                                keySize={16}
+                                keyWeight="bold"
+                                keyColor={colors.gray[1]}
+                                valueSize={16}
+                                valueWeight="normal"
+                                valueColor={colors.gray[5]}
+                            />
                         </Stack>
-                        <FieldValueList
-                            fieldValues={{
-                                c: "Current Track",
-                                p: "Playlist",
-                                r: "Artists",
-                                a: "Albums",
-                                t: "Tracks",
-                                e: "Presets",
-                                f: "Favorites",
-                            }}
-                            columnGap={10}
-                            keySize={16}
-                            keyWeight="bold"
-                            keyColor={colors.gray[1]}
-                            valueSize={16}
-                            valueWeight="normal"
-                            valueColor={colors.gray[5]}
-                        />
-                    </Stack>
-                </Paper>
+                    </Paper>
+                </Flex>
 
-                <Paper p="md" radius={5} withBorder>
-                    <Stack spacing="sm">
-                        <Stack spacing={0}>
-                            <Text weight="bold" transform="uppercase">
-                                Additional
-                            </Text>
-                            <Text fz="xs" c="dimmed">
-                                Additional controls
-                            </Text>
+                <Flex gap="md">
+                    {/* Navigation ------------------------------------------------------------ */}
+                    <Paper p="md" radius={5} withBorder sx={{ flexGrow: 1 }}>
+                        <Stack spacing="sm">
+                            <Stack spacing={0}>
+                                <Text weight="bold" transform="uppercase">
+                                    Navigation
+                                </Text>
+                                <Text fz="xs" c="dimmed">
+                                    Switch between applications screens
+                                </Text>
+                            </Stack>
+                            <FieldValueList
+                                fieldValues={{
+                                    C: "Current Track",
+                                    P: "Playlist",
+                                    R: "Artists",
+                                    A: "Albums",
+                                    T: "Tracks",
+                                    E: "Presets",
+                                    F: "Favorites",
+                                }}
+                                columnGap={10}
+                                keySize={16}
+                                keyWeight="bold"
+                                keyColor={colors.gray[1]}
+                                valueSize={16}
+                                valueWeight="normal"
+                                valueColor={colors.gray[5]}
+                            />
                         </Stack>
-                        <FieldValueList
-                            fieldValues={{
-                                "?": "Show this Help screen",
-                                L: "Show the current track lyrics",
-                                d: "Show the Debug panel",
-                            }}
-                            columnGap={10}
-                            keySize={16}
-                            keyWeight="bold"
-                            keyColor={colors.gray[1]}
-                            valueSize={16}
-                            valueWeight="normal"
-                            valueColor={colors.gray[5]}
-                        />
-                    </Stack>
-                </Paper>
+                    </Paper>
+
+                    {/* Additional ------------------------------------------------------------ */}
+                    <Paper p="md" radius={5} withBorder sx={{ flexGrow: 1 }}>
+                        <Stack spacing="sm">
+                            <Stack spacing={0}>
+                                <Text weight="bold" transform="uppercase">
+                                    Additional
+                                </Text>
+                            </Stack>
+                            <FieldValueList
+                                fieldValues={{
+                                    "?": "Show this Help screen",
+                                    "⇧ L": "Show the current track lyrics",
+                                    D: "Show the Debug panel",
+                                }}
+                                columnGap={10}
+                                keySize={16}
+                                keyWeight="bold"
+                                keyColor={colors.gray[1]}
+                                valueSize={16}
+                                valueWeight="normal"
+                                valueColor={colors.gray[5]}
+                            />
+                        </Stack>
+                    </Paper>
+                </Flex>
             </Stack>
         </Modal>
     ) : null;

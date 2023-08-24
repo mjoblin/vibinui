@@ -292,9 +292,9 @@ function messageHandler(
         } else if (data.type === "System") {
             const system = data.payload as SystemPayload;
 
-            system.amplifier && dispatch(setAmplifierState(system.amplifier));
-            system.media && dispatch(setMediaServerState(system.media));
-            system.streamer && dispatch(setStreamerState(system.streamer));
+            dispatch(setAmplifierState(system.amplifier));
+            dispatch(setMediaServerState(system.media));
+            dispatch(setStreamerState(system.streamer));
 
             // dispatch(setMediaServerName(system.media?.name));
             // dispatch(setStreamerName(system.streamer?.name));
