@@ -48,8 +48,8 @@ See the [Developers README] for more information.
 
 ## Features
 
-> **Note:** Some features will only be available when a supported media server or amplifier are
-> detected.
+> **Note:** Some features will only be available when a supported local media server or amplifier
+> are detected.
 
 Vibin's features include:
 
