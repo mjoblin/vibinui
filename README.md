@@ -95,11 +95,7 @@ Full streamer transport controls are available.
 
 Amplifier controls for volume and mute are available.
 
-<img src="https://github.com/mjoblin/media/blob/main/vibin/images/amplifier_controls.jpg" width="200" />
-
-### Volume and mute controls
-
-![Amplifier controls]
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/amplifier_controls.jpg" width="400" />
 
 ### Currently-playing information
 
@@ -219,7 +215,7 @@ sessions.
 
 #### Input switching
 
-The streamer's audio input source can be set.
+The streamer and amplifier input source can be set.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_input_switching.jpg" width="200" />
 
