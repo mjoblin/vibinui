@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 
 import type { RootState } from "../../../app/store/store";
@@ -9,6 +9,7 @@ import {
     setCurrentTrackMediaId,
 } from "../../../app/store/playbackSlice";
 import { showSuccessNotification } from "../../../app/utils";
+import { AudioSource } from "../../../app/store/systemSlice";
 
 // ================================================================================================
 // Manage the handling of a change to the media source (e.g. AirPlay, Internet Radio, etc).
@@ -16,8 +17,10 @@ import { showSuccessNotification } from "../../../app/utils";
 
 const MediaSourceManager: FC = () => {
     const dispatch = useDispatch();
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
-    const [haveIgnoredInitialState, setHaveIgnoredInitialState] = useState<boolean>(false);
+    const currentSource = useAppSelector(
+        (state: RootState) => state.system.streamer.sources?.active
+    );
+    const previousSource = useRef<AudioSource | undefined>(currentSource);
 
     /**
      *  When the media source changes, some aspects of the application need to be reset:
@@ -34,22 +37,16 @@ const MediaSourceManager: FC = () => {
 
         // Announce the new media source; but not the very first time a media source is known (to
         // prevent the announcement always appearing when the app is first loaded).
-        if (haveIgnoredInitialState) {
-            currentSource && showSuccessNotification({
-                title: "Media Source changed",
-                message: `Media source set to ${currentSource.name}`,
-            })
-        }
-        else {
-            currentSource?.name && setHaveIgnoredInitialState(true);
-        }
+        currentSource?.name &&
+            currentSource.name !== previousSource.current?.name &&
+            previousSource.current !== undefined &&
+            showSuccessNotification({
+                title: "Audio Source",
+                message: `Streamer audio source set to ${currentSource.name}`,
+            });
 
-        // TODO: Figure out how to not require eslint-disable-next-line. It's there because this
-        //  component does not want to notify the user of the media source whenever the app is
-        //  first loaded, which doesn't work when haveIgnoredInitialState is in the dependency list.
-        //
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [dispatch, currentSource]);
+        previousSource.current = currentSource;
+    }, [dispatch, currentSource, previousSource]);
 
     return null;
 };

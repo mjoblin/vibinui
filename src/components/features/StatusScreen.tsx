@@ -5,6 +5,7 @@ import {
     Center,
     Checkbox,
     Flex,
+    NumberInput,
     Paper,
     Stack,
     Table,
@@ -27,7 +28,10 @@ import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibi
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
-import { setApplicationUseImageBackground } from "../../app/store/userSettingsSlice";
+import {
+    setApplicationAmplifierMaxVolume,
+    setApplicationUseImageBackground,
+} from "../../app/store/userSettingsSlice";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
 import BackgroundComputeIndicator from "../shared/dataDisplay/BackgroundComputeIndicator";
@@ -56,7 +60,7 @@ const StatusScreen: FC = () => {
     const { refetch: refetchNewAlbums } = useGetNewAlbumsQuery();
     const { refetch: refetchArtists } = useGetArtistsQuery();
     const { refetch: refetchTracks } = useGetTracksQuery();
-    const { streamer, media_device: mediaDevice } = useAppSelector(
+    const { streamer, media_server: mediaServer, amplifier } = useAppSelector(
         (state: RootState) => state.system
     );
     const { websocketClientId, websocketStatus } = useAppSelector(
@@ -69,7 +73,7 @@ const StatusScreen: FC = () => {
         system_platform: systemPlatform,
         clients,
     } = useAppSelector((state: RootState) => state.vibinStatus);
-    const { useImageBackground } = useAppSelector(
+    const { amplifierMaxVolume, useImageBackground } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );
     const [getSettings, getSettingsResult] = useLazySettingsQuery();
@@ -134,6 +138,21 @@ const StatusScreen: FC = () => {
                             dispatch(setApplicationUseImageBackground(!useImageBackground))
                         }
                     />
+
+                    <NumberInput
+                        disabled={!amplifier}
+                        label="Max amplifier volume"
+                        description="From 0 to 100, step is 1"
+                        min={0}
+                        max={100}
+                        precision={0}
+                        value={amplifierMaxVolume}
+                        maw="10rem"
+                        onChange={(value) =>
+                            typeof value === "number" &&
+                            dispatch(setApplicationAmplifierMaxVolume(value))
+                        }
+                    />
                 </Stack>
             </Paper>
 
@@ -191,7 +210,7 @@ const StatusScreen: FC = () => {
                             rowHeight={1.3}
                             fieldValues={{
                                 Streamer: streamer.name || "",
-                                "Media Server": mediaDevice.name || "",
+                                "Media Server": mediaServer.name || "",
                                 "Play State": <PlayStateIndicator />,
                                 Source: <MediaSourceBadge />,
                             }}
@@ -227,7 +246,7 @@ const StatusScreen: FC = () => {
                     <StylizedLabel color={colors.dark[3]}>media paths</StylizedLabel>
                     <Text size="sm" color={colors.dark[2]}>
                         Where to find media on the Media Server{" "}
-                        {mediaDevice.name && `(${mediaDevice.name})`}. Track details will be
+                        {mediaServer.name && `(${mediaServer.name})`}. Track details will be
                         retrieved from the All Albums path.
                     </Text>
                     <Text size="sm" weight="bold" color={colors.dark[2]}>

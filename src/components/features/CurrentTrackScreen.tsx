@@ -41,7 +41,7 @@ import TrackLinks from "../shared/mediaDisplay/TrackLinks";
 import TrackLyrics from "../shared/mediaDisplay/TrackLyrics";
 import TrackWaveform from "../shared/mediaDisplay/TrackWaveform";
 import SadLabel from "../shared/textDisplay/SadLabel";
-import StandbyMode from "../shared/buttons/StandbyMode";
+import SystemPower from "../shared/buttons/SystemPower";
 import MediaActionsButton from "../shared/buttons/MediaActionsButton";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 
@@ -125,7 +125,7 @@ const CurrentTrackScreen: FC = () => {
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [debouncedPlayStatus] = useDebouncedValue(playStatus, 1000);
@@ -248,8 +248,12 @@ const CurrentTrackScreen: FC = () => {
 
     // --------------------------------------------------------------------------------------------
 
-    if (streamerPower === "off") {
-        return <StandbyMode />;
+    if (playStatus === "not_ready") {
+        return (
+            <Box pt={35}>
+                <SystemPower showPowerOff={false} label="streamer is in standby mode" />
+            </Box>
+        );
     }
     
     if ((!currentTrackId && !currentPlaybackTrack) || preparingForDisplay) {
