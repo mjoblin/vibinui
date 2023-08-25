@@ -65,9 +65,19 @@ import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 
 export type CurrentTrackTab = "links" | "lyrics" | "waveform";
 
-const sourcesSupportingDetailsTabs: Partial<Record<MediaSourceClass, CurrentTrackTab[]>> = {
+// Some sources can have additional information displayed for what's currently playing.
+// e.g. stream.media is local media, which supports waveforms as well as links and lyrics.
+// stream.radio is more limited and can show the main track info but no details tabs as not
+// enough information is available for those tabs to be populated.
+const sourcesSupportingDisplayDetails: Partial<Record<MediaSourceClass, CurrentTrackTab[]>> = {
+    "digital.usb": ["links", "lyrics"], // unconfirmed
     "stream.media": ["links", "lyrics", "waveform"],
+    "stream.radio": [],
     "stream.service.airplay": ["links", "lyrics"],
+    "stream.service.cast": ["links", "lyrics"], // unconfirmed
+    "stream.service.roon": ["links", "lyrics"], // unconfirmed
+    "stream.service.spotify": ["links", "lyrics"], // unconfirmed
+    "stream.service.tidal": ["links", "lyrics"], // unconfirmed
 };
 
 const albumArtWidth = 300;
@@ -118,13 +128,13 @@ const CurrentTrackScreen: FC = () => {
     const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE, SCREEN_LOADING_PT, BUFFERING_AUDIO_NOTIFY_DELAY } = useAppGlobals();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.currentTrack);
-    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
+    const streamerPower = useAppSelector((state: RootState) => state.system.streamer.power);
     const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -248,7 +258,7 @@ const CurrentTrackScreen: FC = () => {
 
     // --------------------------------------------------------------------------------------------
 
-    if (playStatus === "not_ready") {
+    if (streamerPower !== "on") {
         return (
             <Box pt={35}>
                 <SystemPower showPowerOff={false} label="streamer is in standby mode" />
@@ -264,11 +274,14 @@ const CurrentTrackScreen: FC = () => {
         );
     }
 
+    // The system is playing, but the current source is not one flagged as a source which supports
+    // the display of additional track details.
     if (
         playStatusDisplay === "ready" ||
+        playStatusDisplay === "not_ready" ||
         !currentSource ||
         !currentTrack ||
-        !Object.keys(sourcesSupportingDetailsTabs).includes(currentSource.class)
+        !Object.keys(sourcesSupportingDisplayDetails).includes(currentSource.class)
     ) {
         return playStatusDisplay === "play" ? (
             <Center pt="xl">
@@ -281,13 +294,18 @@ const CurrentTrackScreen: FC = () => {
             </Center>
         ) : (
             <Center pt="xl">
-                <SadLabel label="Nothing is currently playing" />
+                <Flex align="center" gap={10}>
+                    <Text size={16} weight="bold" miw="fit-content">
+                        {`Nothing currently playing${currentSource ? " from" : ""}`}
+                    </Text>
+                    {currentSource && <MediaSourceBadge />}
+                </Flex>
             </Center>
         );
     }
 
     const tabsToDisplay = currentSource
-        ? sourcesSupportingDetailsTabs[currentSource.class]
+        ? sourcesSupportingDisplayDetails[currentSource.class]
         : undefined;
 
     // --------------------------------------------------------------------------------------------

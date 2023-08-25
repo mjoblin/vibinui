@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flex, Modal, Overlay, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
+import { Flex, Modal, Paper, Stack, Text, useMantineTheme } from "@mantine/core";
 import { useHotkeys } from "@mantine/hooks";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
@@ -8,6 +8,7 @@ import { RootState } from "../../../app/store/store";
 import {
     useAmplifierMuteToggleMutation,
     useAmplifierVolumeDownMutation,
+    useAmplifierVolumeSetMutation,
     useAmplifierVolumeUpMutation,
 } from "../../../app/services/vibinSystem";
 import {
@@ -45,12 +46,18 @@ const KeyboardShortcutsManager: FC = () => {
     const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
     const [volumeDown] = useAmplifierVolumeDownMutation();
     const [volumeUp] = useAmplifierVolumeUpMutation();
+    const [volumeSet] = useAmplifierVolumeSetMutation();
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [nextTrack] = useNextTrackMutation();
     const [previousTrack] = usePreviousTrackMutation();
     const [seek] = useSeekMutation();
+    const [localVolume, setLocalVolume] = useState<number | undefined>(undefined);
+
+    useEffect(() => {
+        amplifier?.volume && setLocalVolume(amplifier?.volume);
+    }, [amplifier?.volume]);
 
     useHotkeys([
         ["J", () => seek(Math.max(position - SEEK_OFFSET_SECS, 0))],
@@ -60,7 +67,9 @@ const KeyboardShortcutsManager: FC = () => {
         ["ArrowRight", () => nextTrack()],
         ["ArrowUp", () => volumeUp()],
         ["ArrowDown", () => volumeDown()],
-        ["shift+ArrowDown", () => amplifierMuteToggle()],
+        ["shift+ArrowUp", () => typeof localVolume === "number" && volumeSet(Math.min(localVolume + 0.05, 1.0))],
+        ["shift+ArrowDown", () => typeof localVolume === "number" && volumeSet(Math.max(localVolume - 0.05, 0.0))],
+        ["ctrl+shift+ArrowDown", () => amplifierMuteToggle()],
         ["C", () => navigate("/ui/current")],
         ["P", () => navigate("/ui/playlist")],
         ["R", () => navigate("/ui/artists")],
@@ -133,7 +142,9 @@ const KeyboardShortcutsManager: FC = () => {
                                 fieldValues={{
                                     "↑": "Volume up",
                                     "↓": "Volume down",
-                                    "⇧ ↓": "Toggle mute",
+                                    "⇧↑": "Volume up 5 units",
+                                    "⇧↓": "Volume down 5 units",
+                                    "^⇧↓": "Toggle mute",
                                 }}
                                 columnGap={10}
                                 keySize={16}
@@ -191,7 +202,7 @@ const KeyboardShortcutsManager: FC = () => {
                             <FieldValueList
                                 fieldValues={{
                                     "?": "Show this Help screen",
-                                    "⇧ L": "Show the current track lyrics",
+                                    "⇧L": "Show the current track lyrics",
                                     D: "Show the Debug panel",
                                 }}
                                 columnGap={10}
