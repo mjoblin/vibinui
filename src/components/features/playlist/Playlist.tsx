@@ -278,7 +278,10 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
 
     // --------------------------------------------------------------------------------------------
 
-    if (playStatus === "not_ready") {
+    // Disallow playlist display while the streamer is off. This may not be strictly necessary, but
+    // it provides a more intuitive (to me) user experience (my mental model: if streamer is off,
+    // it can't be interacted with).
+    if (streamerPower !== "on") {
         return (
             <Box pt={35}>
                 <SystemPower showPowerOff={false} label="streamer is in standby mode" />
