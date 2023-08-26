@@ -34,6 +34,12 @@ export const vibinTransportApi = createApi({
         seek: builder.mutation<void, SeekTarget>({
             query: (seekTarget) => ({ url: `seek?target=${seekTarget}`, method: "POST" }),
         }),
+        stop: builder.mutation<void, void>({
+            query: () => ({ url: "stop", method: "POST" }),
+        }),
+        togglePlayback: builder.mutation<boolean, void>({
+            query: () => ({ url: `toggle_playback`, method: "POST" }),
+        }),
         toggleRepeat: builder.mutation<boolean, void>({
             query: () => ({ url: `repeat`, method: "POST" }),
         }),
@@ -49,6 +55,8 @@ export const {
     usePauseMutation,
     usePlayMutation,
     useSeekMutation,
+    useStopMutation,
+    useTogglePlaybackMutation,
     useToggleRepeatMutation,
     useToggleShuffleMutation,
 } = vibinTransportApi;

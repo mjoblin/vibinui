@@ -31,19 +31,20 @@ const MediaSourceManager: FC = () => {
      *  * Reset the current track and album media ids.
      */
     useEffect(() => {
-        dispatch(restartPlayhead());
-        dispatch(setCurrentTrackMediaId(undefined));
-        dispatch(setCurrentAlbumMediaId(undefined));
+        if (currentSource?.name && currentSource.name !== previousSource.current?.name) {
+            dispatch(restartPlayhead());
+            dispatch(setCurrentTrackMediaId(undefined));
+            dispatch(setCurrentAlbumMediaId(undefined));
 
-        // Announce the new media source; but not the very first time a media source is known (to
-        // prevent the announcement always appearing when the app is first loaded).
-        currentSource?.name &&
-            currentSource.name !== previousSource.current?.name &&
-            previousSource.current !== undefined &&
-            showSuccessNotification({
-                title: "Audio Source",
-                message: `Streamer audio source set to ${currentSource.name}`,
-            });
+            // Announce the new media source; but not the very first time a media source is known
+            // (to prevent the announcement always appearing when the app is first loaded).
+            if (previousSource.current !== undefined) {
+                showSuccessNotification({
+                    title: "Audio Source",
+                    message: `Streamer audio source set to ${currentSource?.name}`,
+                });
+            }
+        }
 
         previousSource.current = currentSource;
     }, [dispatch, currentSource, previousSource]);
