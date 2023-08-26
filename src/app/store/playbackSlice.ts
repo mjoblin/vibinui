@@ -20,6 +20,10 @@ export type PlayStatus =
     | "ready"
     | "stop";
 
+// Transports might support various flavors of stopping/starting playback. "stop" stops playback,
+// "play" starts/resumes playback, "pause" pauses playback, and "toggle_playback" essentially
+// toggles between the "play" and "pause" states. Exactly what this means depends on the streamer
+// implementation.
 export type TransportAction =
     | "next"
     | "pause"
@@ -28,7 +32,8 @@ export type TransportAction =
     | "repeat"
     | "seek"
     | "shuffle"
-    | "stop";
+    | "stop"
+    | "toggle_playback";
 
 export type RepeatState = "off" | "all";
 

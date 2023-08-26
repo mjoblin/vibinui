@@ -262,11 +262,10 @@ function messageHandler(
             const localMediaTrackDetails: Track | undefined =
                 currentlyPlaying.track_media_id &&
                 getState().mediaGroups.trackById[currentlyPlaying.track_media_id];
-            
+
             dispatch(
                 setCurrentTrack(localMediaTrackDetails || (currentlyPlaying.active_track as Track))
             );
-
             dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
             dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
             dispatch(setCurrentFormat(currentlyPlaying.format));

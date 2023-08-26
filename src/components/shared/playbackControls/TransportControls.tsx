@@ -3,6 +3,7 @@ import { ActionIcon, Flex, Stack, useMantineTheme } from "@mantine/core";
 import {
     IconPlayerPause,
     IconPlayerPlay,
+    IconPlayerStop,
     IconPlayerTrackNext,
     IconPlayerTrackPrev,
     IconRepeat,
@@ -14,9 +15,12 @@ import {
     usePauseMutation,
     usePlayMutation,
     usePreviousTrackMutation,
+    useStopMutation,
+    useTogglePlaybackMutation,
     useToggleRepeatMutation,
     useToggleShuffleMutation,
 } from "../../../app/services/vibinTransport";
+import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 
@@ -25,10 +29,13 @@ import { RootState } from "../../../app/store/store";
 //
 // Contents:
 //  - Previous Track.
-//  - Play/Pause.
+//  - Play/Pause/Toggle/Stop.
 //  - Next Track.
 //  - Repeat.
 //  - Shuffle.
+//
+// Note: The streamer might support a few approaches to stopping/starting playback. See the
+//  TransportActions type definition for details.
 // ================================================================================================
 
 const TransportControls: FC = () => {
@@ -37,14 +44,21 @@ const TransportControls: FC = () => {
     const activeTransportActions = useAppSelector(
         (state: RootState) => state.playback.active_transport_actions
     );
+    const presets = useAppSelector((state: RootState) => state.presets.presets);
     const repeatState = useAppSelector((state: RootState) => state.playback.repeat);
     const shuffleState = useAppSelector((state: RootState) => state.playback.shuffle);
+    const currentStreamerSource = useAppSelector(
+        (state: RootState) => state.system.streamer.sources?.active
+    );
     const [nextTrack] = useNextTrackMutation();
     const [pausePlayback] = usePauseMutation();
-    const [resumePlayback] = usePlayMutation();
+    const [playPlayback] = usePlayMutation();
     const [previousTrack] = usePreviousTrackMutation();
+    const [stopPlayback] = useStopMutation();
+    const [togglePlayback] = useTogglePlaybackMutation();
     const [toggleRepeat] = useToggleRepeatMutation();
     const [toggleShuffle] = useToggleShuffleMutation();
+    const [playPresetId] = useLazyPlayPresetIdQuery();
 
     const disabledStyles = {
         "&[data-disabled]": {
@@ -73,28 +87,57 @@ const TransportControls: FC = () => {
                 />
             </ActionIcon>
 
-            {/* Play/Pause */}
+            {/* Play/Pause/Toggle/Stop */}
             {playStatus === "play" ? (
                 <ActionIcon
                     disabled={
+                        !activeTransportActions.includes("toggle_playback") &&
                         !activeTransportActions.includes("pause") &&
                         !activeTransportActions.includes("stop")
                     }
                     sx={disabledStyles}
-                    onClick={() => pausePlayback()}
+                    onClick={() =>
+                        activeTransportActions.includes("toggle_playback")
+                            ? togglePlayback()
+                            : activeTransportActions.includes("pause")
+                            ? pausePlayback()
+                            : stopPlayback()
+                    }
                 >
-                    <IconPlayerPause
-                        size={20}
-                        stroke={1}
-                        color={colorStandard}
-                        fill={colorStandard}
-                    />
+                    {activeTransportActions.includes("toggle_playback") ||
+                    activeTransportActions.includes("pause") ? (
+                        <IconPlayerPause
+                            size={20}
+                            stroke={1}
+                            color={colorStandard}
+                            fill={colorStandard}
+                        />
+                    ) : (
+                        <IconPlayerStop
+                            size={20}
+                            stroke={1}
+                            color={colorStandard}
+                            fill={colorStandard}
+                        />
+                    )}
                 </ActionIcon>
             ) : (
                 <ActionIcon
-                    disabled={!activeTransportActions.includes("play")}
+                    disabled={
+                        !activeTransportActions.includes("toggle_playback") &&
+                        !activeTransportActions.includes("play")
+                    }
                     sx={disabledStyles}
-                    onClick={() => resumePlayback()}
+                    onClick={() => {
+                        if (currentStreamerSource?.class === "stream.radio") {
+                            const active_preset = presets.find((preset) => preset.is_playing);
+                            active_preset && playPresetId(active_preset.id);
+                        } else {
+                            activeTransportActions.includes("toggle_playback")
+                                ? togglePlayback()
+                                : playPlayback();
+                        }
+                    }}
                 >
                     <IconPlayerPlay
                         size={20}

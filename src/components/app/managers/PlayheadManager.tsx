@@ -46,7 +46,7 @@ const PlayheadManager: FC = () => {
     useEffect(() => {
         setLastBackendSyncTime(Date.now());
 
-        position &&
+        typeof position === "number" &&
             currentTrack?.duration &&
             dispatch(
                 setPlayheadPositionNormalized(normalizePosition(position, currentTrack.duration))
