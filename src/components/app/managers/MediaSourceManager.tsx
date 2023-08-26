@@ -17,10 +17,14 @@ import { AudioSource } from "../../../app/store/systemSlice";
 
 const MediaSourceManager: FC = () => {
     const dispatch = useDispatch();
-    const currentSource = useAppSelector(
+    const currentStreamerSource = useAppSelector(
         (state: RootState) => state.system.streamer.sources?.active
     );
-    const previousSource = useRef<AudioSource | undefined>(currentSource);
+    const currentAmplifierSource = useAppSelector(
+        (state: RootState) => state.system.amplifier?.sources?.active
+    );
+    const previousStreamerSource = useRef<AudioSource | undefined>(currentStreamerSource);
+    const previousAmplifierSource = useRef<AudioSource | undefined>(currentAmplifierSource);
 
     /**
      *  When the media source changes, some aspects of the application need to be reset:
@@ -31,23 +35,34 @@ const MediaSourceManager: FC = () => {
      *  * Reset the current track and album media ids.
      */
     useEffect(() => {
-        if (currentSource?.name && currentSource.name !== previousSource.current?.name) {
+        if (currentStreamerSource?.name && currentStreamerSource.name !== previousStreamerSource.current?.name) {
             dispatch(restartPlayhead());
             dispatch(setCurrentTrackMediaId(undefined));
             dispatch(setCurrentAlbumMediaId(undefined));
 
             // Announce the new media source; but not the very first time a media source is known
             // (to prevent the announcement always appearing when the app is first loaded).
-            if (previousSource.current !== undefined) {
+            if (previousStreamerSource.current !== undefined) {
                 showSuccessNotification({
-                    title: "Audio Source",
-                    message: `Streamer audio source set to ${currentSource?.name}`,
+                    title: "Streamer Audio Source",
+                    message: `Streamer audio source set to ${currentStreamerSource?.name}`,
                 });
             }
         }
 
-        previousSource.current = currentSource;
-    }, [dispatch, currentSource, previousSource]);
+        previousStreamerSource.current = currentStreamerSource;
+
+        if (currentAmplifierSource?.name && currentAmplifierSource.name !== previousAmplifierSource.current?.name) {
+            if (previousAmplifierSource.current !== undefined) {
+                showSuccessNotification({
+                    title: "Amplifier Audio Source",
+                    message: `Amplifier audio source set to ${currentAmplifierSource?.name}`,
+                });
+            }
+        }
+
+        previousAmplifierSource.current = currentAmplifierSource;
+    }, [dispatch, currentStreamerSource, currentAmplifierSource]);
 
     return null;
 };
