@@ -203,7 +203,7 @@ const KeyboardShortcutsManager: FC = () => {
                                 fieldValues={{
                                     "?": "Show this Help screen",
                                     "⇧L": "Show the current track lyrics",
-                                    D: "Show the Debug panel",
+                                    "⇧D": "Show the Debug panel",
                                 }}
                                 columnGap={10}
                                 keySize={16}
