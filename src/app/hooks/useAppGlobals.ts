@@ -56,6 +56,7 @@ export const useAppGlobals = () => {
         RENDER_APP_BACKGROUND_IMAGE: renderAppBackgroundImage,
         SCREEN_LOADING_PT: 25,
         SCREEN_HEADER_HEIGHT: 70,
+        SEEK_OFFSET_SECS: 10,
         SCROLL_POS_DISPATCH_RATE: 500,
         SELECTED_COLOR: "rgba(25, 113, 194, 0.2)",
         BUFFERING_AUDIO_NOTIFY_DELAY: 3000,

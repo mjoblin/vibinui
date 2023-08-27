@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import {
     Box,
     Button,
@@ -32,6 +32,7 @@ import {
     setApplicationAmplifierMaxVolume,
     setApplicationUseImageBackground,
 } from "../../app/store/userSettingsSlice";
+import { useAmplifierVolumeSetMutation } from "../../app/services/vibinSystem";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
 import BackgroundComputeIndicator from "../shared/dataDisplay/BackgroundComputeIndicator";
@@ -43,6 +44,9 @@ import SelfUpdatingRelativeDate from "../shared/dataDisplay/SelfUpdatingRelative
 
 // ================================================================================================
 // Status screen.
+//
+// TODO: Consider renaming as this also includes user settings (or move user settings elsewhere in
+//  the application).
 //
 // Contents:
 //  - User settings
@@ -78,9 +82,12 @@ const StatusScreen: FC = () => {
     );
     const [getSettings, getSettingsResult] = useLazySettingsQuery();
     const [updateSettings, updateSettingsResult] = useLazyUpdateSettingsQuery();
+    const [volumeSet] = useAmplifierVolumeSetMutation();
     const [allAlbumsPath, setAllAlbumsPath] = useState<string>()
     const [newAlbumsPath, setNewAlbumsPath] = useState<string>()
     const [allArtistsPath, setAllArtistsPath] = useState<string>();
+    const [normalizedMaxVolume, setNormalizedMaxVolume] = useState<number>(0.0);
+    const maxVolumeInputRef = useRef<HTMLInputElement>(null);
 
     /**
      * Retrieve the current settings when the component mounts.
@@ -121,6 +128,35 @@ const StatusScreen: FC = () => {
         }
     }, [updateSettingsResult, getSettings]);
 
+    /**
+     * Store user input for maximum volume in local state.
+     */
+    const maxVolumeChangeHandler = useCallback(
+        (value: number | "") => {
+            if (value === "") {
+                return;
+            }
+
+            setNormalizedMaxVolume(value / 100);
+        },
+        []
+    );
+
+    /**
+     * When user is done editing maximum volume, store value in app storage and update the
+     * amplifier's current volume if it's currently higher than the new max.
+     */
+    const maxVolumeBlurHandler = useCallback(
+        () => {
+            dispatch(setApplicationAmplifierMaxVolume(normalizedMaxVolume));
+
+            amplifier?.volume &&
+                normalizedMaxVolume < amplifier.volume &&
+                volumeSet(normalizedMaxVolume);
+
+            showSuccessNotification({ title: "Maximum volume updated" });
+        }, [normalizedMaxVolume, amplifier, dispatch, volumeSet]);
+
     // --------------------------------------------------------------------------------------------
 
     return (
@@ -140,18 +176,17 @@ const StatusScreen: FC = () => {
                     />
 
                     <NumberInput
+                        ref={maxVolumeInputRef}
                         disabled={!amplifier}
-                        label="Max amplifier volume"
+                        label="Maximum amplifier volume"
                         description="From 0 to 100, step is 1"
                         min={0}
                         max={100}
                         precision={0}
-                        value={amplifierMaxVolume}
+                        value={amplifierMaxVolume * 100}
                         maw="10rem"
-                        onChange={(value) =>
-                            typeof value === "number" &&
-                            dispatch(setApplicationAmplifierMaxVolume(value))
-                        }
+                        onChange={maxVolumeChangeHandler}
+                        onBlur={maxVolumeBlurHandler}
                     />
                 </Stack>
             </Paper>
@@ -264,7 +299,7 @@ const StatusScreen: FC = () => {
                             <Box w="20rem">
                                 <TextInput
                                     disabled={getSettingsResult.isFetching}
-                                    value={allAlbumsPath}
+                                    value={allAlbumsPath || ""}
                                     onChange={(event) =>
                                         setAllAlbumsPath(event.currentTarget.value)
                                     }
@@ -295,7 +330,7 @@ const StatusScreen: FC = () => {
                             <Box w="20rem">
                                 <TextInput
                                     disabled={getSettingsResult.isFetching}
-                                    value={newAlbumsPath}
+                                    value={newAlbumsPath || ""}
                                     onChange={(event) =>
                                         setNewAlbumsPath(event.currentTarget.value)
                                     }
@@ -326,7 +361,7 @@ const StatusScreen: FC = () => {
                             <Box w="20rem">
                                 <TextInput
                                     disabled={getSettingsResult.isFetching}
-                                    value={allArtistsPath}
+                                    value={allArtistsPath || ""}
                                     onChange={(event) =>
                                         setAllArtistsPath(event.currentTarget.value)
                                     }
