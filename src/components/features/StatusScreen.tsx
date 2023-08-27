@@ -184,7 +184,7 @@ const StatusScreen: FC = () => {
                         max={100}
                         precision={0}
                         value={amplifierMaxVolume * 100}
-                        maw="10rem"
+                        maw="12rem"
                         onChange={maxVolumeChangeHandler}
                         onBlur={maxVolumeBlurHandler}
                     />
