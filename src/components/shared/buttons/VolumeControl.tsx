@@ -66,6 +66,8 @@ const VolumeControl: FC = () => {
     }
 
     const { mute, volume } = amplifier;
+    const currentVolume = (volume || 0) * 100;
+    const maxVolume = amplifierMaxVolume * 100;
 
     return (
         <Popover
@@ -82,7 +84,15 @@ const VolumeControl: FC = () => {
                     size={HEADER_HEIGHT * 0.9}
                     thickness={5}
                     sections={[
-                        { value: (volume || 0) * 100, color: isAmpOn ? "blue" : colors.gray[7] },
+                        { value: currentVolume, color: isAmpOn ? "blue" : colors.gray[7] },
+                        {
+                            value: maxVolume - currentVolume,
+                            color: isAmpOn ? colors.gray[7] : colors.gray[8],
+                        },
+                        {
+                            value: 100 - maxVolume,
+                            color: isAmpOn ? colors.gray[8] : colors.gray[9],
+                        },
                     ]}
                     onClick={() => isAmpOn && (opened ? close() : open())}
                     label={
@@ -124,7 +134,7 @@ const VolumeControl: FC = () => {
                         <Slider
                             w="100%"
                             min={0.0}
-                            max={amplifierMaxVolume / 100}
+                            max={amplifierMaxVolume}
                             step={0.01}
                             precision={2}
                             value={localVolume}
@@ -164,7 +174,7 @@ const VolumeControl: FC = () => {
                             onChange={(value) => setLocalVolume(value)}
                             onChangeEnd={(value) => {
                                 setLocalVolume(value);
-                                amplifierVolumeSet(volume || 0);
+                                amplifierVolumeSet(value || 0);
                             }}
                             size={7}
                         />

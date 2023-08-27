@@ -58,8 +58,8 @@ const SystemPower: FC<SystemPowerProps> = ({
                             color="blue"
                             variant={
                                 streamerPower === "off" || amplifierPower === "off"
-                                    ? "filled"
-                                    : "light"
+                                    ? "light"
+                                    : "transparent"
                             }
                             radius={5}
                             onClick={() => {
