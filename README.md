@@ -94,7 +94,7 @@ Full streamer transport controls are available.
 
 #### Amplifier controls
 
-Amplifier controls for volume and mute are available.
+Amplifier controls for volume and mute are available. Maximum amplifier volume can be set.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/amplifier_controls.jpg" width="400" />
 
