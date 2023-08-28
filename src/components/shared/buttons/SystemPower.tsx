@@ -37,7 +37,11 @@ const SystemPower: FC<SystemPowerProps> = ({
                         <ActionIcon
                             size="lg"
                             color="blue"
-                            variant="light"
+                            variant={
+                                streamerPower === "on" || amplifierPower === "on"
+                                    ? "light"
+                                    : "transparent"
+                            }
                             radius={5}
                             onClick={() => {
                                 streamerPowerSet("off");
