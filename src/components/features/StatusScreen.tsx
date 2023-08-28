@@ -164,7 +164,7 @@ const StatusScreen: FC = () => {
             {/* User settings ----------------------------------------------------------------- */}
 
             <Paper pt={5} p={15} shadow="xs">
-                <Stack spacing={10}>
+                <Stack spacing={15}>
                     <StylizedLabel color={colors.dark[3]}>user settings</StylizedLabel>
 
                     <Checkbox
@@ -177,7 +177,6 @@ const StatusScreen: FC = () => {
 
                     <NumberInput
                         ref={maxVolumeInputRef}
-                        disabled={!amplifier}
                         label="Maximum amplifier volume"
                         description="From 0 to 100, step is 1"
                         min={0}
@@ -188,6 +187,11 @@ const StatusScreen: FC = () => {
                         onChange={maxVolumeChangeHandler}
                         onBlur={maxVolumeBlurHandler}
                     />
+                    {!amplifier && (
+                        <Text size="sm" color={colors.red[7]}>
+                            Currently has no effect (no amplifier registered with Vibin)
+                        </Text>
+                    )}
                 </Stack>
             </Paper>
 
@@ -245,13 +249,14 @@ const StatusScreen: FC = () => {
                             rowHeight={1.3}
                             fieldValues={{
                                 Streamer: streamer.name || "",
-                                "Media Server": mediaServer.name || "",
+                                "Media Server": mediaServer?.name || "<none>",
                                 "Play State": <PlayStateIndicator />,
                                 Source: <MediaSourceBadge />,
                             }}
                         />
                         <Button
                             variant="outline"
+                            disabled={!mediaServer}
                             size="xs"
                             leftIcon={<IconRefresh size={16} />}
                             onClick={() =>
@@ -281,12 +286,17 @@ const StatusScreen: FC = () => {
                     <StylizedLabel color={colors.dark[3]}>media paths</StylizedLabel>
                     <Text size="sm" color={colors.dark[2]}>
                         Where to find media on the Media Server{" "}
-                        {mediaServer.name && `(${mediaServer.name})`}. Track details will be
+                        {mediaServer?.name && `(${mediaServer?.name})`}. Track details will be
                         retrieved from the All Albums path.
                     </Text>
                     <Text size="sm" weight="bold" color={colors.dark[2]}>
                         After changing paths, click "Refresh Media" above to force a refresh.
                     </Text>
+                    {!mediaServer && (
+                        <Text size="sm" color={colors.red[7]}>
+                            Currently has no effect (no media server registered with Vibin)
+                        </Text>
+                    )}
 
                     <Stack spacing={10} pt={10}>
                         {/* All Albums */}

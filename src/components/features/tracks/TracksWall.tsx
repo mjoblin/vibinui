@@ -34,6 +34,7 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
+    const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const { data: allTracks, error, isLoading, status: allTracksStatus } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] = useSearchLyricsMutation();
     const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
@@ -127,10 +128,12 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         return (
             <Center pt="xl">
                 <SadLabel
-                    label={
-                        "Could not locate All Tracks. Is the Media Server path for All Albums " +
-                        "(where Track details are derived from) correct?"
-                    }
+                    label={`Could not locate All Tracks. ${
+                        !mediaServer
+                            ? "No Media Server registered with Vibin."
+                            : "Is the 'All Albums' Media Server path (where Tracks are derived " +
+                              "from) correct in the 'Status' screen?"
+                    }`}
                 />
             </Center>
         );
