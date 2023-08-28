@@ -82,6 +82,7 @@ Vibin's features include:
   Vibin.
 * Multiple instances of the UI can be running on one or more devices at once. Changes made by one
   device will be automatically reflected on the other devices.
+* Can set a maximum amplifier volume.
 
 ## Examples
 
