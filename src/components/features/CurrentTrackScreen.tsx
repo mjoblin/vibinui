@@ -40,7 +40,6 @@ import CurrentMediaControls from "../shared/playbackControls/CurrentMediaControl
 import TrackLinks from "../shared/mediaDisplay/TrackLinks";
 import TrackLyrics from "../shared/mediaDisplay/TrackLyrics";
 import TrackWaveform from "../shared/mediaDisplay/TrackWaveform";
-import SadLabel from "../shared/textDisplay/SadLabel";
 import SystemPower from "../shared/buttons/SystemPower";
 import MediaActionsButton from "../shared/buttons/MediaActionsButton";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
