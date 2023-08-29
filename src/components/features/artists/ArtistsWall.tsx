@@ -84,6 +84,7 @@ const ArtistsWall: FC = () => {
     const { albumsByArtistName, tracksByAlbumId, tracksByArtistName } = useAppSelector(
         (state: RootState) => state.mediaGroups
     );
+    const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const [artistIdsWithAlbums, setArtistIdsWithAlbums] = useState<MediaId[]>([]);
     const artistsViewport = useRef<HTMLDivElement>(null);
     const albumsViewport = useRef<HTMLDivElement>(null);
@@ -313,7 +314,13 @@ const ArtistsWall: FC = () => {
     if (allArtistsStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
-                <SadLabel label="Could not locate All Artists. Is the Media Server path correct?" />
+                <SadLabel
+                    label={`Could not locate All Artists. ${
+                        !mediaServer
+                            ? "No Media Server registered with Vibin."
+                            : "Are the Media Server paths correct in the 'Status' screen?"
+                    }`}
+                />
             </Center>
         );
     }

@@ -6,6 +6,7 @@ import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import BufferingLoader from "../textDisplay/BufferingLoader";
+import ConnectingLoader from "../textDisplay/ConnectingLoader";
 import TransportControls from "./TransportControls";
 import CurrentMediaControls from "./CurrentMediaControls";
 import CurrentMediaDetails from "./CurrentMediaDetails";
@@ -54,12 +55,12 @@ const PlaybackControls: FC = () => {
 
     const componentHeight = 40;
 
-    return transportActions.length > 0 &&
-        ["play", "pause", "buffering"].includes(playStatus || "") ? (
+    return (transportActions.length > 0 || playStatus === "connecting") &&
+        ["play", "pause", "stop", "buffering", "connecting"].includes(playStatus || "") ? (
         <Flex gap={10} mih={componentHeight} mah={componentHeight} w="100%">
             <LoadingOverlay
-                visible={showBuffering}
-                loader={<BufferingLoader />}
+                visible={showBuffering || playStatus === "connecting"}
+                loader={playStatus === "buffering" ? <BufferingLoader /> : <ConnectingLoader />}
                 overlayBlur={0.7}
                 overlayOpacity={0.9}
             />

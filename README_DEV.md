@@ -125,6 +125,7 @@ The high-level data flow between the UI and the backend is shown below:
    * Favorites.
    * Stored Playlists.
    * Media source.
+   * Amplifier volume/mute.
    * etc...
 1. WebSocket message handling can be found in `src/app/services/vibinWebsocket.ts`.
 1. Updates received by the UI from the WebSocket connection to the backend are used to update the
@@ -133,6 +134,7 @@ The high-level data flow between the UI and the backend is shown below:
    * **The initial bulk retrieval** of information on Tracks, Albums, and Artists.
    * **Details on the currently-playing Track** (lyrics, waveform, etc).
    * **Performing actions on the streamer** such as pause/play, modifying the current Playlist, etc.
+   * **Performing actions on the amplifier** such as volume control, mute, etc.
    * **Persisting information to the backend**, such as saving Playlists, marking Tracks or Albums
      as Favorites, etc.
 1. The REST API handlers can be found in `src/app/services/vibin*.ts`.
@@ -141,12 +143,12 @@ The high-level data flow between the UI and the backend is shown below:
 ### Multiple client instances
 
 All Vibin UI client sessions will have their own WebSocket connection to the back-end. Also, all
-changes made to the streamer will be announced to all clients over their WebSocket -- even changes
-made by other apps such as the StreamMagic app, or changes made by a person pressing the buttons on
-the streamer itself.
+changes made to the streamer or amplifier will be announced to all clients over their WebSocket --
+even changes made by other apps such as the StreamMagic app, or changes made by a person pressing
+the buttons on the streamer or amplifier itself.
 
 **This means that an instance of the Vibin UI might get updates triggered from another application,
-or from the streamer being interacted with in person.** This is considered a feature.
+or from the streamer or amplifier being interacted with in person.** This is considered a feature.
 
 One exception is changes made to the media on the NAS, which are not announced over the WebSocket.
 To get those updates, a Vibin UI instance needs to request a refresh of its Album/Track/Artist data
@@ -223,8 +225,8 @@ The following message types are received:
 * `Position`: Playhead position.
 * `Presets`: Information on Presets (e.g. Internet Radio stations).
 * `StoredPlaylists`: Information on Stored Playlists.
-* `System`: Information about the hardware devices (streamer name, power status, audio sources,
-  device display details; media server name).
+* `System`: Information about the hardware devices (device name, power status, audio sources,
+  device display details, etc).
 * `TransportState`: Current state of the streamer transport (play state, active transport controls,
   shuffle and repeat state, etc).
 * `UPnPProperties`: A general kitchen-sink message containing all the UPnP property values received

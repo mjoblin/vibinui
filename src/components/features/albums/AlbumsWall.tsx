@@ -24,6 +24,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
+    const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const currentAlbumRef = useRef<HTMLDivElement>(null);
     const { activeCollection, cardSize, cardGap } = useAppSelector(
         (state: RootState) => state.userSettings.albums
@@ -116,7 +117,13 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     if (allStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
-                <SadLabel label="Could not locate All Albums. Is the Media Server path correct?" />
+                <SadLabel
+                    label={`Could not locate All Albums. ${
+                        !mediaServer
+                            ? "No Media Server registered with Vibin."
+                            : "Are the Media Server paths correct in the 'Status' screen?"
+                    }`}
+                />
             </Center>
         );
     }
@@ -124,7 +131,13 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     if (activeCollection === "new" && newStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
-                <SadLabel label="Could not locate New Albums. Is the Media Server path correct?" />
+                <SadLabel
+                    label={`Could not locate New Albums. ${
+                        !mediaServer
+                            ? "No Media Server registered with Vibin."
+                            : "Are the Media Server paths correct in the 'Status' screen?"
+                    }`}
+                />
             </Center>
         );
     }

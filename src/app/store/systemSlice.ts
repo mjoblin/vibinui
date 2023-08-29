@@ -2,56 +2,120 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { updateIfDifferent } from "./helpers";
+import { MediaSourceClass } from "../types";
 
 // ================================================================================================
-// Application state for the streaming system (streamer and media device names, power status).
+// Application state for the streaming system (device names, power status, volume, etc).
 // ================================================================================================
 
-export type PowerStatus = "on" | "off" | undefined;
+export type PowerState = "on" | "off" | undefined;
+
+export type MuteState = "on" | "off" | undefined;
+
+export type AudioSource = {
+    id: string;
+    name: string;
+    default_name: string;
+    class: MediaSourceClass;
+    nameable: boolean;
+    ui_selectable: boolean;
+    description: string;
+    description_locale: string;
+    preferred_order: number;
+};
+
+export type AudioSources = {
+    active: AudioSource | undefined;
+    available: AudioSource[] | undefined;
+};
+
+// DeviceDisplay is vaguely defined here, to allow for any arbitrary key/value pairs. This is due
+// to the shape being potentially very different between streamer types; although in a world where
+// this app is specific to CXNv2/StreamMagic, the following shape can be somewhat assumed:
+//
+// {
+//     "line1": "Sooner",
+//     "line2": "slowthai",
+//     "line3": "UGLY",
+//     "format": "44.1kHz/16bit AAC",
+//     "mqa": "none",
+//     "playback_source": "punnet",
+//     "class": "stream.service.airplay",
+//     "art_file": "/tmp/current/AlbumArtFile-20969-20",
+//     "art_url": "http://192.168.1.13:80/album-art-4356?id=1:36",
+//     "progress": {
+//         "position": 0,
+//         "duration": 174
+//     }
+// }
+export type DeviceDisplay = Record<string, any>;
+
+export interface DeviceState {
+    name: string;
+}
+
+export interface StreamerState extends DeviceState {
+    power: PowerState;
+    sources: AudioSources | undefined;
+    display: DeviceDisplay | undefined;
+}
+
+export interface MediaServerState extends DeviceState {
+}
+
+export interface AmplifierState extends DeviceState {
+    power: PowerState;
+    mute: MuteState;
+    volume: number | undefined;
+    sources: AudioSources | undefined;
+}
 
 export interface SystemState {
-    streamer: {
-        name: string;
-        power: PowerStatus;
-    };
-    media_device: {
-        name: string;
-    };
+    streamer: StreamerState;
+    media_server: MediaServerState;
+    amplifier: AmplifierState;
 }
 
 const initialState: SystemState = {
     streamer: {
         name: "",
         power: undefined,
+        sources: undefined,
+        display: undefined,
     },
-    media_device: {
+    media_server: {
         name: "",
     },
+    amplifier: {
+        name: "",
+        power: undefined,
+        mute: undefined,
+        volume: undefined,
+        sources: undefined,
+    }
 };
-
-// TODO: Think about ways to distinguish between reducers intended for user-driven use, vs. those
-//  intended for infrastructure use. e.g. "setStreamerPower" (and others here) are intended to be
-//  used when a power-related message comes in from the backend over a websocket; it's not intended
-//  to be used by a user-facing component (which should be using useLazyPowerToggleQuery in the
-//  vibinSystem service).
 
 export const systemSlice = createSlice({
     name: "system",
     initialState,
     reducers: {
-        setMediaDeviceName: (state, action: PayloadAction<string>) => {
-            updateIfDifferent(state, "media_device.name", action.payload);
+        setAmplifierState: (state, action: PayloadAction<AmplifierState>) => {
+            updateIfDifferent(state, "amplifier", action.payload);
         },
-        setStreamerName: (state, action: PayloadAction<string>) => {
-            updateIfDifferent(state, "streamer.name", action.payload);
+        setMediaServerState: (state, action: PayloadAction<MediaServerState>) => {
+            updateIfDifferent(state, "media_server", action.payload);
         },
-        setStreamerPower: (state, action: PayloadAction<PowerStatus>) => {
-            updateIfDifferent(state, "streamer.power", action.payload);
+        setStreamerState: (state, action: PayloadAction<StreamerState>) => {
+            updateIfDifferent(state, "streamer", action.payload);
         },
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { setMediaDeviceName, setStreamerName, setStreamerPower } = systemSlice.actions;
+export const {
+    setAmplifierState,
+    setMediaServerState,
+    setStreamerState,
+} = systemSlice.actions;
 
 export default systemSlice.reducer;

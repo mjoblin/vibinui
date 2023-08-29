@@ -33,7 +33,7 @@ import AlbumArt from "../albums/AlbumArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
-import StandbyMode from "../../shared/buttons/StandbyMode";
+import SystemPower from "../../shared/buttons/SystemPower";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 // ================================================================================================
@@ -158,7 +158,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const {
         status: { is_activating_playlist: isActivatingPlaylist },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
@@ -278,8 +278,15 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
 
     // --------------------------------------------------------------------------------------------
 
-    if (playStatus === "not_ready") {
-        return <StandbyMode />;
+    // Disallow playlist display while the streamer is off. This may not be strictly necessary, but
+    // it provides a more intuitive (to me) user experience (my mental model: if streamer is off,
+    // it can't be interacted with).
+    if (streamerPower !== "on") {
+        return (
+            <Box pt={35}>
+                <SystemPower showPowerOff={false} label="streamer is in standby mode" />
+            </Box>
+        );
     }
     
     if (!activePlaylist.haveReceivedInitialState || isActivatingPlaylist) {

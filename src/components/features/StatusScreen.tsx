@@ -1,10 +1,11 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import {
     Box,
     Button,
     Center,
     Checkbox,
     Flex,
+    NumberInput,
     Paper,
     Stack,
     Table,
@@ -27,7 +28,11 @@ import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../app/services/vibi
 import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
-import { setApplicationUseImageBackground } from "../../app/store/userSettingsSlice";
+import {
+    setApplicationAmplifierMaxVolume,
+    setApplicationUseImageBackground,
+} from "../../app/store/userSettingsSlice";
+import { useAmplifierVolumeSetMutation } from "../../app/services/vibinSystem";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
 import BackgroundComputeIndicator from "../shared/dataDisplay/BackgroundComputeIndicator";
@@ -39,6 +44,9 @@ import SelfUpdatingRelativeDate from "../shared/dataDisplay/SelfUpdatingRelative
 
 // ================================================================================================
 // Status screen.
+//
+// TODO: Consider renaming as this also includes user settings (or move user settings elsewhere in
+//  the application).
 //
 // Contents:
 //  - User settings
@@ -56,7 +64,7 @@ const StatusScreen: FC = () => {
     const { refetch: refetchNewAlbums } = useGetNewAlbumsQuery();
     const { refetch: refetchArtists } = useGetArtistsQuery();
     const { refetch: refetchTracks } = useGetTracksQuery();
-    const { streamer, media_device: mediaDevice } = useAppSelector(
+    const { streamer, media_server: mediaServer, amplifier } = useAppSelector(
         (state: RootState) => state.system
     );
     const { websocketClientId, websocketStatus } = useAppSelector(
@@ -69,14 +77,17 @@ const StatusScreen: FC = () => {
         system_platform: systemPlatform,
         clients,
     } = useAppSelector((state: RootState) => state.vibinStatus);
-    const { useImageBackground } = useAppSelector(
+    const { amplifierMaxVolume, useImageBackground } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );
     const [getSettings, getSettingsResult] = useLazySettingsQuery();
     const [updateSettings, updateSettingsResult] = useLazyUpdateSettingsQuery();
+    const [volumeSet] = useAmplifierVolumeSetMutation();
     const [allAlbumsPath, setAllAlbumsPath] = useState<string>()
     const [newAlbumsPath, setNewAlbumsPath] = useState<string>()
     const [allArtistsPath, setAllArtistsPath] = useState<string>();
+    const [normalizedMaxVolume, setNormalizedMaxVolume] = useState<number>(0.0);
+    const maxVolumeInputRef = useRef<HTMLInputElement>(null);
 
     /**
      * Retrieve the current settings when the component mounts.
@@ -117,6 +128,35 @@ const StatusScreen: FC = () => {
         }
     }, [updateSettingsResult, getSettings]);
 
+    /**
+     * Store user input for maximum volume in local state.
+     */
+    const maxVolumeChangeHandler = useCallback(
+        (value: number | "") => {
+            if (value === "") {
+                return;
+            }
+
+            setNormalizedMaxVolume(value / 100);
+        },
+        []
+    );
+
+    /**
+     * When user is done editing maximum volume, store value in app storage and update the
+     * amplifier's current volume if it's currently higher than the new max.
+     */
+    const maxVolumeBlurHandler = useCallback(
+        () => {
+            dispatch(setApplicationAmplifierMaxVolume(normalizedMaxVolume));
+
+            amplifier?.volume &&
+                normalizedMaxVolume < amplifier.volume &&
+                volumeSet(normalizedMaxVolume);
+
+            showSuccessNotification({ title: "Maximum volume updated" });
+        }, [normalizedMaxVolume, amplifier, dispatch, volumeSet]);
+
     // --------------------------------------------------------------------------------------------
 
     return (
@@ -124,7 +164,7 @@ const StatusScreen: FC = () => {
             {/* User settings ----------------------------------------------------------------- */}
 
             <Paper pt={5} p={15} shadow="xs">
-                <Stack spacing={10}>
+                <Stack spacing={15}>
                     <StylizedLabel color={colors.dark[3]}>user settings</StylizedLabel>
 
                     <Checkbox
@@ -134,6 +174,24 @@ const StatusScreen: FC = () => {
                             dispatch(setApplicationUseImageBackground(!useImageBackground))
                         }
                     />
+
+                    <NumberInput
+                        ref={maxVolumeInputRef}
+                        label="Maximum amplifier volume"
+                        description="From 0 to 100, step is 1"
+                        min={0}
+                        max={100}
+                        precision={0}
+                        value={amplifierMaxVolume * 100}
+                        maw="12rem"
+                        onChange={maxVolumeChangeHandler}
+                        onBlur={maxVolumeBlurHandler}
+                    />
+                    {!amplifier && (
+                        <Text size="sm" color={colors.red[7]}>
+                            Currently has no effect (no amplifier registered with Vibin)
+                        </Text>
+                    )}
                 </Stack>
             </Paper>
 
@@ -191,13 +249,14 @@ const StatusScreen: FC = () => {
                             rowHeight={1.3}
                             fieldValues={{
                                 Streamer: streamer.name || "",
-                                "Media Server": mediaDevice.name || "",
+                                "Media Server": mediaServer?.name || "<none>",
                                 "Play State": <PlayStateIndicator />,
                                 Source: <MediaSourceBadge />,
                             }}
                         />
                         <Button
                             variant="outline"
+                            disabled={!mediaServer}
                             size="xs"
                             leftIcon={<IconRefresh size={16} />}
                             onClick={() =>
@@ -227,12 +286,17 @@ const StatusScreen: FC = () => {
                     <StylizedLabel color={colors.dark[3]}>media paths</StylizedLabel>
                     <Text size="sm" color={colors.dark[2]}>
                         Where to find media on the Media Server{" "}
-                        {mediaDevice.name && `(${mediaDevice.name})`}. Track details will be
+                        {mediaServer?.name && `(${mediaServer?.name})`}. Track details will be
                         retrieved from the All Albums path.
                     </Text>
                     <Text size="sm" weight="bold" color={colors.dark[2]}>
                         After changing paths, click "Refresh Media" above to force a refresh.
                     </Text>
+                    {!mediaServer && (
+                        <Text size="sm" color={colors.red[7]}>
+                            Currently has no effect (no media server registered with Vibin)
+                        </Text>
+                    )}
 
                     <Stack spacing={10} pt={10}>
                         {/* All Albums */}
@@ -245,7 +309,7 @@ const StatusScreen: FC = () => {
                             <Box w="20rem">
                                 <TextInput
                                     disabled={getSettingsResult.isFetching}
-                                    value={allAlbumsPath}
+                                    value={allAlbumsPath || ""}
                                     onChange={(event) =>
                                         setAllAlbumsPath(event.currentTarget.value)
                                     }
@@ -276,7 +340,7 @@ const StatusScreen: FC = () => {
                             <Box w="20rem">
                                 <TextInput
                                     disabled={getSettingsResult.isFetching}
-                                    value={newAlbumsPath}
+                                    value={newAlbumsPath || ""}
                                     onChange={(event) =>
                                         setNewAlbumsPath(event.currentTarget.value)
                                     }
@@ -307,7 +371,7 @@ const StatusScreen: FC = () => {
                             <Box w="20rem">
                                 <TextInput
                                     disabled={getSettingsResult.isFetching}
-                                    value={allArtistsPath}
+                                    value={allArtistsPath || ""}
                                     onChange={(event) =>
                                         setAllArtistsPath(event.currentTarget.value)
                                     }

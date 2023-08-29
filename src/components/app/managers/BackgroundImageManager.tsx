@@ -19,8 +19,8 @@ const BackgroundImageManager: FC = () => {
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
-    const { current_track: currentPlaybackTrack, current_audio_source: currentAudioSource } =
-        useAppSelector((state: RootState) => state.playback);
+    const { current_track: currentPlaybackTrack } = useAppSelector((state: RootState) => state.playback);
+    const currentAudioSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
 
     /**
      * Set the background image URL. This will change whenever the current track changes. If

@@ -16,7 +16,7 @@ const PlaylistInactiveBanner = React.forwardRef((props, ref) => {
         // @ts-ignore
         <Flex ref={ref} align="center" justify="center" gap={10} bg="#444411" p={15} mb={10}>
             <IconAlertCircle size={20} color={colors.yellow[4]} />
-            <Text>Playlist is currently not being used for playback. Active media source is </Text>
+            <Text>Playlist is currently not being used for playback. Active streamer source is </Text>
             <MediaSourceBadge showSource={true} />
         </Flex>
     );

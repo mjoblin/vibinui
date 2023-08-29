@@ -59,7 +59,7 @@ const DebugPanel: FC = () => {
         (state: RootState) => state.internal.application
     );
 
-    useHotkeys([["D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
+    useHotkeys([["shift+D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
 
     const fontSize = 12;
 
@@ -103,7 +103,9 @@ const DebugPanel: FC = () => {
                             fieldValues={{
                                 streamerName: system.streamer.name || "undefined",
                                 streamerPower: system.streamer.power || "undefined",
-                                mediaDeviceName: system.media_device.name || "undefined",
+                                mediaServerName: system.media_server?.name || "undefined",
+                                amplifierName: system.amplifier?.name || "undefined",
+                                amplifierPower: system.amplifier?.power || "undefined",
                             }}
                             keySize={fontSize}
                             valueSize={fontSize}
@@ -124,7 +126,7 @@ const DebugPanel: FC = () => {
                                         ? playback.active_transport_actions.join(", ")
                                         : "<none>",
                                 currentAudioSourceName:
-                                    playback.current_audio_source?.name || "undefined",
+                                    system.streamer.sources?.active?.name || "undefined",
                                 currentTrackMediaId: playback.current_track_media_id || "<none>",
                                 currentAlbumMediaId: playback.current_album_media_id || "<none>",
                             }}

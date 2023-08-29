@@ -1,20 +1,22 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 
-import { setMediaDeviceName, setStreamerName, setStreamerPower } from "../store/systemSlice";
 import {
+    AudioSource,
     DeviceDisplay,
+    setAmplifierState,
+    setMediaServerState,
+    setStreamerState,
+} from "../store/systemSlice";
+import {
     PlayStatus,
     RepeatState,
     setActiveTransportActions,
-    setAudioSources,
-    setCurrentAudioSource,
     setCurrentFormat,
     setCurrentStream,
     setCurrentTrack,
     setCurrentTrackMediaId,
     setCurrentAlbumMediaId,
-    setDeviceDisplay,
     setPlayStatus,
     setPlayheadPosition,
     setRepeat,
@@ -24,7 +26,6 @@ import {
 } from "../store/playbackSlice";
 import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
-import { AudioSource } from "../store/playbackSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/activePlaylistSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
@@ -121,16 +122,26 @@ type StoredPlaylistsPayload = StoredPlaylistsState;
 type SystemPayload = {
     streamer: {
         name: string;
-        power: "on" | "off";
+        power: "on" | "off" | undefined;
         sources: {
             active: AudioSource,
             available: AudioSource[],
-        };
-        display: DeviceDisplay;
+        } | undefined;
+        display: DeviceDisplay | undefined;
     };
     media: {
         name: string;
     };
+    amplifier: {
+        name: string;
+        power: "on" | "off" | undefined;
+        mute: "on" | "off" | undefined;
+        volume: number | undefined;
+        sources: {
+            active: AudioSource,
+            available: AudioSource[],
+        } | undefined;
+    }
 };
 
 type TransportStatePayload = {
@@ -251,11 +262,10 @@ function messageHandler(
             const localMediaTrackDetails: Track | undefined =
                 currentlyPlaying.track_media_id &&
                 getState().mediaGroups.trackById[currentlyPlaying.track_media_id];
-            
+
             dispatch(
                 setCurrentTrack(localMediaTrackDetails || (currentlyPlaying.active_track as Track))
             );
-
             dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
             dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
             dispatch(setCurrentFormat(currentlyPlaying.format));
@@ -276,12 +286,9 @@ function messageHandler(
         } else if (data.type === "System") {
             const system = data.payload as SystemPayload;
 
-            dispatch(setMediaDeviceName(system.media?.name));
-            dispatch(setStreamerName(system.streamer?.name));
-            dispatch(setStreamerPower(system.streamer?.power));
-            dispatch(setAudioSources(system.streamer?.sources.available))
-            dispatch(setCurrentAudioSource(system.streamer?.sources.active))
-            dispatch(setDeviceDisplay(system.streamer?.display));
+            dispatch(setAmplifierState(system.amplifier));
+            dispatch(setMediaServerState(system.media));
+            dispatch(setStreamerState(system.streamer));
         } else if (data.type === "TransportState") {
             const payload = data.payload as TransportStatePayload;
 

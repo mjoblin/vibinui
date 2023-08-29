@@ -154,6 +154,7 @@ const RootLayout: FC = () => {
                 header={<AppHeader noBackground={RENDER_APP_BACKGROUND_IMAGE} />}
                 styles={(theme) => ({
                     main: {
+                        paddingBottom: 0,
                         backgroundColor: RENDER_APP_BACKGROUND_IMAGE
                             ? "rgb(0, 0, 0, 0)"
                             : theme.colorScheme === "dark"

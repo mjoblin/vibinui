@@ -31,7 +31,7 @@ import {
     setArtistsSelectedTrack,
     setCurrentTrackActiveTab,
 } from "../../app/store/userSettingsSlice";
-import { usePlayMutation } from "../../app/services/vibinTransport";
+import { usePlayMutation, useTogglePlaybackMutation } from "../../app/services/vibinTransport";
 import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
 import BufferingLoader from "../shared/textDisplay/BufferingLoader";
 import TrackArt from "./tracks/TrackArt";
@@ -40,8 +40,7 @@ import CurrentMediaControls from "../shared/playbackControls/CurrentMediaControl
 import TrackLinks from "../shared/mediaDisplay/TrackLinks";
 import TrackLyrics from "../shared/mediaDisplay/TrackLyrics";
 import TrackWaveform from "../shared/mediaDisplay/TrackWaveform";
-import SadLabel from "../shared/textDisplay/SadLabel";
-import StandbyMode from "../shared/buttons/StandbyMode";
+import SystemPower from "../shared/buttons/SystemPower";
 import MediaActionsButton from "../shared/buttons/MediaActionsButton";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 
@@ -65,9 +64,19 @@ import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 
 export type CurrentTrackTab = "links" | "lyrics" | "waveform";
 
-const sourcesSupportingDetailsTabs: Partial<Record<MediaSourceClass, CurrentTrackTab[]>> = {
+// Some sources can have additional information displayed for what's currently playing.
+// e.g. stream.media is local media, which supports waveforms as well as links and lyrics.
+// stream.radio is more limited and can show the main track info but no details tabs as not
+// enough information is available for those tabs to be populated.
+const sourcesSupportingDisplayDetails: Partial<Record<MediaSourceClass, CurrentTrackTab[]>> = {
+    "digital.usb": ["links", "lyrics"], // unconfirmed
     "stream.media": ["links", "lyrics", "waveform"],
+    "stream.radio": [],
     "stream.service.airplay": ["links", "lyrics"],
+    "stream.service.cast": ["links", "lyrics"], // unconfirmed
+    "stream.service.roon": ["links", "lyrics"], // unconfirmed
+    "stream.service.spotify": ["links", "lyrics"], // unconfirmed
+    "stream.service.tidal": ["links", "lyrics"], // unconfirmed
 };
 
 const albumArtWidth = 300;
@@ -82,10 +91,14 @@ const useStyles = createStyles((theme) => ({
 }));
 
 /**
- *
+ * Overlay with a Play button to resume track playback.
  */
 const PlaybackPaused: FC = () => {
-    const [resumePlayback] = usePlayMutation();
+    const activeTransportActions = useAppSelector(
+        (state: RootState) => state.playback.active_transport_actions
+    );
+    const [playPlayback] = usePlayMutation();
+    const [togglePlayback] = useTogglePlaybackMutation();
     const { classes } = useStyles();
 
     return (
@@ -101,7 +114,11 @@ const PlaybackPaused: FC = () => {
                 color="blue"
                 variant="light"
                 radius={40}
-                onClick={() => resumePlayback()}
+                onClick={() =>
+                    activeTransportActions.includes("toggle_playback")
+                        ? togglePlayback()
+                        : playPlayback()
+                }
             >
                 <IconPlayerPlay size={50} fill="lightblue" />
             </ActionIcon>
@@ -118,14 +135,17 @@ const CurrentTrackScreen: FC = () => {
     const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE, SCREEN_LOADING_PT, BUFFERING_AUDIO_NOTIFY_DELAY } = useAppGlobals();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.currentTrack);
-    const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
-    const currentSource = useAppSelector((state: RootState) => state.playback.current_audio_source);
+    const streamerPower = useAppSelector((state: RootState) => state.system.streamer.power);
+    const streamerDisplay = useAppSelector((state: RootState) => state.system.streamer.display);
+    const currentSource = useAppSelector(
+        (state: RootState) => state.system.streamer.sources?.active
+    );
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const [debouncedPlayStatus] = useDebouncedValue(playStatus, 1000);
@@ -144,11 +164,15 @@ const CurrentTrackScreen: FC = () => {
     const { classes: dynamicClasses } = createStyles((theme) => ({
         currentTrackTitle: {
             fontFamily: APP_ALT_FONTFACE,
+            fontWeight: "bold",
             lineHeight: 0.9,
             minHeight: "1.7rem",
-            "&:hover": {
-                cursor: "pointer",
-            },
+            "&:hover":
+                currentSource?.class === "stream.media"
+                    ? {
+                          cursor: "pointer",
+                      }
+                    : {},
         },
     }))();
 
@@ -163,7 +187,6 @@ const CurrentTrackScreen: FC = () => {
             clearBufferTimeout();
             setShowBuffering(false);
         }
-
     }, [playStatus, startBufferTimeout, clearBufferTimeout]);
 
     /**
@@ -238,7 +261,7 @@ const CurrentTrackScreen: FC = () => {
 
     const windowResizeHandler = (event: UIEvent) =>
         event.target && setWindowHeight((event.target as Window).innerHeight);
-    
+
     useWindowEvent("resize", windowResizeHandler);
 
     // AirPlay sets the play status to "paused" between tracks, which makes the UI briefly display
@@ -248,10 +271,14 @@ const CurrentTrackScreen: FC = () => {
 
     // --------------------------------------------------------------------------------------------
 
-    if (streamerPower === "off") {
-        return <StandbyMode />;
+    if (streamerPower !== "on") {
+        return (
+            <Box pt={35}>
+                <SystemPower showPowerOff={false} label="streamer is in standby mode" />
+            </Box>
+        );
     }
-    
+
     if ((!currentTrackId && !currentPlaybackTrack) || preparingForDisplay) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
@@ -260,11 +287,14 @@ const CurrentTrackScreen: FC = () => {
         );
     }
 
+    // The system is playing, but the current source is not one flagged as a source which supports
+    // the display of additional track details.
     if (
         playStatusDisplay === "ready" ||
+        playStatusDisplay === "not_ready" ||
         !currentSource ||
         !currentTrack ||
-        !Object.keys(sourcesSupportingDetailsTabs).includes(currentSource.class)
+        !Object.keys(sourcesSupportingDisplayDetails).includes(currentSource.class)
     ) {
         return playStatusDisplay === "play" ? (
             <Center pt="xl">
@@ -277,13 +307,18 @@ const CurrentTrackScreen: FC = () => {
             </Center>
         ) : (
             <Center pt="xl">
-                <SadLabel label="Nothing is currently playing" />
+                <Flex align="center" gap={10}>
+                    <Text size={16} weight="bold" miw="fit-content">
+                        {`Nothing currently playing${currentSource ? " from" : ""}`}
+                    </Text>
+                    {currentSource && <MediaSourceBadge />}
+                </Flex>
             </Center>
         );
     }
 
     const tabsToDisplay = currentSource
-        ? sourcesSupportingDetailsTabs[currentSource.class]
+        ? sourcesSupportingDisplayDetails[currentSource.class]
         : undefined;
 
     // --------------------------------------------------------------------------------------------
@@ -297,7 +332,8 @@ const CurrentTrackScreen: FC = () => {
                 overlayOpacity={0.9}
             />
 
-            {/* LHS stack: Album art, playhead, etc */}
+            {/* LHS stack: Album art, playhead, etc ------------------------------------------- */}
+
             <Stack miw={albumArtWidth} maw={albumArtWidth} spacing={20} align="flex-end">
                 <Stack spacing="xs">
                     <Flex justify="space-between" align="flex-end">
@@ -323,7 +359,9 @@ const CurrentTrackScreen: FC = () => {
                                 Playlist: ["all"],
                             }}
                         />
-                        {playStatusDisplay === "pause" && <PlaybackPaused />}
+                        {(playStatusDisplay === "pause" || playStatusDisplay === "stop") && (
+                            <PlaybackPaused />
+                        )}
                     </Stack>
 
                     <CurrentMediaControls />
@@ -346,133 +384,164 @@ const CurrentTrackScreen: FC = () => {
                 )}
             </Stack>
 
-            {/* RHS stack: Track name, album, artist, and tabs */}
-            <Stack spacing="lg" sx={{ flexGrow: 1 }}>
-                <Stack spacing={5}>
-                    <Box mih={40} w="fit-content">
-                        <Tooltip label="View Track in Artists screen" position="bottom">
-                            <Text
-                                size={34}
-                                weight="bold"
-                                className={dynamicClasses.currentTrackTitle}
-                                onClick={() => {
-                                    // TODO: Clarify how best to configure the Artists screen for
-                                    //  navigation purposes. This code is duplicated elsewhere (like
-                                    //  <MediaActionsButton> and <PlaylistEntryActionsButton>) and is
-                                    //  overly verbose.
-                                    dispatch(setArtistsActiveCollection("all"));
-                                    dispatch(
-                                        setArtistsSelectedArtist(artistByName[currentTrack.artist])
-                                    );
-                                    dispatch(
-                                        setArtistsSelectedAlbum(albumById[currentTrack.parentId])
-                                    );
-                                    dispatch(setArtistsSelectedTrack(currentTrack));
-                                    dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
+            {/* RHS stack --------------------------------------------------------------------- */}
 
-                                    navigate("/ui/artists");
-                                }}
-                            >
-                                {currentTrack.title || " "}
-                            </Text>
-                        </Tooltip>
-                    </Box>
-
-                    {(currentSource?.class === "stream.media" ||
-                        currentTrack.artist ||
-                        currentTrack.album) && (
-                        <FieldValueList
-                            fieldValues={{
-                                Artist: currentTrack.artist,
-                                Album: currentTrack.album,
-                            }}
-                            keySize={16}
-                            valueSize={16}
-                            keyFontFamily={APP_ALT_FONTFACE}
-                            valueFontFamily={APP_ALT_FONTFACE}
-                            valueColor={colors.dark[2]}
-                        />
-                    )}
+            {/* Radio shows device display information (falling back on track if possible) */}
+            {/* This makes assumptions about the existence of StreamMagic's display "line1"/etc */}
+            {currentSource.class === "stream.radio" && (
+                <Stack spacing={10}>
+                    <Text size={34} className={dynamicClasses.currentTrackTitle}>
+                        {streamerDisplay?.line1 || currentTrack.title}
+                    </Text>
+                    <Stack spacing={10}>
+                        <Text size={24} weight="bold">
+                            {streamerDisplay?.line2 || currentTrack.artist}
+                        </Text>
+                        <Text size={24}>{streamerDisplay?.line3}</Text>
+                    </Stack>
                 </Stack>
+            )}
 
-                {/* Tabs */}
+            {/* Local media, AirPlay, etc, shows track name, album, artist, and tabs */}
+            {currentSource.class !== "stream.radio" && (
+                <Stack spacing="lg" sx={{ flexGrow: 1 }}>
+                    <Stack spacing={5}>
+                        <Box mih={40} w="fit-content">
+                            <Tooltip
+                                disabled={currentSource.class !== "stream.media"}
+                                label="View Track in Artists screen"
+                                position="bottom"
+                            >
+                                <Text
+                                    size={34}
+                                    className={dynamicClasses.currentTrackTitle}
+                                    onClick={() => {
+                                        if (currentSource?.class !== "stream.media") {
+                                            return;
+                                        }
 
-                {tabsToDisplay &&
-                    (currentTrackId || (currentTrack.artist && currentTrack.title)) && (
-                        <Tabs
-                            sx={{ flexGrow: 1 }}
-                            value={activeTab}
-                            onTabChange={(tabName) =>
-                                dispatch(setCurrentTrackActiveTab(tabName as CurrentTrackTab))
-                            }
-                            variant="pills"
-                            styles={(theme) => ({
-                                tabLabel: {
-                                    fontWeight: "bold",
-                                    fontSize: 13,
-                                    letterSpacing: 0.3,
-                                },
-                            })}
-                        >
-                            <Tabs.List ref={tabListRef} mb={20}>
+                                        // TODO: Clarify how best to configure the Artists screen for
+                                        //  navigation purposes. This code is duplicated elsewhere (like
+                                        //  <MediaActionsButton> and <PlaylistEntryActionsButton>) and is
+                                        //  overly verbose.
+                                        dispatch(setArtistsActiveCollection("all"));
+                                        dispatch(
+                                            setArtistsSelectedArtist(
+                                                artistByName[currentTrack.artist]
+                                            )
+                                        );
+                                        dispatch(
+                                            setArtistsSelectedAlbum(
+                                                albumById[currentTrack.parentId]
+                                            )
+                                        );
+                                        dispatch(setArtistsSelectedTrack(currentTrack));
+                                        dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
+
+                                        navigate("/ui/artists");
+                                    }}
+                                >
+                                    {currentTrack.title || " "}
+                                </Text>
+                            </Tooltip>
+                        </Box>
+
+                        {(currentSource?.class === "stream.media" ||
+                            currentTrack.artist ||
+                            currentTrack.album) && (
+                            <FieldValueList
+                                fieldValues={{
+                                    Artist: currentTrack.artist,
+                                    Album: currentTrack.album,
+                                }}
+                                keySize={16}
+                                valueSize={16}
+                                keyFontFamily={APP_ALT_FONTFACE}
+                                valueFontFamily={APP_ALT_FONTFACE}
+                                valueColor={colors.dark[2]}
+                            />
+                        )}
+                    </Stack>
+
+                    {/* Tabs */}
+
+                    {tabsToDisplay &&
+                        (currentTrackId || (currentTrack.artist && currentTrack.title)) && (
+                            <Tabs
+                                sx={{ flexGrow: 1 }}
+                                value={activeTab}
+                                onTabChange={(tabName) =>
+                                    dispatch(setCurrentTrackActiveTab(tabName as CurrentTrackTab))
+                                }
+                                variant="pills"
+                                styles={(theme) => ({
+                                    tabLabel: {
+                                        fontWeight: "bold",
+                                        fontSize: 13,
+                                        letterSpacing: 0.3,
+                                    },
+                                })}
+                            >
+                                <Tabs.List ref={tabListRef} mb={20}>
+                                    {tabsToDisplay.includes("lyrics") && (
+                                        <Tabs.Tab value="lyrics">LYRICS</Tabs.Tab>
+                                    )}
+                                    {tabsToDisplay.includes("waveform") && (
+                                        <Tabs.Tab value="waveform">WAVEFORM</Tabs.Tab>
+                                    )}
+                                    {tabsToDisplay.includes("links") && (
+                                        <Tabs.Tab value="links">LINKS</Tabs.Tab>
+                                    )}
+                                </Tabs.List>
+
                                 {tabsToDisplay.includes("lyrics") && (
-                                    <Tabs.Tab value="lyrics">LYRICS</Tabs.Tab>
+                                    <Tabs.Panel value="lyrics">
+                                        <ScrollArea h={tabContentHeight}>
+                                            {(currentTrackId ||
+                                                (currentTrack.artist && currentTrack.title)) && (
+                                                <TrackLyrics
+                                                    trackId={currentTrackId}
+                                                    artist={currentTrack.artist}
+                                                    title={currentTrack.title}
+                                                />
+                                            )}
+                                        </ScrollArea>
+                                    </Tabs.Panel>
                                 )}
+
                                 {tabsToDisplay.includes("waveform") && (
-                                    <Tabs.Tab value="waveform">WAVEFORM</Tabs.Tab>
+                                    <Tabs.Panel value="waveform">
+                                        <ScrollArea h={tabContentHeight}>
+                                            {currentTrackId && (
+                                                <TrackWaveform
+                                                    trackId={currentTrackId}
+                                                    width={2048}
+                                                    height={700}
+                                                />
+                                            )}
+                                        </ScrollArea>
+                                    </Tabs.Panel>
                                 )}
+
                                 {tabsToDisplay.includes("links") && (
-                                    <Tabs.Tab value="links">LINKS</Tabs.Tab>
+                                    <Tabs.Panel value="links">
+                                        <ScrollArea h={tabContentHeight}>
+                                            {(currentTrackId ||
+                                                (currentTrack.artist && currentTrack.title)) && (
+                                                <TrackLinks
+                                                    trackId={currentTrackId}
+                                                    artist={currentTrack.artist}
+                                                    album={currentTrack.album}
+                                                    title={currentTrack.title}
+                                                />
+                                            )}
+                                        </ScrollArea>
+                                    </Tabs.Panel>
                                 )}
-                            </Tabs.List>
-
-                            {tabsToDisplay.includes("lyrics") && (
-                                <Tabs.Panel value="lyrics">
-                                    <ScrollArea h={tabContentHeight}>
-                                        {(currentTrackId ||
-                                            (currentTrack.artist && currentTrack.title)) && (
-                                            <TrackLyrics
-                                                trackId={currentTrackId}
-                                                artist={currentTrack.artist}
-                                                title={currentTrack.title}
-                                            />
-                                        )}
-                                    </ScrollArea>
-                                </Tabs.Panel>
-                            )}
-
-                            {tabsToDisplay.includes("waveform") && (
-                                <Tabs.Panel value="waveform">
-                                    <ScrollArea h={tabContentHeight}>
-                                        {currentTrackId && (
-                                            <TrackWaveform
-                                                trackId={currentTrackId}
-                                                width={2048}
-                                                height={700}
-                                            />
-                                        )}
-                                    </ScrollArea>
-                                </Tabs.Panel>
-                            )}
-
-                            {tabsToDisplay.includes("links") && (
-                                <Tabs.Panel value="links">
-                                    <ScrollArea h={tabContentHeight}>
-                                        {(currentTrackId ||
-                                            (currentTrack.artist && currentTrack.title)) && (
-                                            <TrackLinks
-                                                trackId={currentTrackId}
-                                                artist={currentTrack.artist}
-                                                album={currentTrack.album}
-                                                title={currentTrack.title}
-                                            />
-                                        )}
-                                    </ScrollArea>
-                                </Tabs.Panel>
-                            )}
-                        </Tabs>
-                    )}
-            </Stack>
+                            </Tabs>
+                        )}
+                </Stack>
+            )}
         </Flex>
     );
 };
