@@ -50,6 +50,9 @@ export const vibinSystemApi = createApi({
         streamerSourceSet: builder.mutation<void, string>({
             query: (sourceName) => ({ url: `streamer/audio_source/${sourceName}`, method: "POST" }),
         }),
+        systemPowerSet: builder.mutation<void, PowerState>({
+            query: (power) => ({ url: `power/${power}`, method: "POST" }),
+        }),
     }),
 });
 
@@ -65,4 +68,5 @@ export const {
     useStreamerPowerSetMutation,
     useStreamerPowerToggleMutation,
     useStreamerSourceSetMutation,
+    useSystemPowerSetMutation,
 } = vibinSystemApi;
