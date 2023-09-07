@@ -6,7 +6,7 @@ requires installation of the [`vibin`](https://github.com/mjoblin/vibin) backend
 Vibin was developed for my specific music streaming needs. It should however work for anyone with a
 StreamMagic audio streamer, but has only been tested with the following:
 
-* Cambridge Audio CXNv2 streamer.
+* [Cambridge Audio] CXNv2 ([StreamMagic]) streamer.
 * Local media stored on a NAS running [Asset UPnP] (optional).
 * A [Hegel] amplifier for volume/mute control (optional).
 * AirPlay from a MacBook.
@@ -229,6 +229,7 @@ Application features can be triggered using keyboard shortcuts.
 
 [//]: # "--- Links -------------------------------------------------------------------------------"
 
+[Cambridge Audio]: https://www.cambridgeaudio.com
 [StreamMagic]: https://www.cambridgeaudio.com/row/en/products/streammagic
 [Asset UPnP]: https://dbpoweramp.com/asset-upnp-dlna.htm
 [Hegel]: https://hegel.com
