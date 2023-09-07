@@ -7,6 +7,7 @@ import {
     setAmplifierState,
     setMediaServerState,
     setStreamerState,
+    setSystemPower,
 } from "../store/systemSlice";
 import {
     PlayStatus,
@@ -120,6 +121,7 @@ type PresetsPayload = PresetsState;
 type StoredPlaylistsPayload = StoredPlaylistsState;
 
 type SystemPayload = {
+    power: "on" | "off";
     streamer: {
         name: string;
         power: "on" | "off" | undefined;
@@ -286,6 +288,7 @@ function messageHandler(
         } else if (data.type === "System") {
             const system = data.payload as SystemPayload;
 
+            dispatch(setSystemPower(system.power));
             dispatch(setAmplifierState(system.amplifier));
             dispatch(setMediaServerState(system.media));
             dispatch(setStreamerState(system.streamer));

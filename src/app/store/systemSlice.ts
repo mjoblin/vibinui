@@ -71,12 +71,14 @@ export interface AmplifierState extends DeviceState {
 }
 
 export interface SystemState {
+    power: PowerState;
     streamer: StreamerState;
     media_server: MediaServerState;
     amplifier: AmplifierState;
 }
 
 const initialState: SystemState = {
+    power: "off",
     streamer: {
         name: "",
         power: undefined,
@@ -108,6 +110,9 @@ export const systemSlice = createSlice({
         setStreamerState: (state, action: PayloadAction<StreamerState>) => {
             updateIfDifferent(state, "streamer", action.payload);
         },
+        setSystemPower: (state, action: PayloadAction<PowerState>) => {
+            updateIfDifferent(state, "power", action.payload);
+        },
     },
 });
 
@@ -116,6 +121,7 @@ export const {
     setAmplifierState,
     setMediaServerState,
     setStreamerState,
+    setSystemPower,
 } = systemSlice.actions;
 
 export default systemSlice.reducer;

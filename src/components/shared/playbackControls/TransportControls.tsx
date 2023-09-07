@@ -16,7 +16,6 @@ import {
     usePlayMutation,
     usePreviousTrackMutation,
     useStopMutation,
-    useTogglePlaybackMutation,
     useToggleRepeatMutation,
     useToggleShuffleMutation,
 } from "../../../app/services/vibinTransport";
@@ -29,7 +28,7 @@ import { RootState } from "../../../app/store/store";
 //
 // Contents:
 //  - Previous Track.
-//  - Play/Pause/Toggle/Stop.
+//  - Play/Pause/Stop.
 //  - Next Track.
 //  - Repeat.
 //  - Shuffle.
@@ -55,7 +54,6 @@ const TransportControls: FC = () => {
     const [playPlayback] = usePlayMutation();
     const [previousTrack] = usePreviousTrackMutation();
     const [stopPlayback] = useStopMutation();
-    const [togglePlayback] = useTogglePlaybackMutation();
     const [toggleRepeat] = useToggleRepeatMutation();
     const [toggleShuffle] = useToggleShuffleMutation();
     const [playPresetId] = useLazyPlayPresetIdQuery();
@@ -97,9 +95,8 @@ const TransportControls: FC = () => {
                     }
                     sx={disabledStyles}
                     onClick={() =>
-                        activeTransportActions.includes("toggle_playback")
-                            ? togglePlayback()
-                            : activeTransportActions.includes("pause")
+                        activeTransportActions.includes("toggle_playback") ||
+                        activeTransportActions.includes("pause")
                             ? pausePlayback()
                             : stopPlayback()
                     }
@@ -133,9 +130,7 @@ const TransportControls: FC = () => {
                             const active_preset = presets.find((preset) => preset.is_playing);
                             active_preset && playPresetId(active_preset.id);
                         } else {
-                            activeTransportActions.includes("toggle_playback")
-                                ? togglePlayback()
-                                : playPlayback();
+                            playPlayback();
                         }
                     }}
                 >
