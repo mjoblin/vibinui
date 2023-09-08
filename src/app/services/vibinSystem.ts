@@ -11,7 +11,7 @@ import { MuteState, PowerState } from "../store/systemSlice";
 
 export const vibinSystemApi = createApi({
     reducerPath: "vibinSystemApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/system" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/system" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         amplifierMuteSet: builder.mutation<void, MuteState>({

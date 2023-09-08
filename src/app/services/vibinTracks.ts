@@ -42,7 +42,7 @@ export type RMS = {
 
 export const vibinTracksApi = createApi({
     reducerPath: "vibinTracksApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/tracks" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/tracks" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getRMS: builder.query<RMS, MediaId>({

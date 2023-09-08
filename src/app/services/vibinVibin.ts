@@ -16,7 +16,7 @@ export type VibinSettings = {
 
 export const vibinVibinApi = createApi({
     reducerPath: "vibinVibinApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/vibin" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/vibin" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         clearMediaCaches: builder.query<void, void>({

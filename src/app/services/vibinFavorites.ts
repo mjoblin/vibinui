@@ -20,7 +20,7 @@ export type Favorite = {
 
 export const vibinFavoritesApi = createApi({
     reducerPath: "vibinFavoritesApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/favorites" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/favorites" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         addFavorite: builder.mutation<void, { type: FavoriteType; mediaId: MediaId }>({
