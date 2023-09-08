@@ -21,7 +21,7 @@ export type StoredPlaylist = {
 
 export const vibinStoredPlaylistsApi = createApi({
     reducerPath: "vibinStoredPlaylistsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/stored_playlists" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/stored_playlists" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getStoredPlaylists: builder.query<StoredPlaylist[], void>({
