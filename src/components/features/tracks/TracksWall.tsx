@@ -19,24 +19,38 @@ import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 // ================================================================================================
 
 type TrackWallProps = {
-    onNewCurrentTrackRef: (ref: RefObject<HTMLDivElement>) => void;
-}
+    filterText?: string;
+    cardSize?: number;
+    cardGap?: number;
+    showDetails?: boolean;
+    quietUnlessShowingTracks?: boolean;
+    cacheCardRenderSize?: boolean;
+    onUpdatedDisplayCount?: (displayCount: number) => void;
+    onNewCurrentTrackRef?: (ref: RefObject<HTMLDivElement>) => void;
+};
 
-const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
+const TracksWall: FC<TrackWallProps> = ({
+    filterText = "",
+    cardSize = 50,
+    cardGap = 50,
+    showDetails = true,
+    quietUnlessShowingTracks = false,
+    cacheCardRenderSize = true,
+    onUpdatedDisplayCount,
+    onNewCurrentTrackRef,
+}) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
-    const filterText = useAppSelector((state: RootState) => state.userSettings.tracks.filterText);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackRef = useRef<HTMLDivElement>(null);
-    const { cardSize, cardGap, lyricsSearchText } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
-    );
+    const { lyricsSearchText } = useAppSelector((state: RootState) => state.userSettings.tracks);
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const { data: allTracks, error, isLoading, status: allTracksStatus } = useGetTracksQuery();
-    const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] = useSearchLyricsMutation();
+    const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] =
+        useSearchLyricsMutation();
     const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
@@ -55,7 +69,7 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
      * over time (as the Track changes).
      */
     useEffect(() => {
-        onNewCurrentTrackRef(currentTrackRef);
+        onNewCurrentTrackRef && onNewCurrentTrackRef(currentTrackRef);
     }, [onNewCurrentTrackRef]);
 
     /**
@@ -114,6 +128,13 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
         dispatch,
     ]);
 
+    /**
+     * Notify parent component of updated display count.
+     */
+    useEffect(() => {
+        onUpdatedDisplayCount && onUpdatedDisplayCount(tracksToDisplay.length);
+    }, [tracksToDisplay, onUpdatedDisplayCount]);
+
     // --------------------------------------------------------------------------------------------
 
     if (calculatingTracksToDisplay || isLoadingSearchLyrics) {
@@ -122,6 +143,10 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
                 <Loader variant="dots" size="md" />
             </Center>
         );
+    }
+
+    if (quietUnlessShowingTracks && tracksToDisplay.length <= 0) {
+        return <></>;
     }
 
     if (allTracksStatus === QueryStatus.rejected) {
@@ -180,10 +205,21 @@ const TracksWall: FC<TrackWallProps> = ({ onNewCurrentTrackRef }) => {
                 .map((track) =>
                     track.id === currentTrackMediaId ? (
                         <Box key={track.id} ref={currentTrackRef}>
-                            <TrackCard track={track} />
+                            <TrackCard
+                                track={track}
+                                size={cardSize}
+                                showDetails={showDetails}
+                                cacheRenderSize={cacheCardRenderSize}
+                            />
                         </Box>
                     ) : (
-                        <TrackCard key={track.id} track={track} />
+                        <TrackCard
+                            key={track.id}
+                            track={track}
+                            size={cardSize}
+                            showDetails={showDetails}
+                            cacheRenderSize={cacheCardRenderSize}
+                        />
                     )
                 )}
         </Box>

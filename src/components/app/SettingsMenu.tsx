@@ -19,7 +19,11 @@ import {
     useStreamerPowerToggleMutation,
     useStreamerSourceSetMutation
 } from "../../app/services/vibinSystem";
-import { setShowDebugPanel, setShowKeyboardShortcuts } from "../../app/store/internalSlice";
+import {
+    setShowDebugPanel,
+    setShowKeyboardShortcuts,
+    setShowMediaSearch,
+} from "../../app/store/internalSlice";
 import { showSuccessNotification } from "../../app/utils";
 import { AudioSource, PowerState } from "../../app/store/systemSlice";
 
@@ -166,6 +170,12 @@ const SettingsMenu: FC = () => {
 
                 {/* Application --------------------------------------------------------------- */}
                 <Menu.Label>Application</Menu.Label>
+                <Menu.Item
+                    icon={<IconKeyboard size={14} />}
+                    onClick={() => dispatch(setShowMediaSearch())}
+                >
+                    Media Search...
+                </Menu.Item>
                 <Menu.Item
                     icon={<IconKeyboard size={14} />}
                     onClick={() => dispatch(setShowKeyboardShortcuts())}

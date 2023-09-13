@@ -37,7 +37,7 @@ type PlaylistEntryIndex = number;
 
 export const vibinActivePlaylistApi = createApi({
     reducerPath: "vibinActivePlaylistApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/active_playlist" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/active_playlist" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         addMediaToPlaylist: builder.mutation<

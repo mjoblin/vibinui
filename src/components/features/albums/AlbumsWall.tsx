@@ -9,6 +9,7 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
+import { AlbumCollection } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { collectionFilter } from "../../../app/utils";
 
@@ -17,18 +18,32 @@ import { collectionFilter } from "../../../app/utils";
 // ================================================================================================
 
 type AlbumWallProps = {
-    onNewCurrentAlbumRef: (ref: RefObject<HTMLDivElement>) => void;
+    filterText?: string;
+    activeCollection?: AlbumCollection;
+    cardSize?: number;
+    cardGap?: number;
+    showDetails?: boolean;
+    quietUnlessShowingAlbums?: boolean;
+    cacheCardRenderSize?: boolean;
+    onUpdatedDisplayCount?: (displayCount: number) => void;
+    onNewCurrentAlbumRef?: (ref: RefObject<HTMLDivElement>) => void;
 }
 
-const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
+const AlbumsWall: FC<AlbumWallProps> = ({
+    filterText = "",
+    activeCollection = "all",
+    cardSize = 50,
+    cardGap = 50,
+    showDetails = true,
+    quietUnlessShowingAlbums = false,
+    cacheCardRenderSize = true,
+    onUpdatedDisplayCount,
+    onNewCurrentAlbumRef,
+}) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
-    const filterText = useAppSelector((state: RootState) => state.userSettings.albums.filterText);
-    const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const currentAlbumRef = useRef<HTMLDivElement>(null);
-    const { activeCollection, cardSize, cardGap } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
-    );
+    const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
@@ -69,7 +84,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
      * over time (as the Album changes).
      */
     useEffect(() => {
-        onNewCurrentAlbumRef(currentAlbumRef);
+        onNewCurrentAlbumRef && onNewCurrentAlbumRef(currentAlbumRef);
     }, [onNewCurrentAlbumRef]);
 
     /**
@@ -103,6 +118,13 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         setCalculatingAlbumsToDisplay(false);
         setAlbumsToDisplay(albumsToDisplay);
     }, [allAlbums, allStatus, newAlbums, filterText, activeCollection, dispatch]);
+
+    /**
+     * Notify parent component of updated display count.
+     */
+    useEffect(() => {
+        onUpdatedDisplayCount && onUpdatedDisplayCount(albumsToDisplay.length);
+    }, [albumsToDisplay, onUpdatedDisplayCount]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -142,6 +164,10 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
         );
     }
 
+    if (quietUnlessShowingAlbums && albumsToDisplay.length <= 0) {
+        return <></>;
+    }
+
     if ((activeCollection === "all" && allError) || (activeCollection === "new" && newError)) {
         return (
             <Center pt="xl">
@@ -153,7 +179,9 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
     if (albumsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label={filterText === "" ? "No Albums available" : "No matching Albums"} />
+                <SadLabel
+                    label={filterText === "" ? "No Albums available" : "No matching Albums"}
+                />
             </Center>
         );
     }
@@ -165,10 +193,21 @@ const AlbumsWall: FC<AlbumWallProps> = ({ onNewCurrentAlbumRef }) => {
             {albumsToDisplay.map((album: Album) =>
                 album.id === currentAlbumMediaId ? (
                     <Box key={album.id} ref={currentAlbumRef}>
-                        <AlbumCard album={album} />
+                        <AlbumCard
+                            album={album}
+                            size={cardSize}
+                            showDetails={showDetails}
+                            cacheRenderSize={cacheCardRenderSize}
+                        />
                     </Box>
                 ) : (
-                    <AlbumCard key={album.id} album={album} />
+                    <AlbumCard
+                        key={album.id}
+                        album={album}
+                        size={cardSize}
+                        showDetails={showDetails}
+                        cacheRenderSize={cacheCardRenderSize}
+                    />
                 )
             )}
         </Box>

@@ -16,8 +16,9 @@ export interface InternalState {
         currentScreen: string;
         isComputingInBackground: boolean;
         showCurrentTrackLyrics: boolean;
-        showKeyboardShortcuts: boolean;
         showDebugPanel: boolean;
+        showKeyboardShortcuts: boolean;
+        showMediaSearch: boolean;
         waveformsSupported: boolean;
         websocketClientId: string | undefined;
         websocketStatus: WebsocketStatus;
@@ -85,8 +86,9 @@ const initialState: InternalState = {
         currentScreen: "",
         isComputingInBackground: false,
         showCurrentTrackLyrics: false,
-        showKeyboardShortcuts: false,
         showDebugPanel: false,
+        showKeyboardShortcuts: false,
+        showMediaSearch: false,
         waveformsSupported: true,
         websocketClientId: undefined,
         websocketStatus: "disconnected",
@@ -259,14 +261,18 @@ export const internalSlice = createSlice({
         setPresetsScrollPosition: (state, action: PayloadAction<number>) => {
             state.presets.scrollPosition = action.payload;
         },
-        setShowCurrentTrackLyrics: (state, action: PayloadAction<boolean>) => {
-            state.application.showCurrentTrackLyrics = action.payload;
+        setShowCurrentTrackLyrics: (state, action: PayloadAction<boolean | undefined>) => {
+            state.application.showCurrentTrackLyrics = action.payload === undefined ? true : action.payload;
         },
         setShowDebugPanel: (state, action: PayloadAction<boolean | undefined>) => {
             state.application.showDebugPanel = action.payload === undefined ? true : action.payload;
         },
         setShowKeyboardShortcuts: (state, action: PayloadAction<boolean | undefined>) => {
             state.application.showKeyboardShortcuts =
+                action.payload === undefined ? true : action.payload;
+        },
+        setShowMediaSearch: (state, action: PayloadAction<boolean | undefined>) => {
+            state.application.showMediaSearch =
                 action.payload === undefined ? true : action.payload;
         },
         setTrackCardRenderDimensions: (
@@ -320,6 +326,7 @@ export const {
     setShowCurrentTrackLyrics,
     setShowDebugPanel,
     setShowKeyboardShortcuts,
+    setShowMediaSearch,
     setTrackCardRenderDimensions,
     setTracksScrollPosition,
     setWaveformsSupported,

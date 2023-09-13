@@ -21,6 +21,7 @@ import FieldValueList from "../../shared/dataDisplay/FieldValueList";
 import {
     setShowCurrentTrackLyrics,
     setShowKeyboardShortcuts,
+    setShowMediaSearch,
 } from "../../../app/store/internalSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
@@ -133,7 +134,8 @@ const KeyboardShortcutsManager: FC = () => {
             ["F", () => navigate("/ui/favorites")],
             ["ctrl+shift+1", () => systemPowerSet(systemPower === "on" ? "off" : "on")],
             ["shift+?", () => dispatch(setShowKeyboardShortcuts(!showKeyboardShortcuts))],
-            ["shift+L", () => dispatch(setShowCurrentTrackLyrics(true))],
+            ["shift+L", () => dispatch(setShowCurrentTrackLyrics())],
+            ["S", () => dispatch(setShowMediaSearch())],
         ],
         [
             activeTransportActions,
@@ -310,6 +312,19 @@ const KeyboardShortcutsManager: FC = () => {
                                     T: "Tracks",
                                     E: "Presets",
                                     F: "Favorites",
+                                }}
+                                columnGap={10}
+                                keySize={16}
+                                keyWeight="bold"
+                                keyColor={colors.gray[1]}
+                                valueSize={16}
+                                valueWeight="normal"
+                                valueColor={colors.gray[5]}
+                            />
+
+                            <FieldValueList
+                                fieldValues={{
+                                    S: "Media Search",
                                 }}
                                 columnGap={10}
                                 keySize={16}

@@ -8,6 +8,7 @@ import { RootState } from "../../../app/store/store";
 import { collectionFilter } from "../../../app/utils";
 import { setFilteredFavoriteMediaIds } from "../../../app/store/internalSlice";
 import { Favorite } from "../../../app/services/vibinFavorites";
+import { FavoriteCollection } from "../../../app/store/userSettingsSlice";
 import AlbumCard from "../albums/AlbumCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
@@ -23,16 +24,32 @@ import TrackCard from "../tracks/TrackCard";
 //  are likely to update more often than Artists/Albums/Tracks.
 // ================================================================================================
 
-const FavoritesWall: FC = () => {
+type FavoritesWallProps = {
+    filterText?: string;
+    activeCollection?: FavoriteCollection;
+    cardSize?: number;
+    cardGap?: number;
+    showDetails?: boolean;
+    quietUnlessShowingFavorites?: boolean;
+    cacheCardRenderSize?: boolean;
+    onUpdatedDisplayCount?: (displayCount: number) => void;
+}
+
+const FavoritesWall: FC<FavoritesWallProps> = ({
+    filterText = "",
+    activeCollection = "all",
+    cardSize = 50,
+    cardGap = 50,
+    showDetails = true,
+    quietUnlessShowingFavorites = false,
+    cacheCardRenderSize = true,
+    onUpdatedDisplayCount,
+}) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const { colors } = useMantineTheme();
-    const { favorites, haveReceivedInitialState } = useAppSelector((state: RootState) => state.favorites);
-    const filterText = useAppSelector(
-        (state: RootState) => state.userSettings.favorites.filterText
-    );
-    const { activeCollection, cardSize, cardGap, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.favorites
+    const { favorites, haveReceivedInitialState } = useAppSelector(
+        (state: RootState) => state.favorites
     );
     const [favoritesToDisplay, setFavoritesToDisplay] = useState<Favorite[]>([]);
 
@@ -83,6 +100,13 @@ const FavoritesWall: FC = () => {
         }
     }, [favorites, filterText, activeCollection, dispatch]);
 
+    /**
+     * Notify parent component of updated display count.
+     */
+    useEffect(() => {
+        onUpdatedDisplayCount && onUpdatedDisplayCount(favoritesToDisplay.length);
+    }, [favoritesToDisplay, onUpdatedDisplayCount]);
+
     // --------------------------------------------------------------------------------------------
 
     if (!haveReceivedInitialState) {
@@ -91,6 +115,10 @@ const FavoritesWall: FC = () => {
                 <Loader variant="dots" size="md" />
             </Center>
         );
+    }
+
+    if (quietUnlessShowingFavorites && favoritesToDisplay.length <= 0) {
+        return <></>;
     }
 
     if (favorites.length <= 0) {
@@ -127,8 +155,9 @@ const FavoritesWall: FC = () => {
                                         Navigation: ["all"],
                                         Playlist: ["all"],
                                     }}
-                                    sizeOverride={cardSize}
-                                    detailsOverride={showDetails}
+                                    size={cardSize}
+                                    showDetails={showDetails}
+                                    cacheRenderSize={cacheCardRenderSize}
                                 />
                             ))
                         ) : (
@@ -161,8 +190,9 @@ const FavoritesWall: FC = () => {
                                         Navigation: ["all"],
                                         Playlist: ["all"],
                                     }}
-                                    sizeOverride={cardSize}
-                                    detailsOverride={showDetails}
+                                    size={cardSize}
+                                    showDetails={showDetails}
+                                    cacheRenderSize={cacheCardRenderSize}
                                 />
                             ))
                         ) : (

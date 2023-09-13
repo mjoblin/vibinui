@@ -16,12 +16,26 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 // Presets can be a mix of various media, such as Internet Radio, Albums, etc.
 // ================================================================================================
 
-const PresetsWall: FC = () => {
+type PresetsWallProps = {
+    filterText?: string;
+    cardSize?: number;
+    cardGap?: number;
+    showDetails?: boolean;
+    quietUnlessShowingPresets?: boolean;
+    onUpdatedDisplayCount?: (displayCount: number) => void;
+}
+
+const PresetsWall: FC<PresetsWallProps> = ({
+    filterText = "",
+    cardSize = 50,
+    cardGap = 50,
+    showDetails = true,
+    quietUnlessShowingPresets = false,
+    onUpdatedDisplayCount,
+}) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const { presets, haveReceivedInitialState } = useAppSelector((state: RootState) => state.presets);
-    const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.presets);
-    const filterText = useAppSelector((state: RootState) => state.userSettings.presets.filterText);
     const [presetsToDisplay, setPresetsToDisplay] = useState<Preset[]>([]);
 
     // NOTE: The PresetWall differs from the Artists/Albums/Tracks walls in that it gets its data
@@ -36,6 +50,13 @@ const PresetsWall: FC = () => {
             paddingBottom: 15,
         },
     }))();
+
+    /**
+     * Notify parent component of updated display count.
+     */
+    useEffect(() => {
+        onUpdatedDisplayCount && onUpdatedDisplayCount(presetsToDisplay.length);
+    }, [presetsToDisplay, onUpdatedDisplayCount]);
 
     /**
      * Determine which Presets to display based on the current filter text.
@@ -55,10 +76,16 @@ const PresetsWall: FC = () => {
         );
     }
 
-    if (presets.length <= 0) {
+    if (quietUnlessShowingPresets && presetsToDisplay.length <= 0) {
+        return <></>;
+    }
+
+    if (presetsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label="No Presets found" />
+                <SadLabel
+                    label={filterText === "" ? "No Presets available" : "No matching Presets"}
+                />
             </Center>
         );
     }
@@ -68,7 +95,12 @@ const PresetsWall: FC = () => {
     return (
         <Box className={dynamicClasses.presetsWall}>
             {presetsToDisplay.map((preset) => (
-                <PresetCard key={preset.id} preset={preset} />
+                <PresetCard
+                    key={preset.id}
+                    preset={preset}
+                    size={cardSize}
+                    showDetails={showDetails}
+                />
             ))}
         </Box>
     );
