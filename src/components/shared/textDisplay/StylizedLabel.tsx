@@ -9,10 +9,11 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 type StylizedLabelProps = {
     color?: MantineColor;
+    size?: number;
     children: ReactNode;
 };
 
-const StylizedLabel: FC<StylizedLabelProps> = ({ color, children }) => {
+const StylizedLabel: FC<StylizedLabelProps> = ({ color, size = 30, children }) => {
     const { APP_ALT_FONTFACE } = useAppGlobals();
 
     const { classes: dynamicClasses } = createStyles(() => ({
@@ -23,7 +24,7 @@ const StylizedLabel: FC<StylizedLabelProps> = ({ color, children }) => {
     }))();
 
     return (
-        <Text size={30} weight="bold" color={color} className={dynamicClasses.screenName}>
+        <Text size={size} weight="bold" color={color} className={dynamicClasses.screenName}>
             {children}
         </Text>
     );

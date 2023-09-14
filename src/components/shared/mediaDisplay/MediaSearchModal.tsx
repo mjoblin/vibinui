@@ -52,6 +52,9 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
     const [presetsDisplayCount, setPresetsDisplayCount] = useState<number>(0);
     const [favoritesDisplayCount, setFavoritesDisplayCount] = useState<number>(0);
 
+    const headerColor = colors.gray[5];
+    const headerSize = 25;
+
     return (
         <Modal
             title="Media Search"
@@ -101,6 +104,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                         defaultKey="title"
                         supportedKeys={["title", "artist", "creator", "genre", "date"]}
                         examples={["favorite album", "squirrels artist:(the rods) date:2004"]}
+                        withinPortal={true}
                     />
 
                     {/* @ts-ignore */}
@@ -146,7 +150,9 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                     <Stack spacing={0}>
                         {displayCategories.includes("albums") && (
                             <>
-                                <StylizedLabel color={colors.gray[7]}>Albums</StylizedLabel>
+                                <StylizedLabel color={headerColor} size={headerSize}>
+                                    Albums
+                                </StylizedLabel>
                                 <AlbumsWall
                                     filterText={filterText}
                                     cardSize={cardSize}
@@ -158,14 +164,18 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {albumsDisplayCount === 0 && (
-                                    <Text>No matching albums</Text>
+                                    <Text color={colors.gray[6]} pb={5}>
+                                        No matching albums
+                                    </Text>
                                 )}
                             </>
                         )}
 
                         {displayCategories.includes("tracks") && (
                             <>
-                                <StylizedLabel color={colors.gray[7]}>Tracks</StylizedLabel>
+                                <StylizedLabel color={headerColor} size={headerSize}>
+                                    Tracks
+                                </StylizedLabel>
                                 <TracksWall
                                     filterText={filterText}
                                     cardSize={cardSize}
@@ -177,14 +187,18 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {tracksDisplayCount === 0 && (
-                                    <Text>No matching tracks</Text>
+                                    <Text color={colors.gray[6]} pb={5}>
+                                        No matching tracks
+                                    </Text>
                                 )}
                             </>
                         )}
 
                         {displayCategories.includes("presets") && (
                             <>
-                                <StylizedLabel color={colors.gray[7]}>Presets</StylizedLabel>
+                                <StylizedLabel color={headerColor} size={headerSize}>
+                                    Presets
+                                </StylizedLabel>
                                 <PresetsWall
                                     filterText={filterText}
                                     cardSize={cardSize}
@@ -195,14 +209,18 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {presetsDisplayCount === 0 && (
-                                    <Text>No matching presets</Text>
+                                    <Text color={colors.gray[6]} pb={5}>
+                                        No matching presets
+                                    </Text>
                                 )}
                             </>
                         )}
 
                         {displayCategories.includes("favorites") && (
                             <>
-                                <StylizedLabel color={colors.gray[7]}>Favorites</StylizedLabel>
+                                <StylizedLabel color={headerColor} size={headerSize}>
+                                    Favorites
+                                </StylizedLabel>
                                 <FavoritesWall
                                     filterText={filterText}
                                     activeCollection="all"
@@ -215,7 +233,9 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {favoritesDisplayCount === 0 && (
-                                    <Text>No matching favorites</Text>
+                                    <Text color={colors.gray[6]} pb={5}>
+                                        No matching favorites
+                                    </Text>
                                 )}
                             </>
                         )}
