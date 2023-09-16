@@ -8,6 +8,7 @@ import { RootState } from "../../../app/store/store";
 import {
     useAmplifierMuteToggleMutation,
     useAmplifierVolumeSetMutation,
+    useSystemPowerSetMutation,
 } from "../../../app/services/vibinSystem";
 import {
     useNextTrackMutation,
@@ -15,12 +16,12 @@ import {
     usePlayMutation,
     usePreviousTrackMutation,
     useSeekMutation,
-    useTogglePlaybackMutation,
 } from "../../../app/services/vibinTransport";
 import FieldValueList from "../../shared/dataDisplay/FieldValueList";
 import {
     setShowCurrentTrackLyrics,
     setShowKeyboardShortcuts,
+    setShowMediaSearch,
 } from "../../../app/store/internalSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
@@ -48,12 +49,13 @@ const KeyboardShortcutsManager: FC = () => {
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
     const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
     const amplifierVolume = useAppSelector((state: RootState) => state.system.amplifier?.volume);
+    const systemPower = useAppSelector((state: RootState) => state.system.power);
     const [debouncedAmplifierVolume] = useDebouncedValue(amplifierVolume, 2000);
+    const [systemPowerSet] = useSystemPowerSetMutation();
     const [volumeSet] = useAmplifierVolumeSetMutation();
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [pausePlayback] = usePauseMutation();
     const [playPlayback] = usePlayMutation();
-    const [togglePlayback] = useTogglePlaybackMutation();
     const [nextTrack] = useNextTrackMutation();
     const [previousTrack] = usePreviousTrackMutation();
     const [seek] = useSeekMutation();
@@ -113,18 +115,7 @@ const KeyboardShortcutsManager: FC = () => {
                     activeTransportActions.includes("seek") &&
                     seek(Math.max(position - SEEK_OFFSET_SECS, 0)),
             ],
-            [
-                "K",
-                () => {
-                    const preferToggle = activeTransportActions.includes("toggle_playback");
-
-                    preferToggle
-                        ? togglePlayback()
-                        : playStatus === "play"
-                        ? pausePlayback()
-                        : playPlayback();
-                },
-            ],
+            ["K", () => (playStatus === "play" ? pausePlayback() : playPlayback())],
             [
                 "L",
                 () =>
@@ -141,8 +132,10 @@ const KeyboardShortcutsManager: FC = () => {
             ["T", () => navigate("/ui/tracks")],
             ["E", () => navigate("/ui/presets")],
             ["F", () => navigate("/ui/favorites")],
+            ["ctrl+shift+1", () => systemPowerSet(systemPower === "on" ? "off" : "on")],
             ["shift+?", () => dispatch(setShowKeyboardShortcuts(!showKeyboardShortcuts))],
-            ["shift+L", () => dispatch(setShowCurrentTrackLyrics(true))],
+            ["shift+L", () => dispatch(setShowCurrentTrackLyrics())],
+            ["S", () => dispatch(setShowMediaSearch())],
         ],
         [
             activeTransportActions,
@@ -157,8 +150,9 @@ const KeyboardShortcutsManager: FC = () => {
             previousTrack,
             seek,
             SEEK_OFFSET_SECS,
+            systemPower,
+            systemPowerSet,
             showKeyboardShortcuts,
-            togglePlayback,
         ]
     );
 
@@ -327,22 +321,10 @@ const KeyboardShortcutsManager: FC = () => {
                                 valueWeight="normal"
                                 valueColor={colors.gray[5]}
                             />
-                        </Stack>
-                    </Paper>
 
-                    {/* Additional ------------------------------------------------------------ */}
-                    <Paper p="md" radius={5} withBorder sx={{ flexGrow: 1 }}>
-                        <Stack spacing="sm">
-                            <Stack spacing={0}>
-                                <Text weight="bold" transform="uppercase">
-                                    Additional
-                                </Text>
-                            </Stack>
                             <FieldValueList
                                 fieldValues={{
-                                    "?": "Show this Help screen",
-                                    "⇧L": "Show the current track lyrics",
-                                    "⇧D": "Show the Debug panel",
+                                    S: "Media Search",
                                 }}
                                 columnGap={10}
                                 keySize={16}
@@ -354,6 +336,56 @@ const KeyboardShortcutsManager: FC = () => {
                             />
                         </Stack>
                     </Paper>
+
+                    {/* System ----------------------------------------------------------------- */}
+                    <Stack spacing="md">
+                        <Paper p="md" radius={5} withBorder sx={{ flexGrow: 1 }}>
+                            <Stack spacing="sm">
+                                <Stack spacing={0}>
+                                    <Text weight="bold" transform="uppercase">
+                                        System
+                                    </Text>
+                                </Stack>
+                                <FieldValueList
+                                    fieldValues={{
+                                        "^⇧1": "Power system on/off",
+                                    }}
+                                    columnGap={10}
+                                    keySize={16}
+                                    keyWeight="bold"
+                                    keyColor={colors.gray[1]}
+                                    valueSize={16}
+                                    valueWeight="normal"
+                                    valueColor={colors.gray[5]}
+                                />
+                            </Stack>
+                        </Paper>
+
+                        {/* Additional ------------------------------------------------------------ */}
+                        <Paper p="md" radius={5} withBorder sx={{ flexGrow: 1 }}>
+                            <Stack spacing="sm">
+                                <Stack spacing={0}>
+                                    <Text weight="bold" transform="uppercase">
+                                        Additional
+                                    </Text>
+                                </Stack>
+                                <FieldValueList
+                                    fieldValues={{
+                                        "?": "Show this Help screen",
+                                        "⇧L": "Show the current track lyrics",
+                                        "⇧D": "Show the Debug panel",
+                                    }}
+                                    columnGap={10}
+                                    keySize={16}
+                                    keyWeight="bold"
+                                    keyColor={colors.gray[1]}
+                                    valueSize={16}
+                                    valueWeight="normal"
+                                    valueColor={colors.gray[5]}
+                                />
+                            </Stack>
+                        </Paper>
+                    </Stack>
                 </Flex>
             </Stack>
         </Modal>

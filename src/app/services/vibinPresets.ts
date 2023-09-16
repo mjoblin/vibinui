@@ -24,7 +24,7 @@ export type Preset = {
 
 export const vibinPresetsApi = createApi({
     reducerPath: "vibinPresetsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/presets" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/presets" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getPresets: builder.query<Preset[], void>({

@@ -9,7 +9,8 @@ import {
     rem,
     Stack,
     Text,
-    useMantineTheme,
+    Tooltip,
+    useMantineTheme, ActionIcon
 } from "@mantine/core";
 import {
     IconDeviceSpeaker,
@@ -19,11 +20,14 @@ import {
     IconMicrophone2,
     IconPlaylist,
     IconRadio,
+    IconSearch,
     IconUser,
     TablerIcon,
 } from "@tabler/icons";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { useAppDispatch } from "../../../app/hooks/store";
+import { setShowMediaSearch } from "../../../app/store/internalSlice";
 import SettingsMenu from "../SettingsMenu";
 import WaitingOnAPIIndicator from "../../shared/dataDisplay/WaitingOnAPIIndicator";
 import SystemPower from "../../shared/buttons/SystemPower";
@@ -117,6 +121,7 @@ type AppNavProps = {
 };
 
 const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
+    const dispatch = useAppDispatch();
     const theme = useMantineTheme();
     const { pathname } = useLocation();
     const { classes, cx } = useStyles();
@@ -208,7 +213,22 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
 
             <Navbar.Section className={classes.footer}>
                 <Flex justify="space-between" align="center">
-                    <SettingsMenu />
+                    <Flex gap={10} align="center">
+                        <SettingsMenu />
+
+                        <Tooltip label="Media Search" position="top" withArrow>
+                            <Box>
+                                <ActionIcon variant="default" size="lg">
+                                    <IconSearch
+                                        size={18}
+                                        stroke={1.5}
+                                        onClick={() => dispatch(setShowMediaSearch())}
+                                    />
+                                </ActionIcon>
+                            </Box>
+                        </Tooltip>
+                    </Flex>
+
                     <Flex gap={10} align="center">
                         <WaitingOnAPIIndicator stealth />
                         <SystemPower />

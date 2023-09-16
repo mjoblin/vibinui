@@ -12,6 +12,7 @@ type FilterInstructionsProps = {
     supportedKeys?: string[];
     examples?: string[];
     note?: string;
+    withinPortal?: boolean;
 };
 
 const FilterInstructions: FC<FilterInstructionsProps> = ({
@@ -19,12 +20,20 @@ const FilterInstructions: FC<FilterInstructionsProps> = ({
     supportedKeys = [],
     examples = [],
     note,
+    withinPortal = false,
 }) => {
     const { colors } = useMantineTheme();
     const [opened, { close, open }] = useDisclosure(false);
 
     return (
-        <Popover position="bottom" width={350} withArrow arrowPosition="center" opened={opened}>
+        <Popover
+            position="bottom"
+            width={350}
+            withArrow
+            arrowPosition="center"
+            opened={opened}
+            withinPortal={withinPortal}
+        >
             <Popover.Target>
                 <ThemeIcon size={20} radius={10} variant="light">
                     <IconQuestionMark

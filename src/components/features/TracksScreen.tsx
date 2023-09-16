@@ -22,6 +22,9 @@ const TracksScreen: FC = () => {
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const [currentTrackRef, setCurrentTrackRef] = useState<RefObject<HTMLDivElement>>();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.tracks);
+    const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.tracks
+    );
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
     /**
@@ -68,7 +71,13 @@ const TracksScreen: FC = () => {
                 <TracksControls scrollToCurrent={scrollToCurrent} />
             </ScreenHeader>
             <Box pt={SCREEN_HEADER_HEIGHT}>
-                <TracksWall onNewCurrentTrackRef={setCurrentTrackRef} />
+                <TracksWall
+                    filterText={filterText}
+                    cardSize={cardSize}
+                    cardGap={cardGap}
+                    showDetails={showDetails}
+                    onNewCurrentTrackRef={setCurrentTrackRef}
+                />
             </Box>
         </Stack>
     );

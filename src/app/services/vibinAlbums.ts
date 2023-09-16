@@ -54,7 +54,7 @@ export const trackTransformer = (track: BackendTrack): Track => ({
 
 export const vibinAlbumsApi = createApi({
     reducerPath: "vibinAlbumsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/albums" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/albums" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getAlbumById: builder.query<Album, MediaId>({

@@ -17,7 +17,7 @@ type SeekTarget = number | string;
 
 export const vibinTransportApi = createApi({
     reducerPath: "vibinTransportApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/transport" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/transport" }),
     endpoints: (builder) => ({
         nextTrack: builder.mutation<void, void>({
             query: () => ({ url: "next", method: "POST" }),

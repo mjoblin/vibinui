@@ -11,7 +11,7 @@ import { MuteState, PowerState } from "../store/systemSlice";
 
 export const vibinSystemApi = createApi({
     reducerPath: "vibinSystemApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/system" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/system" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         amplifierMuteSet: builder.mutation<void, MuteState>({
@@ -50,6 +50,9 @@ export const vibinSystemApi = createApi({
         streamerSourceSet: builder.mutation<void, string>({
             query: (sourceName) => ({ url: `streamer/audio_source/${sourceName}`, method: "POST" }),
         }),
+        systemPowerSet: builder.mutation<void, PowerState>({
+            query: (power) => ({ url: `power/${power}`, method: "POST" }),
+        }),
     }),
 });
 
@@ -65,4 +68,5 @@ export const {
     useStreamerPowerSetMutation,
     useStreamerPowerToggleMutation,
     useStreamerSourceSetMutation,
+    useSystemPowerSetMutation,
 } = vibinSystemApi;

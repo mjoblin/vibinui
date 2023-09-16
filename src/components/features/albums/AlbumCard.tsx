@@ -120,16 +120,16 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
 const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     album,
     enabledActions,
-    sizeOverride,
-    detailsOverride,
+    size = 200,
+    showDetails = true,
     selected,
     highlightIfPlaying,
     onClick,
 }) => {
     const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppGlobals();
-    const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
-    );
+    // const { cardSize, showDetails } = useAppSelector(
+    //     (state: RootState) => state.userSettings.albums
+    // );
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
@@ -141,7 +141,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
-            width: sizeOverride || cardSize,
+            width: size,
             border:
                 highlightIfPlaying && isCurrentlyPlaying
                     ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
@@ -171,7 +171,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
                             Details: ["all"],
                         }
                     }
-                    size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}
+                    size={size - borderSize * 2}
                     radius={5}
                     onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                     onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
@@ -179,7 +179,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
             </Box>
 
             {/* Album title, artist, year, genre */}
-            {((detailsOverride === undefined && showDetails) || detailsOverride) && (
+            {showDetails && (
                 <Stack spacing={0} p={7}>
                     <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                         {album.title}
@@ -213,31 +213,26 @@ type AlbumCardProps = {
     album: Album;
     tracks?: Track[];
     enabledActions?: EnabledActions;
-    // Allow callers to override the size and details settings which would otherwise be pulled from
-    // the users album display settings. This is intended for use by (for now) the favorites
-    // screen, so its use of AlbumCard (and TrackCard) can use independent card display settings.
-    sizeOverride?: number;
-    detailsOverride?: boolean;
+    size?: number;
+    showDetails?: boolean;
     selected?: boolean;
     highlightIfPlaying?: boolean;
     onClick?: (album: Album) => void;
 };
 
-const AlbumCard: FC<AlbumCardProps> = ({
+const AlbumCard: FC<AlbumCardProps & { cacheRenderSize?: boolean }> = ({
     type = "art_focused",
     album,
     tracks,
     enabledActions,
-    sizeOverride,
-    detailsOverride,
+    size = 200,
+    showDetails = true,
     selected = false,
     highlightIfPlaying = true,
     onClick,
+    cacheRenderSize = true,
 }) => {
     const dispatch = useAppDispatch();
-    const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
-    );
     const latestVisibleRenderSize = useAppSelector(
         (state: RootState) => state.internal.albums.albumCard
     );
@@ -256,6 +251,10 @@ const AlbumCard: FC<AlbumCardProps> = ({
      * scrolling (and scrollbar height) works as expected by the user.
      */
     useEffect(() => {
+        if (!cacheRenderSize) {
+            return;
+        }
+
         if (cardRef.current && isVisible) {
             const newRenderWidth = cardRef.current.offsetWidth;
             const newRenderHeight = cardRef.current.offsetHeight;
@@ -269,7 +268,7 @@ const AlbumCard: FC<AlbumCardProps> = ({
                     })
                 );
         }
-    }, [cardRef, isVisible, cardSize, showDetails, latestVisibleRenderSize, dispatch]);
+    }, [cardRef, cacheRenderSize, isVisible, size, showDetails, latestVisibleRenderSize, dispatch]);
 
     const visibilityOffset = type === "art_focused" ? -1000 : -200;
 
@@ -292,8 +291,8 @@ const AlbumCard: FC<AlbumCardProps> = ({
                             <AlbumCardArtFocused
                                 album={album}
                                 enabledActions={enabledActions}
-                                sizeOverride={sizeOverride}
-                                detailsOverride={detailsOverride}
+                                size={size}
+                                showDetails={showDetails}
                                 selected={selected}
                                 highlightIfPlaying={highlightIfPlaying}
                             />
@@ -317,8 +316,8 @@ const AlbumCard: FC<AlbumCardProps> = ({
                             album={album}
                             tracks={tracks}
                             enabledActions={enabledActions}
-                            sizeOverride={sizeOverride}
-                            detailsOverride={detailsOverride}
+                            size={size}
+                            showDetails={showDetails}
                             selected={selected}
                             highlightIfPlaying={highlightIfPlaying}
                             onClick={onClick}

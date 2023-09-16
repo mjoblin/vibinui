@@ -274,7 +274,7 @@ const CurrentTrackScreen: FC = () => {
     if (streamerPower !== "on") {
         return (
             <Box pt={35}>
-                <SystemPower showPowerOff={false} label="streamer is in standby mode" />
+                <SystemPower label="streamer is in standby mode" />
             </Box>
         );
     }

@@ -176,6 +176,42 @@ const parentStripperRegex = /^\(?(.*?)\)?$/;
 const emptyStringRegex = /^\s*$/;
 
 /**
+ * Take a given obj, which can be a nested object of arbitrary depth, and return an array of all
+ * key names flattened in dot notation. e.g:
+ *
+ * {
+ *     grandparent: {
+ *         parent1: {
+ *             child1: 10,
+ *             child2: 10,
+ *         },
+ *         parent2: "foo",
+ *     }
+ * }
+ *
+ * ... will return:
+ *
+ * ["grandparent.parent1.child1"], "grandparent.parent1.child2", "grandparent.parent2"].
+ */
+const flattenKeys = (obj: { [key: string]: any }, prefix = ""): string[] => {
+    let result: string[] = [];
+
+    for (let key in obj) {
+        const flattenedKey = `${prefix}${key}`;
+
+        if (obj.hasOwnProperty(key)) {
+            if (obj[key] instanceof Object && !Array.isArray(obj[key])) {
+                result = [...result, ...flattenKeys(obj[key], `${flattenedKey}.`)];
+            } else {
+                result.push(flattenedKey);
+            }
+        }
+    }
+
+    return result;
+};
+
+/**
  * Determine which objects in the collection match the given filterText.
  *
  * Example filterText:
@@ -193,11 +229,15 @@ const emptyStringRegex = /^\s*$/;
  * @param collection An array of Artists, Tracks, etc.
  * @param filterText The text filter to apply.
  * @param defaultKey The key to apply the filter to, if the key is not explicitly stated.
+ * @param searchRoot The root of each item/object in the collection under which to search. e.g. If
+ *  each collection item is an object with a "media" key which contains the fields to search, then
+ *  specify a searchRoot of "media".
  */
 export function collectionFilter<T extends Object>(
     collection: T[],
     filterText: string,
     defaultKey: string = "",
+    searchRoot?: string,
 ): T[] {
     if (collection.length <= 0 || filterText.match(emptyStringRegex)) {
         return collection;
@@ -205,10 +245,17 @@ export function collectionFilter<T extends Object>(
 
     const matches = [...filterText.toLocaleLowerCase().matchAll(filterTokenizerRegex)];
 
-    // Ignore any "key:value" where the "key" is not a key in any of the items in the collection.
+    // If the "key" in any "key:value" is invalid (i.e. it's not a key in any of the items in the
+    // collection, then treat this as a zero-match result.
     const validMatches = matches.filter((match) =>
-        collection.some((item) => Object.keys(item).includes(match[1]))
+        collection.some((item) =>
+            flattenKeys(item).includes(searchRoot ? `${searchRoot}.${match[1]}` : match[1])
+        )
     );
+
+    if (validMatches.length !== matches.length) {
+        return [];
+    }
 
     const foundKeys: string[] = [];
 
@@ -238,7 +285,7 @@ export function collectionFilter<T extends Object>(
     // "AND" search; and matching is a case-insensitive partial text match.
     return collection.filter((item) => {
         for (const [key, searchValue] of matchKeyValues) {
-            const thisValue = get(item, key); // Using lodash to support "nested.key.names".
+            const thisValue = get(item, searchRoot ? `${searchRoot}.${key}` : key); // Using lodash to support "nested.key.names".
             if (!thisValue || (thisValue && !thisValue.toLocaleLowerCase().includes(searchValue))) {
                 return false;
             }

@@ -11,7 +11,7 @@ import { API_REFRESH_INTERVAL } from "../constants";
 
 export const vibinArtistsApi = createApi({
     reducerPath: "vibinArtistsApi",
-    baseQuery: fetchBaseQuery({ baseUrl: "/artists" }),
+    baseQuery: fetchBaseQuery({ baseUrl: "/api/artists" }),
     keepUnusedDataFor: API_REFRESH_INTERVAL,
     endpoints: (builder) => ({
         getArtistById: builder.query<Artist, MediaId>({

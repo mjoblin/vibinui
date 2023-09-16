@@ -64,6 +64,10 @@ const Playhead: FC = () => {
                     setManualPosition(value);
                 }}
                 onChangeEnd={(value) => {
+                    if (!activeTransportActions.includes("seek")) {
+                        return;
+                    }
+
                     // Update the backend first (via the seek() API call), then we also dispatch
                     // a local state update. We do the latter as an optimistic update so that the
                     // UI will reflect the new value for the brief period between when the new
@@ -84,6 +88,13 @@ const Playhead: FC = () => {
                                 ? theme.colors.dark[3]
                                 : theme.colors.blue[1],
                     },
+                    trackContainer: !activeTransportActions.includes("seek")
+                        ? {
+                              "&:hover": {
+                                  cursor: "not-allowed",
+                              },
+                          }
+                        : {},
                     thumb: {
                         height: 8,
                         width: 3,

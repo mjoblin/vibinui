@@ -20,6 +20,9 @@ const PresetsScreen: FC = () => {
     const dispatch = useAppDispatch();
     const { SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.presets);
+    const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.presets
+    );
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
     /**
@@ -45,7 +48,12 @@ const PresetsScreen: FC = () => {
                 <PresetsControls />
             </ScreenHeader>
             <Box pt={SCREEN_HEADER_HEIGHT}>
-                <PresetsWall />
+                <PresetsWall
+                    filterText={filterText}
+                    cardSize={cardSize}
+                    cardGap={cardGap}
+                    showDetails={showDetails}
+                />
             </Box>
         </Stack>
     );
