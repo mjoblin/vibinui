@@ -17,7 +17,8 @@ StreamMagic audio streamer, but has only been tested with the following:
 > internet radio presets configured in the StreamMagic app), and has no support for TIDAL or Qobuz.
 > Nor is Vibin intended to replace general-purpose solutions like Plexamp, Audirvana, Roon, etc.
 
-Watch the [overview video] (4m:15s) to see Vibin's features in action.
+Watch the [overview video] (4m:15s) to see Vibin's features in action. (Does not show some features,
+like Hegel amplifier controls and all-media searching).
 
 &ensp;<br />
 ![Vibin]
