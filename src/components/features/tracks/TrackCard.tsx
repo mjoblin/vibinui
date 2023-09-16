@@ -103,16 +103,16 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
 const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
     track,
     enabledActions,
-    sizeOverride,
-    detailsOverride,
+    size = 200,
+    showDetails = true,
     selected,
     highlightIfPlaying,
     onClick,
 }) => {
     const { CURRENTLY_PLAYING_COLOR, SELECTED_COLOR } = useAppGlobals();
-    const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
-    );
+    // const { cardSize, showDetails } = useAppSelector(
+    //     (state: RootState) => state.userSettings.tracks
+    // );
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
@@ -122,7 +122,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
-            width: sizeOverride || cardSize,
+            width: size,
             border: highlightIfPlaying && isCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
@@ -144,13 +144,13 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
                 <TrackArt
                     track={track}
                     enabledActions={enabledActions}
-                    size={sizeOverride ? sizeOverride - borderSize * 2 : cardSize - borderSize * 2}
+                    size={size - borderSize * 2}
                     radius={5}
                 />
             </Box>
 
             {/* Track title, artist, year, genre */}
-            {((detailsOverride === undefined && showDetails) || detailsOverride) && (
+            {showDetails && (
                 <Stack spacing={0} p={7}>
                     <Text size="xs" weight="bold" sx={{ lineHeight: 1.25 }}>
                         {track.title}
@@ -182,28 +182,29 @@ type TrackCardProps = {
     track: Track;
     showArt?: boolean;
     enabledActions?: EnabledActions;
-    sizeOverride?: number;
-    detailsOverride?: boolean;
+    size?: number;
+    showDetails?: boolean;
     selected?: boolean;
     highlightIfPlaying?: boolean;
     onClick?: (track: Track) => void;
 };
 
-const TrackCard: FC<TrackCardProps> = ({
+const TrackCard: FC<TrackCardProps & { cacheRenderSize?: boolean }> = ({
     type = "art_focused",
     track,
     showArt = true,
     enabledActions,
-    sizeOverride,
-    detailsOverride,
+    size,
+    showDetails,
     selected = false,
     highlightIfPlaying = true,
     onClick,
+    cacheRenderSize = true,
 }) => {
     const dispatch = useAppDispatch();
-    const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
-    );
+    // const { cardSize, showDetails } = useAppSelector(
+    //     (state: RootState) => state.userSettings.tracks
+    // );
     const latestVisibleRenderSize = useAppSelector(
         (state: RootState) => state.internal.tracks.trackCard
     );
@@ -222,6 +223,10 @@ const TrackCard: FC<TrackCardProps> = ({
      * scrolling (and scrollbar height) works as expected by the user.
      */
     useEffect(() => {
+        if (!cacheRenderSize) {
+            return;
+        }
+
         if (cardRef.current && isVisible) {
             const newRenderWidth = cardRef.current.offsetWidth;
             const newRenderHeight = cardRef.current.offsetHeight;
@@ -235,7 +240,7 @@ const TrackCard: FC<TrackCardProps> = ({
                     })
                 );
         }
-    }, [cardRef, isVisible, cardSize, showDetails, latestVisibleRenderSize, dispatch]);
+    }, [cardRef, cacheRenderSize, isVisible, size, showDetails, latestVisibleRenderSize, dispatch]);
 
     const visibilityOffset = type === "art_focused" ? -1000 : -200;
 
@@ -258,8 +263,8 @@ const TrackCard: FC<TrackCardProps> = ({
                             <TrackCardArtFocused
                                 track={track}
                                 enabledActions={enabledActions}
-                                sizeOverride={sizeOverride}
-                                detailsOverride={detailsOverride}
+                                size={size}
+                                showDetails={showDetails}
                                 selected={selected}
                                 highlightIfPlaying={highlightIfPlaying}
                             />

@@ -22,6 +22,9 @@ const AlbumsScreen: FC = () => {
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const [currentAlbumRef, setCurrentAlbumRef] = useState<RefObject<HTMLDivElement>>();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.albums);
+    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
+    );
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
     /**
@@ -69,7 +72,14 @@ const AlbumsScreen: FC = () => {
                 <AlbumsControls scrollToCurrent={scrollToCurrent} />
             </ScreenHeader>
             <Box pt={SCREEN_HEADER_HEIGHT}>
-                <AlbumsWall onNewCurrentAlbumRef={setCurrentAlbumRef} />
+                <AlbumsWall
+                    filterText={filterText}
+                    activeCollection={activeCollection}
+                    cardSize={cardSize}
+                    cardGap={cardGap}
+                    showDetails={showDetails}
+                    onNewCurrentAlbumRef={setCurrentAlbumRef}
+                />
             </Box>
         </Stack>
     );

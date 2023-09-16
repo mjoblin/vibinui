@@ -95,7 +95,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
 
             showErrorNotification({
                 title: "Error replacing Playlist",
-                message: `[${status}] ${data}`,
+                message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
     }, [addStatus]);

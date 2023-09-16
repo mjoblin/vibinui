@@ -51,15 +51,17 @@ const useStyles = createStyles((theme) => ({
 
 type PresetCardProps = {
     preset: Preset;
+    size?: number;
+    showDetails?: boolean;
 };
 
-const PresetCard: FC<PresetCardProps> = ({ preset }) => {
+const PresetCard: FC<PresetCardProps> = ({ preset, size = 50, showDetails = true }) => {
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
-    const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.presets
-    );
+    // const { cardSize, showDetails } = useAppSelector(
+    //     (state: RootState) => state.userSettings.presets
+    // );
     const playState = useAppSelector((state: RootState) => state.playback.play_status);
     const [playPresetId] = useLazyPlayPresetIdQuery();
     const [waitingForConnection, setWaitingForConnection] = useState<boolean>(false);
@@ -105,15 +107,15 @@ const PresetCard: FC<PresetCardProps> = ({ preset }) => {
 
     const borderSize = 3;
 
-    const artWidth = cardSize - borderSize * 2;
-    const artHeight = cardSize - borderSize * 2;
+    const artWidth = size - borderSize * 2;
+    const artHeight = size - borderSize * 2;
 
     const overlayWidth = artWidth;
     const overlayHeight = artHeight;
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         presetCard: {
-            width: cardSize,
+            width: size,
             border: presetIsCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,

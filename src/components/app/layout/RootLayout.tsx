@@ -17,7 +17,11 @@ import { useWindowEvent } from "@mantine/hooks";
 import { RootState } from "../../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { setCurrentScreen, setShowCurrentTrackLyrics } from "../../../app/store/internalSlice";
+import {
+    setCurrentScreen,
+    setShowCurrentTrackLyrics,
+    setShowMediaSearch,
+} from "../../../app/store/internalSlice";
 import { setApplicationHaveShownWelcomeMessage } from "../../../app/store/userSettingsSlice";
 import { showWarningNotification } from "../../../app/utils";
 import AppHeader from "./AppHeader";
@@ -25,6 +29,7 @@ import AppNav from "./AppNav";
 import DebugPanel from "../DebugPanel";
 import BackgroundImageManager from "../managers/BackgroundImageManager";
 import KeyboardShortcutsManager from "../managers/KeyboardShortcutsManager";
+import MediaSearchModal from "../../shared/mediaDisplay/MediaSearchModal";
 import TrackLyricsModal from "../../shared/mediaDisplay/TrackLyricsModal";
 import WelcomeMessage from "../WelcomeMessage";
 
@@ -67,8 +72,13 @@ const RootLayout: FC = () => {
     const location = useLocation();
     const { classes } = useStyles();
     const { APP_URL_PREFIX, APP_PADDING, RENDER_APP_BACKGROUND_IMAGE } = useAppGlobals();
-    const { currentlyPlayingArtUrl, currentScreen, showCurrentTrackLyrics, websocketStatus } =
-        useAppSelector((state: RootState) => state.internal.application);
+    const {
+        currentlyPlayingArtUrl,
+        currentScreen,
+        showCurrentTrackLyrics,
+        showMediaSearch,
+        websocketStatus,
+    } = useAppSelector((state: RootState) => state.internal.application);
     const { haveShownWelcomeMessage } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );    
@@ -219,6 +229,12 @@ const RootLayout: FC = () => {
                         onClose={() => dispatch(setShowCurrentTrackLyrics(false))}
                     />
                 )}
+
+                {/* Handle request to show the media search modal */}
+                <MediaSearchModal
+                    opened={showMediaSearch}
+                    onClose={() => dispatch(setShowMediaSearch(false))}
+                />
             </AppShell>
         </>
     );

@@ -17,7 +17,8 @@ StreamMagic audio streamer, but has only been tested with the following:
 > internet radio presets configured in the StreamMagic app), and has no support for TIDAL or Qobuz.
 > Nor is Vibin intended to replace general-purpose solutions like Plexamp, Audirvana, Roon, etc.
 
-Watch the [overview video] (4m:15s) to see Vibin's features in action.
+Watch the [overview video] (4m:15s) to see Vibin's features in action. (Does not show some features,
+like Hegel amplifier controls and all-media searching).
 
 &ensp;<br />
 ![Vibin]
@@ -68,6 +69,7 @@ Vibin's features include:
   * Filtering.
   * Searching by title, date, genre, etc.
   * Searching for lyrics.
+  * Searching across all media at once (Albums, Tracks, Presets, Favorites).
 * **Playlists**.
   * Viewing and interacting with the active streamer Playlist.
   * Saving and switching between stored Playlists.
@@ -199,10 +201,18 @@ Albums and Tracks can be favorited.
 
 ### General features
 
-Vibin supports additional features including filtering, art display settings, input switching, and
-more.
+Vibin supports additional features including all-media searches, filtering, art display settings,
+input switching, and more.
+
+#### Search across all media at once
+
+All media can be searched at once (Albums, Tracks, Presets, Favorites).
+
+![Media search]
 
 #### Media filtering
+
+Media display can be filtered based on various metadata criteria.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_search.jpg" width="400" />
 
@@ -253,3 +263,4 @@ Application features can be triggered using keyboard shortcuts.
 [Tracks filtered by title]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_love.jpg?raw=true
 [Favorites]: https://github.com/mjoblin/media/blob/main/vibin/images/favorites.jpg?raw=true
 [Presets]: https://github.com/mjoblin/media/blob/main/vibin/images/presets.jpg?raw=true
+[Media search]: https://github.com/mjoblin/media/blob/main/vibin/images/media_search.jpg?raw=true

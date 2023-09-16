@@ -6,6 +6,8 @@ import { CurrentTrackTab } from "../../components/features/CurrentTrackScreen";
 
 // ================================================================================================
 // Application state for user settings.
+//
+// See localStorageMiddleware.ts for instructions on how "TO STORE A USER SETTING IN LOCAL STORAGE"
 // ================================================================================================
 
 export const minCardGap = 0;
@@ -14,13 +16,23 @@ export const minCardSize = 100;
 export const maxCardSize = 300;
 
 const DEFAULT_ALBUMS_ACTIVE_COLLECTION = "all";
-const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_CARD_GAP = 15;
+const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING = false;
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
 const DEFAULT_APPLICATION_AMPLIFIER_MAX_VOLUME = 0.5;
 const DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = false;
+const DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP = 15;
+const DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_SIZE = 200;
+const DEFAULT_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES = [
+    "albums",
+    "tracks",
+    "presets",
+    "favorites",
+];
+const DEFAULT_APPLICATION_MEDIA_SEARCH_FILTER_TEXT = "";
+const DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS = true;
 const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND = true;
 const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
@@ -30,20 +42,20 @@ const DEFAULT_ARTISTS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_ARTISTS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
 const DEFAULT_ARTISTS_VIEWMODE = "detailed";
 const DEFAULT_FAVORITES_ACTIVE_COLLECTION = "all";
-const DEFAULT_FAVORITES_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_FAVORITES_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
+const DEFAULT_FAVORITES_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_FAVORITES_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_FAVORITES_SHOW_DETAILS = true;
 const DEFAULT_CURRENTTRACK_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
 const DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = true;
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
-const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
+const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_PRESETS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_PRESETS_SHOW_DETAILS = true;
-const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_TRACKS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
+const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_TRACKS_FOLLOW_CURRENTLY_PLAYING = false;
 const DEFAULT_TRACKS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
@@ -58,6 +70,11 @@ export const LSKEY_ALBUMS_FOLLOW_CURRENTLY_PLAYING = "albums.followCurrentlyPlay
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
 export const LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME = "application.amplifierMaxVolume";
 export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP = "application.mediaSearch.cardGap";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE = "application.mediaSearch.cardSize";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES = "application.mediaSearch.displayCategories";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_FILTER_TEXT = "application.mediaSearch.filterText";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS = "application.mediaSearch.showDetails";
 export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
@@ -92,6 +109,7 @@ export type PlaylistEditorSortField = "name" | "created" | "entry_count" | "upda
 export type AlbumCollection = "all" | "new";
 export type ArtistCollection = "all" | "with_albums";
 export type FavoriteCollection = "all" | "albums" | "tracks";
+export type MediaSearchDisplayCategory = "albums" | "tracks" | "presets" | "favorites";
 
 export interface UserSettingsState {
     albums: {
@@ -105,6 +123,13 @@ export interface UserSettingsState {
     application: {
         amplifierMaxVolume: number;
         haveShownWelcomeMessage: boolean;
+        mediaSearch: {
+            cardGap: number;
+            cardSize: number;
+            displayCategories: MediaSearchDisplayCategory[];
+            filterText: string;
+            showDetails: boolean;
+        }
         theme: ApplicationTheme;
         useImageBackground: boolean;
     };
@@ -190,6 +215,28 @@ const initialState: UserSettingsState = {
             LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
             DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE
         ),
+        mediaSearch: {
+            cardGap: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP
+            ),
+            cardSize: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_SIZE
+            ),
+            displayCategories: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES
+            ),
+            filterText: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_FILTER_TEXT,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_FILTER_TEXT
+            ),
+            showDetails: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS
+            ),
+        },
         theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
         useImageBackground: getLocalStorageValue(
             LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
@@ -227,7 +274,10 @@ const initialState: UserSettingsState = {
         ),
     },
     currentTrack: {
-        activeTab: getLocalStorageValue(LSKEY_CURRENTTRACK_ACTIVETAB, DEFAULT_CURRENTTRACK_ACTIVETAB),
+        activeTab: getLocalStorageValue(
+            LSKEY_CURRENTTRACK_ACTIVETAB,
+            DEFAULT_CURRENTTRACK_ACTIVETAB
+        ),
     },
     playlist: {
         editor: {
@@ -266,28 +316,34 @@ export const userSettingsSlice = createSlice({
     initialState,
     reducers: {
         resetAlbumsToDefaults: (state) => {
-            state.albums.cardSize = DEFAULT_ALBUMS_CARD_SIZE;
             state.albums.cardGap = DEFAULT_ALBUMS_CARD_GAP;
+            state.albums.cardSize = DEFAULT_ALBUMS_CARD_SIZE;
             state.albums.showDetails = DEFAULT_ALBUMS_SHOW_DETAILS;
         },
+        resetApplicationMediaSearchToDefaults: (state) => {
+            state.application.mediaSearch.cardGap = DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP;
+            state.application.mediaSearch.cardSize = DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_SIZE;
+            state.application.mediaSearch.showDetails =
+                DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS;
+        },
         resetArtistsToDefaults: (state) => {
-            state.artists.cardSize = DEFAULT_ARTISTS_CARD_SIZE;
             state.artists.cardGap = DEFAULT_ARTISTS_CARD_GAP;
+            state.artists.cardSize = DEFAULT_ARTISTS_CARD_SIZE;
             state.artists.showDetails = DEFAULT_ARTISTS_SHOW_DETAILS;
         },
         resetFavoritesToDefaults: (state) => {
-            state.favorites.cardSize = DEFAULT_FAVORITES_CARD_SIZE;
             state.favorites.cardGap = DEFAULT_FAVORITES_CARD_GAP;
+            state.favorites.cardSize = DEFAULT_FAVORITES_CARD_SIZE;
             state.favorites.showDetails = DEFAULT_FAVORITES_SHOW_DETAILS;
         },
         resetPresetsToDefaults: (state) => {
-            state.presets.cardSize = DEFAULT_PRESETS_CARD_SIZE;
             state.presets.cardGap = DEFAULT_PRESETS_CARD_GAP;
+            state.presets.cardSize = DEFAULT_PRESETS_CARD_SIZE;
             state.presets.showDetails = DEFAULT_PRESETS_SHOW_DETAILS;
         },
         resetTracksToDefaults: (state) => {
-            state.tracks.cardSize = DEFAULT_TRACKS_CARD_SIZE;
             state.tracks.cardGap = DEFAULT_TRACKS_CARD_GAP;
+            state.tracks.cardSize = DEFAULT_TRACKS_CARD_SIZE;
             state.tracks.showDetails = DEFAULT_TRACKS_SHOW_DETAILS;
         },
         setAlbumsActiveCollection: (state, action: PayloadAction<AlbumCollection>) => {
@@ -313,6 +369,24 @@ export const userSettingsSlice = createSlice({
         },
         setApplicationHaveShownWelcomeMessage: (state, action: PayloadAction<boolean>) => {
             state.application.haveShownWelcomeMessage = action.payload;
+        },
+        setApplicationMediaSearchCardGap: (state, action: PayloadAction<number>) => {
+            state.application.mediaSearch.cardGap = action.payload;
+        },
+        setApplicationMediaSearchCardSize: (state, action: PayloadAction<number>) => {
+            state.application.mediaSearch.cardSize = action.payload;
+        },
+        setApplicationMediaSearchDisplayCategories: (
+            state,
+            action: PayloadAction<MediaSearchDisplayCategory[]>
+        ) => {
+            state.application.mediaSearch.displayCategories = action.payload;
+        },
+        setApplicationMediaSearchFilterText: (state, action: PayloadAction<string>) => {
+            state.application.mediaSearch.filterText = action.payload;
+        },
+        setApplicationMediaSearchShowDetails: (state, action: PayloadAction<boolean>) => {
+            state.application.mediaSearch.showDetails = action.payload;
         },
         setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {
             state.application.theme = action.payload;
@@ -410,6 +484,7 @@ export const userSettingsSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
     resetAlbumsToDefaults,
+    resetApplicationMediaSearchToDefaults,
     resetArtistsToDefaults,
     resetFavoritesToDefaults,
     resetPresetsToDefaults,
@@ -422,6 +497,11 @@ export const {
     setAlbumsShowDetails,
     setApplicationAmplifierMaxVolume,
     setApplicationHaveShownWelcomeMessage,
+    setApplicationMediaSearchCardGap,
+    setApplicationMediaSearchCardSize,
+    setApplicationMediaSearchDisplayCategories,
+    setApplicationMediaSearchFilterText,
+    setApplicationMediaSearchShowDetails,
     setApplicationTheme,
     setApplicationUseImageBackground,
     setArtistsActiveCollection,

@@ -16,12 +16,28 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 // Presets can be a mix of various media, such as Internet Radio, Albums, etc.
 // ================================================================================================
 
-const PresetsWall: FC = () => {
+type PresetsWallProps = {
+    filterText?: string;
+    cardSize?: number;
+    cardGap?: number;
+    showDetails?: boolean;
+    quietUnlessShowingPresets?: boolean;
+    onIsFilteringUpdate?: (isFiltering: boolean) => void;
+    onDisplayCountUpdate?: (displayCount: number) => void;
+}
+
+const PresetsWall: FC<PresetsWallProps> = ({
+    filterText = "",
+    cardSize = 50,
+    cardGap = 50,
+    showDetails = true,
+    quietUnlessShowingPresets = false,
+    onIsFilteringUpdate,
+    onDisplayCountUpdate,
+}) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const { presets, haveReceivedInitialState } = useAppSelector((state: RootState) => state.presets);
-    const { cardSize, cardGap } = useAppSelector((state: RootState) => state.userSettings.presets);
-    const filterText = useAppSelector((state: RootState) => state.userSettings.presets.filterText);
     const [presetsToDisplay, setPresetsToDisplay] = useState<Preset[]>([]);
 
     // NOTE: The PresetWall differs from the Artists/Albums/Tracks walls in that it gets its data
@@ -38,14 +54,25 @@ const PresetsWall: FC = () => {
     }))();
 
     /**
+     * Notify parent component of updated display count.
+     */
+    useEffect(() => {
+        onDisplayCountUpdate && onDisplayCountUpdate(presetsToDisplay.length);
+    }, [presetsToDisplay, onDisplayCountUpdate]);
+
+    /**
      * Determine which Presets to display based on the current filter text.
      */
     useEffect(() => {
+        onIsFilteringUpdate && onIsFilteringUpdate(true);
+
         const presetsToDisplay = collectionFilter(presets, filterText, "name");
 
         dispatch(setFilteredPresetIds(presetsToDisplay.map((preset) => preset.id)));
         setPresetsToDisplay(presetsToDisplay);
-    }, [presets, filterText, dispatch]);
+
+        onIsFilteringUpdate && onIsFilteringUpdate(false);
+    }, [presets, filterText, dispatch, onIsFilteringUpdate]);
     
     if (!haveReceivedInitialState) {
         return (
@@ -55,10 +82,16 @@ const PresetsWall: FC = () => {
         );
     }
 
-    if (presets.length <= 0) {
+    if (quietUnlessShowingPresets && presetsToDisplay.length <= 0) {
+        return <></>;
+    }
+
+    if (presetsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label="No Presets found" />
+                <SadLabel
+                    label={filterText === "" ? "No Presets available" : "No matching Presets"}
+                />
             </Center>
         );
     }
@@ -68,7 +101,12 @@ const PresetsWall: FC = () => {
     return (
         <Box className={dynamicClasses.presetsWall}>
             {presetsToDisplay.map((preset) => (
-                <PresetCard key={preset.id} preset={preset} />
+                <PresetCard
+                    key={preset.id}
+                    preset={preset}
+                    size={cardSize}
+                    showDetails={showDetails}
+                />
             ))}
         </Box>
     );
