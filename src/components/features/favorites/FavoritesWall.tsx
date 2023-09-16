@@ -113,7 +113,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
             activeCollection === "tracks" && setFavoritesToDisplay(filteredTrackFavorites);
         }
 
-        onIsFilteringUpdate && onIsFilteringUpdate(true);
+        onIsFilteringUpdate && onIsFilteringUpdate(false);
     }, [favorites, filterText, activeCollection, dispatch, onIsFilteringUpdate]);
 
     /**
