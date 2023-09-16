@@ -32,7 +32,8 @@ type FavoritesWallProps = {
     showDetails?: boolean;
     quietUnlessShowingFavorites?: boolean;
     cacheCardRenderSize?: boolean;
-    onUpdatedDisplayCount?: (displayCount: number) => void;
+    onIsFilteringUpdate?: (isFiltering: boolean) => void;
+    onDisplayCountUpdate?: (displayCount: number) => void;
 }
 
 const FavoritesWall: FC<FavoritesWallProps> = ({
@@ -43,7 +44,8 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
     showDetails = true,
     quietUnlessShowingFavorites = false,
     cacheCardRenderSize = true,
-    onUpdatedDisplayCount,
+    onIsFilteringUpdate,
+    onDisplayCountUpdate,
 }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
@@ -67,6 +69,8 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
      * chosen to view Album or Track Favorites (or both).
      */
     useEffect(() => {
+        onIsFilteringUpdate && onIsFilteringUpdate(true);
+
         const albumFavorites = favorites.filter((favorite) => favorite.type === "album");
         const trackFavorites = favorites.filter((favorite) => favorite.type === "track");
         const filteredAlbumFavorites = collectionFilter(
@@ -108,14 +112,16 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
             activeCollection === "albums" && setFavoritesToDisplay(filteredAlbumFavorites);
             activeCollection === "tracks" && setFavoritesToDisplay(filteredTrackFavorites);
         }
-    }, [favorites, filterText, activeCollection, dispatch]);
+
+        onIsFilteringUpdate && onIsFilteringUpdate(true);
+    }, [favorites, filterText, activeCollection, dispatch, onIsFilteringUpdate]);
 
     /**
      * Notify parent component of updated display count.
      */
     useEffect(() => {
-        onUpdatedDisplayCount && onUpdatedDisplayCount(favoritesToDisplay.length);
-    }, [favoritesToDisplay, onUpdatedDisplayCount]);
+        onDisplayCountUpdate && onDisplayCountUpdate(favoritesToDisplay.length);
+    }, [favoritesToDisplay, onDisplayCountUpdate]);
 
     // --------------------------------------------------------------------------------------------
 

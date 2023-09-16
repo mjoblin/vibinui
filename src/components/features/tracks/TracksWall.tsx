@@ -25,7 +25,8 @@ type TrackWallProps = {
     showDetails?: boolean;
     quietUnlessShowingTracks?: boolean;
     cacheCardRenderSize?: boolean;
-    onUpdatedDisplayCount?: (displayCount: number) => void;
+    onIsFilteringUpdate?: (isFiltering: boolean) => void;
+    onDisplayCountUpdate?: (displayCount: number) => void;
     onNewCurrentTrackRef?: (ref: RefObject<HTMLDivElement>) => void;
 };
 
@@ -36,7 +37,8 @@ const TracksWall: FC<TrackWallProps> = ({
     showDetails = true,
     quietUnlessShowingTracks = false,
     cacheCardRenderSize = true,
-    onUpdatedDisplayCount,
+    onIsFilteringUpdate,
+    onDisplayCountUpdate,
     onNewCurrentTrackRef,
 }) => {
     const dispatch = useAppDispatch();
@@ -129,11 +131,18 @@ const TracksWall: FC<TrackWallProps> = ({
     ]);
 
     /**
+     * Notify parent component of current filtering state.
+     */
+    useEffect(() => {
+        onIsFilteringUpdate && onIsFilteringUpdate(calculatingTracksToDisplay);
+    }, [calculatingTracksToDisplay, onIsFilteringUpdate]);
+
+    /**
      * Notify parent component of updated display count.
      */
     useEffect(() => {
-        onUpdatedDisplayCount && onUpdatedDisplayCount(tracksToDisplay.length);
-    }, [tracksToDisplay, onUpdatedDisplayCount]);
+        onDisplayCountUpdate && onDisplayCountUpdate(tracksToDisplay.length);
+    }, [tracksToDisplay, onDisplayCountUpdate]);
 
     // --------------------------------------------------------------------------------------------
 

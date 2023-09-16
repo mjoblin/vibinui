@@ -25,7 +25,8 @@ type AlbumWallProps = {
     showDetails?: boolean;
     quietUnlessShowingAlbums?: boolean;
     cacheCardRenderSize?: boolean;
-    onUpdatedDisplayCount?: (displayCount: number) => void;
+    onIsFilteringUpdate?: (isFiltering: boolean) => void;
+    onDisplayCountUpdate?: (displayCount: number) => void;
     onNewCurrentAlbumRef?: (ref: RefObject<HTMLDivElement>) => void;
 }
 
@@ -37,7 +38,8 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     showDetails = true,
     quietUnlessShowingAlbums = false,
     cacheCardRenderSize = true,
-    onUpdatedDisplayCount,
+    onIsFilteringUpdate,
+    onDisplayCountUpdate,
     onNewCurrentAlbumRef,
 }) => {
     const dispatch = useAppDispatch();
@@ -120,11 +122,18 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     }, [allAlbums, allStatus, newAlbums, filterText, activeCollection, dispatch]);
 
     /**
+     * Notify parent component of current filtering state.
+     */
+    useEffect(() => {
+        onIsFilteringUpdate && onIsFilteringUpdate(calculatingAlbumsToDisplay);
+    }, [calculatingAlbumsToDisplay, onIsFilteringUpdate]);
+
+    /**
      * Notify parent component of updated display count.
      */
     useEffect(() => {
-        onUpdatedDisplayCount && onUpdatedDisplayCount(albumsToDisplay.length);
-    }, [albumsToDisplay, onUpdatedDisplayCount]);
+        onDisplayCountUpdate && onDisplayCountUpdate(albumsToDisplay.length);
+    }, [albumsToDisplay, onDisplayCountUpdate]);
 
     // --------------------------------------------------------------------------------------------
 

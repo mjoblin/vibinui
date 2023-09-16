@@ -51,6 +51,10 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
     const [tracksDisplayCount, setTracksDisplayCount] = useState<number>(0);
     const [presetsDisplayCount, setPresetsDisplayCount] = useState<number>(0);
     const [favoritesDisplayCount, setFavoritesDisplayCount] = useState<number>(0);
+    const [isAlbumsFilterExecuting, setIsAlbumsFilterExecuting] = useState<boolean>(false);
+    const [isTracksFilterExecuting, setIsTracksFilterExecuting] = useState<boolean>(false);
+    const [isPresetsFilterExecuting, setIsPresetsFilterExecuting] = useState<boolean>(false);
+    const [isFavoritesFilterExecuting, setIsFavoritesFilterExecuting] = useState<boolean>(false);
 
     const headerColor = colors.gray[5];
     const headerSize = 25;
@@ -72,6 +76,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
             <Stack>
                 <Flex gap={10} align="center" sx={{ flexGrow: 1 }}>
                     <TextInput
+                        data-autofocus
                         placeholder="Search for media"
                         label="Filter"
                         value={filterText}
@@ -160,10 +165,11 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                     showDetails={showDetails}
                                     quietUnlessShowingAlbums={true}
                                     cacheCardRenderSize={false}
-                                    onUpdatedDisplayCount={setAlbumsDisplayCount}
+                                    onIsFilteringUpdate={setIsAlbumsFilterExecuting}
+                                    onDisplayCountUpdate={setAlbumsDisplayCount}
                                 />
 
-                                {albumsDisplayCount === 0 && (
+                                {albumsDisplayCount === 0 && !isAlbumsFilterExecuting && (
                                     <Text color={colors.gray[6]} pb={5}>
                                         No matching albums
                                     </Text>
@@ -183,10 +189,11 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                     showDetails={showDetails}
                                     quietUnlessShowingTracks={true}
                                     cacheCardRenderSize={false}
-                                    onUpdatedDisplayCount={setTracksDisplayCount}
+                                    onIsFilteringUpdate={setIsTracksFilterExecuting}
+                                    onDisplayCountUpdate={setTracksDisplayCount}
                                 />
 
-                                {tracksDisplayCount === 0 && (
+                                {tracksDisplayCount === 0 && !isTracksFilterExecuting && (
                                     <Text color={colors.gray[6]} pb={5}>
                                         No matching tracks
                                     </Text>
@@ -205,10 +212,11 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                     cardGap={cardGap}
                                     showDetails={showDetails}
                                     quietUnlessShowingPresets={true}
-                                    onUpdatedDisplayCount={setPresetsDisplayCount}
+                                    onIsFilteringUpdate={setIsPresetsFilterExecuting}
+                                    onDisplayCountUpdate={setPresetsDisplayCount}
                                 />
 
-                                {presetsDisplayCount === 0 && (
+                                {presetsDisplayCount === 0 && !isPresetsFilterExecuting && (
                                     <Text color={colors.gray[6]} pb={5}>
                                         No matching presets
                                     </Text>
@@ -229,10 +237,11 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                     showDetails={showDetails}
                                     quietUnlessShowingFavorites={true}
                                     cacheCardRenderSize={false}
-                                    onUpdatedDisplayCount={setFavoritesDisplayCount}
+                                    onIsFilteringUpdate={setIsFavoritesFilterExecuting}
+                                    onDisplayCountUpdate={setFavoritesDisplayCount}
                                 />
 
-                                {favoritesDisplayCount === 0 && (
+                                {favoritesDisplayCount === 0 && !isFavoritesFilterExecuting && (
                                     <Text color={colors.gray[6]} pb={5}>
                                         No matching favorites
                                     </Text>

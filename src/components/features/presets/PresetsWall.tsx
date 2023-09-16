@@ -22,7 +22,8 @@ type PresetsWallProps = {
     cardGap?: number;
     showDetails?: boolean;
     quietUnlessShowingPresets?: boolean;
-    onUpdatedDisplayCount?: (displayCount: number) => void;
+    onIsFilteringUpdate?: (isFiltering: boolean) => void;
+    onDisplayCountUpdate?: (displayCount: number) => void;
 }
 
 const PresetsWall: FC<PresetsWallProps> = ({
@@ -31,7 +32,8 @@ const PresetsWall: FC<PresetsWallProps> = ({
     cardGap = 50,
     showDetails = true,
     quietUnlessShowingPresets = false,
-    onUpdatedDisplayCount,
+    onIsFilteringUpdate,
+    onDisplayCountUpdate,
 }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
@@ -55,18 +57,22 @@ const PresetsWall: FC<PresetsWallProps> = ({
      * Notify parent component of updated display count.
      */
     useEffect(() => {
-        onUpdatedDisplayCount && onUpdatedDisplayCount(presetsToDisplay.length);
-    }, [presetsToDisplay, onUpdatedDisplayCount]);
+        onDisplayCountUpdate && onDisplayCountUpdate(presetsToDisplay.length);
+    }, [presetsToDisplay, onDisplayCountUpdate]);
 
     /**
      * Determine which Presets to display based on the current filter text.
      */
     useEffect(() => {
+        onIsFilteringUpdate && onIsFilteringUpdate(true);
+
         const presetsToDisplay = collectionFilter(presets, filterText, "name");
 
         dispatch(setFilteredPresetIds(presetsToDisplay.map((preset) => preset.id)));
         setPresetsToDisplay(presetsToDisplay);
-    }, [presets, filterText, dispatch]);
+
+        onIsFilteringUpdate && onIsFilteringUpdate(false);
+    }, [presets, filterText, dispatch, onIsFilteringUpdate]);
     
     if (!haveReceivedInitialState) {
         return (
