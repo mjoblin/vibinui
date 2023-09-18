@@ -165,7 +165,7 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
             <Box className={classes.waveformContainer}>
                 <Image
                     color="rgb(0, 0, 1)"
-                    src={`/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
+                    src={`/api/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
                     radius={5}
                     sx={{
                         filter: "sepia(70%) saturate(100%) brightness(85%) hue-rotate(110deg)",
