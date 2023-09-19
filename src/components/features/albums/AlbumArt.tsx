@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Flex, Image } from "@mantine/core";
+import { Box, createStyles, Flex, Image, Skeleton } from "@mantine/core";
 import { FloatingPosition } from "@mantine/core/lib/Floating/types";
 import { IconPlayerPlay } from "@tabler/icons";
 
@@ -50,6 +50,7 @@ type AlbumArtProps = {
     alt?: string;
     radius?: number;
     showControls?: boolean;
+    showLoading?: boolean;
     enabledActions?: EnabledActions;
     size?: number;
     actionsMenuPosition?: FloatingPosition;
@@ -69,6 +70,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
     alt,
     radius = 0,
     showControls = true,
+    showLoading = true,
     enabledActions = {
         Details: ["all"],
         Favorites: ["all"],
@@ -84,6 +86,7 @@ const AlbumArt: FC<AlbumArtProps> = ({
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
 
     /**
      * Notify the user if there was an error playing the Album (playing an Album actually involves
@@ -107,18 +110,21 @@ const AlbumArt: FC<AlbumArtProps> = ({
 
     return (
         <Box className={classes.albumArtContainer}>
-            <Image
-                src={artUrl}
-                alt={alt ? alt : album ? `${album.artist} / ${album.title}` : undefined}
-                fit="cover"
-                radius={radius}
-                width={size}
-                height={size}
-                withPlaceholder={true}
-                placeholder={<NoArtPlaceholder artSize={size} />}
-            />
+            <Skeleton visible={showLoading && isLoadingArt}>
+                <Image
+                    src={artUrl}
+                    alt={alt ? alt : album ? `${album.artist} / ${album.title}` : undefined}
+                    fit="cover"
+                    radius={radius}
+                    width={size}
+                    height={size}
+                    withPlaceholder={true}
+                    placeholder={<NoArtPlaceholder artSize={size} />}
+                    onLoad={() => setIsLoadingArt(false)}
+                />
+            </Skeleton>
 
-            {album && showControls && (
+            {album && showControls && !isLoadingArt && (
                 <Flex
                     p="xs"
                     justify="space-between"

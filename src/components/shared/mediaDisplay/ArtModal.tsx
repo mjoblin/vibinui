@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { Image, Modal, Stack, useMantineTheme } from "@mantine/core";
+import React, { FC, useState } from "react";
+import { Image, Modal, Skeleton, Stack, useMantineTheme } from "@mantine/core";
 
 import { Album, Track } from "../../../app/types";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
@@ -19,6 +19,7 @@ type ArtModalProps = {
 const ArtModal: FC<ArtModalProps> = ({ media, opened, onClose = undefined }) => {
     const { APP_MODAL_BLUR } = useAppGlobals();
     const { colors } = useMantineTheme();
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
 
     const isTrack = "album" in media;
 
@@ -35,13 +36,18 @@ const ArtModal: FC<ArtModalProps> = ({ media, opened, onClose = undefined }) => 
             <Stack>
                 <MediaSummaryBanner media={media} showArt={false} />
 
-                <Image
-                    src={(media as Track).art_url || media.album_art_uri}
-                    radius={5}
-                    fit="cover"
-                    withPlaceholder={true}
-                    placeholder={<NoArtPlaceholder backgroundColor={colors.dark[5]} />}
-                />
+                {/* TODO: Consider merging AlbumArt and TrackArt into a single component,
+                        which could then be used here. */}
+                <Skeleton visible={isLoadingArt} miw="100%" sx={{ aspectRatio: "1.0" }}>
+                    <Image
+                        src={(media as Track).art_url || media.album_art_uri}
+                        radius={5}
+                        fit="cover"
+                        withPlaceholder={true}
+                        placeholder={<NoArtPlaceholder backgroundColor={colors.dark[5]} />}
+                        onLoad={() => setIsLoadingArt(false)}
+                    />
+                </Skeleton>
             </Stack>
         </Modal>
     );
