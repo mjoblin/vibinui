@@ -6,6 +6,7 @@ import {
     createStyles,
     Image,
     Loader,
+    Skeleton,
     Stack,
     Text,
     useMantineTheme,
@@ -53,18 +54,22 @@ type PresetCardProps = {
     preset: Preset;
     size?: number;
     showDetails?: boolean;
+    showLoading?: boolean;
 };
 
-const PresetCard: FC<PresetCardProps> = ({ preset, size = 50, showDetails = true }) => {
+const PresetCard: FC<PresetCardProps> = ({
+    preset,
+    size = 50,
+    showDetails = true,
+    showLoading = true,
+}) => {
     const { classes } = useStyles();
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
-    // const { cardSize, showDetails } = useAppSelector(
-    //     (state: RootState) => state.userSettings.presets
-    // );
     const playState = useAppSelector((state: RootState) => state.playback.play_status);
     const [playPresetId] = useLazyPlayPresetIdQuery();
     const [waitingForConnection, setWaitingForConnection] = useState<boolean>(false);
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
     const previousPlayState = useRef(playState);
     const previousIsPlayingState = useRef(preset.is_playing);
 
@@ -127,15 +132,18 @@ const PresetCard: FC<PresetCardProps> = ({ preset, size = 50, showDetails = true
     return (
         <Card radius="sm" className={dynamicClasses.presetCard}>
             <Card.Section>
-                <Image
-                    src={preset.art_url}
-                    fit="cover"
-                    radius={5}
-                    width={artWidth}
-                    height={artHeight}
-                    withPlaceholder={true}
-                    placeholder={<NoArtPlaceholder artSize={artWidth} />}
-                />
+                <Skeleton visible={showLoading && isLoadingArt}>
+                    <Image
+                        src={preset.art_url}
+                        fit="cover"
+                        radius={5}
+                        width={artWidth}
+                        height={artHeight}
+                        withPlaceholder={true}
+                        placeholder={<NoArtPlaceholder artSize={artWidth} />}
+                        onLoad={() => setIsLoadingArt(false)}
+                    />
+                </Skeleton>
 
                 {playState === "connecting" && preset.is_playing ? (
                     <Center w={overlayWidth} h={overlayHeight} className={classes.presetConnecting}>

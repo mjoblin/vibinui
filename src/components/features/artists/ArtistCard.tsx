@@ -1,5 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, Card, createStyles, Flex, Image, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+    Box,
+    Card,
+    createStyles,
+    Flex,
+    Image,
+    Skeleton,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Album, Artist, Track } from "../../../app/types";
@@ -55,6 +65,7 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     selected,
     isCurrentlyPlaying,
     highlightIfPlaying,
+    showLoading,
     onClick,
 }) => {
     // TODO: Determination of isCurrentlyPlaying should be done here rather than being passed in
@@ -67,6 +78,7 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
             artUrl={artist.album_art_uri}
             selected={selected}
             isCurrentlyPlaying={highlightIfPlaying && isCurrentlyPlaying}
+            showLoading={showLoading}
             onClick={() => onClick && onClick(artist)}
         >
             <Text size="sm" weight="bold" sx={{ lineHeight: 1.0 }}>
@@ -82,10 +94,11 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     );
 };
 
-const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks, onClick }) => {
+const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks, showLoading, onClick }) => {
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
 
     const borderSize = 2;
 
@@ -100,12 +113,19 @@ const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks,
         <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.artistCard}>
             {/* Artist art */}
             <Card.Section>
-                <Image
-                    src={artist.album_art_uri}
+                <Skeleton
+                    visible={showLoading && isLoadingArt}
                     width={cardSize - borderSize * 2}
                     height={cardSize - borderSize * 2}
-                    radius={5}
-                />
+                >
+                    <Image
+                        src={artist.album_art_uri}
+                        width={cardSize - borderSize * 2}
+                        height={cardSize - borderSize * 2}
+                        radius={5}
+                        onLoad={() => setIsLoadingArt(false)}
+                    />
+                </Skeleton>
             </Card.Section>
 
             {/* Artist title (name) */}
@@ -132,6 +152,7 @@ type ArtistCardProps = {
     selected?: boolean;
     isCurrentlyPlaying?: boolean;
     highlightIfPlaying?: boolean;
+    showLoading?: boolean;
     onClick?: (artist: Artist) => void;
 };
 
@@ -143,6 +164,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
     selected = false,
     isCurrentlyPlaying = false,
     highlightIfPlaying = true,
+    showLoading = true,
     onClick,
 }) => {
     const dispatch = useAppDispatch();
@@ -227,6 +249,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
                             selected={selected}
                             isCurrentlyPlaying={isCurrentlyPlaying}
                             highlightIfPlaying={highlightIfPlaying}
+                            showLoading={showLoading}
                             onClick={onClick}
                         />
                     </Box>

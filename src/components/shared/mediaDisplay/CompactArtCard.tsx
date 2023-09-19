@@ -1,5 +1,14 @@
-import React, { FC, ReactNode } from "react";
-import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@mantine/core";
+import React, { FC, ReactNode, useState } from "react";
+import {
+    Box,
+    createStyles,
+    Flex,
+    Image,
+    Paper,
+    Skeleton,
+    Stack,
+    useMantineTheme,
+} from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import NoArtPlaceholder from "./NoArtPlaceholder";
@@ -14,6 +23,7 @@ type CompactArtCardProps = {
     actions?: ReactNode;
     selected?: boolean;
     isCurrentlyPlaying?: boolean;
+    showLoading?: boolean;
     onClick?: () => void;
     children: ReactNode;
 };
@@ -23,11 +33,13 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
     actions = null,
     selected = false,
     isCurrentlyPlaying = false,
+    showLoading = true,
     onClick,
     children,
 }) => {
     const { colors } = useMantineTheme();
     const { SELECTED_COLOR, CURRENTLY_PLAYING_COLOR } = useAppGlobals();
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
 
     const artSize = 70;
     const borderSize = 2;
@@ -59,20 +71,27 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
             <Flex align="flex-start" justify="space-between" gap={10} w="100%">
                 <Flex align="flex-start">
                     {artUrl && (
-                        <Image
-                            src={artUrl}
+                        <Skeleton
+                            visible={showLoading && isLoadingArt}
                             width={artSize}
                             height={artSize}
-                            radius={5}
-                            fit="cover"
-                            withPlaceholder={true}
-                            placeholder={
-                                <NoArtPlaceholder
-                                    artSize={artSize}
-                                    backgroundColor={colors.dark[5]}
-                                />
-                            }
-                        />
+                        >
+                            <Image
+                                src={artUrl}
+                                width={artSize}
+                                height={artSize}
+                                radius={5}
+                                fit="cover"
+                                withPlaceholder={true}
+                                placeholder={
+                                    <NoArtPlaceholder
+                                        artSize={artSize}
+                                        backgroundColor={colors.dark[5]}
+                                    />
+                                }
+                                onLoad={() => setIsLoadingArt(false)}
+                            />
+                        </Skeleton>
                     )}
                     <Stack spacing={5} p={10}>
                         {children}

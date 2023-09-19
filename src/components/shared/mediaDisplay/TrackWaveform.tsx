@@ -1,5 +1,15 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import { Badge, Box, createStyles, Flex, Image, Stack, Text, useMantineTheme } from "@mantine/core";
+import {
+    Badge,
+    Box,
+    createStyles,
+    Flex,
+    Image,
+    Skeleton,
+    Stack,
+    Text,
+    useMantineTheme,
+} from "@mantine/core";
 import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../../app/types";
@@ -18,11 +28,6 @@ import { setWaveformsSupported } from "../../../app/store/internalSlice";
 //  a new playhead position doesn't result in a brief delay before the update is displayed.
 
 const useStyles = createStyles((theme) => ({
-    waveformContainer: {
-        position: "relative",
-        opacity: 0.35,
-        borderRadius: 5,
-    },
     waveformProgress: {
         position: "absolute",
         top: 0,
@@ -122,6 +127,8 @@ const TrackWaveformProgress: FC = () => {
     );
 };
 
+// ------------------------------------------------------------------------------------------------
+
 type TrackWaveformProps = {
     trackId: MediaId;
     width?: number;
@@ -137,9 +144,25 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
 }) => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
-    const { classes } = useStyles();
     const { waveformsSupported } = useAppSelector((state: RootState) => state.internal.application);
+    const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const { data: rms, isSuccess: haveRMS, isError: gotRMSError } = useGetRMSQuery(trackId);
+    const [isLoadingWaveform, setIsLoadingWaveform] = useState<boolean>(true);
+
+    // The waveform container needs to maintain an aspect ratio based on the given width:height.
+    const { classes: dynamicClasses } = createStyles((theme) => ({
+        waveformContainer: {
+            position: "relative",
+            width: "100%",
+            aspectRatio: `${width / height}`,
+            opacity: 0.35,
+            borderRadius: 5,
+        },
+    }))();
+
+    useEffect(() => {
+        setIsLoadingWaveform(true);
+    }, [trackId]);
 
     /**
      * If a request for RMS fails, then assume that the backend doesn't support waveforms. This is
@@ -162,16 +185,20 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
 
     return (
         <Stack spacing={10}>
-            <Box className={classes.waveformContainer}>
-                <Image
-                    color="rgb(0, 0, 1)"
-                    src={`/api/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
-                    radius={5}
-                    sx={{
-                        filter: "sepia(70%) saturate(100%) brightness(85%) hue-rotate(110deg)",
-                    }}
-                />
-                {showProgress && <TrackWaveformProgress />}
+            <Box className={dynamicClasses.waveformContainer}>
+                <Skeleton visible={isLoadingWaveform}>
+                    <Image
+                        src={`/api/tracks/${trackId}/waveform.png?width=${width}&height=${height}`}
+                        radius={5}
+                        sx={{
+                            filter: "sepia(70%) saturate(100%) brightness(85%) hue-rotate(110deg)",
+                        }}
+                        onLoad={() => setIsLoadingWaveform(false)}
+                    />
+                    {showProgress && playStatus && ["play", "pause"].includes(playStatus) && (
+                        <TrackWaveformProgress />
+                    )}
+                </Skeleton>
             </Box>
 
             {haveRMS && (

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
-import { Box, createStyles, Flex, Image } from "@mantine/core";
+import { Box, createStyles, Flex, Image, Skeleton } from "@mantine/core";
 import { IconPlayerPlay } from "@tabler/icons";
 
 import { Track } from "../../../app/types";
@@ -49,7 +49,9 @@ type TrackArtProps = {
     artUri?: string;
     alt?: string;
     radius?: number;
+    fit?: React.CSSProperties["objectFit"],
     showControls?: boolean;
+    showLoading?: boolean;
     enabledActions?: EnabledActions;
     hidePlayButton?: boolean;
     size?: number;
@@ -67,7 +69,9 @@ const TrackArt: FC<TrackArtProps> = ({
     artUri,
     alt,
     radius = 0,
+    fit = "cover",
     showControls = true,
+    showLoading = true,
     enabledActions = {
         Details: ["all"],
         Favorites: ["all"],
@@ -84,6 +88,7 @@ const TrackArt: FC<TrackArtProps> = ({
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
 
     /**
      * Notify the user if there was an error playing the Track (playing a Track actually involves
@@ -106,18 +111,21 @@ const TrackArt: FC<TrackArtProps> = ({
 
     return (
         <Box className={classes.trackArtContainer}>
-            <Image
-                src={artUri ? artUri : track ? track.album_art_uri || track.art_url : ""}
-                fit="cover"
-                radius={radius}
-                width={size}
-                height={size}
-                withPlaceholder={true}
-                placeholder={<NoArtPlaceholder artSize={size} />}
-            />
+            <Skeleton visible={showLoading && isLoadingArt}>
+                <Image
+                    src={artUri ? artUri : track ? track.album_art_uri || track.art_url : ""}
+                    fit={fit}
+                    radius={radius}
+                    width={size}
+                    height={size}
+                    withPlaceholder={true}
+                    placeholder={<NoArtPlaceholder artSize={size} radius={radius} />}
+                    onLoad={() => setIsLoadingArt(false)}
+                />
+            </Skeleton>
 
             {/* Only show the track controls for locally-streamed media */}
-            {track && showControls && (
+            {track && showControls && !isLoadingArt && (
                 <Flex
                     p="xs"
                     justify="space-between"
