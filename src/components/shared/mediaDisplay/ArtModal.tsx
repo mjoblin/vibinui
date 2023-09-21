@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Modal, Stack } from "@mantine/core";
+import { Flex, Modal, Stack } from "@mantine/core";
 
 import { isAlbum, isPreset, isTrack, Media } from "../../../app/types";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
@@ -20,7 +20,7 @@ const ArtModal: FC<ArtModalProps> = ({ media, opened, onClose = undefined }) => 
     const { APP_MODAL_BLUR } = useAppGlobals();
 
     const title = isAlbum(media)
-        ? "Track Art"
+        ? "Album Art"
         : isTrack(media)
         ? "Track Art"
         : isPreset(media)
@@ -39,7 +39,9 @@ const ArtModal: FC<ArtModalProps> = ({ media, opened, onClose = undefined }) => 
         >
             <Stack>
                 <MediaSummaryBanner media={media} showArt={false} />
-                <MediaArt media={media} />
+                <Flex>
+                    <MediaArt media={media} showControls={false} />
+                </Flex>
             </Stack>
         </Modal>
     );
