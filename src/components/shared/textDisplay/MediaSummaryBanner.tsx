@@ -37,14 +37,12 @@ const MediaSummaryBanner: FC<MediaSummaryBannerProps> = ({
                 <MediaArt
                     media={media}
                     size={100}
-                    showActions={showArtControls}
-                    showPlayButton={showArtControls}
+                    showControls={showArtControls}
                     actionsMenuPosition={"bottom"}
                 />
             )}
 
-            {isAlbum(media) ||
-                (isTrack(media) && (
+            {(isAlbum(media) || isTrack(media)) && (
                     <Stack sx={{ gap: 0, flexGrow: 1 }}>
                         <Text size="lg" weight="bold" sx={{ lineHeight: 1.25 }}>
                             {media.title}
@@ -59,7 +57,7 @@ const MediaSummaryBanner: FC<MediaSummaryBannerProps> = ({
                                 : ""}
                         </Text>
                     </Stack>
-                ))}
+                )}
 
             {isPreset(media) && (
                 <Stack sx={{ gap: 0, flexGrow: 1 }}>

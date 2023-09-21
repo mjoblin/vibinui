@@ -364,7 +364,7 @@ const CurrentTrackScreen: FC = () => {
                         <MediaArt
                             media={currentTrack}
                             size={albumArtWidth}
-                            showPlayButton={false}
+                            showControls={false}
                         />
                         {(playStatusDisplay === "pause" || playStatusDisplay === "stop") && (
                             <PlaybackPaused />
