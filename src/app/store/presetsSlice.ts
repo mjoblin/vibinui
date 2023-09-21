@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
-import { Preset } from "../services/vibinPresets";
+import { Preset } from "../types";
 import { updateIfDifferent } from "./helpers";
 
 // ================================================================================================

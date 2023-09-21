@@ -135,7 +135,6 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
 
                                         <MediaActionsButton
                                             media={track}
-                                            mediaType="track"
                                             inCircle={false}
                                             enabledActions={{
                                                 Details: ["all"],

@@ -21,7 +21,7 @@ import { IconPlayerPlay } from "@tabler/icons";
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
-import { MediaSourceClass, Track } from "../../app/types";
+import { MediaSourceClass, Preset, Track } from "../../app/types";
 import { yearFromDate } from "../../app/utils";
 import { setArtistsScrollToCurrentOnScreenEnter } from "../../app/store/internalSlice";
 import {
@@ -34,7 +34,7 @@ import {
 import { usePlayMutation, useTogglePlaybackMutation } from "../../app/services/vibinTransport";
 import { useLazyGetTrackByIdQuery } from "../../app/services/vibinTracks";
 import BufferingLoader from "../shared/textDisplay/BufferingLoader";
-import TrackArt from "./tracks/TrackArt";
+import MediaArt from "../shared/mediaDisplay/MediaArt";
 import FieldValueList from "../shared/dataDisplay/FieldValueList";
 import CurrentMediaControls from "../shared/playbackControls/CurrentMediaControls";
 import TrackLinks from "../shared/mediaDisplay/TrackLinks";
@@ -84,8 +84,10 @@ const albumArtWidth = 300;
 const useStyles = createStyles((theme) => ({
     pausedStatusContainer: {
         position: "absolute",
+        zIndex: 9,  // TODO: Remove reliance on zIndex when MediaArt no longer uses zIndex
         width: albumArtWidth,
         height: albumArtWidth,
+        borderRadius: 5,
         backgroundColor: "rgb(0, 0, 0, 0.75)",
     },
 }));
@@ -141,6 +143,7 @@ const CurrentTrackScreen: FC = () => {
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
+    const presets = useAppSelector((state: RootState) => state.presets.presets);
     const streamerPower = useAppSelector((state: RootState) => state.system.streamer.power);
     const streamerDisplay = useAppSelector((state: RootState) => state.system.streamer.display);
     const currentSource = useAppSelector(
@@ -151,6 +154,7 @@ const CurrentTrackScreen: FC = () => {
     const [debouncedPlayStatus] = useDebouncedValue(playStatus, 1000);
     const [getTrack, getTrackResult] = useLazyGetTrackByIdQuery();
     const [trackYearAndGenre, setTrackYearAndGenre] = useState<string | undefined>(undefined);
+    const [activePreset, setActivePreset] = useState<Preset | undefined>(undefined);
     const [tabContentHeight, setTabContentHeight] = useState<number>(300);
     const tabListRef = useRef<HTMLDivElement>(null);
     const [windowHeight, setWindowHeight] = useState<number>(window.innerHeight);
@@ -257,6 +261,15 @@ const CurrentTrackScreen: FC = () => {
         setTabContentHeight(tabContentHeight);
     }, [tabListRef, currentTrack, windowHeight]);
 
+    /**
+     * Keep track of which Preset is currently playing (if any).
+     */
+    useEffect(() => {
+        const p = presets.find((preset) => preset.is_playing);
+        console.log("P", p);
+        setActivePreset(presets.find((preset) => preset.is_playing));
+    }, [presets]);
+
     // --------------------------------------------------------------------------------------------
 
     const windowResizeHandler = (event: UIEvent) =>
@@ -321,6 +334,7 @@ const CurrentTrackScreen: FC = () => {
         ? sourcesSupportingDisplayDetails[currentSource.class]
         : undefined;
 
+    console.log(presets);
     // --------------------------------------------------------------------------------------------
 
     return (
@@ -347,17 +361,10 @@ const CurrentTrackScreen: FC = () => {
                     </Flex>
 
                     <Stack>
-                        <TrackArt
-                            track={currentTrack}
+                        <MediaArt
+                            media={currentTrack}
                             size={albumArtWidth}
-                            radius={5}
-                            hidePlayButton
-                            showControls={false}
-                            enabledActions={{
-                                Favorites: ["all"],
-                                Navigation: ["ViewCurrentInArtists", "ViewInAlbums"],
-                                Playlist: ["all"],
-                            }}
+                            showPlayButton={false}
                         />
                         {(playStatusDisplay === "pause" || playStatusDisplay === "stop") && (
                             <PlaybackPaused />
@@ -367,20 +374,29 @@ const CurrentTrackScreen: FC = () => {
                     <CurrentMediaControls />
                 </Stack>
 
-                {/* Track actions button */}
+                {/* Media actions button */}
                 {currentSource.class === "stream.media" && (
-                    <Flex gap={10} align="center">
-                        <MediaActionsButton
-                            mediaType="track"
-                            media={currentTrack}
-                            size={"md"}
-                            enabledActions={{
-                                Details: ["all"],
-                                Favorites: ["all"],
-                                Navigation: ["all"],
-                            }}
-                        />
-                    </Flex>
+                    <MediaActionsButton
+                        media={currentTrack}
+                        size={"md"}
+                        enabledActions={{
+                            Details: ["all"],
+                            Favorites: ["all"],
+                            Navigation: ["all"],
+                        }}
+                    />
+                )}
+
+                {activePreset && (
+                    <MediaActionsButton
+                        media={activePreset}
+                        size={"md"}
+                        enabledActions={{
+                            Details: ["ViewArt"],
+                            Favorites: [],
+                            Navigation: [],
+                        }}
+                    />
                 )}
             </Stack>
 

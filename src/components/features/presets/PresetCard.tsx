@@ -1,24 +1,20 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import {
-    ActionIcon,
     Card,
     Center,
     createStyles,
-    Image,
     Loader,
-    Skeleton,
     Stack,
     Text,
     useMantineTheme,
 } from "@mantine/core";
-import { IconPlayerPlay } from "@tabler/icons";
 
-import { Preset } from "../../../app/services/vibinPresets";
+import { Preset } from "../../../app/types";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import NoArtPlaceholder from "../../shared/mediaDisplay/NoArtPlaceholder";
+import MediaArt from "../../shared/mediaDisplay/MediaArt";
 
 // ================================================================================================
 // A card representing a single Preset.
@@ -30,20 +26,9 @@ import NoArtPlaceholder from "../../shared/mediaDisplay/NoArtPlaceholder";
 // ================================================================================================
 
 const useStyles = createStyles((theme) => ({
-    playPreset: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        opacity: 0,
-        transition:
-            "transform .2s ease-in-out, opacity .2s ease-in-out, backgroundColor .1s ease-in-out",
-        "&:hover": {
-            opacity: 0.95,
-            backgroundColor: "rgb(0, 0, 0, 0.20)",
-        },
-    },
     presetConnecting: {
         position: "absolute",
+        zIndex: 9,  // TODO: Remove reliance on zIndex when MediaArt no longer uses zIndex
         top: 0,
         left: 0,
         backgroundColor: "rgb(0, 0, 0, 0.90)",
@@ -69,7 +54,6 @@ const PresetCard: FC<PresetCardProps> = ({
     const playState = useAppSelector((state: RootState) => state.playback.play_status);
     const [playPresetId] = useLazyPlayPresetIdQuery();
     const [waitingForConnection, setWaitingForConnection] = useState<boolean>(false);
-    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
     const previousPlayState = useRef(playState);
     const previousIsPlayingState = useRef(preset.is_playing);
 
@@ -132,45 +116,23 @@ const PresetCard: FC<PresetCardProps> = ({
     return (
         <Card radius="sm" className={dynamicClasses.presetCard}>
             <Card.Section>
-                <Skeleton visible={showLoading && isLoadingArt}>
-                    <Image
-                        src={preset.art_url}
-                        fit="cover"
-                        radius={5}
-                        width={artWidth}
-                        height={artHeight}
-                        withPlaceholder={true}
-                        placeholder={<NoArtPlaceholder artSize={artWidth} />}
-                        onLoad={() => setIsLoadingArt(false)}
-                    />
-                </Skeleton>
+                <MediaArt
+                    media={preset}
+                    showLoading={showLoading}
+                    showActions={false}
+                    showPlayButton={true}
+                    centerPlayButton={true}
+                    onPlay={() => playPresetId(preset.id)}
+                />
 
-                {playState === "connecting" && preset.is_playing ? (
+                {playState === "connecting" && preset.is_playing && (
                     <Center w={overlayWidth} h={overlayHeight} className={classes.presetConnecting}>
                         <Stack spacing={5} align="center">
                             <Loader size="md" />
-                            <Text>Connecting...</Text>
+                            <Text>connecting...</Text>
                         </Stack>
                     </Center>
-                ) : !presetIsCurrentlyPlaying ? (
-                    <Center w={overlayWidth} h={overlayHeight} className={classes.playPreset}>
-                        <ActionIcon
-                            size={80}
-                            color={colors.blue[4]}
-                            variant="filled"
-                            radius={40}
-                            onClick={() => {
-                                playPresetId(preset.id);
-                            }}
-                        >
-                            <IconPlayerPlay
-                                size={50}
-                                color={colors.blue[2]}
-                                fill={colors.blue[2]}
-                            />
-                        </ActionIcon>
-                    </Center>
-                ) : null}
+                )}
 
                 {showDetails && (
                     <Stack spacing={0} pl={7} pr={7} pt={7} pb={3}>

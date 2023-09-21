@@ -13,6 +13,8 @@
 //  and Track updates (owned by the streamer). They overlap a lot, but not entirely (the Media ID's
 //  are notably missing from the streamer updates).
 
+export type Media = Album | Track | Preset;
+
 export type MediaId = string;
 
 // Album details.
@@ -32,6 +34,21 @@ export type Artist = {
     title: string;
     genre: string;
     album_art_uri: string; // TODO: This vs. art_url (be consistent; will need to rename somewhere)
+};
+
+// Preset details
+export type PresetId = number;
+
+export type PresetType = "Radio" | "UPnP";
+
+export type Preset = {
+    id: PresetId;
+    name: string;
+    type: PresetType;
+    class: string;
+    state: string;
+    is_playing: boolean;
+    art_url: string;
 };
 
 // Music track details.
@@ -85,13 +102,17 @@ export type PlaylistEntry = {
 }
 
 export type MediaSourceClass =
-    "stream.radio" |
-    "digital.usb" |
     "digital.coax" |
     "digital.toslink" |
+    "digital.usb" |
     "stream.media" |
+    "stream.radio" |
     "stream.service.airplay" |
-    "stream.service.spotify" |
     "stream.service.cast" |
     "stream.service.roon" |
+    "stream.service.spotify" |
     "stream.service.tidal";
+
+export const isAlbum = (media: Media): media is Album => !isTrack(media) && !isPreset(media);
+export const isTrack = (media: Media): media is Track => (media as Track).track_number !== undefined;
+export const isPreset = (media: Media): media is Preset => (media as Preset).class !== undefined;
