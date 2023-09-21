@@ -1,10 +1,10 @@
 import React, { FC, useEffect, useState } from "react";
 import { Box, Center, createStyles, Loader } from "@mantine/core";
 
+import { Preset } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
-import { Preset } from "../../../app/services/vibinPresets";
 import { setFilteredPresetIds } from "../../../app/store/internalSlice";
 import { collectionFilter } from "../../../app/utils";
 import PresetCard from "./PresetCard";

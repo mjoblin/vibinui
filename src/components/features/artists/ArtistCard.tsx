@@ -4,8 +4,6 @@ import {
     Card,
     createStyles,
     Flex,
-    Image,
-    Skeleton,
     Stack,
     Text,
     useMantineTheme,
@@ -18,6 +16,7 @@ import { RootState } from "../../../app/store/store";
 import { setArtistCardRenderDimensions } from "../../../app/store/internalSlice";
 import { MediaViewMode } from "../../../app/store/userSettingsSlice";
 import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
+import MediaArt from "../../shared/mediaDisplay/MediaArt";
 
 // ================================================================================================
 // A card representing a single Artist.
@@ -98,7 +97,6 @@ const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks,
     const { cardSize, showDetails } = useAppSelector(
         (state: RootState) => state.userSettings.artists
     );
-    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
 
     const borderSize = 2;
 
@@ -113,19 +111,11 @@ const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks,
         <Card radius="sm" p={7} pb={showDetails ? 7 : 0} className={dynamicClasses.artistCard}>
             {/* Artist art */}
             <Card.Section>
-                <Skeleton
-                    visible={showLoading && isLoadingArt}
-                    width={cardSize - borderSize * 2}
-                    height={cardSize - borderSize * 2}
-                >
-                    <Image
-                        src={artist.album_art_uri}
-                        width={cardSize - borderSize * 2}
-                        height={cardSize - borderSize * 2}
-                        radius={5}
-                        onLoad={() => setIsLoadingArt(false)}
-                    />
-                </Skeleton>
+                <MediaArt
+                    artUri={artist.album_art_uri}
+                    size={cardSize - borderSize * 2}
+                    showControls={false}
+                />
             </Card.Section>
 
             {/* Artist title (name) */}

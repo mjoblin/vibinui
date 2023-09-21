@@ -29,7 +29,7 @@ import {
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../../app/services/vibinActivePlaylist";
-import AlbumArt from "../albums/AlbumArt";
+import MediaArt from "../../shared/mediaDisplay/MediaArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
@@ -400,7 +400,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                             </td>
                             {viewMode === "detailed" && (
                                 <td style={{ width: 50 }}>
-                                    <AlbumArt artUri={entry.albumArtURI} size={35} radius={3} />
+                                    <MediaArt artUri={entry.albumArtURI} size={35} />
                                 </td>
                             )}
                             <td

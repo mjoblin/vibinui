@@ -3,7 +3,7 @@ import { Flex, Text } from "@mantine/core";
 
 import type { RootState } from "../../../app/store/store";
 import { useAppSelector } from "../../../app/hooks/store";
-import TrackArt from "../../features/tracks/TrackArt";
+import MediaArt from "../mediaDisplay/MediaArt";
 
 // ================================================================================================
 // Details about the currently-playing media.
@@ -25,12 +25,13 @@ const CurrentMediaDetails: FC = () => {
 
     return (
         <Flex direction="row" align="center" gap={10} sx={{ flexGrow: 1, minWidth: 0 }}>
-            <TrackArt
+            <MediaArt
                 artUri={currentTrack.art_url}
-                radius={3}
                 size={35}
                 fit="scale-down"
+                showControls={false}
             />
+
             <Flex
                 direction="column"
                 align="start"
