@@ -9,12 +9,14 @@ import {
     setPresetsCardSize,
     setPresetsFilterText,
     setPresetsShowDetails,
+    setPresetsWallViewMode,
 } from "../../../app/store/userSettingsSlice";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import CardControls from "../../shared/buttons/CardControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
+import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <PresetsWall>.
@@ -28,7 +30,7 @@ const PresetsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { presets } = useAppSelector((state: RootState) => state.presets);
-    const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
+    const { cardSize, cardGap, filterText, showDetails, wallViewMode } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );
     const { filteredPresetIds } = useAppSelector((state: RootState) => state.internal.presets);
@@ -67,6 +69,12 @@ const PresetsControls: FC = () => {
                     examples={["favorite station", "type:radio", "easy type:radio"]}
                 />
             </Flex>
+
+            {/* Toggle between Card and Table views */}
+            <MediaWallViewModeSelector
+                viewMode={wallViewMode}
+                onChange={(viewMode) => dispatch(setPresetsWallViewMode(viewMode))}
+            />
 
             <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
                 {/* "Showing x of y presets" */}

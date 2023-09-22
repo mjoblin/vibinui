@@ -1,9 +1,6 @@
 import React, { FC } from "react";
-import { ActionIcon, Box, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
 import { IconCurrentLocation } from "@tabler/icons";
-
-import { RootState } from "../../../app/store/store";
-import { useAppSelector } from "../../../app/hooks/store";
 
 // ================================================================================================
 // Button to scroll to the currently-playing media.
@@ -22,20 +19,18 @@ const CurrentlyPlayingButton: FC<CurrentlyPlayingButtonProps> = ({
     tooltipLabel = "Show current item",
     onClick,
 }) => {
-    const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
-    );
+    const theme = useMantineTheme();
 
     return (
         <Tooltip label={tooltipLabel} position="bottom">
             <Box>
                 <ActionIcon
-                    variant="subtle"
-                    color="yellow"
-                    disabled={disabled || !currentTrackMediaId}
+                    variant="light"
+                    color={theme.primaryColor}
+                    disabled={disabled}
                     onClick={() => onClick && onClick()}
                 >
-                    <IconCurrentLocation size="1.2rem" />
+                    <IconCurrentLocation size="1rem" />
                 </ActionIcon>
             </Box>
         </Tooltip>

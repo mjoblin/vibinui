@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
 import { IconSquareX } from "@tabler/icons";
 
@@ -12,6 +12,7 @@ import {
     setAlbumsFilterText,
     setAlbumsFollowCurrentlyPlaying,
     setAlbumsShowDetails,
+    setAlbumsWallViewMode,
 } from "../../../app/store/userSettingsSlice";
 import { RootState } from "../../../app/store/store";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
@@ -22,6 +23,7 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
+import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <AlbumsWall>.
@@ -42,12 +44,20 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allAlbums } = useGetAlbumsQuery();
-    const { activeCollection, cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails } =
-        useAppSelector((state: RootState) => state.userSettings.albums);
+    const {
+        activeCollection,
+        cardSize,
+        cardGap,
+        filterText,
+        followCurrentlyPlaying,
+        showDetails,
+        wallViewMode,
+    } = useAppSelector((state: RootState) => state.userSettings.albums);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
     const { filteredAlbumMediaIds } = useAppSelector((state: RootState) => state.internal.albums);
+    const [currentIsShown, setCurrentIsShown] = useState<boolean>(false);
 
     /**
      * Auto-scroll to the current entry when the current entry changes, and if the "follow" feature
@@ -71,6 +81,17 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
         }
     }, [activeCollection, filterText, dispatch]);
 
+    /**
+     * Keep track of whether the currently-playing album is in the list of albums being displayed.
+     */
+    useEffect(
+        () =>
+            setCurrentIsShown(
+                !!(currentAlbumMediaId && filteredAlbumMediaIds.includes(currentAlbumMediaId))
+            ),
+        [currentAlbumMediaId, filteredAlbumMediaIds]
+    );
+    
     // --------------------------------------------------------------------------------------------
 
     return (
@@ -128,17 +149,23 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                 />
             </Flex>
 
+            {/* Toggle between Card and Table views */}
+            <MediaWallViewModeSelector
+                viewMode={wallViewMode}
+                onChange={(viewMode) => dispatch(setAlbumsWallViewMode(viewMode))}
+            />
+
             {/* Buttons to show and follow currently-playing */}
             <Flex align="center" gap={5}>
                 <CurrentlyPlayingButton
-                    disabled={activeCollection !== "all" || filterText !== ""}
+                    disabled={!currentIsShown}
                     tooltipLabel="Show currently playing Album"
                     onClick={() => scrollToCurrent && scrollToCurrent()}
                 />
 
                 <FollowCurrentlyPlayingToggle
                     isOn={followCurrentlyPlaying}
-                    disabled={activeCollection !== "all" || filterText !== ""}
+                    disabled={!currentIsShown}
                     tooltipLabel="Follow currently playing Album"
                     onClick={() =>
                         dispatch(setAlbumsFollowCurrentlyPlaying(!followCurrentlyPlaying))

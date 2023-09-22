@@ -1,28 +1,32 @@
 import React, { FC, RefObject, useEffect, useRef, useState } from "react";
 import { QueryStatus } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Loader } from "@mantine/core";
+import { Box, Center, createStyles, Loader, MantineColor } from "@mantine/core";
 
 import { Album } from "../../../app/types";
 import type { RootState } from "../../../app/store/store";
+import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import AlbumCard from "./AlbumCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
-import { AlbumCollection } from "../../../app/store/userSettingsSlice";
+import { AlbumCollection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { collectionFilter } from "../../../app/utils";
 
 // ================================================================================================
-// Show a wall of Album art. Reacts to display properties configured via <AlbumsControls>.
+// Show a wall of Albums. Wall will be either art cards or a table. Reacts to display properties
+// configured via <AlbumsControls>.
 // ================================================================================================
 
 type AlbumWallProps = {
     filterText?: string;
     activeCollection?: AlbumCollection;
+    viewMode?: MediaWallViewMode;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
+    tableStripeColor?: MantineColor;
     quietUnlessShowingAlbums?: boolean;
     cacheCardRenderSize?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
@@ -33,9 +37,11 @@ type AlbumWallProps = {
 const AlbumsWall: FC<AlbumWallProps> = ({
     filterText = "",
     activeCollection = "all",
+    viewMode = "cards",
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
+    tableStripeColor,
     quietUnlessShowingAlbums = false,
     cacheCardRenderSize = true,
     onIsFilteringUpdate,
@@ -65,10 +71,13 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     const [albumsToDisplay, setAlbumsToDisplay] = useState<Album[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        albumWall: {
+        cardWall: {
             display: "grid",
             gap: cardGap,
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
+            paddingBottom: 15,
+        },
+        tableWall: {
             paddingBottom: 15,
         },
     }))();
@@ -194,11 +203,21 @@ const AlbumsWall: FC<AlbumWallProps> = ({
             </Center>
         );
     }
-
+    
     // --------------------------------------------------------------------------------------------
 
-    return (
-        <Box className={dynamicClasses.albumWall}>
+    return viewMode === "table" ? (
+        <Box className={dynamicClasses.tableWall}>
+            <MediaTable
+                media={albumsToDisplay}
+                columns={["album_art_uri", "title", "artist", "date", "genre"]}
+                stripeColor={tableStripeColor}
+                currentlyPlayingId={currentAlbumMediaId}
+                currentlyPlayingRef={currentAlbumRef}
+            />
+        </Box>
+    ) : (
+        <Box className={dynamicClasses.cardWall}>
             {albumsToDisplay.map((album: Album) =>
                 album.id === currentAlbumMediaId ? (
                     <Box key={album.id} ref={currentAlbumRef}>

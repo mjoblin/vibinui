@@ -13,11 +13,13 @@ import {
     setFavoritesCardSize,
     setFavoritesFilterText,
     setFavoritesShowDetails,
+    setFavoritesWallViewMode,
 } from "../../../app/store/userSettingsSlice";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import CardControls from "../../shared/buttons/CardControls";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
+import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <FavoritesWall>.
@@ -32,9 +34,8 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
-    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.favorites
-    );
+    const { activeCollection, cardSize, cardGap, filterText, showDetails, wallViewMode } =
+        useAppSelector((state: RootState) => state.userSettings.favorites);
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { filteredFavoriteMediaIds } = useAppSelector(
         (state: RootState) => state.internal.favorites
@@ -94,6 +95,12 @@ const FavoritesControls: FC = () => {
                     examples={["asparagus", "artist:(the rods) date:2004"]}
                 />
             </Flex>
+
+            {/* Toggle between Card and Table views */}
+            <MediaWallViewModeSelector
+                viewMode={wallViewMode}
+                onChange={(viewMode) => dispatch(setFavoritesWallViewMode(viewMode))}
+            />
 
             {/* Replace playlist with favorites */}
             <PlayMediaIdsButton

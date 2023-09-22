@@ -6,7 +6,7 @@ import { RootState } from "../../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { Track } from "../../../app/types";
-import { MediaViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaCardViewMode } from "../../../app/store/userSettingsSlice";
 import { setTrackCardRenderDimensions } from "../../../app/store/internalSlice";
 import { secstoHms, yearFromDate } from "../../../app/utils";
 import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
@@ -176,7 +176,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
 // ------------------------------------------------------------------------------------------------
 
 type TrackCardProps = {
-    type?: MediaViewMode;
+    type?: MediaCardViewMode;
     track: Track;
     showArt?: boolean;
     enabledActions?: EnabledActions;

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconSquareX } from "@tabler/icons";
@@ -15,6 +15,7 @@ import {
     setTracksFollowCurrentlyPlaying,
     setTracksLyricsSearchText,
     setTracksShowDetails,
+    setTracksWallViewMode
 } from "../../../app/store/userSettingsSlice";
 import CardControls from "../../shared/buttons/CardControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
@@ -22,6 +23,7 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
+import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <TracksWall>.
@@ -45,14 +47,14 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allTracks } = useGetTracksQuery();
-    const { cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
-    );
+    const { cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails, wallViewMode } =
+        useAppSelector((state: RootState) => state.userSettings.tracks);
     const { filteredTrackMediaIds } = useAppSelector((state: RootState) => state.internal.tracks);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
+    const [currentIsShown, setCurrentIsShown] = useState<boolean>(false);
 
     /**
      * Auto-scroll to the current entry when the current entry changes, and if the "follow" feature
@@ -94,6 +96,17 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             dispatch(setTracksLyricsSearchText(""));
         }
     }, [debouncedFilterText, dispatch]);
+
+   /**
+     * Keep track of whether the currently-playing track is in the list of tracks being displayed.
+     */
+    useEffect(
+        () =>
+            setCurrentIsShown(
+                !!(currentTrackMediaId && filteredTrackMediaIds.includes(currentTrackMediaId))
+            ),
+        [currentTrackMediaId, filteredTrackMediaIds]
+    );
 
     // --------------------------------------------------------------------------------------------
 
@@ -141,18 +154,24 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                 />
             </Flex>
 
+            {/* Toggle between Card and Table views */}
+            <MediaWallViewModeSelector
+                viewMode={wallViewMode}
+                onChange={(viewMode) => dispatch(setTracksWallViewMode(viewMode))}
+            />
+            
             <Flex gap={20} align="center">
                 {/* Buttons to show and follow currently-playing */}
                 <Flex gap={5} align="center">
                     <CurrentlyPlayingButton
-                        disabled={filterText !== ""}
+                        disabled={!currentIsShown}
                         tooltipLabel="Show currently playing Track"
                         onClick={() => scrollToCurrent && scrollToCurrent()}
                     />
 
                     <FollowCurrentlyPlayingToggle
                         isOn={followCurrentlyPlaying}
-                        disabled={filterText !== ""}
+                        disabled={!currentIsShown}
                         tooltipLabel="Follow currently playing Track"
                         onClick={() =>
                             dispatch(setTracksFollowCurrentlyPlaying(!followCurrentlyPlaying))
