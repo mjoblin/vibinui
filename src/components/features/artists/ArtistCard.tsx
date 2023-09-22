@@ -14,7 +14,7 @@ import { Album, Artist, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setArtistCardRenderDimensions } from "../../../app/store/internalSlice";
-import { MediaViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaCardViewMode } from "../../../app/store/userSettingsSlice";
 import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
 import MediaArt from "../../shared/mediaDisplay/MediaArt";
 
@@ -135,7 +135,7 @@ const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks,
 // ------------------------------------------------------------------------------------------------
 
 type ArtistCardProps = {
-    type: MediaViewMode;
+    type: MediaCardViewMode;
     artist: Artist;
     albums?: Album[];
     tracks?: Track[];

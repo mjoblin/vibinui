@@ -1,5 +1,5 @@
 import React, { FC, useCallback } from "react";
-import { ActionIcon, Box, Flex, Select, TextInput, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Flex, Select, TextInput, Tooltip, useMantineTheme } from "@mantine/core";
 
 import { Album, Artist, MediaId, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
@@ -32,6 +32,7 @@ import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton"
 // ================================================================================================
 
 const ArtistsControls: FC = () => {
+    const theme = useMantineTheme();
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const albumsByArtistName = useAppSelector(
@@ -176,11 +177,12 @@ const ArtistsControls: FC = () => {
                 <Tooltip label="Scroll selected items into view" position="bottom">
                     <Box>
                         <ActionIcon
-                            color="blue"
+                            variant="light"
+                            color={theme.primaryColor}
                             disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
                             onClick={scrollSelectedIntoView}
                         >
-                            <IconHandFinger size="1.2rem" />
+                            <IconHandFinger size="1rem" />
                         </ActionIcon>
                     </Box>
                 </Tooltip>

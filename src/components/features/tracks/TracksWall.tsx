@@ -1,6 +1,6 @@
 import React, { FC, RefObject, useEffect, useRef, useState } from "react";
 import { QueryStatus } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Loader } from "@mantine/core";
+import { Box, Center, createStyles, Loader, MantineColor } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 
 import type { RootState } from "../../../app/store/store";
@@ -13,16 +13,21 @@ import { collectionFilter } from "../../../app/utils";
 import TrackCard from "./TrackCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
+import MediaTable from "../../shared/mediaDisplay/MediaTable";
+import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
-// Show a wall of Track art. Reacts to display properties configured via <TracksControls>.
+// Show a wall of Tracks. Wall will be either art cards or a table. Reacts to display properties
+// configured via <TracksControls>.
 // ================================================================================================
 
 type TrackWallProps = {
     filterText?: string;
+    viewMode?: MediaWallViewMode;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
+    tableStripeColor?: MantineColor;
     quietUnlessShowingTracks?: boolean;
     cacheCardRenderSize?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
@@ -32,9 +37,11 @@ type TrackWallProps = {
 
 const TracksWall: FC<TrackWallProps> = ({
     filterText = "",
+    viewMode = "cards",
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
+    tableStripeColor,
     quietUnlessShowingTracks = false,
     cacheCardRenderSize = true,
     onIsFilteringUpdate,
@@ -57,10 +64,13 @@ const TracksWall: FC<TrackWallProps> = ({
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        trackWall: {
+        cardWall: {
             display: "grid",
             gap: cardGap,
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
+            paddingBottom: 15,
+        },
+        tableWall: {
             paddingBottom: 15,
         },
     }))();
@@ -207,8 +217,18 @@ const TracksWall: FC<TrackWallProps> = ({
 
     // --------------------------------------------------------------------------------------------
 
-    return (
-        <Box className={dynamicClasses.trackWall}>
+    return viewMode === "table" ? (
+        <Box className={dynamicClasses.tableWall}>
+            <MediaTable
+                media={tracksToDisplay}
+                columns={["album_art_uri", "artist", "title", "album", "date", "genre"]}
+                stripeColor={tableStripeColor}
+                currentlyPlayingId={currentTrackMediaId}
+                currentlyPlayingRef={currentTrackRef}
+            />
+        </Box>
+    ) : (
+        <Box className={dynamicClasses.cardWall}>
             {[...tracksToDisplay]
                 .sort((trackA, trackB) => trackA.title.localeCompare(trackB.title))
                 .map((track) =>

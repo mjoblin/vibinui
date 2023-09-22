@@ -6,7 +6,7 @@ import { Album, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../../app/store/internalSlice";
-import { MediaViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaCardViewMode } from "../../../app/store/userSettingsSlice";
 import { yearFromDate } from "../../../app/utils";
 import { secstoHms } from "../../../app/utils";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
@@ -209,7 +209,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
 // ------------------------------------------------------------------------------------------------
 
 type AlbumCardProps = {
-    type?: MediaViewMode;
+    type?: MediaCardViewMode;
     album: Album;
     tracks?: Track[];
     enabledActions?: EnabledActions;

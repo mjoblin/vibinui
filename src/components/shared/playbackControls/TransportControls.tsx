@@ -87,6 +87,7 @@ const TransportControls: FC = () => {
 
             {/* Play/Pause/Toggle/Stop */}
             {playStatus === "play" ? (
+                // Pause or Stop
                 <ActionIcon
                     disabled={
                         !activeTransportActions.includes("toggle_playback") &&
@@ -119,6 +120,7 @@ const TransportControls: FC = () => {
                     )}
                 </ActionIcon>
             ) : (
+                // Play/resume
                 <ActionIcon
                     disabled={
                         !activeTransportActions.includes("toggle_playback") &&

@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Center, createStyles, Loader } from "@mantine/core";
+import { Box, Center, createStyles, Loader, MantineColor } from "@mantine/core";
 
 import { Preset } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
@@ -7,20 +7,25 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { setFilteredPresetIds } from "../../../app/store/internalSlice";
 import { collectionFilter } from "../../../app/utils";
+import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import PresetCard from "./PresetCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
+import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
-// Show a wall of Presets art. Reacts to display properties configured via <PresetsControls>.
+// Show a wall of Presets. Wall will be either art cards or a table. Reacts to display properties
+// configured via <PresetsControls>.
 //
 // Presets can be a mix of various media, such as Internet Radio, Albums, etc.
 // ================================================================================================
 
 type PresetsWallProps = {
     filterText?: string;
+    viewMode?: MediaWallViewMode;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
+    tableStripeColor?: MantineColor;
     quietUnlessShowingPresets?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
     onDisplayCountUpdate?: (displayCount: number) => void;
@@ -28,9 +33,11 @@ type PresetsWallProps = {
 
 const PresetsWall: FC<PresetsWallProps> = ({
     filterText = "",
+    viewMode = "cards",
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
+    tableStripeColor,
     quietUnlessShowingPresets = false,
     onIsFilteringUpdate,
     onDisplayCountUpdate,
@@ -45,10 +52,13 @@ const PresetsWall: FC<PresetsWallProps> = ({
     //  are likely to update more often than Artists/Albums/Tracks.
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        presetsWall: {
+        cardWall: {
             display: "grid",
             gap: cardGap,
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
+            paddingBottom: 15,
+        },
+        tableWall: {
             paddingBottom: 15,
         },
     }))();
@@ -98,8 +108,17 @@ const PresetsWall: FC<PresetsWallProps> = ({
 
     // --------------------------------------------------------------------------------------------
 
-    return (
-        <Box className={dynamicClasses.presetsWall}>
+    return viewMode === "table" ? (
+        <Box className={dynamicClasses.tableWall}>
+            <MediaTable
+                media={presetsToDisplay}
+                columns={["art_url", "name", "type"]}
+                stripeColor={tableStripeColor}
+                currentlyPlayingId={presets.find((preset) => preset.is_playing)?.id}
+            />
+        </Box>
+    ) : (
+        <Box className={dynamicClasses.cardWall}>
             {presetsToDisplay.map((preset) => (
                 <PresetCard
                     key={preset.id}

@@ -85,8 +85,8 @@ const useStyles = createStyles((theme) => ({
             fontSize: 14,
             paddingLeft: 5,
             paddingRight: 5,
-            paddingTop: 8,
-            paddingBottom: 8,
+            paddingTop: 4,
+            paddingBottom: 4,
         },
         "td:first-of-type": {
             fontSize: 12,

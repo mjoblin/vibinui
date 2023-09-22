@@ -25,7 +25,7 @@ const FollowCurrentlyPlayingToggle: FC<CurrentlyPlayingToggleProps> = ({
     tooltipLabel = "Follow current item",
     onClick,
 }) => {
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
@@ -34,20 +34,12 @@ const FollowCurrentlyPlayingToggle: FC<CurrentlyPlayingToggleProps> = ({
         <Tooltip label={tooltipLabel} position="bottom">
             <Box>
                 <ActionIcon
-                    variant="subtle"
-                    color={isOn ? "yellow" : "gray"}
+                    variant="light"
+                    color={isOn ? "yellow" : theme.primaryColor}
                     disabled={disabled || !currentTrackMediaId}
                     onClick={() => onClick && onClick()}
                 >
-                    <IconArrowAutofitHeight
-                        size="1.2rem"
-                        // Specifying a color here when isOn is false to override the "gray" on
-                        // <ActionIcon>, because <ActionIcon> only accepts a theme key and not a
-                        // level (0 thru 9) within that key.
-                        color={
-                            !isOn && !disabled && currentTrackMediaId ? colors.dark[3] : undefined
-                        }
-                    />
+                    <IconArrowAutofitHeight size="1rem" />
                 </ActionIcon>
             </Box>
         </Tooltip>
