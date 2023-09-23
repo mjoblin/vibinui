@@ -7,6 +7,7 @@ import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import { Playlist } from "./types";
+import { MediaSortDirection } from "./store/userSettingsSlice";
 
 // ================================================================================================
 // Various utility functions.
@@ -293,4 +294,38 @@ export function collectionFilter<T extends Object>(
 
         return true;
     });
+}
+
+/**
+ * Sorter factory, to sorts the given collection by field name.
+ *
+ * Returns a function which can passed to an array's sort() function.
+ */
+export function collectionSorter<T extends Record<string, any>>(
+    field: string,
+    direction: MediaSortDirection = "ascending",
+) {
+    const lessThanCheck = direction === "ascending" ? -1 : 1;
+    const greaterThanCheck = direction === "ascending" ? 1 : -1;
+
+    return (a: T, b: T) => {
+        let aValue = a[field];
+        let bValue = b[field];
+
+        if (typeof aValue === "undefined" || typeof bValue === "undefined") {
+            return 0;
+        }
+
+        aValue = typeof aValue === "string" ? aValue.toUpperCase() : aValue;
+        bValue = typeof bValue === "string" ? bValue.toUpperCase() : bValue;
+
+        if (aValue < bValue) {
+            return lessThanCheck;
+        }
+        if (aValue > bValue) {
+            return greaterThanCheck;
+        }
+
+        return 0;
+    };
 }

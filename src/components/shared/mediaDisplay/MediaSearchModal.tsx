@@ -30,9 +30,8 @@ import AlbumsWall from "../../features/albums/AlbumsWall";
 import TracksWall from "../../features/tracks/TracksWall";
 import PresetsWall from "../../features/presets/PresetsWall";
 import FavoritesWall from "../../features/favorites/FavoritesWall";
-import CardControls from "../buttons/CardControls";
+import MediaWallDisplayControls from "../buttons/MediaWallDisplayControls";
 import StylizedLabel from "../textDisplay/StylizedLabel";
-import MediaWallViewModeSelector from "../buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Allow for all media to be searched within one interface.
@@ -62,7 +61,6 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
     const headerSize = 25;
     const tableStripeColor =
         theme.colorScheme === "dark" ? theme.colors.gray[9] : theme.colors.gray[2];
-    console.log("MODAL", tableStripeColor);
 
     return (
         <Modal
@@ -117,14 +115,6 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                         withinPortal={true}
                     />
 
-                    {/* Toggle between Card and Table views */}
-                    <MediaWallViewModeSelector
-                        viewMode={wallViewMode}
-                        onChange={(viewMode) =>
-                            dispatch(setApplicationMediaSearchWallViewMode(viewMode))
-                        }
-                    />
-
                     <Chip.Group
                         multiple
                         value={displayCategories}
@@ -149,15 +139,17 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                     </Chip.Group>
 
                     {/* Card display settings */}
-                    <CardControls
-                        cardSize={cardSize}
-                        cardGap={cardGap}
-                        showDetails={showDetails}
-                        cardSizeSetter={setApplicationMediaSearchCardSize}
-                        cardGapSetter={setApplicationMediaSearchCardGap}
-                        showDetailsSetter={setApplicationMediaSearchShowDetails}
-                        resetter={resetApplicationMediaSearchToDefaults}
-                    />
+                    {/*<MediaWallDisplayControls*/}
+                    {/*    viewMode={wallViewMode}*/}
+                    {/*    viewModeSetter={setApplicationMediaSearchWallViewMode}*/}
+                    {/*    cardSize={cardSize}*/}
+                    {/*    cardGap={cardGap}*/}
+                    {/*    cardDetails={showDetails}*/}
+                    {/*    cardSizeSetter={setApplicationMediaSearchCardSize}*/}
+                    {/*    cardGapSetter={setApplicationMediaSearchCardGap}*/}
+                    {/*    cardDetailsSetter={setApplicationMediaSearchShowDetails}*/}
+                    {/*    cardDisplayResetter={resetApplicationMediaSearchToDefaults}*/}
+                    {/*/>*/}
                 </Flex>
 
                 {typeof filterText === "undefined" || filterText.length < 2 ? (

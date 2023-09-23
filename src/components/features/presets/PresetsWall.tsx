@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { setFilteredPresetIds } from "../../../app/store/internalSlice";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import PresetCard from "./PresetCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
@@ -45,6 +45,9 @@ const PresetsWall: FC<PresetsWallProps> = ({
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const { presets, haveReceivedInitialState } = useAppSelector((state: RootState) => state.presets);
+    const { wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.presets
+    );
     const [presetsToDisplay, setPresetsToDisplay] = useState<Preset[]>([]);
 
     // NOTE: The PresetWall differs from the Artists/Albums/Tracks walls in that it gets its data
@@ -76,13 +79,15 @@ const PresetsWall: FC<PresetsWallProps> = ({
     useEffect(() => {
         onIsFilteringUpdate && onIsFilteringUpdate(true);
 
-        const presetsToDisplay = collectionFilter(presets, filterText, "name");
+        let processedPresets = collectionFilter(presets || [], filterText, "name")
+            .slice()
+            .sort(collectionSorter(wallSortField, wallSortDirection));
 
-        dispatch(setFilteredPresetIds(presetsToDisplay.map((preset) => preset.id)));
-        setPresetsToDisplay(presetsToDisplay);
+        dispatch(setFilteredPresetIds(processedPresets.map((preset) => preset.id)));
+        setPresetsToDisplay(processedPresets);
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
-    }, [presets, filterText, dispatch, onIsFilteringUpdate]);
+    }, [presets, filterText, dispatch, onIsFilteringUpdate, wallSortDirection, wallSortField]);
     
     if (!haveReceivedInitialState) {
         return (

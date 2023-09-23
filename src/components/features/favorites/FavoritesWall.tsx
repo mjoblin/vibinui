@@ -5,7 +5,7 @@ import { Album, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 import { setFilteredFavoriteMediaIds } from "../../../app/store/internalSlice";
 import { Favorite } from "../../../app/services/vibinFavorites";
 import { FavoriteCollection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
@@ -59,6 +59,9 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
     const { favorites, haveReceivedInitialState } = useAppSelector(
         (state: RootState) => state.favorites
     );
+    const { wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.favorites
+    );
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
@@ -88,48 +91,62 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
 
         const albumFavorites = favorites.filter((favorite) => favorite.type === "album");
         const trackFavorites = favorites.filter((favorite) => favorite.type === "track");
-        const filteredAlbumFavorites = collectionFilter(
+
+        const processedAlbumFavorites = collectionFilter(
             albumFavorites,
             filterText,
             "title",
             "media"
-        );
-        const filteredTrackFavorites = collectionFilter(
+        )
+            .slice()
+            .sort(collectionSorter(wallSortField, wallSortDirection));
+
+        const processedTrackFavorites = collectionFilter(
             trackFavorites,
             filterText,
             "title",
             "media"
-        );
+        )
+            .slice()
+            .sort(collectionSorter(wallSortField, wallSortDirection));
 
         if (activeCollection === "all") {
             dispatch(
                 setFilteredFavoriteMediaIds({
-                    albums: filteredAlbumFavorites.map((albumFavorite) => albumFavorite.media_id),
-                    tracks: filteredTrackFavorites.map((trackFavorite) => trackFavorite.media_id),
+                    albums: processedAlbumFavorites.map((albumFavorite) => albumFavorite.media_id),
+                    tracks: processedTrackFavorites.map((trackFavorite) => trackFavorite.media_id),
                 })
             );
 
-            setFavoritesToDisplay([...filteredAlbumFavorites, ...filteredTrackFavorites]);
+            setFavoritesToDisplay([...processedAlbumFavorites, ...processedTrackFavorites]);
         } else {
             dispatch(
                 setFilteredFavoriteMediaIds({
                     albums:
                         activeCollection === "albums"
-                            ? filteredAlbumFavorites.map((albumFavorite) => albumFavorite.media_id)
+                            ? processedAlbumFavorites.map((albumFavorite) => albumFavorite.media_id)
                             : [],
                     tracks:
                         activeCollection === "tracks"
-                            ? filteredTrackFavorites.map((trackFavorite) => trackFavorite.media_id)
+                            ? processedTrackFavorites.map((trackFavorite) => trackFavorite.media_id)
                             : [],
                 })
             );
 
-            activeCollection === "albums" && setFavoritesToDisplay(filteredAlbumFavorites);
-            activeCollection === "tracks" && setFavoritesToDisplay(filteredTrackFavorites);
+            activeCollection === "albums" && setFavoritesToDisplay(processedAlbumFavorites);
+            activeCollection === "tracks" && setFavoritesToDisplay(processedTrackFavorites);
         }
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
-    }, [favorites, filterText, activeCollection, dispatch, onIsFilteringUpdate]);
+    }, [
+        favorites,
+        filterText,
+        activeCollection,
+        dispatch,
+        onIsFilteringUpdate,
+        wallSortDirection,
+        wallSortField,
+    ]);
 
     /**
      * Notify parent component of updated display count.

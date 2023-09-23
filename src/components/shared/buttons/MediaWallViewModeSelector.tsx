@@ -1,30 +1,37 @@
 import React, { FC } from "react";
-import { Center, SegmentedControl } from "@mantine/core";
+import { ActionCreator } from "@reduxjs/toolkit";
+import { Center, SegmentedControl, Text } from "@mantine/core";
 import { IconGridDots, IconMenu2 } from "@tabler/icons";
 
+import { useAppDispatch } from "../../../app/hooks/store";
 import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Toggle to switch between media wall view modes.
 // ================================================================================================
 
-type MediaWallViewModeProps = {
+type MediaWallViewModeSelectorProps = {
     viewMode: MediaWallViewMode;
-    onChange?: (viewMode: MediaWallViewMode) => void;
+    viewModeSetter?: ActionCreator<any>;
 };
 
-const MediaWallViewModeSelector: FC<MediaWallViewModeProps> = ({ viewMode, onChange }) => {
+const MediaWallViewModeSelector: FC<MediaWallViewModeSelectorProps> = ({ viewMode, viewModeSetter }) => {
+    const dispatch = useAppDispatch();
+
     return (
         <SegmentedControl
             value={viewMode}
             radius={5}
-            onChange={(value) => onChange && onChange(value as MediaWallViewMode)}
+            onChange={(value) => viewModeSetter && dispatch(viewModeSetter(value))}
             data={[
                 {
                     value: "cards",
                     label: (
                         <Center>
                             <IconGridDots size={14} />
+                            <Text size={14} ml={10}>
+                                Cards
+                            </Text>
                         </Center>
                     ),
                 },
@@ -33,6 +40,9 @@ const MediaWallViewModeSelector: FC<MediaWallViewModeProps> = ({ viewMode, onCha
                     label: (
                         <Center>
                             <IconMenu2 size={14} />
+                            <Text size={14} ml={10}>
+                                Table
+                            </Text>
                         </Center>
                     ),
                 },

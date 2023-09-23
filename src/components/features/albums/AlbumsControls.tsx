@@ -5,25 +5,19 @@ import { IconSquareX } from "@tabler/icons";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {
     AlbumCollection,
-    resetAlbumsToDefaults,
     setAlbumsActiveCollection,
-    setAlbumsCardGap,
-    setAlbumsCardSize,
     setAlbumsFilterText,
     setAlbumsFollowCurrentlyPlaying,
-    setAlbumsShowDetails,
-    setAlbumsWallViewMode,
 } from "../../../app/store/userSettingsSlice";
 import { RootState } from "../../../app/store/store";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import CardControls from "../../shared/buttons/CardControls";
+import MediaWallDisplayControls from "../../shared/buttons/MediaWallDisplayControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
-import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <AlbumsWall>.
@@ -44,15 +38,9 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allAlbums } = useGetAlbumsQuery();
-    const {
-        activeCollection,
-        cardSize,
-        cardGap,
-        filterText,
-        followCurrentlyPlaying,
-        showDetails,
-        wallViewMode,
-    } = useAppSelector((state: RootState) => state.userSettings.albums);
+    const { activeCollection, filterText, followCurrentlyPlaying } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
+    );
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
@@ -149,12 +137,6 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                 />
             </Flex>
 
-            {/* Toggle between Card and Table views */}
-            <MediaWallViewModeSelector
-                viewMode={wallViewMode}
-                onChange={(viewMode) => dispatch(setAlbumsWallViewMode(viewMode))}
-            />
-
             {/* Buttons to show and follow currently-playing */}
             <Flex align="center" gap={5}>
                 <CurrentlyPlayingButton
@@ -187,7 +169,7 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                 maxToPlay={10}
             />
 
-            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" align="center">
                 {/* "Showing x of y albums" */}
                 <ShowCountLabel
                     showing={filteredAlbumMediaIds.length}
@@ -196,15 +178,7 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
                 />
 
                 {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setAlbumsCardSize}
-                    cardGapSetter={setAlbumsCardGap}
-                    showDetailsSetter={setAlbumsShowDetails}
-                    resetter={resetAlbumsToDefaults}
-                />
+                <MediaWallDisplayControls applicationFeature="albums" />
             </Flex>
         </Flex>
     );

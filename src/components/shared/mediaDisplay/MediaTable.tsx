@@ -5,6 +5,7 @@ import { useAppSelector } from "../../../app/hooks/store";
 import { Media, MediaId } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { secstoHms } from "../../../app/utils";
 import MediaArt from "./MediaArt";
 import MediaActionsButton from "../buttons/MediaActionsButton";
 import PlayButton from "../buttons/PlayButton";
@@ -31,10 +32,6 @@ const useStyles = createStyles((theme) => ({
         "tbody > tr:not(:last-of-type)": {
             borderBottom: `1px solid ${theme.colors.gray[8]}`,
         },
-        // "tbody > tr:nth-child(odd)": {
-        //     backgroundColor:
-        //         theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2],
-        // },
         td: {
             fontSize: 14,
             paddingLeft: 0,
@@ -171,30 +168,8 @@ const MediaTable: FC<MediaTableProps> = ({
 
     // Configure the header and value generators for each potential field from a media item.
     const columnConfig: { [key: string]: ColumnConfiguration } = {
-        id: {
-            heading: "",
-        },
-        title: {
-            heading: "title",
-        },
-        creator: {
-            heading: "creator",
-        },
-        date: {
-            heading: "year",
-            valueGenerator: (value: any): string => {
-                const date = new Date(value);
-                const year = date.getFullYear();
-
-                return isNaN(year) ? "" : `${year}`;
-            },
-        },
-        artist: {
-            heading: "artist",
-        },
-        genre: {
-            heading: "genre",
-            valueGenerator: (value: any): string => (value.includes("Unknown") ? "" : value),
+        album: {
+            heading: "album",
         },
         album_art_uri: {
             heading: "",
@@ -213,18 +188,6 @@ const MediaTable: FC<MediaTableProps> = ({
                 );
             },
         },
-        parentId: {
-            heading: "parent",
-        },
-        track_number: {
-            heading: "track",
-        },
-        duration: {
-            heading: "duration",
-        },
-        album: {
-            heading: "album",
-        },
         art_url: {
             heading: "",
             valueGenerator: (value: any, media: Media): ReactElement => {
@@ -242,20 +205,11 @@ const MediaTable: FC<MediaTableProps> = ({
                 );
             },
         },
-        name: {
-            heading: "name",
-        },
-        type: {
-            heading: "type",
+        artist: {
+            heading: "artist",
         },
         class: {
             heading: "class",
-        },
-        state: {
-            heading: "state",
-        },
-        is_playing: {
-            heading: "playing",
         },
         controls: {
             heading: "",
@@ -267,6 +221,50 @@ const MediaTable: FC<MediaTableProps> = ({
                     </Flex>
                 );
             },
+        },
+        creator: {
+            heading: "creator",
+        },
+        date: {
+            heading: "year",
+            valueGenerator: (value: any): string => {
+                const date = new Date(value);
+                const year = date.getFullYear();
+
+                return isNaN(year) ? "" : `${year}`;
+            },
+        },
+        duration: {
+            heading: "duration",
+            valueGenerator: (value: any, media: Media): string => secstoHms(value),
+        },
+        genre: {
+            heading: "genre",
+            valueGenerator: (value: any): string => (value.includes("Unknown") ? "" : value),
+        },
+        id: {
+            heading: "",
+        },
+        is_playing: {
+            heading: "playing",
+        },
+        name: {
+            heading: "name",
+        },
+        parentId: {
+            heading: "parent",
+        },
+        state: {
+            heading: "state",
+        },
+        title: {
+            heading: "title",
+        },
+        track_number: {
+            heading: "track",
+        },
+        type: {
+            heading: "type",
         },
     };
 
