@@ -39,7 +39,6 @@ const TableRow: FC<TableRowProps> = ({
 
     return (
         <VisibilitySensor
-            key={mediaItem.id}
             onChange={setIsVisible}
             partialVisibility={true}
             offset={{ top: -1000, bottom: -1000 }}
@@ -357,6 +356,7 @@ const MediaTable: FC<MediaTableProps> = ({
         .map((mediaItem) => ({ ...mediaItem, controls: undefined }))
         .map((mediaItem) => (
             <TableRow
+                key={mediaItem.id}
                 mediaItem={mediaItem}
                 columnsToDisplay={columnsToDisplay}
                 currentlyPlayingId={currentlyPlayingId}

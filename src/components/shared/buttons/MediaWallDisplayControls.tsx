@@ -87,6 +87,7 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({ applicati
     const {
         SORTABLE_MEDIA_FIELDS_ALBUMS,
         SORTABLE_MEDIA_FIELDS_FAVORITES,
+        SORTABLE_MEDIA_FIELDS_MEDIA_SEARCH,
         SORTABLE_MEDIA_FIELDS_PRESETS,
         SORTABLE_MEDIA_FIELDS_TRACKS,
     } = useAppGlobals();
@@ -153,7 +154,7 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({ applicati
         cardGapSetter = setApplicationMediaSearchCardGap;
         cardDetailsSetter = setApplicationMediaSearchShowDetails;
         cardDisplayResetter = resetApplicationMediaSearchToDefaults;
-        sortableFields = SORTABLE_MEDIA_FIELDS_TRACKS;
+        sortableFields = SORTABLE_MEDIA_FIELDS_MEDIA_SEARCH;
     } else if (applicationFeature === "tracks") {
         viewModeSetter = setTracksWallViewMode;
         sortFieldSetter = setTracksWallSortField;
@@ -168,6 +169,7 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({ applicati
     return (
         <Popover
             position="bottom-end"
+            withinPortal
             withArrow
             arrowPosition="center"
             onOpen={() => setMenuOpen(true)}

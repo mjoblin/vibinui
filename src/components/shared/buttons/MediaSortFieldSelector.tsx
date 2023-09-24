@@ -21,16 +21,18 @@ const MediaSortFieldSelector: FC<MediaSortFieldSelectorProps> = ({
 }) => {
     const dispatch = useAppDispatch();
 
+    const segments = fields.map((field) => ({
+        value: field,
+        label: field === "date" ? "year" : field, // Force "year" display for date field
+    }));
+
     return (
         <SegmentedControl
             orientation="vertical"
             value={activeField}
             radius={5}
             onChange={(value) => activeFieldSetter && dispatch(activeFieldSetter(value))}
-            data={fields.map((field) => ({
-                value: field,
-                label: field === "date" ? "year" : field,  // Force "year" display for date field
-            }))}
+            data={segments.sort((a, b) => a.label.localeCompare(b.label))}
         />
     );
 };

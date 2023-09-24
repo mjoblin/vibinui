@@ -10,7 +10,7 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
-import { AlbumCollection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import { AlbumCollection, MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { collectionFilter, collectionSorter } from "../../../app/utils";
 
@@ -23,6 +23,8 @@ type AlbumWallProps = {
     filterText?: string;
     activeCollection?: AlbumCollection;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -38,6 +40,8 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     filterText = "",
     activeCollection = "all",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
@@ -127,21 +131,23 @@ const AlbumsWall: FC<AlbumWallProps> = ({
 
         let processedAlbums = collectionFilter(collection || [], filterText, "title")
             .slice()
-            .sort(collectionSorter(wallSortField, wallSortDirection));
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
         dispatch(setFilteredAlbumMediaIds(processedAlbums.map((album) => album.id)));
 
         setCalculatingAlbumsToDisplay(false);
         setAlbumsToDisplay(processedAlbums);
     }, [
+        activeCollection,
         allAlbums,
         allStatus,
-        newAlbums,
+        dispatch,
         filterText,
-        activeCollection,
+        newAlbums,
+        sortDirection,
+        sortField,
         wallSortDirection,
         wallSortField,
-        dispatch,
     ]);
 
     /**

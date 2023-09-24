@@ -1,5 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Center, createStyles, Loader, MantineColor, Stack, useMantineTheme } from "@mantine/core";
+import {
+    Box,
+    Center,
+    createStyles,
+    Loader,
+    MantineColor,
+    Stack,
+    useMantineTheme,
+} from "@mantine/core";
 
 import { Album, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
@@ -8,7 +16,11 @@ import { RootState } from "../../../app/store/store";
 import { collectionFilter, collectionSorter } from "../../../app/utils";
 import { setFilteredFavoriteMediaIds } from "../../../app/store/internalSlice";
 import { Favorite } from "../../../app/services/vibinFavorites";
-import { FavoriteCollection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import {
+    FavoriteCollection,
+    MediaSortDirection,
+    MediaWallViewMode,
+} from "../../../app/store/userSettingsSlice";
 import AlbumCard from "../albums/AlbumCard";
 import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import SadLabel from "../../shared/textDisplay/SadLabel";
@@ -30,6 +42,8 @@ type FavoritesWallProps = {
     filterText?: string;
     activeCollection?: FavoriteCollection;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -38,11 +52,13 @@ type FavoritesWallProps = {
     cacheCardRenderSize?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
     onDisplayCountUpdate?: (displayCount: number) => void;
-}
+};
 
 const FavoritesWall: FC<FavoritesWallProps> = ({
     filterText = "",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     activeCollection = "all",
     cardSize = 50,
     cardGap = 50,
@@ -101,7 +117,12 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
             "media"
         )
             .slice()
-            .sort(collectionSorter(`media.${wallSortField}`, wallSortDirection));
+            .sort(
+                collectionSorter(
+                    `media.${sortField || wallSortField}`,
+                    sortDirection || wallSortDirection
+                )
+            );
 
         const processedTrackFavorites = collectionFilter(
             trackFavorites,
@@ -110,7 +131,12 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
             "media"
         )
             .slice()
-            .sort(collectionSorter(`media.${wallSortField}`, wallSortDirection));
+            .sort(
+                collectionSorter(
+                    `media.${sortField || wallSortField}`,
+                    sortDirection || wallSortDirection
+                )
+            );
 
         if (activeCollection === "all") {
             dispatch(
@@ -141,11 +167,13 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
     }, [
-        favorites,
-        filterText,
         activeCollection,
         dispatch,
+        favorites,
+        filterText,
         onIsFilteringUpdate,
+        sortDirection,
+        sortField,
         wallSortDirection,
         wallSortField,
     ]);

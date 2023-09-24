@@ -14,7 +14,7 @@ import TrackCard from "./TrackCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import MediaTable from "../../shared/mediaDisplay/MediaTable";
-import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Show a wall of Tracks. Wall will be either art cards or a table. Reacts to display properties
@@ -24,6 +24,8 @@ import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 type TrackWallProps = {
     filterText?: string;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -38,6 +40,8 @@ type TrackWallProps = {
 const TracksWall: FC<TrackWallProps> = ({
     filterText = "",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
@@ -133,7 +137,7 @@ const TracksWall: FC<TrackWallProps> = ({
         // Perform any filtering based on user input.
         const processedTracks = collectionFilter(tracksToFilter, debouncedFilterText, "title")
             .slice()
-            .sort(collectionSorter(wallSortField, wallSortDirection));
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
         dispatch(setFilteredTrackMediaIds(processedTracks.map((track) => track.id)));
         setTracksToDisplay(processedTracks);
@@ -141,11 +145,13 @@ const TracksWall: FC<TrackWallProps> = ({
     }, [
         allTracks,
         allTracksStatus,
-        tracksMatchingLyrics,
-        filterText,
         debouncedFilterText,
-        lyricsSearchText,
         dispatch,
+        filterText,
+        lyricsSearchText,
+        sortDirection,
+        sortField,
+        tracksMatchingLyrics,
         wallSortDirection,
         wallSortField,
     ]);

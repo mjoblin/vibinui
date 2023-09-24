@@ -10,7 +10,7 @@ import { collectionFilter, collectionSorter } from "../../../app/utils";
 import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import PresetCard from "./PresetCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
-import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Show a wall of Presets. Wall will be either art cards or a table. Reacts to display properties
@@ -22,6 +22,8 @@ import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 type PresetsWallProps = {
     filterText?: string;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -29,11 +31,13 @@ type PresetsWallProps = {
     quietUnlessShowingPresets?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
     onDisplayCountUpdate?: (displayCount: number) => void;
-}
+};
 
 const PresetsWall: FC<PresetsWallProps> = ({
     filterText = "",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
@@ -44,7 +48,9 @@ const PresetsWall: FC<PresetsWallProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
-    const { presets, haveReceivedInitialState } = useAppSelector((state: RootState) => state.presets);
+    const { presets, haveReceivedInitialState } = useAppSelector(
+        (state: RootState) => state.presets
+    );
     const { wallSortDirection, wallSortField } = useAppSelector(
         (state: RootState) => state.userSettings.presets
     );
@@ -81,14 +87,23 @@ const PresetsWall: FC<PresetsWallProps> = ({
 
         let processedPresets = collectionFilter(presets || [], filterText, "name")
             .slice()
-            .sort(collectionSorter(wallSortField, wallSortDirection));
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
         dispatch(setFilteredPresetIds(processedPresets.map((preset) => preset.id)));
         setPresetsToDisplay(processedPresets);
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
-    }, [presets, filterText, dispatch, onIsFilteringUpdate, wallSortDirection, wallSortField]);
-    
+    }, [
+        dispatch,
+        filterText,
+        onIsFilteringUpdate,
+        presets,
+        sortDirection,
+        sortField,
+        wallSortDirection,
+        wallSortField,
+    ]);
+
     if (!haveReceivedInitialState) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
