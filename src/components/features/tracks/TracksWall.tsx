@@ -62,7 +62,7 @@ const TracksWall: FC<TrackWallProps> = ({
     const { data: allTracks, error, isLoading, status: allTracksStatus } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] =
         useSearchLyricsMutation();
-    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
+    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(false);
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -106,6 +106,7 @@ const TracksWall: FC<TrackWallProps> = ({
         }
 
         if (!allTracks || allTracks.length <= 0) {
+            setCalculatingTracksToDisplay(false);
             return;
         }
 
@@ -117,8 +118,11 @@ const TracksWall: FC<TrackWallProps> = ({
             // which match the lyrics search.
             dispatch(setFilteredTrackMediaIds([]));
             setTracksToDisplay([]);
+            setCalculatingTracksToDisplay(false);
             return;
         }
+
+        setCalculatingTracksToDisplay(true);
 
         // First restrict the filtering to any tracks associated with a current lyrics search.
         const tracksToFilter =
@@ -227,7 +231,7 @@ const TracksWall: FC<TrackWallProps> = ({
         <Box className={dynamicClasses.tableWall}>
             <MediaTable
                 media={tracksToDisplay}
-                columns={["album_art_uri", "artist", "title", "album", "date", "duration", "genre"]}
+                columns={["album_art_uri", "title", "artist", "album", "date", "duration", "genre"]}
                 stripeColor={tableStripeColor}
                 currentlyPlayingId={currentTrackMediaId}
                 currentlyPlayingRef={currentTrackRef}

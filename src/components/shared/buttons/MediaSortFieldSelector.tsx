@@ -29,7 +29,7 @@ const MediaSortFieldSelector: FC<MediaSortFieldSelectorProps> = ({
             onChange={(value) => activeFieldSetter && dispatch(activeFieldSetter(value))}
             data={fields.map((field) => ({
                 value: field,
-                label: field,
+                label: field === "date" ? "year" : field,  // Force "year" display for date field
             }))}
         />
     );

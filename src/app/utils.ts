@@ -297,7 +297,7 @@ export function collectionFilter<T extends Object>(
 }
 
 /**
- * Sorter factory, to sorts the given collection by field name.
+ * Sorter factory, to sort the given collection by field name.
  *
  * Returns a function which can passed to an array's sort() function.
  */
@@ -309,8 +309,9 @@ export function collectionSorter<T extends Record<string, any>>(
     const greaterThanCheck = direction === "ascending" ? 1 : -1;
 
     return (a: T, b: T) => {
-        let aValue = a[field];
-        let bValue = b[field];
+        // Using lodash to support "nested.field.names"
+        let aValue = get(a, field);
+        let bValue = get(b, field);
 
         if (typeof aValue === "undefined" || typeof bValue === "undefined") {
             return 0;

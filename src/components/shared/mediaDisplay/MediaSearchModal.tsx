@@ -139,17 +139,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                     </Chip.Group>
 
                     {/* Card display settings */}
-                    {/*<MediaWallDisplayControls*/}
-                    {/*    viewMode={wallViewMode}*/}
-                    {/*    viewModeSetter={setApplicationMediaSearchWallViewMode}*/}
-                    {/*    cardSize={cardSize}*/}
-                    {/*    cardGap={cardGap}*/}
-                    {/*    cardDetails={showDetails}*/}
-                    {/*    cardSizeSetter={setApplicationMediaSearchCardSize}*/}
-                    {/*    cardGapSetter={setApplicationMediaSearchCardGap}*/}
-                    {/*    cardDetailsSetter={setApplicationMediaSearchShowDetails}*/}
-                    {/*    cardDisplayResetter={resetApplicationMediaSearchToDefaults}*/}
-                    {/*/>*/}
+                    <MediaWallDisplayControls applicationFeature="mediaSearch" />
                 </Flex>
 
                 {typeof filterText === "undefined" || filterText.length < 2 ? (

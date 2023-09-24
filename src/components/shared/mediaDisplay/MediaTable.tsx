@@ -1,5 +1,6 @@
 import React, { FC, ReactElement, Ref, useEffect, useState } from "react";
 import { Box, createStyles, Flex, MantineColor, Stack, Text, useMantineTheme } from "@mantine/core";
+import VisibilitySensor from "react-visibility-sensor";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { Media, MediaId } from "../../../app/types";
@@ -15,6 +16,61 @@ import WarningBanner from "../textDisplay/WarningBanner";
 // Show an array of Media items in a table.
 // ================================================================================================
 
+type TableRowProps = {
+    mediaItem: Media;
+    columnsToDisplay: string[];
+    currentlyPlayingId?: MediaId | number;
+    currentlyPlayingRef?: Ref<HTMLDivElement>;
+    columnValue: (media: Media, column: string) => any;
+}
+
+/**
+ * Render a single table row. Use visibility sensing to only fully render the row cells when the
+ * row is visible.
+ */
+const TableRow: FC<TableRowProps> = ({
+    mediaItem,
+    columnsToDisplay,
+    currentlyPlayingId,
+    currentlyPlayingRef,
+    columnValue,
+}) => {
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+
+    return (
+        <VisibilitySensor
+            key={mediaItem.id}
+            onChange={setIsVisible}
+            partialVisibility={true}
+            offset={{ top: -1000, bottom: -1000 }}
+        >
+            {/* @ts-ignore */}
+            {({ isVisible }) =>
+                isVisible ? (
+                    <tr>
+                        {columnsToDisplay.map((column, index) => (
+                            // Wrap the "currently playing" row in a Box with the currentlyPlayingRef
+                            <td key={`${mediaItem.id}::${index}`}>
+                                {index === 0 &&
+                                currentlyPlayingRef &&
+                                currentlyPlayingId === mediaItem.id ? (
+                                    <Box ref={currentlyPlayingRef}>
+                                        {columnValue(mediaItem, column)}
+                                    </Box>
+                                ) : (
+                                    columnValue(mediaItem, column)
+                                )}
+                            </td>
+                        ))}
+                    </tr>
+                ) : <tr><td></td></tr>
+            }
+        </VisibilitySensor>
+    );
+};
+
+// ================================================================================================
+
 const useStyles = createStyles((theme) => ({
     table: {
         borderCollapse: "collapse",
@@ -25,6 +81,9 @@ const useStyles = createStyles((theme) => ({
             "td::first-letter": {
                 textTransform: "capitalize",
             },
+        },
+        tr: {
+            height: "1lh",
         },
         "tbody > tr:not(:first-of-type)": {
             borderTop: `1px solid ${theme.colors.gray[8]}`,
@@ -52,6 +111,8 @@ type ColumnConfiguration = {
     heading: string;
     valueGenerator?: (value: any, media: Media) => any;
 };
+
+// ------------------------------------------------------------------------------------------------
 
 type MediaTableProps = {
     media: Media[];
@@ -290,25 +351,18 @@ const MediaTable: FC<MediaTableProps> = ({
             ))}
         </tr>
     );
-
+    
     // Define table body
     const bodyRows = mediaToDisplay.media
         .map((mediaItem) => ({ ...mediaItem, controls: undefined }))
         .map((mediaItem) => (
-            <tr key={mediaItem.id}>
-                {columnsToDisplay.map((column, index) => (
-                    // Wrap the "currently playing" row in a Box with the currentlyPlayingRef
-                    <td key={`${mediaItem.id}::${index}`}>
-                        {index === 0 &&
-                        currentlyPlayingRef &&
-                        currentlyPlayingId === mediaItem.id ? (
-                            <Box ref={currentlyPlayingRef}>{columnValue(mediaItem, column)}</Box>
-                        ) : (
-                            columnValue(mediaItem, column)
-                        )}
-                    </td>
-                ))}
-            </tr>
+            <TableRow
+                mediaItem={mediaItem}
+                columnsToDisplay={columnsToDisplay}
+                currentlyPlayingId={currentlyPlayingId}
+                currentlyPlayingRef={currentlyPlayingRef}
+                columnValue={columnValue}
+            />
         ));
 
     // --------------------------------------------------------------------------------------------

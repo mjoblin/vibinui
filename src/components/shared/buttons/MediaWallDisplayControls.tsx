@@ -26,6 +26,7 @@ import {
     minCardGap,
     minCardSize,
     resetAlbumsToDefaults,
+    resetApplicationMediaSearchToDefaults,
     resetFavoritesToDefaults,
     resetPresetsToDefaults,
     resetTracksToDefaults,
@@ -35,6 +36,12 @@ import {
     setAlbumsWallSortDirection,
     setAlbumsWallSortField,
     setAlbumsWallViewMode,
+    setApplicationMediaSearchCardGap,
+    setApplicationMediaSearchCardSize,
+    setApplicationMediaSearchShowDetails,
+    setApplicationMediaSearchWallSortDirection,
+    setApplicationMediaSearchWallSortField,
+    setApplicationMediaSearchWallViewMode,
     setFavoritesCardGap,
     setFavoritesCardSize,
     setFavoritesShowDetails,
@@ -71,40 +78,10 @@ import MediaWallViewModeSelector from "./MediaWallViewModeSelector";
 //  the app feature ("albums", "mediaSearch", etc), and then own the determination of which view
 //  state and state setter to use.
 type MediaWallDisplayControlsProps = {
-    // viewMode: MediaWallViewMode;
     applicationFeature?: ApplicationFeature;
-    // viewModeSetter?: ActionCreator<any>;
-    // sortableFields?: string[];
-    // sortField: string;
-    // sortFieldSetter: ActionCreator<any>;
-    // sortDirection: MediaSortDirection;
-    // sortDirectionSetter: ActionCreator<any>;
-    // cardSize: number;
-    // cardGap: number;
-    // cardDetails: boolean;
-    // cardSizeSetter?: ActionCreator<any>;
-    // cardGapSetter?: ActionCreator<any>;
-    // cardDetailsSetter?: ActionCreator<any>;
-    // cardDisplayResetter?: ActionCreator<any>;
 };
 
-const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({
-    // viewMode = "cards",
-    applicationFeature,
-    // viewModeSetter,
-    // sortableFields = [],
-    // sortField,
-    // sortFieldSetter,
-    // sortDirection,
-    // sortDirectionSetter,
-    // cardSize,
-    // cardGap,
-    // cardDetails,
-    // cardSizeSetter,
-    // cardGapSetter,
-    // cardDetailsSetter,
-    // cardDisplayResetter,
-}) => {
+const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({ applicationFeature }) => {
     const theme = useMantineTheme();
     const dispatch = useAppDispatch();
     const {
@@ -118,6 +95,8 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({
             ? state.userSettings.albums
             : applicationFeature === "favorites"
             ? state.userSettings.favorites
+            : applicationFeature === "mediaSearch"
+            ? state.userSettings.application.mediaSearch
             : applicationFeature === "presets"
             ? state.userSettings.presets
             : applicationFeature === "tracks"
@@ -127,8 +106,9 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     // @ts-ignore
-    const { cardGap, cardSize, wallSortDirection, showDetails, wallSortField, wallViewMode } = stateRoot;
-    
+    const { cardGap, cardSize, wallSortDirection, showDetails, wallSortField, wallViewMode } =
+        stateRoot;
+
     let viewModeSetter: ActionCreator<any> | undefined = undefined;
     let sortFieldSetter: ActionCreator<any> | undefined = undefined;
     let sortDirectionSetter: ActionCreator<any> | undefined = undefined;
@@ -137,7 +117,7 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({
     let cardDetailsSetter: ActionCreator<any> | undefined = undefined;
     let cardDisplayResetter: ActionCreator<any> | undefined = undefined;
     let sortableFields: string[] = [];
-    
+
     if (applicationFeature === "albums") {
         viewModeSetter = setAlbumsWallViewMode;
         sortFieldSetter = setAlbumsWallSortField;
@@ -165,6 +145,15 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({
         cardDetailsSetter = setPresetsShowDetails;
         cardDisplayResetter = resetPresetsToDefaults;
         sortableFields = SORTABLE_MEDIA_FIELDS_PRESETS;
+    } else if (applicationFeature === "mediaSearch") {
+        viewModeSetter = setApplicationMediaSearchWallViewMode;
+        sortFieldSetter = setApplicationMediaSearchWallSortField;
+        sortDirectionSetter = setApplicationMediaSearchWallSortDirection;
+        cardSizeSetter = setApplicationMediaSearchCardSize;
+        cardGapSetter = setApplicationMediaSearchCardGap;
+        cardDetailsSetter = setApplicationMediaSearchShowDetails;
+        cardDisplayResetter = resetApplicationMediaSearchToDefaults;
+        sortableFields = SORTABLE_MEDIA_FIELDS_TRACKS;
     } else if (applicationFeature === "tracks") {
         viewModeSetter = setTracksWallViewMode;
         sortFieldSetter = setTracksWallSortField;
@@ -175,7 +164,7 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({
         cardDisplayResetter = resetTracksToDefaults;
         sortableFields = SORTABLE_MEDIA_FIELDS_TRACKS;
     }
-    
+
     return (
         <Popover
             position="bottom-end"
