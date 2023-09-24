@@ -21,6 +21,8 @@ const DEFAULT_ALBUMS_CARD_SIZE = 200;
 const DEFAULT_ALBUMS_FILTER_TEXT = "";
 const DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING = false;
 const DEFAULT_ALBUMS_SHOW_DETAILS = true;
+const DEFAULT_ALBUMS_WALL_SORT_FIELD = "title";
+const DEFAULT_ALBUMS_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_ALBUMS_WALL_VIEW_MODE = "cards";
 const DEFAULT_APPLICATION_AMPLIFIER_MAX_VOLUME = 0.5;
 const DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = false;
@@ -34,6 +36,8 @@ const DEFAULT_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES = [
 ];
 const DEFAULT_APPLICATION_MEDIA_SEARCH_FILTER_TEXT = "";
 const DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS = true;
+const DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD = "title";
+const DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE = "cards";
 const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND = true;
@@ -48,6 +52,8 @@ const DEFAULT_FAVORITES_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_FAVORITES_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_FAVORITES_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_FAVORITES_SHOW_DETAILS = true;
+const DEFAULT_FAVORITES_WALL_SORT_FIELD = "title";
+const DEFAULT_FAVORITES_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_FAVORITES_WALL_VIEW_MODE = "cards";
 const DEFAULT_CURRENTTRACK_ACTIVETAB = "lyrics";
 const DEFAULT_PLAYLIST_EDITOR_SORTFIELD = "name";
@@ -57,12 +63,16 @@ const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_PRESETS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_PRESETS_SHOW_DETAILS = true;
+const DEFAULT_PRESETS_WALL_SORT_FIELD = "name";
+const DEFAULT_PRESETS_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_PRESETS_WALL_VIEW_MODE = "cards";
 const DEFAULT_TRACKS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_TRACKS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_TRACKS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_TRACKS_FOLLOW_CURRENTLY_PLAYING = false;
 const DEFAULT_TRACKS_SHOW_DETAILS = DEFAULT_ALBUMS_SHOW_DETAILS;
+const DEFAULT_TRACKS_WALL_SORT_FIELD = "title";
+const DEFAULT_TRACKS_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_TRACKS_WALL_VIEW_MODE = "cards";
 
 // LSKEY = Local Storage Key. These dot-delimited keys need to match the nested object hierarchy
@@ -73,6 +83,8 @@ export const LSKEY_ALBUMS_CARD_SIZE = "albums.cardSize";
 export const LSKEY_ALBUMS_FILTER_TEXT = "albums.filterText";
 export const LSKEY_ALBUMS_FOLLOW_CURRENTLY_PLAYING = "albums.followCurrentlyPlaying";
 export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
+export const LSKEY_ALBUMS_WALL_SORT_DIRECTION = "albums.wallSortDirection";
+export const LSKEY_ALBUMS_WALL_SORT_FIELD = "albums.wallSortField";
 export const LSKEY_ALBUMS_WALL_VIEW_MODE = "albums.wallViewMode";
 export const LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME = "application.amplifierMaxVolume";
 export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
@@ -81,7 +93,9 @@ export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE = "application.mediaSearch
 export const LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES = "application.mediaSearch.displayCategories";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_FILTER_TEXT = "application.mediaSearch.filterText";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS = "application.mediaSearch.showDetails";
-export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE = "albums.wallViewMode";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION = "application.mediaSearch.wallSortDirection";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD = "application.mediaSearch.wallSortField";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE = "application.mediaSearch.wallViewMode";
 export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
@@ -95,7 +109,9 @@ export const LSKEY_FAVORITES_CARD_GAP = "favorites.cardGap";
 export const LSKEY_FAVORITES_CARD_SIZE = "favorites.cardSize";
 export const LSKEY_FAVORITES_FILTER_TEXT = "favorites.filterText";
 export const LSKEY_FAVORITES_SHOW_DETAILS = "favorites.showDetails";
-export const LSKEY_FAVORITES_WALL_VIEW_MODE = "albums.wallViewMode";
+export const LSKEY_FAVORITES_WALL_SORT_DIRECTION = "favorites.wallSortDirection";
+export const LSKEY_FAVORITES_WALL_SORT_FIELD = "favorites.wallSortField";
+export const LSKEY_FAVORITES_WALL_VIEW_MODE = "favorites.wallViewMode";
 export const LSKEY_CURRENTTRACK_ACTIVETAB = "currentTrack.activeTab";
 export const LSKEY_PLAYLIST_EDITOR_SORTFIELD = "playlist.editor.sortField";
 export const LSKEY_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = "playlist.followCurrentlyPlaying";
@@ -104,15 +120,21 @@ export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
 export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
 export const LSKEY_PRESETS_FILTER_TEXT = "presets.filterText";
 export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
-export const LSKEY_PRESETS_WALL_VIEW_MODE = "albums.wallViewMode";
+export const LSKEY_PRESETS_WALL_SORT_DIRECTION = "presets.wallSortDirection";
+export const LSKEY_PRESETS_WALL_SORT_FIELD = "presets.wallSortField";
+export const LSKEY_PRESETS_WALL_VIEW_MODE = "presets.wallViewMode";
 export const LSKEY_TRACKS_CARD_GAP = "tracks.cardGap";
 export const LSKEY_TRACKS_CARD_SIZE = "tracks.cardSize";
 export const LSKEY_TRACKS_FILTER_TEXT = "tracks.filterText";
 export const LSKEY_TRACKS_FOLLOW_CURRENTLY_PLAYING = "tracks.followCurrentlyPlaying";
 export const LSKEY_TRACKS_SHOW_DETAILS = "tracks.showDetails";
+export const LSKEY_TRACKS_WALL_SORT_DIRECTION = "tracks.wallSortDirection";
+export const LSKEY_TRACKS_WALL_SORT_FIELD = "tracks.wallSortField";
 export const LSKEY_TRACKS_WALL_VIEW_MODE = "tracks.wallViewMode";
 
 export type MediaWallViewMode = "cards" | "table";
+export type MediaSortDirection = "ascending" | "descending";
+export type MediaSortField = string;
 export type MediaCardViewMode = "art_focused" | "compact";
 export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
@@ -130,6 +152,8 @@ export interface UserSettingsState {
         filterText: string;
         followCurrentlyPlaying: boolean;
         showDetails: boolean;
+        wallSortDirection: MediaSortDirection;
+        wallSortField: string;
         wallViewMode: MediaWallViewMode;
     };
     application: {
@@ -141,6 +165,8 @@ export interface UserSettingsState {
             displayCategories: MediaSearchDisplayCategory[];
             filterText: string;
             showDetails: boolean;
+            wallSortDirection: MediaSortDirection;
+            wallSortField: string;
             wallViewMode: MediaWallViewMode;
         }
         theme: ApplicationTheme;
@@ -163,6 +189,8 @@ export interface UserSettingsState {
         cardSize: number;
         filterText: string;
         showDetails: boolean;
+        wallSortDirection: MediaSortDirection;
+        wallSortField: string;
         wallViewMode: MediaWallViewMode;
     };
     currentTrack: {
@@ -180,6 +208,8 @@ export interface UserSettingsState {
         cardSize: number;
         filterText: string;
         showDetails: boolean;
+        wallSortDirection: MediaSortDirection;
+        wallSortField: string;
         wallViewMode: MediaWallViewMode;
     };
     tracks: {
@@ -189,6 +219,8 @@ export interface UserSettingsState {
         followCurrentlyPlaying: boolean;
         lyricsSearchText: string;
         showDetails: boolean;
+        wallSortDirection: MediaSortDirection;
+        wallSortField: string;
         wallViewMode: MediaWallViewMode;
     };
 }
@@ -221,6 +253,14 @@ const initialState: UserSettingsState = {
             DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING
         ),
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
+        wallSortDirection: getLocalStorageValue(
+            LSKEY_ALBUMS_WALL_SORT_DIRECTION,
+            DEFAULT_ALBUMS_WALL_SORT_DIRECTION
+        ),
+        wallSortField: getLocalStorageValue(
+            LSKEY_ALBUMS_WALL_SORT_FIELD,
+            DEFAULT_ALBUMS_WALL_SORT_FIELD
+        ),
         wallViewMode: getLocalStorageValue(
             LSKEY_ALBUMS_WALL_VIEW_MODE,
             DEFAULT_ALBUMS_WALL_VIEW_MODE
@@ -255,6 +295,14 @@ const initialState: UserSettingsState = {
             showDetails: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS,
                 DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS
+            ),
+            wallSortDirection: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION
+            ),
+            wallSortField: getLocalStorageValue(
+                LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD,
+                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD
             ),
             wallViewMode: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE,
@@ -296,6 +344,14 @@ const initialState: UserSettingsState = {
             LSKEY_FAVORITES_SHOW_DETAILS,
             DEFAULT_FAVORITES_SHOW_DETAILS
         ),
+        wallSortDirection: getLocalStorageValue(
+            LSKEY_FAVORITES_WALL_SORT_DIRECTION,
+            DEFAULT_FAVORITES_WALL_SORT_DIRECTION
+        ),
+        wallSortField: getLocalStorageValue(
+            LSKEY_FAVORITES_WALL_SORT_FIELD,
+            DEFAULT_FAVORITES_WALL_SORT_FIELD
+        ),
         wallViewMode: getLocalStorageValue(
             LSKEY_FAVORITES_WALL_VIEW_MODE,
             DEFAULT_FAVORITES_WALL_VIEW_MODE
@@ -325,6 +381,14 @@ const initialState: UserSettingsState = {
         cardSize: getLocalStorageValue(LSKEY_PRESETS_CARD_SIZE, DEFAULT_PRESETS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_PRESETS_FILTER_TEXT, DEFAULT_PRESETS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_PRESETS_SHOW_DETAILS, DEFAULT_PRESETS_SHOW_DETAILS),
+        wallSortDirection: getLocalStorageValue(
+            LSKEY_PRESETS_WALL_SORT_DIRECTION,
+            DEFAULT_PRESETS_WALL_SORT_DIRECTION
+        ),
+        wallSortField: getLocalStorageValue(
+            LSKEY_PRESETS_WALL_SORT_FIELD,
+            DEFAULT_PRESETS_WALL_SORT_FIELD
+        ),
         wallViewMode: getLocalStorageValue(
             LSKEY_PRESETS_WALL_VIEW_MODE,
             DEFAULT_PRESETS_WALL_VIEW_MODE
@@ -340,6 +404,14 @@ const initialState: UserSettingsState = {
         ),
         lyricsSearchText: "",
         showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
+        wallSortDirection: getLocalStorageValue(
+            LSKEY_TRACKS_WALL_SORT_DIRECTION,
+            DEFAULT_TRACKS_WALL_SORT_DIRECTION
+        ),
+        wallSortField: getLocalStorageValue(
+            LSKEY_TRACKS_WALL_SORT_FIELD,
+            DEFAULT_TRACKS_WALL_SORT_FIELD
+        ),
         wallViewMode: getLocalStorageValue(
             LSKEY_TRACKS_WALL_VIEW_MODE,
             DEFAULT_TRACKS_WALL_VIEW_MODE
@@ -400,6 +472,12 @@ export const userSettingsSlice = createSlice({
         setAlbumsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.albums.showDetails = action.payload;
         },
+        setAlbumsWallSortDirection: (state, action: PayloadAction<MediaSortDirection>) => {
+            state.albums.wallSortDirection = action.payload;
+        },
+        setAlbumsWallSortField: (state, action: PayloadAction<MediaSortField>) => {
+            state.albums.wallSortField = action.payload;
+        },
         setAlbumsWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
             state.albums.wallViewMode = action.payload;
         },
@@ -426,6 +504,12 @@ export const userSettingsSlice = createSlice({
         },
         setApplicationMediaSearchShowDetails: (state, action: PayloadAction<boolean>) => {
             state.application.mediaSearch.showDetails = action.payload;
+        },
+        setApplicationMediaSearchWallSortDirection: (state, action: PayloadAction<MediaSortDirection>) => {
+            state.application.mediaSearch.wallSortDirection = action.payload;
+        },
+        setApplicationMediaSearchWallSortField: (state, action: PayloadAction<MediaSortField>) => {
+            state.application.mediaSearch.wallSortField = action.payload;
         },
         setApplicationMediaSearchWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
             state.application.mediaSearch.wallViewMode = action.payload;
@@ -478,6 +562,12 @@ export const userSettingsSlice = createSlice({
         setFavoritesShowDetails: (state, action: PayloadAction<boolean>) => {
             state.favorites.showDetails = action.payload;
         },
+        setFavoritesWallSortDirection: (state, action: PayloadAction<MediaSortDirection>) => {
+            state.favorites.wallSortDirection = action.payload;
+        },
+        setFavoritesWallSortField: (state, action: PayloadAction<MediaSortField>) => {
+            state.favorites.wallSortField = action.payload;
+        },
         setFavoritesWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
             state.favorites.wallViewMode = action.payload;
         },
@@ -505,6 +595,12 @@ export const userSettingsSlice = createSlice({
         setPresetsShowDetails: (state, action: PayloadAction<boolean>) => {
             state.presets.showDetails = action.payload;
         },
+        setPresetsWallSortDirection: (state, action: PayloadAction<MediaSortDirection>) => {
+            state.presets.wallSortDirection = action.payload;
+        },
+        setPresetsWallSortField: (state, action: PayloadAction<MediaSortField>) => {
+            state.presets.wallSortField = action.payload;
+        },
         setPresetsWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
             state.presets.wallViewMode = action.payload;
         },
@@ -526,6 +622,12 @@ export const userSettingsSlice = createSlice({
         setTracksShowDetails: (state, action: PayloadAction<boolean>) => {
             state.tracks.showDetails = action.payload;
         },
+        setTracksWallSortDirection: (state, action: PayloadAction<MediaSortDirection>) => {
+            state.tracks.wallSortDirection = action.payload;
+        },
+        setTracksWallSortField: (state, action: PayloadAction<MediaSortField>) => {
+            state.tracks.wallSortField = action.payload;
+        },
         setTracksWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
             state.tracks.wallViewMode = action.payload;
         },
@@ -546,6 +648,8 @@ export const {
     setAlbumsFilterText,
     setAlbumsFollowCurrentlyPlaying,
     setAlbumsShowDetails,
+    setAlbumsWallSortDirection,
+    setAlbumsWallSortField,
     setAlbumsWallViewMode,
     setApplicationAmplifierMaxVolume,
     setApplicationHaveShownWelcomeMessage,
@@ -554,6 +658,8 @@ export const {
     setApplicationMediaSearchDisplayCategories,
     setApplicationMediaSearchFilterText,
     setApplicationMediaSearchShowDetails,
+    setApplicationMediaSearchWallSortDirection,
+    setApplicationMediaSearchWallSortField,
     setApplicationMediaSearchWallViewMode,
     setApplicationTheme,
     setApplicationUseImageBackground,
@@ -571,6 +677,8 @@ export const {
     setFavoritesCardSize,
     setFavoritesFilterText,
     setFavoritesShowDetails,
+    setFavoritesWallSortDirection,
+    setFavoritesWallSortField,
     setFavoritesWallViewMode,
     setCurrentTrackActiveTab,
     setPlaylistEditorSortField,
@@ -580,6 +688,8 @@ export const {
     setPresetsCardSize,
     setPresetsFilterText,
     setPresetsShowDetails,
+    setPresetsWallSortDirection,
+    setPresetsWallSortField,
     setPresetsWallViewMode,
     setTracksCardGap,
     setTracksCardSize,
@@ -587,6 +697,8 @@ export const {
     setTracksFollowCurrentlyPlaying,
     setTracksLyricsSearchText,
     setTracksShowDetails,
+    setTracksWallSortDirection,
+    setTracksWallSortField,
     setTracksWallViewMode,
 } = userSettingsSlice.actions;
 

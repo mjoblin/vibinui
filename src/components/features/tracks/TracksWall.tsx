@@ -9,12 +9,12 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { Track } from "../../../app/types";
 import { useGetTracksQuery, useSearchLyricsMutation } from "../../../app/services/vibinTracks";
 import { setFilteredTrackMediaIds } from "../../../app/store/internalSlice";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 import TrackCard from "./TrackCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import MediaTable from "../../shared/mediaDisplay/MediaTable";
-import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Show a wall of Tracks. Wall will be either art cards or a table. Reacts to display properties
@@ -24,6 +24,8 @@ import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 type TrackWallProps = {
     filterText?: string;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -38,6 +40,8 @@ type TrackWallProps = {
 const TracksWall: FC<TrackWallProps> = ({
     filterText = "",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
@@ -52,7 +56,9 @@ const TracksWall: FC<TrackWallProps> = ({
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackRef = useRef<HTMLDivElement>(null);
-    const { lyricsSearchText } = useAppSelector((state: RootState) => state.userSettings.tracks);
+    const { lyricsSearchText, wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.tracks
+    );
     const currentTrackMediaId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
@@ -60,7 +66,7 @@ const TracksWall: FC<TrackWallProps> = ({
     const { data: allTracks, error, isLoading, status: allTracksStatus } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] =
         useSearchLyricsMutation();
-    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
+    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(false);
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -104,6 +110,7 @@ const TracksWall: FC<TrackWallProps> = ({
         }
 
         if (!allTracks || allTracks.length <= 0) {
+            setCalculatingTracksToDisplay(false);
             return;
         }
 
@@ -115,8 +122,11 @@ const TracksWall: FC<TrackWallProps> = ({
             // which match the lyrics search.
             dispatch(setFilteredTrackMediaIds([]));
             setTracksToDisplay([]);
+            setCalculatingTracksToDisplay(false);
             return;
         }
+
+        setCalculatingTracksToDisplay(true);
 
         // First restrict the filtering to any tracks associated with a current lyrics search.
         const tracksToFilter =
@@ -125,19 +135,25 @@ const TracksWall: FC<TrackWallProps> = ({
                 : allTracks;
 
         // Perform any filtering based on user input.
-        const tracksToDisplay = collectionFilter(tracksToFilter, debouncedFilterText, "title");
+        const processedTracks = collectionFilter(tracksToFilter, debouncedFilterText, "title")
+            .slice()
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
-        dispatch(setFilteredTrackMediaIds(tracksToDisplay.map((track) => track.id)));
-        setTracksToDisplay(tracksToDisplay);
+        dispatch(setFilteredTrackMediaIds(processedTracks.map((track) => track.id)));
+        setTracksToDisplay(processedTracks);
         setCalculatingTracksToDisplay(false);
     }, [
         allTracks,
         allTracksStatus,
-        tracksMatchingLyrics,
-        filterText,
         debouncedFilterText,
-        lyricsSearchText,
         dispatch,
+        filterText,
+        lyricsSearchText,
+        sortDirection,
+        sortField,
+        tracksMatchingLyrics,
+        wallSortDirection,
+        wallSortField,
     ]);
 
     /**
@@ -221,7 +237,7 @@ const TracksWall: FC<TrackWallProps> = ({
         <Box className={dynamicClasses.tableWall}>
             <MediaTable
                 media={tracksToDisplay}
-                columns={["album_art_uri", "artist", "title", "album", "date", "genre"]}
+                columns={["album_art_uri", "title", "artist", "album", "date", "duration", "genre"]}
                 stripeColor={tableStripeColor}
                 currentlyPlayingId={currentTrackMediaId}
                 currentlyPlayingRef={currentTrackRef}

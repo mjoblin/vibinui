@@ -8,22 +8,16 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetTracksQuery } from "../../../app/services/vibinTracks";
 import {
-    resetTracksToDefaults,
-    setTracksCardGap,
-    setTracksCardSize,
     setTracksFilterText,
     setTracksFollowCurrentlyPlaying,
     setTracksLyricsSearchText,
-    setTracksShowDetails,
-    setTracksWallViewMode
 } from "../../../app/store/userSettingsSlice";
-import CardControls from "../../shared/buttons/CardControls";
+import MediaWallDisplayControls from "../../shared/buttons/MediaWallDisplayControls";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPlayingToggle";
-import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <TracksWall>.
@@ -47,8 +41,9 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allTracks } = useGetTracksQuery();
-    const { cardSize, cardGap, filterText, followCurrentlyPlaying, showDetails, wallViewMode } =
-        useAppSelector((state: RootState) => state.userSettings.tracks);
+    const { filterText, followCurrentlyPlaying } = useAppSelector(
+        (state: RootState) => state.userSettings.tracks
+    );
     const { filteredTrackMediaIds } = useAppSelector((state: RootState) => state.internal.tracks);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackMediaId = useAppSelector(
@@ -154,12 +149,6 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                 />
             </Flex>
 
-            {/* Toggle between Card and Table views */}
-            <MediaWallViewModeSelector
-                viewMode={wallViewMode}
-                onChange={(viewMode) => dispatch(setTracksWallViewMode(viewMode))}
-            />
-            
             <Flex gap={20} align="center">
                 {/* Buttons to show and follow currently-playing */}
                 <Flex gap={5} align="center">
@@ -196,7 +185,7 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                 </Box>
             </Flex>
 
-            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" align="center">
                 {/* "Showing x of y tracks" */}
                 <ShowCountLabel
                     showing={filteredTrackMediaIds.length}
@@ -205,15 +194,7 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
                 />
 
                 {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setTracksCardSize}
-                    cardGapSetter={setTracksCardGap}
-                    showDetailsSetter={setTracksShowDetails}
-                    resetter={resetTracksToDefaults}
-                />
+                <MediaWallDisplayControls applicationFeature="tracks" />
             </Flex>
         </Flex>
     );

@@ -13,6 +13,17 @@
 //  and Track updates (owned by the streamer). They overlap a lot, but not entirely (the Media ID's
 //  are notably missing from the streamer updates).
 
+export type ApplicationFeature =
+    | "albums"
+    | "artists"
+    | "currentTrack"
+    | "favorites"
+    | "mediaSearch"
+    | "playlists"
+    | "presets"
+    | "status"
+    | "tracks";
+
 export type Media = Album | Track | Preset;
 
 export type MediaId = string;

@@ -1,10 +1,12 @@
 import React, { FC, ReactElement, Ref, useEffect, useState } from "react";
 import { Box, createStyles, Flex, MantineColor, Stack, Text, useMantineTheme } from "@mantine/core";
+import VisibilitySensor from "react-visibility-sensor";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { Media, MediaId } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { secstoHms } from "../../../app/utils";
 import MediaArt from "./MediaArt";
 import MediaActionsButton from "../buttons/MediaActionsButton";
 import PlayButton from "../buttons/PlayButton";
@@ -12,6 +14,60 @@ import WarningBanner from "../textDisplay/WarningBanner";
 
 // ================================================================================================
 // Show an array of Media items in a table.
+// ================================================================================================
+
+type TableRowProps = {
+    mediaItem: Media;
+    columnsToDisplay: string[];
+    currentlyPlayingId?: MediaId | number;
+    currentlyPlayingRef?: Ref<HTMLDivElement>;
+    columnValue: (media: Media, column: string) => any;
+}
+
+/**
+ * Render a single table row. Use visibility sensing to only fully render the row cells when the
+ * row is visible.
+ */
+const TableRow: FC<TableRowProps> = ({
+    mediaItem,
+    columnsToDisplay,
+    currentlyPlayingId,
+    currentlyPlayingRef,
+    columnValue,
+}) => {
+    const [isVisible, setIsVisible] = useState<boolean>(false);
+
+    return (
+        <VisibilitySensor
+            onChange={setIsVisible}
+            partialVisibility={true}
+            offset={{ top: -1000, bottom: -1000 }}
+        >
+            {/* @ts-ignore */}
+            {({ isVisible }) =>
+                isVisible ? (
+                    <tr>
+                        {columnsToDisplay.map((column, index) => (
+                            // Wrap the "currently playing" row in a Box with the currentlyPlayingRef
+                            <td key={`${mediaItem.id}::${index}`}>
+                                {index === 0 &&
+                                currentlyPlayingRef &&
+                                currentlyPlayingId === mediaItem.id ? (
+                                    <Box ref={currentlyPlayingRef}>
+                                        {columnValue(mediaItem, column)}
+                                    </Box>
+                                ) : (
+                                    columnValue(mediaItem, column)
+                                )}
+                            </td>
+                        ))}
+                    </tr>
+                ) : <tr><td></td></tr>
+            }
+        </VisibilitySensor>
+    );
+};
+
 // ================================================================================================
 
 const useStyles = createStyles((theme) => ({
@@ -25,16 +81,15 @@ const useStyles = createStyles((theme) => ({
                 textTransform: "capitalize",
             },
         },
+        tr: {
+            height: "1lh",
+        },
         "tbody > tr:not(:first-of-type)": {
             borderTop: `1px solid ${theme.colors.gray[8]}`,
         },
         "tbody > tr:not(:last-of-type)": {
             borderBottom: `1px solid ${theme.colors.gray[8]}`,
         },
-        // "tbody > tr:nth-child(odd)": {
-        //     backgroundColor:
-        //         theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.colors.gray[2],
-        // },
         td: {
             fontSize: 14,
             paddingLeft: 0,
@@ -55,6 +110,8 @@ type ColumnConfiguration = {
     heading: string;
     valueGenerator?: (value: any, media: Media) => any;
 };
+
+// ------------------------------------------------------------------------------------------------
 
 type MediaTableProps = {
     media: Media[];
@@ -171,30 +228,8 @@ const MediaTable: FC<MediaTableProps> = ({
 
     // Configure the header and value generators for each potential field from a media item.
     const columnConfig: { [key: string]: ColumnConfiguration } = {
-        id: {
-            heading: "",
-        },
-        title: {
-            heading: "title",
-        },
-        creator: {
-            heading: "creator",
-        },
-        date: {
-            heading: "year",
-            valueGenerator: (value: any): string => {
-                const date = new Date(value);
-                const year = date.getFullYear();
-
-                return isNaN(year) ? "" : `${year}`;
-            },
-        },
-        artist: {
-            heading: "artist",
-        },
-        genre: {
-            heading: "genre",
-            valueGenerator: (value: any): string => (value.includes("Unknown") ? "" : value),
+        album: {
+            heading: "album",
         },
         album_art_uri: {
             heading: "",
@@ -213,18 +248,6 @@ const MediaTable: FC<MediaTableProps> = ({
                 );
             },
         },
-        parentId: {
-            heading: "parent",
-        },
-        track_number: {
-            heading: "track",
-        },
-        duration: {
-            heading: "duration",
-        },
-        album: {
-            heading: "album",
-        },
         art_url: {
             heading: "",
             valueGenerator: (value: any, media: Media): ReactElement => {
@@ -242,20 +265,11 @@ const MediaTable: FC<MediaTableProps> = ({
                 );
             },
         },
-        name: {
-            heading: "name",
-        },
-        type: {
-            heading: "type",
+        artist: {
+            heading: "artist",
         },
         class: {
             heading: "class",
-        },
-        state: {
-            heading: "state",
-        },
-        is_playing: {
-            heading: "playing",
         },
         controls: {
             heading: "",
@@ -267,6 +281,50 @@ const MediaTable: FC<MediaTableProps> = ({
                     </Flex>
                 );
             },
+        },
+        creator: {
+            heading: "creator",
+        },
+        date: {
+            heading: "year",
+            valueGenerator: (value: any): string => {
+                const date = new Date(value);
+                const year = date.getFullYear();
+
+                return isNaN(year) ? "" : `${year}`;
+            },
+        },
+        duration: {
+            heading: "duration",
+            valueGenerator: (value: any, media: Media): string => secstoHms(value),
+        },
+        genre: {
+            heading: "genre",
+            valueGenerator: (value: any): string => (value.includes("Unknown") ? "" : value),
+        },
+        id: {
+            heading: "",
+        },
+        is_playing: {
+            heading: "playing",
+        },
+        name: {
+            heading: "name",
+        },
+        parentId: {
+            heading: "parent",
+        },
+        state: {
+            heading: "state",
+        },
+        title: {
+            heading: "title",
+        },
+        track_number: {
+            heading: "track",
+        },
+        type: {
+            heading: "type",
         },
     };
 
@@ -292,25 +350,19 @@ const MediaTable: FC<MediaTableProps> = ({
             ))}
         </tr>
     );
-
+    
     // Define table body
     const bodyRows = mediaToDisplay.media
         .map((mediaItem) => ({ ...mediaItem, controls: undefined }))
         .map((mediaItem) => (
-            <tr key={mediaItem.id}>
-                {columnsToDisplay.map((column, index) => (
-                    // Wrap the "currently playing" row in a Box with the currentlyPlayingRef
-                    <td key={`${mediaItem.id}::${index}`}>
-                        {index === 0 &&
-                        currentlyPlayingRef &&
-                        currentlyPlayingId === mediaItem.id ? (
-                            <Box ref={currentlyPlayingRef}>{columnValue(mediaItem, column)}</Box>
-                        ) : (
-                            columnValue(mediaItem, column)
-                        )}
-                    </td>
-                ))}
-            </tr>
+            <TableRow
+                key={mediaItem.id}
+                mediaItem={mediaItem}
+                columnsToDisplay={columnsToDisplay}
+                currentlyPlayingId={currentlyPlayingId}
+                currentlyPlayingRef={currentlyPlayingRef}
+                columnValue={columnValue}
+            />
         ));
 
     // --------------------------------------------------------------------------------------------

@@ -60,6 +60,19 @@ export const useAppGlobals = () => {
         SEEK_OFFSET_SECS: 10,
         SCROLL_POS_DISPATCH_RATE: 500,
         SELECTED_COLOR: "rgba(25, 113, 194, 0.2)",
+        SORTABLE_MEDIA_FIELDS_ALBUMS: ["artist", "date", "genre", "title"],
+        SORTABLE_MEDIA_FIELDS_FAVORITES: ["album", "artist", "date", "duration", "genre", "title"],
+        SORTABLE_MEDIA_FIELDS_MEDIA_SEARCH: [
+            "album",
+            "artist",
+            "date",
+            "duration",
+            "genre",
+            "name",
+            "title",
+        ],
+        SORTABLE_MEDIA_FIELDS_PRESETS: ["name", "type"],
+        SORTABLE_MEDIA_FIELDS_TRACKS: ["album", "artist", "date", "duration", "genre", "title"],
         BUFFERING_AUDIO_NOTIFY_DELAY: 3000,
         STYLE_LABEL_BESIDE_COMPONENT: {
             root: {

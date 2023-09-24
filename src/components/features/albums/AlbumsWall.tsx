@@ -10,9 +10,9 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
-import { AlbumCollection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import { AlbumCollection, MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 
 // ================================================================================================
 // Show a wall of Albums. Wall will be either art cards or a table. Reacts to display properties
@@ -23,6 +23,8 @@ type AlbumWallProps = {
     filterText?: string;
     activeCollection?: AlbumCollection;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -38,6 +40,8 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     filterText = "",
     activeCollection = "all",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
@@ -51,6 +55,9 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const currentAlbumRef = useRef<HTMLDivElement>(null);
+    const { wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
+    );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
@@ -122,13 +129,26 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         const collection =
             activeCollection === "all" ? allAlbums : activeCollection === "new" ? newAlbums : [];
 
-        const albumsToDisplay = collectionFilter(collection || [], filterText, "title");
+        let processedAlbums = collectionFilter(collection || [], filterText, "title")
+            .slice()
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
-        dispatch(setFilteredAlbumMediaIds(albumsToDisplay.map((album) => album.id)));
+        dispatch(setFilteredAlbumMediaIds(processedAlbums.map((album) => album.id)));
 
         setCalculatingAlbumsToDisplay(false);
-        setAlbumsToDisplay(albumsToDisplay);
-    }, [allAlbums, allStatus, newAlbums, filterText, activeCollection, dispatch]);
+        setAlbumsToDisplay(processedAlbums);
+    }, [
+        activeCollection,
+        allAlbums,
+        allStatus,
+        dispatch,
+        filterText,
+        newAlbums,
+        sortDirection,
+        sortField,
+        wallSortDirection,
+        wallSortField,
+    ]);
 
     /**
      * Notify parent component of current filtering state.

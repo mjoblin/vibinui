@@ -17,22 +17,16 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
     MediaSearchDisplayCategory,
-    resetApplicationMediaSearchToDefaults,
-    setApplicationMediaSearchCardGap,
-    setApplicationMediaSearchCardSize,
     setApplicationMediaSearchDisplayCategories,
     setApplicationMediaSearchFilterText,
-    setApplicationMediaSearchShowDetails,
-    setApplicationMediaSearchWallViewMode
 } from "../../../app/store/userSettingsSlice";
 import FilterInstructions from "../textDisplay/FilterInstructions";
 import AlbumsWall from "../../features/albums/AlbumsWall";
 import TracksWall from "../../features/tracks/TracksWall";
 import PresetsWall from "../../features/presets/PresetsWall";
 import FavoritesWall from "../../features/favorites/FavoritesWall";
-import CardControls from "../buttons/CardControls";
+import MediaWallDisplayControls from "../buttons/MediaWallDisplayControls";
 import StylizedLabel from "../textDisplay/StylizedLabel";
-import MediaWallViewModeSelector from "../buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Allow for all media to be searched within one interface.
@@ -47,8 +41,16 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
     const dispatch = useAppDispatch();
     const theme = useMantineTheme();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
-    const { cardGap, cardSize, displayCategories, filterText, showDetails, wallViewMode } =
-        useAppSelector((state: RootState) => state.userSettings.application.mediaSearch);
+    const {
+        cardGap,
+        cardSize,
+        displayCategories,
+        filterText,
+        showDetails,
+        wallSortField,
+        wallSortDirection,
+        wallViewMode,
+    } = useAppSelector((state: RootState) => state.userSettings.application.mediaSearch);
     const [albumsDisplayCount, setAlbumsDisplayCount] = useState<number>(0);
     const [tracksDisplayCount, setTracksDisplayCount] = useState<number>(0);
     const [presetsDisplayCount, setPresetsDisplayCount] = useState<number>(0);
@@ -62,7 +64,6 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
     const headerSize = 25;
     const tableStripeColor =
         theme.colorScheme === "dark" ? theme.colors.gray[9] : theme.colors.gray[2];
-    console.log("MODAL", tableStripeColor);
 
     return (
         <Modal
@@ -117,14 +118,6 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                         withinPortal={true}
                     />
 
-                    {/* Toggle between Card and Table views */}
-                    <MediaWallViewModeSelector
-                        viewMode={wallViewMode}
-                        onChange={(viewMode) =>
-                            dispatch(setApplicationMediaSearchWallViewMode(viewMode))
-                        }
-                    />
-
                     <Chip.Group
                         multiple
                         value={displayCategories}
@@ -149,15 +142,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                     </Chip.Group>
 
                     {/* Card display settings */}
-                    <CardControls
-                        cardSize={cardSize}
-                        cardGap={cardGap}
-                        showDetails={showDetails}
-                        cardSizeSetter={setApplicationMediaSearchCardSize}
-                        cardGapSetter={setApplicationMediaSearchCardGap}
-                        showDetailsSetter={setApplicationMediaSearchShowDetails}
-                        resetter={resetApplicationMediaSearchToDefaults}
-                    />
+                    <MediaWallDisplayControls applicationFeature="mediaSearch" />
                 </Flex>
 
                 {typeof filterText === "undefined" || filterText.length < 2 ? (
@@ -172,6 +157,8 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 <AlbumsWall
                                     filterText={filterText}
                                     viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
@@ -198,6 +185,8 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 <TracksWall
                                     filterText={filterText}
                                     viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
@@ -224,6 +213,8 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 <PresetsWall
                                     filterText={filterText}
                                     viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
@@ -250,6 +241,8 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                     filterText={filterText}
                                     activeCollection="all"
                                     viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}

@@ -7,19 +7,13 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import {
     FavoriteCollection,
-    resetFavoritesToDefaults,
     setFavoritesActiveCollection,
-    setFavoritesCardGap,
-    setFavoritesCardSize,
     setFavoritesFilterText,
-    setFavoritesShowDetails,
-    setFavoritesWallViewMode,
 } from "../../../app/store/userSettingsSlice";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
-import CardControls from "../../shared/buttons/CardControls";
+import MediaWallDisplayControls from "../../shared/buttons/MediaWallDisplayControls";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
-import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSelector";
 
 // ================================================================================================
 // Controls for the <FavoritesWall>.
@@ -34,8 +28,9 @@ import MediaWallViewModeSelector from "../../shared/buttons/MediaWallViewModeSel
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
-    const { activeCollection, cardSize, cardGap, filterText, showDetails, wallViewMode } =
-        useAppSelector((state: RootState) => state.userSettings.favorites);
+    const { activeCollection, filterText } = useAppSelector(
+        (state: RootState) => state.userSettings.favorites
+    );
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { filteredFavoriteMediaIds } = useAppSelector(
         (state: RootState) => state.internal.favorites
@@ -96,12 +91,6 @@ const FavoritesControls: FC = () => {
                 />
             </Flex>
 
-            {/* Toggle between Card and Table views */}
-            <MediaWallViewModeSelector
-                viewMode={wallViewMode}
-                onChange={(viewMode) => dispatch(setFavoritesWallViewMode(viewMode))}
-            />
-
             {/* Replace playlist with favorites */}
             <PlayMediaIdsButton
                 mediaIds={[
@@ -114,7 +103,7 @@ const FavoritesControls: FC = () => {
                 maxToPlay={100}
             />
 
-            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" align="center">
                 {/* "Showing x of y favorites" */}
                 <ShowCountLabel
                     showing={
@@ -126,15 +115,7 @@ const FavoritesControls: FC = () => {
                 />
 
                 {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setFavoritesCardSize}
-                    cardGapSetter={setFavoritesCardGap}
-                    showDetailsSetter={setFavoritesShowDetails}
-                    resetter={resetFavoritesToDefaults}
-                />
+                <MediaWallDisplayControls applicationFeature="favorites" />
             </Flex>
         </Flex>
     );

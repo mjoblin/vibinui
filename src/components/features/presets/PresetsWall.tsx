@@ -6,11 +6,11 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import { setFilteredPresetIds } from "../../../app/store/internalSlice";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import PresetCard from "./PresetCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
-import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 
 // ================================================================================================
 // Show a wall of Presets. Wall will be either art cards or a table. Reacts to display properties
@@ -22,6 +22,8 @@ import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 type PresetsWallProps = {
     filterText?: string;
     viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
@@ -29,11 +31,13 @@ type PresetsWallProps = {
     quietUnlessShowingPresets?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
     onDisplayCountUpdate?: (displayCount: number) => void;
-}
+};
 
 const PresetsWall: FC<PresetsWallProps> = ({
     filterText = "",
     viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
@@ -44,7 +48,12 @@ const PresetsWall: FC<PresetsWallProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
-    const { presets, haveReceivedInitialState } = useAppSelector((state: RootState) => state.presets);
+    const { presets, haveReceivedInitialState } = useAppSelector(
+        (state: RootState) => state.presets
+    );
+    const { wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.presets
+    );
     const [presetsToDisplay, setPresetsToDisplay] = useState<Preset[]>([]);
 
     // NOTE: The PresetWall differs from the Artists/Albums/Tracks walls in that it gets its data
@@ -76,14 +85,25 @@ const PresetsWall: FC<PresetsWallProps> = ({
     useEffect(() => {
         onIsFilteringUpdate && onIsFilteringUpdate(true);
 
-        const presetsToDisplay = collectionFilter(presets, filterText, "name");
+        let processedPresets = collectionFilter(presets || [], filterText, "name")
+            .slice()
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
-        dispatch(setFilteredPresetIds(presetsToDisplay.map((preset) => preset.id)));
-        setPresetsToDisplay(presetsToDisplay);
+        dispatch(setFilteredPresetIds(processedPresets.map((preset) => preset.id)));
+        setPresetsToDisplay(processedPresets);
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
-    }, [presets, filterText, dispatch, onIsFilteringUpdate]);
-    
+    }, [
+        dispatch,
+        filterText,
+        onIsFilteringUpdate,
+        presets,
+        sortDirection,
+        sortField,
+        wallSortDirection,
+        wallSortField,
+    ]);
+
     if (!haveReceivedInitialState) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
