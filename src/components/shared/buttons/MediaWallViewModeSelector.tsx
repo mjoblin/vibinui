@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { ActionCreator } from "@reduxjs/toolkit";
 import { Center, SegmentedControl, Text } from "@mantine/core";
-import { IconGridDots, IconMenu2 } from "@tabler/icons";
+import { IconGridDots, IconMenu2 } from "@tabler/icons-react";
 
 import { useAppDispatch } from "../../../app/hooks/store";
 import { MediaWallViewMode } from "../../../app/store/userSettingsSlice";

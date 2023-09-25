@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Anchor, Button, Flex, Image, Stack, Text } from "@mantine/core";
-import { IconExternalLink } from "@tabler/icons";
+import { IconExternalLink } from "@tabler/icons-react";
 
 import { useGetLinksQuery } from "../../../app/services/vibinTracks";
 import LoadingDataMessage from "../textDisplay/LoadingDataMessage";

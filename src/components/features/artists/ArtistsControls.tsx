@@ -1,5 +1,6 @@
 import React, { FC, useCallback } from "react";
 import { ActionIcon, Box, Flex, Select, TextInput, Tooltip, useMantineTheme } from "@mantine/core";
+import { IconHandFinger, IconSquareX } from "@tabler/icons-react";
 
 import { Album, Artist, MediaId, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
@@ -17,7 +18,6 @@ import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useGetArtistsQuery } from "../../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../../app/services/vibinTracks";
-import { IconHandFinger, IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 

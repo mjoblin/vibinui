@@ -9,7 +9,7 @@ import {
     Switch,
     useMantineColorScheme,
 } from "@mantine/core";
-import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/icons";
+import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/icons-react";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";

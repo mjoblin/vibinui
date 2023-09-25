@@ -12,7 +12,7 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconVolume, IconVolumeOff } from "@tabler/icons";
+import { IconVolume, IconVolumeOff } from "@tabler/icons-react";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppSelector } from "../../../app/hooks/store";

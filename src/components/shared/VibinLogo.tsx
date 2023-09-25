@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Center, Flex, Text, ThemeIcon, createStyles } from "@mantine/core";
-import { IconPlant2 } from "@tabler/icons";
+import { IconPlant2 } from "@tabler/icons-react";
 
 import CustomFonts from "../app/customFonts/CustomFonts";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";

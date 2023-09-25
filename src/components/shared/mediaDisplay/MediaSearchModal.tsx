@@ -10,7 +10,7 @@ import {
     TextInput,
     useMantineTheme,
 } from "@mantine/core";
-import { IconSquareX } from "@tabler/icons";
+import { IconSquareX } from "@tabler/icons-react";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";

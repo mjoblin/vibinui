@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
-import { IconSquareX } from "@tabler/icons";
+import { IconSquareX } from "@tabler/icons-react";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";

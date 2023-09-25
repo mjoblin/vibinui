@@ -16,7 +16,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { IconTrash } from "@tabler/icons";
+import { IconTrash } from "@tabler/icons-react";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import {

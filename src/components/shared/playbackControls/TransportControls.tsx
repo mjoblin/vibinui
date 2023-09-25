@@ -8,7 +8,7 @@ import {
     IconPlayerTrackPrev,
     IconRepeat,
     IconArrowsShuffle,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import {
     useNextTrackMutation,

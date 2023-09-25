@@ -2,7 +2,7 @@ import React, { FC, useEffect } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { Box, createStyles, Tooltip } from "@mantine/core";
 import { updateNotification } from "@mantine/notifications";
-import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons";
+import { IconCheck, IconExclamationMark, IconPlaylistAdd } from "@tabler/icons-react";
 
 import { Album, Track } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
