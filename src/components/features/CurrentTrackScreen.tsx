@@ -43,6 +43,7 @@ import TrackWaveform from "../shared/mediaDisplay/TrackWaveform";
 import SystemPower from "../shared/buttons/SystemPower";
 import MediaActionsButton from "../shared/buttons/MediaActionsButton";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
+import FavoriteIndicator from "../shared/buttons/FavoriteIndicator";
 
 // ================================================================================================
 // Current Track screen.
@@ -334,7 +335,6 @@ const CurrentTrackScreen: FC = () => {
         ? sourcesSupportingDisplayDetails[currentSource.class]
         : undefined;
 
-    console.log(presets);
     // --------------------------------------------------------------------------------------------
 
     return (
@@ -361,11 +361,7 @@ const CurrentTrackScreen: FC = () => {
                     </Flex>
 
                     <Stack>
-                        <MediaArt
-                            media={currentTrack}
-                            size={albumArtWidth}
-                            showControls={false}
-                        />
+                        <MediaArt media={currentTrack} size={albumArtWidth} showControls={false} />
                         {(playStatusDisplay === "pause" || playStatusDisplay === "stop") && (
                             <PlaybackPaused />
                         )}
@@ -378,7 +374,7 @@ const CurrentTrackScreen: FC = () => {
                 {currentSource.class === "stream.media" && (
                     <MediaActionsButton
                         media={currentTrack}
-                        size={"md"}
+                        size="sm"
                         enabledActions={{
                             Details: ["all"],
                             Favorites: ["all"],
@@ -390,7 +386,7 @@ const CurrentTrackScreen: FC = () => {
                 {activePreset && (
                     <MediaActionsButton
                         media={activePreset}
-                        size={"md"}
+                        size="sm"
                         enabledActions={{
                             Details: ["ViewArt"],
                             Favorites: [],
@@ -422,45 +418,48 @@ const CurrentTrackScreen: FC = () => {
             {currentSource.class !== "stream.radio" && (
                 <Stack spacing="lg" sx={{ flexGrow: 1 }}>
                     <Stack spacing={5}>
-                        <Box mih={40} w="fit-content">
-                            <Tooltip
-                                disabled={currentSource.class !== "stream.media"}
-                                label="View Track in Artists screen"
-                                position="bottom"
-                            >
-                                <Text
-                                    size={34}
-                                    className={dynamicClasses.currentTrackTitle}
-                                    onClick={() => {
-                                        if (currentSource?.class !== "stream.media") {
-                                            return;
-                                        }
-
-                                        // TODO: Clarify how best to configure the Artists screen for
-                                        //  navigation purposes. This code is duplicated elsewhere (like
-                                        //  <MediaActionsButton> and <PlaylistEntryActionsButton>) and is
-                                        //  overly verbose.
-                                        dispatch(setArtistsActiveCollection("all"));
-                                        dispatch(
-                                            setArtistsSelectedArtist(
-                                                artistByName[currentTrack.artist]
-                                            )
-                                        );
-                                        dispatch(
-                                            setArtistsSelectedAlbum(
-                                                albumById[currentTrack.parentId]
-                                            )
-                                        );
-                                        dispatch(setArtistsSelectedTrack(currentTrack));
-                                        dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
-
-                                        navigate("/ui/artists");
-                                    }}
+                        <Flex gap={10} justify="space-between" align="center">
+                            <Box mih={40} w="fit-content">
+                                <Tooltip
+                                    disabled={currentSource.class !== "stream.media"}
+                                    label="View Track in Artists screen"
+                                    position="bottom"
                                 >
-                                    {currentTrack.title || " "}
-                                </Text>
-                            </Tooltip>
-                        </Box>
+                                    <Text
+                                        size={34}
+                                        className={dynamicClasses.currentTrackTitle}
+                                        onClick={() => {
+                                            if (currentSource?.class !== "stream.media") {
+                                                return;
+                                            }
+
+                                            // TODO: Clarify how best to configure the Artists screen for
+                                            //  navigation purposes. This code is duplicated elsewhere (like
+                                            //  <MediaActionsButton> and <PlaylistEntryActionsButton>) and is
+                                            //  overly verbose.
+                                            dispatch(setArtistsActiveCollection("all"));
+                                            dispatch(
+                                                setArtistsSelectedArtist(
+                                                    artistByName[currentTrack.artist]
+                                                )
+                                            );
+                                            dispatch(
+                                                setArtistsSelectedAlbum(
+                                                    albumById[currentTrack.parentId]
+                                                )
+                                            );
+                                            dispatch(setArtistsSelectedTrack(currentTrack));
+                                            dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
+
+                                            navigate("/ui/artists");
+                                        }}
+                                    >
+                                        {currentTrack.title || " "}
+                                    </Text>
+                                </Tooltip>
+                            </Box>
+                            <FavoriteIndicator media={currentTrack} size="1.2rem" />
+                        </Flex>
 
                         {(currentSource?.class === "stream.media" ||
                             currentTrack.artist ||

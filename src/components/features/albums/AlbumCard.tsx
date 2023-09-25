@@ -171,8 +171,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
                         }
                     }
                     size={size - borderSize * 2}
-                    showPlayButton={true}
-                    showActions={true}
+                    showControls={true}
                     onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                     onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
                 />

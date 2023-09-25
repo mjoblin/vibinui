@@ -34,7 +34,7 @@ export const presetsSlice = createSlice({
                 "favoriteAlbumMediaIds",
                 action.payload.favorites.reduce(
                     (accum, favorite) =>
-                        favorite.type === "album" ? [...accum, favorite.media_id] : accum,
+                        favorite.type === "album" ? [...accum, favorite.media.id] : accum,
                     [] as MediaId[]
                 )
             );
@@ -43,7 +43,7 @@ export const presetsSlice = createSlice({
                 "favoriteTrackMediaIds",
                 action.payload.favorites.reduce(
                     (accum, favorite) =>
-                        favorite.type === "track" ? [...accum, favorite.media_id] : accum,
+                        favorite.type === "track" ? [...accum, favorite.media.id] : accum,
                     [] as MediaId[]
                 )
             );
