@@ -32,7 +32,6 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
 
     const isFavorite = isFavoritedMedia(media);
-    console.log("INDICATOR", isFavorite, media);
 
     const favoritedColor = theme.colors.red[6];
     const unfavoritedColor = theme.colors.dark[3];
