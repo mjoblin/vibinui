@@ -1,6 +1,6 @@
-import { ReactNode } from "react";
+import { createElement, ReactNode } from "react";
 import { showNotification } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
+import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import get from "lodash/get";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
@@ -114,7 +114,7 @@ export const showSuccessNotification = ({
         title,
         message,
         color: color || "teal",
-        icon: icon || IconCheck({ size: 18 }),
+        icon: icon || createElement(IconCheck, { size: 18 }),
         loading,
         autoClose,
     });
@@ -136,7 +136,7 @@ export const showWarningNotification = ({
         title,
         message,
         color: color || "yellow",
-        icon: icon || IconAlertCircle({ size: 21, style: { paddingRight: 1, paddingBottom: 2 } }),
+        icon: icon || createElement(IconAlertCircle, { size: 21, style: { paddingRight: 1, paddingBottom: 2 } }),
         loading,
         autoClose,
     });
@@ -158,7 +158,7 @@ export const showErrorNotification = ({
         title,
         message,
         color: color || "red",
-        icon: icon || IconX({ size: 18 }),
+        icon: icon || createElement(IconX, { size: 18 }),
         loading,
         autoClose,
     });

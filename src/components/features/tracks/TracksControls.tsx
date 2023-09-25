@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import { ActionIcon, Box, Flex, TextInput } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconSquareX } from "@tabler/icons";
+import { IconSquareX } from "@tabler/icons-react";
 
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";

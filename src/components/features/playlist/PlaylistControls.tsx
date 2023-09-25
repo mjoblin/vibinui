@@ -28,7 +28,7 @@ import {
     IconFilePlus,
     IconListDetails,
     IconMenu2,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import { RootState } from "../../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";

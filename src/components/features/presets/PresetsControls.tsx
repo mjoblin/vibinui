@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { ActionIcon, Flex, TextInput } from "@mantine/core";
-import { IconSquareX } from "@tabler/icons";
+import { IconSquareX } from "@tabler/icons-react";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { setPresetsFilterText } from "../../../app/store/userSettingsSlice";

@@ -1,7 +1,7 @@
 import React, { FC, SVGAttributes, useEffect } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconHeart } from "@tabler/icons";
+import { IconHeart } from "@tabler/icons-react";
 
 import { isAlbum, Media, MediaId } from "../../../app/types";
 import {

@@ -1,6 +1,6 @@
 import React, { FC, useEffect, useState } from "react";
 import { ActionIcon, createStyles, getStylesRef, useMantineTheme } from "@mantine/core";
-import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons";
+import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 
 import { isAlbum, isPreset, isTrack, Media } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";

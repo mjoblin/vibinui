@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Flex, Text, useMantineTheme } from "@mantine/core";
-import { IconAlertCircle } from "@tabler/icons";
+import { IconAlertCircle } from "@tabler/icons-react";
 
 // ================================================================================================
 // Warning message with an alert icon.

@@ -13,6 +13,7 @@ import {
     useMantineTheme, ActionIcon
 } from "@mantine/core";
 import {
+    Icon,
     IconDeviceSpeaker,
     IconDisc,
     IconHeart,
@@ -22,8 +23,7 @@ import {
     IconRadio,
     IconSearch,
     IconUser,
-    TablerIcon,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppDispatch } from "../../../app/hooks/store";
@@ -127,7 +127,7 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
     const { classes, cx } = useStyles();
     const { APP_URL_PREFIX, APP_PADDING, NAVBAR_WIDTH } = useAppGlobals();
 
-    const routeInfo: Record<string, { link: string; label: string; icon: TablerIcon }[]> = {
+    const routeInfo: Record<string, { link: string; label: string; icon: Icon }[]> = {
         "Now Playing": [
             { link: `${APP_URL_PREFIX}/current`, label: "Current Track", icon: IconDeviceSpeaker },
             { link: `${APP_URL_PREFIX}/playlist`, label: "Playlist", icon: IconPlaylist },

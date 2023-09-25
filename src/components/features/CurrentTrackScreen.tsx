@@ -16,7 +16,7 @@ import {
     useMantineTheme,
 } from "@mantine/core";
 import { useDebouncedValue, useTimeout, useWindowEvent } from "@mantine/hooks";
-import { IconPlayerPlay } from "@tabler/icons";
+import { IconPlayerPlay } from "@tabler/icons-react";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";

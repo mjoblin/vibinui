@@ -17,7 +17,7 @@ import {
     IconPlayerPlay,
     IconTrash,
     IconWaveSine,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import { PlaylistEntry } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";

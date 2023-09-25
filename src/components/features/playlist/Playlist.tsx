@@ -10,7 +10,7 @@ import {
     Text,
     useMantineTheme,
 } from "@mantine/core";
-import { IconGripVertical, IconPlayerPause, IconPlayerPlay, IconTrash } from "@tabler/icons";
+import { IconGripVertical, IconPlayerPause, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { PlaylistEntry } from "../../../app/types";

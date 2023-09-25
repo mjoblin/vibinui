@@ -1,6 +1,6 @@
-import React, { FC, ReactNode, SyntheticEvent } from "react";
+import React, { createElement, FC, ReactNode, SyntheticEvent } from "react";
 import { Center, createStyles, getStylesRef, Tooltip } from "@mantine/core";
-import { TablerIcon } from "@tabler/icons";
+import { Icon } from "@tabler/icons-react";
 
 // ================================================================================================
 //
@@ -9,7 +9,7 @@ import { TablerIcon } from "@tabler/icons";
 // TODO: Deprecate this and replace it with Mantine's ActionButton.
 
 type VibinIconButtonProps = {
-    icon: TablerIcon;
+    icon: Icon;
     size?: number;
     disabled?: boolean;
     container?: boolean;
@@ -67,9 +67,7 @@ const VibinIconButton: FC<VibinIconButtonProps> = ({
         onClick && !disabled && onClick();
     };
 
-    // TODO: Is there a way to keep TS happy here.
-    // @ts-ignore
-    const iconComponent: ReactNode = new icon({
+    const iconComponent: ReactNode = createElement(icon, {
         className: dynamicClasses.button,
         size,
         stroke,

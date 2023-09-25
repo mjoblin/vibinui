@@ -1,7 +1,7 @@
 import React, { FC } from "react";
 import { Popover, Stack, Text, ThemeIcon, useMantineTheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconQuestionMark } from "@tabler/icons";
+import { IconQuestionMark } from "@tabler/icons-react";
 
 // ================================================================================================
 // A popover describing the supported syntax of the screen filter input text.

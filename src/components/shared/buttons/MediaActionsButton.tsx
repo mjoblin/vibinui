@@ -19,7 +19,7 @@ import {
     IconPlaylistAdd,
     IconUser,
     IconWaveSine,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import { Album, isAlbum, isPreset, isTrack, Media, Track } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";

@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { ActionIcon, Box, Flex, Text, Tooltip } from "@mantine/core";
-import { IconPower } from "@tabler/icons";
+import { IconPower } from "@tabler/icons-react";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";

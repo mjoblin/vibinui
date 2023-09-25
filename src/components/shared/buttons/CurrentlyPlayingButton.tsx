@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconCurrentLocation } from "@tabler/icons";
+import { IconCurrentLocation } from "@tabler/icons-react";
 
 // ================================================================================================
 // Button to scroll to the currently-playing media.
