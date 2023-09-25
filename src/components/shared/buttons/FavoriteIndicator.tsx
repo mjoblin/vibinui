@@ -96,7 +96,7 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
                         }
                     }}
                     sx={{
-                        "&[data-loading]": { opacity: 0.5 },
+                        "&[data-loading]": { opacity: highContrast ? 1.0 : 0.5 },
                     }}
                 >
                     <IconHeart
