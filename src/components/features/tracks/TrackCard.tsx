@@ -144,6 +144,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
                     media={track}
                     enabledActions={enabledActions}
                     size={size - borderSize * 2}
+                    showControls={true}
                 />
             </Box>
 

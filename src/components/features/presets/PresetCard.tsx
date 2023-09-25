@@ -120,6 +120,7 @@ const PresetCard: FC<PresetCardProps> = ({
                     media={preset}
                     showLoading={showLoading}
                     showActions={false}
+                    showFavoriteIndicator={false}
                     showPlayButton={true}
                     centerPlayButton={true}
                     onPlay={() => playPresetId(preset.id)}

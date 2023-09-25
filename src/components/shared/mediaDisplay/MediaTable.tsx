@@ -7,6 +7,7 @@ import { Media, MediaId } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { secstoHms } from "../../../app/utils";
+import FavoriteIndicator from "../buttons/FavoriteIndicator";
 import MediaArt from "./MediaArt";
 import MediaActionsButton from "../buttons/MediaActionsButton";
 import PlayButton from "../buttons/PlayButton";
@@ -22,7 +23,7 @@ type TableRowProps = {
     currentlyPlayingId?: MediaId | number;
     currentlyPlayingRef?: Ref<HTMLDivElement>;
     columnValue: (media: Media, column: string) => any;
-}
+};
 
 /**
  * Render a single table row. Use visibility sensing to only fully render the row cells when the
@@ -35,7 +36,7 @@ const TableRow: FC<TableRowProps> = ({
     currentlyPlayingRef,
     columnValue,
 }) => {
-    const [isVisible, setIsVisible] = useState<boolean>(false);
+    const [, setIsVisible] = useState<boolean>(false);
 
     return (
         <VisibilitySensor
@@ -43,8 +44,7 @@ const TableRow: FC<TableRowProps> = ({
             partialVisibility={true}
             offset={{ top: -1000, bottom: -1000 }}
         >
-            {/* @ts-ignore */}
-            {({ isVisible }) =>
+            {({ isVisible }: { isVisible: boolean }) =>
                 isVisible ? (
                     <tr>
                         {columnsToDisplay.map((column, index) => (
@@ -62,7 +62,11 @@ const TableRow: FC<TableRowProps> = ({
                             </td>
                         ))}
                     </tr>
-                ) : <tr><td></td></tr>
+                ) : (
+                    <tr>
+                        <td></td>
+                    </tr>
+                )
             }
         </VisibilitySensor>
     );
@@ -165,7 +169,7 @@ const MediaTable: FC<MediaTableProps> = ({
     const columnsToDisplay = [...columns, "controls"];
 
     // --------------------------------------------------------------------------------------------
-    
+
     const { classes: dynamicClasses } = createStyles((theme) => {
         // The table will always have a stripe color.
         const tableCSS: Record<string, any> = {
@@ -174,15 +178,15 @@ const MediaTable: FC<MediaTableProps> = ({
                     backgroundColor: stripeColor
                         ? stripeColor
                         : theme.colorScheme === "dark"
-                            ? theme.colors.dark[7]
-                            : theme.colors.gray[2],
+                        ? theme.colors.dark[7]
+                        : theme.colors.gray[2],
                 },
             },
         };
 
         // Define the CSS for the row representing the currently-playing media item. This CSS
         // defines a box and background color for the row.
-        
+
         // The bottom border of the row *above* the currently-playing row is used to draw the
         // top of the box around the currently-playing row.
         const previousRowCSS = {
@@ -210,13 +214,13 @@ const MediaTable: FC<MediaTableProps> = ({
             const currentlyPlayingRowIndex = media.findIndex(
                 (mediaItem) => mediaItem.id === currentlyPlayingId
             );
-            
+
             if (currentlyPlayingRowIndex) {
                 tableCSS.table = {
                     ...tableCSS.table,
                     [`tbody > tr:nth-of-type(${currentlyPlayingRowIndex})`]: previousRowCSS,
                     [`tbody > tr:nth-of-type(${currentlyPlayingRowIndex + 1})`]:
-                    currentlyPlayingRowCSS,
+                        currentlyPlayingRowCSS,
                 };
             }
         }
@@ -241,6 +245,7 @@ const MediaTable: FC<MediaTableProps> = ({
                         size={35}
                         fit="scale-down"
                         showActions={false}
+                        showFavoriteIndicator={false}
                         showPlayButton={true}
                         centerPlayButton={true}
                         playButtonSize={27}
@@ -278,6 +283,7 @@ const MediaTable: FC<MediaTableProps> = ({
                     <Flex gap={10} align="center">
                         <PlayButton media={media} size={20} />
                         <MediaActionsButton media={media} size={10} />
+                        <FavoriteIndicator media={media} />
                     </Flex>
                 );
             },
@@ -350,7 +356,7 @@ const MediaTable: FC<MediaTableProps> = ({
             ))}
         </tr>
     );
-    
+
     // Define table body
     const bodyRows = mediaToDisplay.media
         .map((mediaItem) => ({ ...mediaItem, controls: undefined }))

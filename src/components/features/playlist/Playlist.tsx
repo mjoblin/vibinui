@@ -21,7 +21,9 @@ import {
     yearFromDate,
 } from "../../../app/utils";
 import { RootState } from "../../../app/store/store";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppSelector } from "../../../app/hooks/store";
+import { useMediaGroupings } from "../../../app/hooks/useMediaGroupings";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { usePauseMutation, usePlayMutation } from "../../../app/services/vibinTransport";
 import {
@@ -29,12 +31,12 @@ import {
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../../app/services/vibinActivePlaylist";
+import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
 import MediaArt from "../../shared/mediaDisplay/MediaArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import SystemPower from "../../shared/buttons/SystemPower";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 // ================================================================================================
 // Shows the active streamer Playlist.
@@ -154,6 +156,7 @@ type PlaylistProps = {
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
+    const { trackById } = useMediaGroupings();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
@@ -514,6 +517,10 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                             });
                                         }}
                                     />
+
+                                    {trackById[entry.trackMediaId] && (
+                                        <FavoriteIndicator media={trackById[entry.trackMediaId]} />
+                                    )}
 
                                     <PlaylistEntryActionsButton
                                         entry={entry}
