@@ -518,9 +518,13 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                         }}
                                     />
 
-                                    {trackById[entry.trackMediaId] && (
-                                        <FavoriteIndicator media={trackById[entry.trackMediaId]} />
-                                    )}
+                                    <Box miw="1.8rem">
+                                        {trackById[entry.trackMediaId] && (
+                                            <FavoriteIndicator
+                                                media={trackById[entry.trackMediaId]}
+                                            />
+                                        )}
+                                    </Box>
 
                                     <PlaylistEntryActionsButton
                                         entry={entry}
