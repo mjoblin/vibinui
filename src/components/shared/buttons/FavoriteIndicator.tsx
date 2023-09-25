@@ -1,7 +1,7 @@
-import React, { FC, SVGAttributes, useEffect } from "react";
+import React, { FC, SVGAttributes, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconHeart } from "@tabler/icons-react";
+import { IconHeart, IconHeartCancel } from "@tabler/icons-react";
 
 import { isAlbum, Media, MediaId } from "../../../app/types";
 import {
@@ -30,6 +30,7 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
     const { isFavoritable, isFavoritedMedia } = useFavorites();
     const [addFavorite, addFavoriteStatus] = useAddFavoriteMutation();
     const [deleteFavorite, deleteFavoriteStatus] = useDeleteFavoriteMutation();
+    const [updateInProgress, setUpdateInProgress] = useState<boolean>(false);
 
     const isFavorite = isFavoritedMedia(media);
 
@@ -54,6 +55,8 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
      * Inform the user if there was an error while attempting to favorite/unfavorite the media.
      */
     useEffect(() => {
+        setUpdateInProgress(addFavoriteStatus.isLoading || deleteFavoriteStatus.isLoading);
+
         if (addFavoriteStatus.isError || deleteFavoriteStatus.isError) {
             const { status, data } = addFavoriteStatus.isError
                 ? (addFavoriteStatus.error as FetchBaseQueryError)
@@ -79,6 +82,7 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
             <Box>
                 <ActionIcon
                     variant="transparent"
+                    disabled={updateInProgress}
                     onClick={(event) => {
                         event.stopPropagation();
 
@@ -92,12 +96,21 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
                         }
                     }}
                 >
-                    <IconHeart
-                        size={size}
-                        stroke={1}
-                        color={paintBorderColor}
-                        fill={paintFillColor}
-                    />
+                    {updateInProgress ?
+                        <IconHeartCancel
+                            size={size}
+                            stroke={1}
+                            color={paintBorderColor}
+                            fill={paintFillColor}
+                        />
+                    :
+                        <IconHeart
+                            size={size}
+                            stroke={1}
+                            color={paintBorderColor}
+                            fill={paintFillColor}
+                        />
+                    }
                 </ActionIcon>
             </Box>
         </Tooltip>
