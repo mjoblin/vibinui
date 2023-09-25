@@ -1,7 +1,7 @@
 import React, { FC, SVGAttributes, useEffect, useState } from "react";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
 import { ActionIcon, Box, Tooltip, useMantineTheme } from "@mantine/core";
-import { IconHeart, IconHeartCancel } from "@tabler/icons-react";
+import { IconHeart } from "@tabler/icons-react";
 
 import { isAlbum, Media, MediaId } from "../../../app/types";
 import {
@@ -82,7 +82,7 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
             <Box>
                 <ActionIcon
                     variant="transparent"
-                    disabled={updateInProgress}
+                    loading={updateInProgress}
                     onClick={(event) => {
                         event.stopPropagation();
 
@@ -95,22 +95,16 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
                             });
                         }
                     }}
+                    sx={{
+                        "&[data-loading]": { opacity: 0.5 },
+                    }}
                 >
-                    {updateInProgress ?
-                        <IconHeartCancel
-                            size={size}
-                            stroke={1}
-                            color={paintBorderColor}
-                            fill={paintFillColor}
-                        />
-                    :
-                        <IconHeart
-                            size={size}
-                            stroke={1}
-                            color={paintBorderColor}
-                            fill={paintFillColor}
-                        />
-                    }
+                    <IconHeart
+                        size={size}
+                        stroke={1}
+                        color={paintBorderColor}
+                        fill={paintFillColor}
+                    />
                 </ActionIcon>
             </Box>
         </Tooltip>
