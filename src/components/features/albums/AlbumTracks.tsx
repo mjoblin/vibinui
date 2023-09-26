@@ -4,6 +4,7 @@ import { Box, Center, createStyles, Flex, Paper, Stack, Text } from "@mantine/co
 import { useGetAlbumTracksQuery } from "../../../app/services/vibinAlbums";
 import { Album, Track } from "../../../app/types";
 import { secstoHms } from "../../../app/utils";
+import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
 import MediaActionsButton from "../../shared/buttons/MediaActionsButton";
 import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
 import AppendAlbumTrackToPlaylistButton from "./AppendAlbumTrackToPlaylistButton";
@@ -124,7 +125,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                     </Box>
 
                                     <Flex
-                                        gap="sm"
+                                        gap={7}
                                         align="center"
                                         justify="flex-end"
                                         sx={{ minWidth: "4rem" }}
@@ -147,6 +148,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                         />
 
                                         <AppendAlbumTrackToPlaylistButton item={track} />
+                                        <FavoriteIndicator media={track} />
                                     </Flex>
                                 </Flex>
                             </Paper>
