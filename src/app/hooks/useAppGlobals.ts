@@ -53,7 +53,7 @@ export const useAppGlobals = () => {
         HEADER_HEIGHT: 60,
         LARGE_SCREEN: largeScreen,
         MAX_TABLE_ITEMS_TO_DISPLAY: 500,
-        NAVBAR_WIDTH: largeScreen === false ? 190 : 210,
+        NAVBAR_WIDTH: largeScreen === false ? 160 : 180,
         RENDER_APP_BACKGROUND_IMAGE: renderAppBackgroundImage,
         SCREEN_LOADING_PT: 25,
         SCREEN_HEADER_HEIGHT: 70,
