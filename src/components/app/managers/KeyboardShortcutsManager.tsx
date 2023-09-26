@@ -305,7 +305,7 @@ const KeyboardShortcutsManager: FC = () => {
                             </Stack>
                             <FieldValueList
                                 fieldValues={{
-                                    C: "Current Track",
+                                    C: "Current",
                                     P: "Playlist",
                                     R: "Artists",
                                     A: "Albums",

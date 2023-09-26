@@ -40,8 +40,8 @@ const PlaybackControls: FC = () => {
      * If the playStatus has been "buffering" for at least BUFFERING_AUDIO_NOTIFY_DELAY ms, then
      * display a "buffering" overlay.
      *
-     * Do not show this overlay if on the Current Track screen (which has its own fullscreen
-     * overlay for the buffering state).
+     * Do not show this overlay if on the Current screen (which has its own fullscreen overlay for
+     * the buffering state).
      */
     useEffect(() => {
         if (playStatus === "buffering" && currentScreen !== "current") {

@@ -38,7 +38,7 @@ import WelcomeMessage from "../WelcomeMessage";
 //
 // Contents:
 //  - The main application shell (which holds the header, navigation, and active feature/screen).
-//  - The background image based on currently-playing art (for Current Track and Playlist screens).
+//  - The background image based on currently-playing art (for Current and Playlist screens).
 //  - Occasional components which want to render on top of the base application:
 //      - Keyboard shortcuts.
 //      - Debug panel.
