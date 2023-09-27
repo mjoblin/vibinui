@@ -64,15 +64,15 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     );
     const {
         data: allAlbums,
-        error: allError,
-        isLoading: allIsLoading,
-        status: allStatus,
+        error: allAlbumsError,
+        isLoading: isLoadingAllAlbums,
+        status: allAlbumsStatus,
     } = useGetAlbumsQuery();
     const {
         data: newAlbums,
-        error: newError,
-        isLoading: newIsLoading,
-        status: newStatus,
+        error: newAlbumsError,
+        isLoading: isLoadingNewAlbums,
+        status: newAlbumsStatus,
     } = useGetNewAlbumsQuery();
     const [calculatingAlbumsToDisplay, setCalculatingAlbumsToDisplay] = useState<boolean>(true);
     const [albumsToDisplay, setAlbumsToDisplay] = useState<Album[]>([]);
@@ -110,14 +110,19 @@ const AlbumsWall: FC<AlbumWallProps> = ({
      * Albums" selection, and any filter text.
      */
     useEffect(() => {
-        if (allStatus === QueryStatus.rejected) {
+        if (isLoadingAllAlbums || isLoadingNewAlbums) {
+            return;
+        }
+
+        if (allAlbumsStatus === QueryStatus.rejected) {
             // Inability to retrieve All Albums is considered a significant-enough problem to stop
             // trying to proceed. Inability to retrieve New Albums isn't as severe.
             setCalculatingAlbumsToDisplay(false);
             return;
         }
 
-        if (!allAlbums) {
+        if (!allAlbums || !newAlbums) {
+            setCalculatingAlbumsToDisplay(false);
             return;
         }
 
@@ -135,14 +140,16 @@ const AlbumsWall: FC<AlbumWallProps> = ({
 
         dispatch(setFilteredAlbumMediaIds(processedAlbums.map((album) => album.id)));
 
-        setCalculatingAlbumsToDisplay(false);
         setAlbumsToDisplay(processedAlbums);
+        setCalculatingAlbumsToDisplay(false);
     }, [
         activeCollection,
         allAlbums,
-        allStatus,
+        allAlbumsStatus,
         dispatch,
         filterText,
+        isLoadingAllAlbums,
+        isLoadingNewAlbums,
         newAlbums,
         sortDirection,
         sortField,
@@ -166,7 +173,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
 
     // --------------------------------------------------------------------------------------------
 
-    if (calculatingAlbumsToDisplay || allIsLoading || newIsLoading) {
+    if (calculatingAlbumsToDisplay || isLoadingAllAlbums || isLoadingNewAlbums) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
@@ -174,7 +181,11 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if (allStatus === QueryStatus.rejected) {
+    if (quietUnlessShowingAlbums && albumsToDisplay.length <= 0) {
+        return <></>;
+    }
+
+    if (allAlbumsStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
                 <SadLabel
@@ -188,7 +199,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if (activeCollection === "new" && newStatus === QueryStatus.rejected) {
+    if (activeCollection === "new" && newAlbumsStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
                 <SadLabel
@@ -202,14 +213,18 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if (quietUnlessShowingAlbums && albumsToDisplay.length <= 0) {
-        return <></>;
-    }
-
-    if ((activeCollection === "all" && allError) || (activeCollection === "new" && newError)) {
+    if ((activeCollection === "all" && allAlbumsError) || (activeCollection === "new" && newAlbumsError)) {
         return (
             <Center pt="xl">
                 <SadLabel label="Error retrieving Album details" />
+            </Center>
+        );
+    }
+    
+    if (!allAlbums || allAlbums.length <= 0) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="No Albums available" />
             </Center>
         );
     }
@@ -217,9 +232,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     if (albumsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel
-                    label={filterText === "" ? "No Albums available" : "No matching Albums"}
-                />
+                <SadLabel label="No matching Albums" />
             </Center>
         );
     }

@@ -63,11 +63,18 @@ const TracksWall: FC<TrackWallProps> = ({
         (state: RootState) => state.playback.current_track_media_id
     );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
-    const { data: allTracks, error, isLoading, status: allTracksStatus } = useGetTracksQuery();
+    const {
+        data: allTracks,
+        error,
+        isLoading: isLoadingAllTracks,
+        status: allTracksStatus,
+    } = useGetTracksQuery();
     const [searchLyrics, { data: tracksMatchingLyrics, isLoading: isLoadingSearchLyrics }] =
         useSearchLyricsMutation();
-    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(false);
+    const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
+
+    console.log(`TOP: ${calculatingTracksToDisplay} :: ${tracksToDisplay.length}`);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
         cardWall: {
@@ -102,6 +109,10 @@ const TracksWall: FC<TrackWallProps> = ({
      * of any lyrics search.
      */
     useEffect(() => {
+        if (isLoadingAllTracks) {
+            return;
+        }
+
         if (allTracksStatus === QueryStatus.rejected) {
             // Inability to retrieve All Tracks is considered a significant-enough problem to stop
             // trying to proceed.
@@ -140,6 +151,7 @@ const TracksWall: FC<TrackWallProps> = ({
             .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
         dispatch(setFilteredTrackMediaIds(processedTracks.map((track) => track.id)));
+
         setTracksToDisplay(processedTracks);
         setCalculatingTracksToDisplay(false);
     }, [
@@ -148,6 +160,7 @@ const TracksWall: FC<TrackWallProps> = ({
         debouncedFilterText,
         dispatch,
         filterText,
+        isLoadingAllTracks,
         lyricsSearchText,
         sortDirection,
         sortField,
@@ -199,7 +212,7 @@ const TracksWall: FC<TrackWallProps> = ({
         );
     }
 
-    if (isLoading) {
+    if (isLoadingAllTracks) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <LoadingDataMessage message="Retrieving tracks..." />
