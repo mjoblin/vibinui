@@ -17,6 +17,8 @@ import WarningBanner from "../textDisplay/WarningBanner";
 // Show an array of Media items in a table.
 // ================================================================================================
 
+const ART_SIZE = 35;
+
 type TableRowProps = {
     mediaItem: Media;
     columnsToDisplay: string[];
@@ -64,7 +66,7 @@ const TableRow: FC<TableRowProps> = ({
                     </tr>
                 ) : (
                     <tr>
-                        <td></td>
+                        <td><Box mih={ART_SIZE}></Box></td>
                     </tr>
                 )
             }
@@ -246,7 +248,7 @@ const MediaTable: FC<MediaTableProps> = ({
                     <MediaArt
                         media={media}
                         radius={3}
-                        size={35}
+                        size={ART_SIZE}
                         fit="scale-down"
                         showActions={false}
                         showFavoriteIndicator={false}
@@ -264,7 +266,7 @@ const MediaTable: FC<MediaTableProps> = ({
                     <MediaArt
                         media={media}
                         radius={3}
-                        size={35}
+                        size={ART_SIZE}
                         fit="scale-down"
                         showActions={false}
                         showPlayButton={true}
