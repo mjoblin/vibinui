@@ -65,6 +65,7 @@ export type Preset = {
 // Music track details.
 export type Track = {
     id: MediaId;
+    albumId: MediaId;
     parentId: MediaId;
     track_number: number;
     duration: number;

@@ -445,7 +445,7 @@ const CurrentTrackScreen: FC = () => {
                                             );
                                             dispatch(
                                                 setArtistsSelectedAlbum(
-                                                    albumById[currentTrack.parentId]
+                                                    albumById[currentTrack.albumId]
                                                 )
                                             );
                                             dispatch(setArtistsSelectedTrack(currentTrack));

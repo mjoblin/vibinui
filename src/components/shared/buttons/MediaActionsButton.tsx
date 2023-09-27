@@ -487,7 +487,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                             );
                                             dispatch(
                                                 setArtistsSelectedAlbum(
-                                                    albumById[(media as Track).parentId]
+                                                    albumById[(media as Track).albumId]
                                                 )
                                             );
                                             dispatch(setArtistsSelectedTrack(media as Track));

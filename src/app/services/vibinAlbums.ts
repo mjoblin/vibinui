@@ -26,6 +26,7 @@ export type BackendAlbum = {
 
 export type BackendTrack = {
     id: string;
+    albumId: string;
     parentId: string;
     title: string;
     creator: string;
@@ -40,6 +41,7 @@ export type BackendTrack = {
 
 export const trackTransformer = (track: BackendTrack): Track => ({
     id: track.id,
+    albumId: track.albumId,
     parentId: track.parentId,
     track_number: parseInt(track.original_track_number, 10),
     duration: hmsToSecs(track.duration),
