@@ -140,7 +140,7 @@ const PresetsWall: FC<PresetsWallProps> = ({
         <Box className={dynamicClasses.tableWall}>
             <MediaTable
                 media={presetsToDisplay}
-                columns={["art_url", "name", "type"]}
+                columns={["art_url", "id", "name", "type"]}
                 stripeColor={tableStripeColor}
                 currentlyPlayingId={presets.find((preset) => preset.is_playing)?.id}
             />
