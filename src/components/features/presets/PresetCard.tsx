@@ -3,7 +3,6 @@ import {
     Box,
     Card,
     Center,
-    ColorSwatch,
     createStyles,
     Flex,
     Loader,
