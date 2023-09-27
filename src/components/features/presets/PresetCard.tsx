@@ -139,9 +139,9 @@ const PresetCard: FC<PresetCardProps> = ({
                 )}
 
                 {showDetails && (
-                    <Flex justify="space-between">
+                    <Flex justify="space-between" gap={5}>
                         {/* Preset number */}
-                        <Box pt={4}>
+                        <Box pl={3} pt={4}>
                             <ColorSwatch size={20} color={theme.colors.dark[4]}>
                                 <Text size="xs" weight="bold" color={theme.colors.gray[6]}>
                                     {preset.id}
@@ -150,7 +150,7 @@ const PresetCard: FC<PresetCardProps> = ({
                         </Box>
 
                         {/* Preset details */}
-                        <Stack spacing={0} pl={7} pr={7} pt={7} pb={3} sx={{ flexGrow: 1 }}>
+                        <Stack spacing={0} pr={7} pt={7} pb={3} sx={{ flexGrow: 1 }}>
                             <Text size="sm" weight="bold" sx={{ lineHeight: 1 }}>
                                 {preset.name}
                             </Text>
