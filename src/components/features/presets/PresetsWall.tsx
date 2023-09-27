@@ -55,6 +55,7 @@ const PresetsWall: FC<PresetsWallProps> = ({
         (state: RootState) => state.userSettings.presets
     );
     const [presetsToDisplay, setPresetsToDisplay] = useState<Preset[]>([]);
+    const [haveProcessedPresets, setHaveProcessedPresets] = useState<boolean>(false);
 
     // NOTE: The PresetWall differs from the Artists/Albums/Tracks walls in that it gets its data
     //  (the presets) directly from the redux state, not from an API call. This is because Presets
@@ -83,6 +84,10 @@ const PresetsWall: FC<PresetsWallProps> = ({
      * Determine which Presets to display based on the current filter text.
      */
     useEffect(() => {
+        if (!haveReceivedInitialState) {
+            return;
+        }
+
         onIsFilteringUpdate && onIsFilteringUpdate(true);
 
         let processedPresets = collectionFilter(presets || [], filterText, "name")
@@ -90,12 +95,15 @@ const PresetsWall: FC<PresetsWallProps> = ({
             .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
         dispatch(setFilteredPresetIds(processedPresets.map((preset) => preset.id)));
+
         setPresetsToDisplay(processedPresets);
+        setHaveProcessedPresets(true);
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
     }, [
         dispatch,
         filterText,
+        haveReceivedInitialState,
         onIsFilteringUpdate,
         presets,
         sortDirection,
@@ -104,7 +112,7 @@ const PresetsWall: FC<PresetsWallProps> = ({
         wallSortField,
     ]);
 
-    if (!haveReceivedInitialState) {
+    if (!haveReceivedInitialState || !haveProcessedPresets) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
