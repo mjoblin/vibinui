@@ -18,6 +18,7 @@ import { RootState } from "../../../app/store/store";
 import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import MediaArt from "../../shared/mediaDisplay/MediaArt";
+import NumericSwatch from "../../shared/dataDisplay/NumericSwatch";
 
 // ================================================================================================
 // A card representing a single Preset.
@@ -142,11 +143,7 @@ const PresetCard: FC<PresetCardProps> = ({
                     <Flex justify="space-between" gap={5}>
                         {/* Preset number */}
                         <Box pl={3} pt={4}>
-                            <ColorSwatch size={20} color={theme.colors.dark[4]}>
-                                <Text size="xs" weight="bold" color={theme.colors.gray[6]}>
-                                    {preset.id}
-                                </Text>
-                            </ColorSwatch>
+                            <NumericSwatch number={preset.id} />
                         </Box>
 
                         {/* Preset details */}

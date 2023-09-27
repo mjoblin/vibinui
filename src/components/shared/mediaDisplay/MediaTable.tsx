@@ -12,6 +12,7 @@ import MediaArt from "./MediaArt";
 import MediaActionsButton from "../buttons/MediaActionsButton";
 import PlayButton from "../buttons/PlayButton";
 import WarningBanner from "../textDisplay/WarningBanner";
+import NumericSwatch from "../dataDisplay/NumericSwatch";
 
 // ================================================================================================
 // Show an array of Media items in a table.
@@ -316,6 +317,8 @@ const MediaTable: FC<MediaTableProps> = ({
         },
         id: {
             heading: "ID",
+            valueGenerator: (value: any): any =>
+                typeof value === "number" ? <NumericSwatch number={value} /> : value,
         },
         is_playing: {
             heading: "playing",
