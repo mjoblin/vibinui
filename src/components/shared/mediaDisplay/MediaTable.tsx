@@ -85,7 +85,8 @@ const useStyles = createStyles((theme) => ({
                 textTransform: "capitalize",
             },
         },
-        tr: {
+        "tbody > tr": {
+            backgroundColor: theme.colorScheme === "dark" ? "#1c1f22" : "#e4e8e6",
             height: "1lh",
         },
         "tbody > tr:not(:first-of-type)": {
