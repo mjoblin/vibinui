@@ -1,8 +1,11 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import {
+    Box,
     Card,
     Center,
+    ColorSwatch,
     createStyles,
+    Flex,
     Loader,
     Stack,
     Text,
@@ -28,7 +31,7 @@ import MediaArt from "../../shared/mediaDisplay/MediaArt";
 const useStyles = createStyles((theme) => ({
     presetConnecting: {
         position: "absolute",
-        zIndex: 9,  // TODO: Remove reliance on zIndex when MediaArt no longer uses zIndex
+        zIndex: 9, // TODO: Remove reliance on zIndex when MediaArt no longer uses zIndex
         top: 0,
         left: 0,
         backgroundColor: "rgb(0, 0, 0, 0.90)",
@@ -48,8 +51,8 @@ const PresetCard: FC<PresetCardProps> = ({
     showDetails = true,
     showLoading = true,
 }) => {
+    const theme = useMantineTheme();
     const { classes } = useStyles();
-    const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR } = useAppGlobals();
     const playState = useAppSelector((state: RootState) => state.playback.play_status);
     const [playPresetId] = useLazyPlayPresetIdQuery();
@@ -136,14 +139,26 @@ const PresetCard: FC<PresetCardProps> = ({
                 )}
 
                 {showDetails && (
-                    <Stack spacing={0} pl={7} pr={7} pt={7} pb={3}>
-                        <Text size="sm" weight="bold" sx={{ lineHeight: 1 }}>
-                            {preset.name}
-                        </Text>
-                        <Text size="xs" color={colors.gray[6]}>
-                            {preset.type}
-                        </Text>
-                    </Stack>
+                    <Flex justify="space-between">
+                        {/* Preset number */}
+                        <Box pt={4}>
+                            <ColorSwatch size={20} color={theme.colors.dark[4]}>
+                                <Text size="xs" weight="bold" color={theme.colors.gray[6]}>
+                                    {preset.id}
+                                </Text>
+                            </ColorSwatch>
+                        </Box>
+
+                        {/* Preset details */}
+                        <Stack spacing={0} pl={7} pr={7} pt={7} pb={3} sx={{ flexGrow: 1 }}>
+                            <Text size="sm" weight="bold" sx={{ lineHeight: 1 }}>
+                                {preset.name}
+                            </Text>
+                            <Text size="xs" color={theme.colors.gray[6]}>
+                                {preset.type}
+                            </Text>
+                        </Stack>
+                    </Flex>
                 )}
             </Card.Section>
         </Card>

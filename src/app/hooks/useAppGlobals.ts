@@ -71,7 +71,7 @@ export const useAppGlobals = () => {
             "name",
             "title",
         ],
-        SORTABLE_MEDIA_FIELDS_PRESETS: ["name", "type"],
+        SORTABLE_MEDIA_FIELDS_PRESETS: ["id", "name", "type"],
         SORTABLE_MEDIA_FIELDS_TRACKS: ["album", "artist", "date", "duration", "genre", "title"],
         BUFFERING_AUDIO_NOTIFY_DELAY: 3000,
         STYLE_LABEL_BESIDE_COMPONENT: {

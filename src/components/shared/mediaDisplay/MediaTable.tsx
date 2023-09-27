@@ -315,7 +315,7 @@ const MediaTable: FC<MediaTableProps> = ({
             valueGenerator: (value: any): string => (value.includes("Unknown") ? "" : value),
         },
         id: {
-            heading: "",
+            heading: "ID",
         },
         is_playing: {
             heading: "playing",
