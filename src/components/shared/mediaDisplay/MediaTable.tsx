@@ -197,7 +197,7 @@ const MediaTable: FC<MediaTableProps> = ({
         // as well as the box background color.
         const currentlyPlayingRowCSS = {
             color: theme.white,
-            backgroundColor: theme.colorScheme === "dark" ? undefined : theme.colors.yellow[6],
+            backgroundColor: theme.colorScheme === "dark" ? "rgb(70, 70, 70, 0.5)" : theme.colors.yellow[6],
             border: `1px solid ${currentEntryBorderColor} !important`,
         };
 
@@ -234,6 +234,9 @@ const MediaTable: FC<MediaTableProps> = ({
     const columnConfig: { [key: string]: ColumnConfiguration } = {
         album: {
             heading: "album",
+        },
+        albumId: {
+            heading: "album id",
         },
         album_art_uri: {
             heading: "",
