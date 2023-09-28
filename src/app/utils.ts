@@ -244,7 +244,9 @@ export function collectionFilter<T extends Object>(
         return collection;
     }
 
-    const matches = [...filterText.toLocaleLowerCase().matchAll(filterTokenizerRegex)];
+    const filterTextLowerCase = filterText.toLocaleLowerCase()
+
+    const matches = [...filterTextLowerCase.matchAll(filterTokenizerRegex)];
 
     // If the "key" in any "key:value" is invalid (i.e. it's not a key in any of the items in the
     // collection, then treat this as a zero-match result.
@@ -273,9 +275,8 @@ export function collectionFilter<T extends Object>(
     //
     // e.g. "some text key:value" will be interpreted as "defaultKey:(some text) key:value"; but
     //      "some text defaultKey:value" will be interpreted as "defaultKey:value".
-    const unkewordedText = filterText
+    const unkewordedText = filterTextLowerCase
         .replace(filterTokenizerRegex, "")
-        .toLocaleLowerCase()
         .replace(emptyStringRegex, "");
 
     if (unkewordedText !== "" && defaultKey !== "" && !foundKeys.includes(defaultKey)) {
@@ -286,8 +287,15 @@ export function collectionFilter<T extends Object>(
     // "AND" search; and matching is a case-insensitive partial text match.
     return collection.filter((item) => {
         for (const [key, searchValue] of matchKeyValues) {
-            const thisValue = get(item, searchRoot ? `${searchRoot}.${key}` : key); // Using lodash to support "nested.key.names".
-            if (!thisValue || (thisValue && !thisValue.toLocaleLowerCase().includes(searchValue))) {
+            let thisValue = get(item, searchRoot ? `${searchRoot}.${key}` : key); // Using lodash to support "nested.key.names".
+
+            if (typeof thisValue === "undefined") {
+                return false;
+            }
+            else if (typeof thisValue === "string" && !thisValue.toLocaleLowerCase().includes(searchValue)) {
+                return false;
+            }
+            else if (typeof thisValue === "number" && thisValue !== parseFloat(searchValue)) {
                 return false;
             }
         }

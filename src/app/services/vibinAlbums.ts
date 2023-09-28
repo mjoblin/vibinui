@@ -39,20 +39,42 @@ export type BackendTrack = {
     original_track_number: string;
 };
 
-export const trackTransformer = (track: BackendTrack): Track => ({
-    id: track.id,
-    albumId: track.albumId,
-    parentId: track.parentId,
-    track_number: parseInt(track.original_track_number, 10),
-    duration: hmsToSecs(track.duration),
-    album: track.album,
-    artist: track.artist,
-    title: track.title,
-    art_url: track.album_art_uri,
-    album_art_uri: track.album_art_uri,
-    date: track.date,
-    genre: track.genre,
-});
+export const albumTransformer = (album: BackendAlbum): Album => {
+    const date = new Date(album.date);
+    const year = date.getFullYear();
+
+    return {
+        id: album.id,
+        title: album.title,
+        creator: album.artist,
+        date: album.date,
+        year: isNaN(year) ? 0 : year,
+        artist: album.artist,
+        genre: album.genre,
+        album_art_uri: album.album_art_uri,
+    }
+};
+
+export const trackTransformer = (track: BackendTrack): Track => {
+    const date = new Date(track.date);
+    const year = date.getFullYear();
+
+    return {
+        id: track.id,
+        albumId: track.albumId,
+        parentId: track.parentId,
+        track_number: parseInt(track.original_track_number, 10),
+        duration: hmsToSecs(track.duration),
+        album: track.album,
+        artist: track.artist,
+        title: track.title,
+        art_url: track.album_art_uri,
+        album_art_uri: track.album_art_uri,
+        date: track.date,
+        year: isNaN(year) ? 0 : year,
+        genre: track.genre,
+    }
+};
 
 export const vibinAlbumsApi = createApi({
     reducerPath: "vibinAlbumsApi",
@@ -61,12 +83,21 @@ export const vibinAlbumsApi = createApi({
     endpoints: (builder) => ({
         getAlbumById: builder.query<Album, MediaId>({
             query: (albumId) => albumId,
+            transformResponse(album: BackendAlbum): Promise<Album> | Album {
+                return albumTransformer(album);
+            },
         }),
         getAlbums: builder.query<Album[], void>({
             query: () => "",
+            transformResponse(albums: BackendAlbum[]): Promise<Album[]> | Album[] {
+                return albums.map(albumTransformer);
+            },
         }),
         getNewAlbums: builder.query<Album[], void>({
             query: () => "new",
+            transformResponse(albums: BackendAlbum[]): Promise<Album[]> | Album[] {
+                return albums.map(albumTransformer);
+            },
         }),
         getAlbumTracks: builder.query<Track[], string>({
             query: (albumMediaId) => `${albumMediaId}/tracks`,

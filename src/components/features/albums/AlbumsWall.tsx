@@ -243,7 +243,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         <Box className={dynamicClasses.tableWall}>
             <MediaTable
                 media={albumsToDisplay}
-                columns={["album_art_uri", "title", "artist", "date", "genre"]}
+                columns={["album_art_uri", "title", "artist", "year", "genre"]}
                 stripeColor={tableStripeColor}
                 currentlyPlayingId={currentAlbumMediaId}
                 currentlyPlayingRef={currentAlbumRef}

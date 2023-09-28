@@ -244,7 +244,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                             <Box className={dynamicClasses.tableWall}>
                                 <MediaTable
                                     media={albumsToDisplay}
-                                    columns={["album_art_uri", "title", "artist", "date", "genre"]}
+                                    columns={["album_art_uri", "title", "artist", "year", "genre"]}
                                     stripeColor={tableStripeColor}
                                     currentlyPlayingId={currentAlbumMediaId}
                                 />
@@ -298,7 +298,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                                         "title",
                                         "artist",
                                         "album",
-                                        "date",
+                                        "year",
                                         "genre",
                                     ]}
                                     stripeColor={tableStripeColor}
