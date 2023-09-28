@@ -34,6 +34,7 @@ export type Album = {
     title: string;
     creator: string;
     date: string;
+    year: number;
     artist: string;
     genre: string;
     album_art_uri: string; // TODO: This vs. art_url (be consistent; will need to rename somewhere)
@@ -74,6 +75,7 @@ export type Track = {
     title: string;
     // TODO: Fix up difference between a Track from /tracks/:id and the "current track" from the websocket
     date?: string;
+    year?: number;
     art_url: string;
     album_art_uri?: string;  // TODO: Fix "art_url" vs. "album_art_uri"
     genre?: string;

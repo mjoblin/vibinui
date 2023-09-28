@@ -20,12 +20,34 @@ import NumericSwatch from "../dataDisplay/NumericSwatch";
 
 const ART_SIZE = 35;
 
+type ColumnConfiguration = {
+    [key: string]: {
+        heading?: string;
+        valueGenerator?: (value: any, media: Media) => any;
+        justify?: "left" | "right" | "center";
+    };
+};
+
 type TableRowProps = {
     mediaItem: Media;
+    columnConfig: ColumnConfiguration;
     columnsToDisplay: string[];
     currentlyPlayingId?: MediaId | number;
     currentlyPlayingRef?: Ref<HTMLDivElement>;
-    columnValue: (media: Media, column: string) => any;
+};
+
+/**
+ * Get the value to display in the given column for the given media item.
+ */
+const columnValueGetter = (media: Media, columnConfig: ColumnConfiguration, column: string): any => {
+    if (!media.hasOwnProperty(column)) {
+        return "";
+    }
+
+    const valueGenerator = columnConfig[column]?.valueGenerator;
+
+    // @ts-ignore
+    return valueGenerator ? valueGenerator(media[column], media) : media[column];
 };
 
 /**
@@ -34,10 +56,10 @@ type TableRowProps = {
  */
 const TableRow: FC<TableRowProps> = ({
     mediaItem,
+    columnConfig,
     columnsToDisplay,
     currentlyPlayingId,
     currentlyPlayingRef,
-    columnValue,
 }) => {
     const [, setIsVisible] = useState<boolean>(false);
 
@@ -52,22 +74,28 @@ const TableRow: FC<TableRowProps> = ({
                     <tr>
                         {columnsToDisplay.map((column, index) => (
                             // Wrap the "currently playing" row in a Box with the currentlyPlayingRef
-                            <td key={`${mediaItem.id}::${index}`}>
+                            <td
+                                key={`${mediaItem.id}::${index}`}
+                                // @ts-ignore
+                                style={{ textAlign: columnConfig[column].justify }}
+                            >
                                 {index === 0 &&
                                 currentlyPlayingRef &&
                                 currentlyPlayingId === mediaItem.id ? (
                                     <Box ref={currentlyPlayingRef}>
-                                        {columnValue(mediaItem, column)}
+                                        {columnValueGetter(mediaItem, columnConfig, column)}
                                     </Box>
                                 ) : (
-                                    columnValue(mediaItem, column)
+                                    columnValueGetter(mediaItem, columnConfig, column)
                                 )}
                             </td>
                         ))}
                     </tr>
                 ) : (
                     <tr>
-                        <td><Box mih={ART_SIZE}></Box></td>
+                        <td>
+                            <Box mih={ART_SIZE}></Box>
+                        </td>
                     </tr>
                 )
             }
@@ -113,11 +141,6 @@ const useStyles = createStyles((theme) => ({
         },
     },
 }));
-
-type ColumnConfiguration = {
-    heading: string;
-    valueGenerator?: (value: any, media: Media) => any;
-};
 
 // ------------------------------------------------------------------------------------------------
 
@@ -235,7 +258,7 @@ const MediaTable: FC<MediaTableProps> = ({
     // --------------------------------------------------------------------------------------------
 
     // Configure the header and value generators for each potential field from a media item.
-    const columnConfig: { [key: string]: ColumnConfiguration } = {
+    const columnConfig: ColumnConfiguration = {
         album: {
             heading: "album",
         },
@@ -298,17 +321,9 @@ const MediaTable: FC<MediaTableProps> = ({
         creator: {
             heading: "creator",
         },
-        date: {
-            heading: "year",
-            valueGenerator: (value: any): string => {
-                const date = new Date(value);
-                const year = date.getFullYear();
-
-                return isNaN(year) ? "" : `${year}`;
-            },
-        },
         duration: {
             heading: "duration",
+            justify: "right",
             valueGenerator: (value: any, media: Media): string => secstoHms(value),
         },
         genre: {
@@ -317,6 +332,7 @@ const MediaTable: FC<MediaTableProps> = ({
         },
         id: {
             heading: "ID",
+            justify: "center",
             valueGenerator: (value: any): any =>
                 typeof value === "number" ? <NumericSwatch number={value} /> : value,
         },
@@ -341,27 +357,19 @@ const MediaTable: FC<MediaTableProps> = ({
         type: {
             heading: "type",
         },
-    };
-
-    /**
-     * Get the value to display in the given column for the given media item.
-     */
-    const columnValue = (media: Media, column: string): any => {
-        if (!media.hasOwnProperty(column)) {
-            return "";
-        }
-
-        const generator = columnConfig[column]?.valueGenerator;
-
-        // @ts-ignore
-        return generator ? generator(media[column], media) : media[column];
+        year: {
+            heading: "year",
+            justify: "right",
+        },
     };
 
     // Define table header
     const headerRow = (
         <tr>
             {columnsToDisplay.map((column) => (
-                <td key={`header::${column}`}>{columnConfig[column]?.heading}</td>
+                <td key={`header::${column}`} style={{ textAlign: columnConfig[column].justify }}>
+                    {columnConfig[column]?.heading}
+                </td>
             ))}
         </tr>
     );
@@ -373,10 +381,10 @@ const MediaTable: FC<MediaTableProps> = ({
             <TableRow
                 key={mediaItem.id}
                 mediaItem={mediaItem}
+                columnConfig={columnConfig}
                 columnsToDisplay={columnsToDisplay}
                 currentlyPlayingId={currentlyPlayingId}
                 currentlyPlayingRef={currentlyPlayingRef}
-                columnValue={columnValue}
             />
         ));
 

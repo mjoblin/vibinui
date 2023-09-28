@@ -250,7 +250,7 @@ const TracksWall: FC<TrackWallProps> = ({
         <Box className={dynamicClasses.tableWall}>
             <MediaTable
                 media={tracksToDisplay}
-                columns={["album_art_uri", "title", "artist", "album", "date", "duration", "genre"]}
+                columns={["album_art_uri", "title", "artist", "album", "year", "duration", "genre"]}
                 stripeColor={tableStripeColor}
                 currentlyPlayingId={currentTrackMediaId}
                 currentlyPlayingRef={currentTrackRef}
