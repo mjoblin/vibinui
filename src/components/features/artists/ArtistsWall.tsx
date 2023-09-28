@@ -391,7 +391,7 @@ const ArtistsWall: FC = () => {
 
             <Stack spacing={10}>
                 <Stack spacing={2}>
-                    <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
+                    <Text weight="bold" size={14}>
                         Artist
                     </Text>
                     <Divider color={colors.dark[6]} pb={0} />
@@ -438,7 +438,7 @@ const ArtistsWall: FC = () => {
 
             <Stack spacing={10}>
                 <Stack spacing={2}>
-                    <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
+                    <Text weight="bold" size={14}>
                         Albums
                     </Text>
                     <Divider color={colors.dark[6]} pb={0} />
@@ -503,7 +503,6 @@ const ArtistsWall: FC = () => {
                             <Text
                                 size="sm"
                                 transform="uppercase"
-                                weight="bold"
                                 color={colors.dark[3]}
                                 w={250}
                             >
@@ -518,7 +517,7 @@ const ArtistsWall: FC = () => {
 
             <Stack spacing={10}>
                 <Stack spacing={2}>
-                    <Text transform="uppercase" weight="bold" color={colors.dark[2]}>
+                    <Text weight="bold" size={14}>
                         Tracks
                     </Text>
                     <Divider color={colors.dark[6]} pb={0} />
@@ -589,7 +588,6 @@ const ArtistsWall: FC = () => {
                             <Text
                                 size="sm"
                                 transform="uppercase"
-                                weight="bold"
                                 color={colors.dark[3]}
                                 w={250}
                             >
