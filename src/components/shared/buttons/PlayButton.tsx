@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { ActionIcon, createStyles, getStylesRef, useMantineTheme } from "@mantine/core";
+import { ActionIcon, Box, createStyles, getStylesRef, useMantineTheme } from "@mantine/core";
 import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 
 import { isAlbum, isPreset, isTrack, Media } from "../../../app/types";
@@ -51,6 +51,11 @@ const PlayButton: FC<PlayButtonProps> = ({
     const [mediaIsActive, setMediaIsActive] = useState<boolean>(false);
 
     const { classes: dynamicClasses } = createStyles((theme, _params) => ({
+        disabled: {
+            "&:hover": {
+                cursor: "not-allowed",
+            },
+        },
         playButtonContainer: {
             backgroundColor: "rgb(255, 255, 255, 0.2)",
             transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
@@ -107,74 +112,80 @@ const PlayButton: FC<PlayButtonProps> = ({
     if (!mediaIsActive) {
         // Media is not active, so behave like a play button to initiate media playback.
         return (
-            <ActionIcon
-                className={dynamicClasses.playButtonContainer}
-                disabled={disabled}
-                size={size}
-                color={colors.blue[4]}
-                variant="filled"
-                radius={size / 2}
-                onClick={(event) => {
-                    event.stopPropagation();
+            <Box className={disabled ? dynamicClasses.disabled : undefined}>
+                <ActionIcon
+                    className={dynamicClasses.playButtonContainer}
+                    disabled={disabled}
+                    size={size}
+                    color={colors.blue[4]}
+                    variant="filled"
+                    radius={size / 2}
+                    onClick={(event) => {
+                        event.stopPropagation();
 
-                    if (onPlay) {
-                        onPlay();
-                        return;
-                    }
+                        if (onPlay) {
+                            onPlay();
+                            return;
+                        }
 
-                    if (isAlbum(media) || isTrack(media)) {
-                        addMediaToPlaylist({ mediaId: media.id, action: "REPLACE" });
+                        if (isAlbum(media) || isTrack(media)) {
+                            addMediaToPlaylist({ mediaId: media.id, action: "REPLACE" });
 
-                        showSuccessNotification({
-                            title: `Replaced Playlist ${
-                                isAlbum(media) ? "with Album" : isTrack(media) ? "with Track" : ""
-                            }`,
-                            message: media.title,
-                        });
-                    }
-                    else if (isPreset(media)) {
-                        playPresetId(media.id);
-                    }
-                }}
-            >
-                <IconPlayerPlay size={size / 2} className={dynamicClasses.button} />
-            </ActionIcon>
+                            showSuccessNotification({
+                                title: `Replaced Playlist ${
+                                    isAlbum(media)
+                                        ? "with Album"
+                                        : isTrack(media)
+                                        ? "with Track"
+                                        : ""
+                                }`,
+                                message: media.title,
+                            });
+                        } else if (isPreset(media)) {
+                            playPresetId(media.id);
+                        }
+                    }}
+                >
+                    <IconPlayerPlay size={size / 2} className={dynamicClasses.button} />
+                </ActionIcon>
+            </Box>
         );
     } else {
         // Media is active, so behave like a transport play/pause button.
         return (
-            <ActionIcon
-                className={dynamicClasses.playButtonContainer}
-                disabled={disabled}
-                size={size}
-                color={colors.blue[4]}
-                variant="filled"
-                radius={size / 2}
-                onClick={(event) => {
-                    event.stopPropagation();
+            <Box className={disabled ? dynamicClasses.disabled : undefined}>
+                <ActionIcon
+                    className={dynamicClasses.playButtonContainer}
+                    disabled={disabled}
+                    size={size}
+                    color={colors.blue[4]}
+                    variant="filled"
+                    radius={size / 2}
+                    onClick={(event) => {
+                        event.stopPropagation();
 
-                    if (onPlay && playStatus !== "play") {
-                        onPlay();
-                        return;
-                    } else if (onPause && playStatus === "play") {
-                        onPause();
-                        return;
-                    }
+                        if (onPlay && playStatus !== "play") {
+                            onPlay();
+                            return;
+                        } else if (onPause && playStatus === "play") {
+                            onPause();
+                            return;
+                        }
 
-                    if (playStatus === "play") {
-                        pausePlayback();
-                    }
-                    else {
-                        playPlayback();
-                    }
-                }}
-            >
-                {playStatus === "play" ? (
-                    <IconPlayerPause size={size / 2} className={dynamicClasses.button} />
-                ) : (
-                    <IconPlayerPlay size={size / 2} className={dynamicClasses.button} />
-                )}
-            </ActionIcon>
+                        if (playStatus === "play") {
+                            pausePlayback();
+                        } else {
+                            playPlayback();
+                        }
+                    }}
+                >
+                    {playStatus === "play" ? (
+                        <IconPlayerPause size={size / 2} className={dynamicClasses.button} />
+                    ) : (
+                        <IconPlayerPlay size={size / 2} className={dynamicClasses.button} />
+                    )}
+                </ActionIcon>
+            </Box>
         );
     }
 };
