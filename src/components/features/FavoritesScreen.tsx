@@ -20,9 +20,8 @@ const FavoritesScreen: FC = () => {
     const dispatch = useAppDispatch();
     const { SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.favorites);
-    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.favorites
-    );
+    const { activeCollection, cardSize, cardGap, filterText, showDetails, wallViewMode } =
+        useAppSelector((state: RootState) => state.userSettings.favorites);
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
     /**
@@ -51,6 +50,7 @@ const FavoritesScreen: FC = () => {
                 <FavoritesWall
                     filterText={filterText}
                     activeCollection={activeCollection}
+                    viewMode={wallViewMode}
                     cardSize={cardSize}
                     cardGap={cardGap}
                     showDetails={showDetails}

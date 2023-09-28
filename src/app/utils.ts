@@ -1,12 +1,13 @@
-import { ReactNode } from "react";
+import { createElement, ReactNode } from "react";
 import { showNotification } from "@mantine/notifications";
-import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons";
+import { IconAlertCircle, IconCheck, IconX } from "@tabler/icons-react";
 import get from "lodash/get";
 import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 
 import { Playlist } from "./types";
+import { MediaSortDirection } from "./store/userSettingsSlice";
 
 // ================================================================================================
 // Various utility functions.
@@ -113,7 +114,7 @@ export const showSuccessNotification = ({
         title,
         message,
         color: color || "teal",
-        icon: icon || IconCheck({ size: 18 }),
+        icon: icon || createElement(IconCheck, { size: 18 }),
         loading,
         autoClose,
     });
@@ -135,7 +136,7 @@ export const showWarningNotification = ({
         title,
         message,
         color: color || "yellow",
-        icon: icon || IconAlertCircle({ size: 21, style: { paddingRight: 1, paddingBottom: 2 } }),
+        icon: icon || createElement(IconAlertCircle, { size: 21, style: { paddingRight: 1, paddingBottom: 2 } }),
         loading,
         autoClose,
     });
@@ -157,7 +158,7 @@ export const showErrorNotification = ({
         title,
         message,
         color: color || "red",
-        icon: icon || IconX({ size: 18 }),
+        icon: icon || createElement(IconX, { size: 18 }),
         loading,
         autoClose,
     });
@@ -243,7 +244,9 @@ export function collectionFilter<T extends Object>(
         return collection;
     }
 
-    const matches = [...filterText.toLocaleLowerCase().matchAll(filterTokenizerRegex)];
+    const filterTextLowerCase = filterText.toLocaleLowerCase()
+
+    const matches = [...filterTextLowerCase.matchAll(filterTokenizerRegex)];
 
     // If the "key" in any "key:value" is invalid (i.e. it's not a key in any of the items in the
     // collection, then treat this as a zero-match result.
@@ -272,9 +275,8 @@ export function collectionFilter<T extends Object>(
     //
     // e.g. "some text key:value" will be interpreted as "defaultKey:(some text) key:value"; but
     //      "some text defaultKey:value" will be interpreted as "defaultKey:value".
-    const unkewordedText = filterText
+    const unkewordedText = filterTextLowerCase
         .replace(filterTokenizerRegex, "")
-        .toLocaleLowerCase()
         .replace(emptyStringRegex, "");
 
     if (unkewordedText !== "" && defaultKey !== "" && !foundKeys.includes(defaultKey)) {
@@ -285,12 +287,54 @@ export function collectionFilter<T extends Object>(
     // "AND" search; and matching is a case-insensitive partial text match.
     return collection.filter((item) => {
         for (const [key, searchValue] of matchKeyValues) {
-            const thisValue = get(item, searchRoot ? `${searchRoot}.${key}` : key); // Using lodash to support "nested.key.names".
-            if (!thisValue || (thisValue && !thisValue.toLocaleLowerCase().includes(searchValue))) {
+            let thisValue = get(item, searchRoot ? `${searchRoot}.${key}` : key); // Using lodash to support "nested.key.names".
+
+            if (typeof thisValue === "undefined") {
+                return false;
+            }
+            else if (typeof thisValue === "string" && !thisValue.toLocaleLowerCase().includes(searchValue)) {
+                return false;
+            }
+            else if (typeof thisValue === "number" && thisValue !== parseFloat(searchValue)) {
                 return false;
             }
         }
 
         return true;
     });
+}
+
+/**
+ * Sorter factory, to sort the given collection by field name.
+ *
+ * Returns a function which can passed to an array's sort() function.
+ */
+export function collectionSorter<T extends Record<string, any>>(
+    field: string,
+    direction: MediaSortDirection = "ascending",
+) {
+    const lessThanCheck = direction === "ascending" ? -1 : 1;
+    const greaterThanCheck = direction === "ascending" ? 1 : -1;
+
+    return (a: T, b: T) => {
+        // Using lodash to support "nested.field.names"
+        let aValue = get(a, field);
+        let bValue = get(b, field);
+
+        if (typeof aValue === "undefined" || typeof bValue === "undefined") {
+            return 0;
+        }
+
+        aValue = typeof aValue === "string" ? aValue.toUpperCase() : aValue;
+        bValue = typeof bValue === "string" ? bValue.toUpperCase() : bValue;
+
+        if (aValue < bValue) {
+            return lessThanCheck;
+        }
+        if (aValue > bValue) {
+            return greaterThanCheck;
+        }
+
+        return 0;
+    };
 }

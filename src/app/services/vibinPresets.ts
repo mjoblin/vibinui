@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
+import { Preset, PresetId } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
 // ================================================================================================
@@ -7,20 +8,6 @@ import { API_REFRESH_INTERVAL } from "../constants";
 //
 // Features: Retrieve and play Presets.
 // ================================================================================================
-
-export type PresetId = number;
-
-export type PresetType = "Radio" | "UPnP";
-
-export type Preset = {
-    id: PresetId;
-    name: string;
-    type: PresetType;
-    class: string;
-    state: string;
-    is_playing: boolean;
-    art_url: string;
-};
 
 export const vibinPresetsApi = createApi({
     reducerPath: "vibinPresetsApi",

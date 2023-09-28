@@ -10,25 +10,22 @@ import {
     TextInput,
     useMantineTheme,
 } from "@mantine/core";
-import { IconSquareX } from "@tabler/icons";
+import { IconSquareX } from "@tabler/icons-react";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
-    resetApplicationMediaSearchToDefaults,
-    setApplicationMediaSearchCardGap,
-    setApplicationMediaSearchCardSize,
+    MediaSearchDisplayCategory,
     setApplicationMediaSearchDisplayCategories,
     setApplicationMediaSearchFilterText,
-    setApplicationMediaSearchShowDetails,
 } from "../../../app/store/userSettingsSlice";
 import FilterInstructions from "../textDisplay/FilterInstructions";
 import AlbumsWall from "../../features/albums/AlbumsWall";
 import TracksWall from "../../features/tracks/TracksWall";
 import PresetsWall from "../../features/presets/PresetsWall";
 import FavoritesWall from "../../features/favorites/FavoritesWall";
-import CardControls from "../buttons/CardControls";
+import MediaWallDisplayControls from "../buttons/MediaWallDisplayControls";
 import StylizedLabel from "../textDisplay/StylizedLabel";
 
 // ================================================================================================
@@ -42,11 +39,18 @@ type MediaSearchModalProps = {
 
 const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefined }) => {
     const dispatch = useAppDispatch();
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
-    const { cardGap, cardSize, displayCategories, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.application.mediaSearch
-    );
+    const {
+        cardGap,
+        cardSize,
+        displayCategories,
+        filterText,
+        showDetails,
+        wallSortField,
+        wallSortDirection,
+        wallViewMode,
+    } = useAppSelector((state: RootState) => state.userSettings.application.mediaSearch);
     const [albumsDisplayCount, setAlbumsDisplayCount] = useState<number>(0);
     const [tracksDisplayCount, setTracksDisplayCount] = useState<number>(0);
     const [presetsDisplayCount, setPresetsDisplayCount] = useState<number>(0);
@@ -56,8 +60,10 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
     const [isPresetsFilterExecuting, setIsPresetsFilterExecuting] = useState<boolean>(false);
     const [isFavoritesFilterExecuting, setIsFavoritesFilterExecuting] = useState<boolean>(false);
 
-    const headerColor = colors.gray[5];
+    const headerColor = theme.colors.gray[5];
     const headerSize = 25;
+    const tableStripeColor =
+        theme.colorScheme === "dark" ? theme.colors.gray[9] : theme.colors.gray[2];
 
     return (
         <Modal
@@ -112,12 +118,10 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                         withinPortal={true}
                     />
 
-                    {/* @ts-ignore */}
                     <Chip.Group
                         multiple
                         value={displayCategories}
-                        onChange={(value) =>
-                            // @ts-ignore
+                        onChange={(value: MediaSearchDisplayCategory[]) =>
                             dispatch(setApplicationMediaSearchDisplayCategories(value))
                         }
                     >
@@ -138,19 +142,11 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                     </Chip.Group>
 
                     {/* Card display settings */}
-                    <CardControls
-                        cardSize={cardSize}
-                        cardGap={cardGap}
-                        showDetails={showDetails}
-                        cardSizeSetter={setApplicationMediaSearchCardSize}
-                        cardGapSetter={setApplicationMediaSearchCardGap}
-                        showDetailsSetter={setApplicationMediaSearchShowDetails}
-                        resetter={resetApplicationMediaSearchToDefaults}
-                    />
+                    <MediaWallDisplayControls applicationFeature="mediaSearch" />
                 </Flex>
 
                 {typeof filterText === "undefined" || filterText.length < 2 ? (
-                    <Text color={colors.gray[6]}>No media search specified</Text>
+                    <Text color={theme.colors.gray[6]}>No media search specified</Text>
                 ) : (
                     <Stack spacing={0}>
                         {displayCategories.includes("albums") && (
@@ -160,9 +156,13 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 </StylizedLabel>
                                 <AlbumsWall
                                     filterText={filterText}
+                                    viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
+                                    tableStripeColor={tableStripeColor}
                                     quietUnlessShowingAlbums={true}
                                     cacheCardRenderSize={false}
                                     onIsFilteringUpdate={setIsAlbumsFilterExecuting}
@@ -170,7 +170,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {albumsDisplayCount === 0 && !isAlbumsFilterExecuting && (
-                                    <Text color={colors.gray[6]} pb={5}>
+                                    <Text color={theme.colors.gray[6]} pb={5}>
                                         No matching albums
                                     </Text>
                                 )}
@@ -184,9 +184,13 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 </StylizedLabel>
                                 <TracksWall
                                     filterText={filterText}
+                                    viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
+                                    tableStripeColor={tableStripeColor}
                                     quietUnlessShowingTracks={true}
                                     cacheCardRenderSize={false}
                                     onIsFilteringUpdate={setIsTracksFilterExecuting}
@@ -194,7 +198,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {tracksDisplayCount === 0 && !isTracksFilterExecuting && (
-                                    <Text color={colors.gray[6]} pb={5}>
+                                    <Text color={theme.colors.gray[6]} pb={5}>
                                         No matching tracks
                                     </Text>
                                 )}
@@ -208,16 +212,20 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 </StylizedLabel>
                                 <PresetsWall
                                     filterText={filterText}
+                                    viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
+                                    tableStripeColor={tableStripeColor}
                                     quietUnlessShowingPresets={true}
                                     onIsFilteringUpdate={setIsPresetsFilterExecuting}
                                     onDisplayCountUpdate={setPresetsDisplayCount}
                                 />
 
                                 {presetsDisplayCount === 0 && !isPresetsFilterExecuting && (
-                                    <Text color={colors.gray[6]} pb={5}>
+                                    <Text color={theme.colors.gray[6]} pb={5}>
                                         No matching presets
                                     </Text>
                                 )}
@@ -232,9 +240,13 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 <FavoritesWall
                                     filterText={filterText}
                                     activeCollection="all"
+                                    viewMode={wallViewMode}
+                                    sortField={wallSortField}
+                                    sortDirection={wallSortDirection}
                                     cardSize={cardSize}
                                     cardGap={cardGap}
                                     showDetails={showDetails}
+                                    tableStripeColor={tableStripeColor}
                                     quietUnlessShowingFavorites={true}
                                     cacheCardRenderSize={false}
                                     onIsFilteringUpdate={setIsFavoritesFilterExecuting}
@@ -242,7 +254,7 @@ const MediaSearchModal: FC<MediaSearchModalProps> = ({ opened, onClose = undefin
                                 />
 
                                 {favoritesDisplayCount === 0 && !isFavoritesFilterExecuting && (
-                                    <Text color={colors.gray[6]} pb={5}>
+                                    <Text color={theme.colors.gray[6]} pb={5}>
                                         No matching favorites
                                     </Text>
                                 )}

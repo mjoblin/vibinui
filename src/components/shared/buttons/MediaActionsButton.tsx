@@ -19,9 +19,9 @@ import {
     IconPlaylistAdd,
     IconUser,
     IconWaveSine,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
-import { Album, Track } from "../../../app/types";
+import { Album, isAlbum, isPreset, isTrack, Media, Track } from "../../../app/types";
 import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
 import {
     useAddFavoriteMutation,
@@ -59,7 +59,8 @@ import {
 //  - Navigation (view media in another screen like Albums, Tracks, etc).
 //
 // Some actions will be disabled based on current state. E.g. Playlist actions are not supported
-// while the streamer is powered off.
+// while the streamer is powered off; and playlist/favorites/navigation actions are only supported
+// for Albums and Tracks.
 // ================================================================================================
 
 export type MediaType = "album" | "track";
@@ -112,9 +113,13 @@ const useStyles = createStyles((theme) => ({
     actionsInCircleContainer: {
         borderRadius: 15,
         backgroundColor: "rgb(255, 255, 255, 0.2)",
-        transition: "transform .2s ease-in-out, background-color .2s ease-in-out",
+        color: theme.colors.gray[4],
+        transition:
+            "transform .2s ease-in-out, background-color .2s ease-in-out, " +
+            "transform .2s ease-in-out, color .2s ease-in-out",
         "&:hover": {
             backgroundColor: theme.colors.blue,
+            color: "white",
         },
     },
     buttonActive: {
@@ -134,8 +139,7 @@ const useMenuStyles = createStyles((theme) => ({
 }));
 
 type MediaActionsButtonProps = {
-    mediaType: MediaType; // TODO: Can "mediaType" be replaced with type checking on "media".
-    media: Album | Track;
+    media: Media;
     enabledActions?: EnabledActions;
     position?: FloatingPosition;
     size?: "md" | "sm" | number;
@@ -149,7 +153,6 @@ type MediaActionsButtonProps = {
 //  top/bottom or left/right bars as appropriate).
 
 const MediaActionsButton: FC<MediaActionsButtonProps> = ({
-    mediaType,
     media,
     enabledActions = {
         Details: ["all"],
@@ -196,7 +199,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
         }
     }, [addStatus]);
 
-    const mediaTypeDisplay = mediaType && mediaType[0].toUpperCase() + mediaType.slice(1);
+    const mediaTypeDisplay = isAlbum(media) ? "Album" : isTrack(media) ? "Track" : "";
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === media.id);
     const isStreamerOff = streamerPower === "off";
 
@@ -215,7 +218,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
         enabledActions.Navigation!!,
         "ViewCurrentInArtists"
     );
-    
+
     return (
         <Box onClick={(event) => event.stopPropagation()}>
             <Menu
@@ -264,7 +267,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         <>
                             <Menu.Label>Details</Menu.Label>
 
-                            {mediaType === "album" &&
+                            {isAlbum(media) &&
                                 wantAction(enabledActions.Details!!, "ViewTracks") && (
                                     <Menu.Item
                                         icon={<IconList size={14} />}
@@ -274,7 +277,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     </Menu.Item>
                                 )}
 
-                            {mediaType === "track" &&
+                            {isTrack(media) &&
                                 wantAction(enabledActions.Details!!, "ViewLyrics") && (
                                     <Menu.Item
                                         icon={<IconArticle size={14} />}
@@ -284,7 +287,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     </Menu.Item>
                                 )}
 
-                            {mediaType === "track" &&
+                            {isTrack(media) &&
                                 wantAction(enabledActions.Details!!, "ViewWaveform") && (
                                     <Menu.Item
                                         icon={<IconWaveSine size={14} />}
@@ -294,7 +297,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     </Menu.Item>
                                 )}
 
-                            {mediaType === "track" &&
+                            {isTrack(media) &&
                                 wantAction(enabledActions.Details!!, "ViewLinks") && (
                                     <Menu.Item
                                         icon={<IconExternalLink size={14} />}
@@ -304,7 +307,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     </Menu.Item>
                                 )}
 
-                            {["album", "track"].includes(mediaType) &&
+                            {(isAlbum(media) || isPreset(media) || isTrack(media)) &&
                                 wantAction(enabledActions.Details!!, "ViewArt") && (
                                     <Menu.Item
                                         icon={<IconPhoto size={14} />}
@@ -318,7 +321,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 
                     {/* Playlist actions ------------------------------------------------------ */}
 
-                    {showPlaylistActions && (
+                    {showPlaylistActions && (isAlbum(media) || isTrack(media)) && (
                         <>
                             <Menu.Label>Playlist</Menu.Label>
 
@@ -334,8 +337,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                                         ? darkDisabled
                                                         : darkEnabled
                                                     : isStreamerOff
-                                                        ? lightDisabled
-                                                        : lightEnabled
+                                                    ? lightDisabled
+                                                    : lightEnabled
                                             }
                                         />
                                     }
@@ -416,26 +419,30 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 
                     {/* Favorites actions ----------------------------------------------------- */}
 
-                    {showFavoritesActions && (
+                    {showFavoritesActions && (isAlbum(media) || isTrack(media)) && (
                         <>
                             <Menu.Label>Favorites</Menu.Label>
 
-                            {wantAction(enabledActions.Favorites!!, "AddFavorite") && (
-                                <Menu.Item
-                                    icon={<IconHeart size={14} />}
-                                    disabled={isFavorited}
-                                    onClick={() => {
-                                        addFavorite({ type: mediaType, mediaId: media.id });
+                            {wantAction(enabledActions.Favorites!!, "AddFavorite") &&
+                                (isAlbum(media) || isTrack(media)) && (
+                                    <Menu.Item
+                                        icon={<IconHeart size={14} />}
+                                        disabled={isFavorited}
+                                        onClick={() => {
+                                            addFavorite({
+                                                type: isAlbum(media) ? "album" : "track",
+                                                mediaId: media.id,
+                                            });
 
-                                        showSuccessNotification({
-                                            title: `${mediaTypeDisplay} added to Favorites`,
-                                            message: media.title,
-                                        });
-                                    }}
-                                >
-                                    Add to Favorites
-                                </Menu.Item>
-                            )}
+                                            showSuccessNotification({
+                                                title: `${mediaTypeDisplay} added to Favorites`,
+                                                message: media.title,
+                                            });
+                                        }}
+                                    >
+                                        Add to Favorites
+                                    </Menu.Item>
+                                )}
 
                             {wantAction(enabledActions.Favorites!!, "RemoveFavorite") && (
                                 <Menu.Item
@@ -458,7 +465,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 
                     {/* Navigation actions ---------------------------------------------------- */}
 
-                    {showNavigationActions && (
+                    {showNavigationActions && (isAlbum(media) || isTrack(media)) && (
                         <>
                             <Menu.Label>Navigation</Menu.Label>
 
@@ -468,19 +475,19 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     onClick={() => {
                                         dispatch(setArtistsActiveCollection("all"));
 
-                                        if (mediaType === "album") {
+                                        if (isAlbum(media)) {
                                             dispatch(
                                                 setArtistsSelectedArtist(artistByName[media.artist])
                                             );
                                             dispatch(setArtistsSelectedAlbum(albumById[media.id]));
                                             dispatch(setArtistsSelectedTrack(undefined));
-                                        } else if (mediaType === "track") {
+                                        } else if (isTrack(media)) {
                                             dispatch(
                                                 setArtistsSelectedArtist(artistByName[media.artist])
                                             );
                                             dispatch(
                                                 setArtistsSelectedAlbum(
-                                                    albumById[(media as Track).parentId]
+                                                    albumById[(media as Track).albumId]
                                                 )
                                             );
                                             dispatch(setArtistsSelectedTrack(media as Track));
@@ -505,7 +512,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                         dispatch(setAlbumsActiveCollection("all"));
                                         dispatch(
                                             setAlbumsFilterText(
-                                                mediaType === "album"
+                                                isAlbum(media)
                                                     ? `${media.title} artist:(${media.artist})`
                                                     : `${(media as Track).album} artist:(${
                                                           media.artist
@@ -525,7 +532,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     onClick={() => {
                                         dispatch(
                                             setTracksFilterText(
-                                                mediaType === "album"
+                                                isAlbum(media)
                                                     ? `artist:(${media.artist}) album:(${media.title})`
                                                     : `${media.title} album:(${
                                                           (media as Track).album
@@ -545,7 +552,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                 {/* Details modals ------------------------------------------------------------ */}
 
                 {/* Albums can show their track list */}
-                {mediaType === "album" && (
+                {isAlbum(media) && (
                     <AlbumTracksModal
                         album={media as Album}
                         opened={showAlbumTracksModal}
@@ -554,7 +561,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                 )}
 
                 {/* Tracks can show their lyrics, waveform, and links */}
-                {mediaType === "track" && (
+                {isTrack(media) && (
                     <TrackLyricsModal
                         track={media as Track}
                         opened={showTrackLyricsModal}
@@ -562,7 +569,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                     />
                 )}
 
-                {mediaType === "track" && (
+                {isTrack(media) && (
                     <TrackWaveformModal
                         track={media as Track}
                         opened={showTrackWaveformModal}
@@ -570,7 +577,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                     />
                 )}
 
-                {mediaType === "track" && (
+                {isTrack(media) && (
                     <TrackLinksModal
                         track={media as Track}
                         opened={showTrackLinksModal}
@@ -578,8 +585,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                     />
                 )}
 
-                {/* Albums and Tracks can show their art */}
-                {["album", "track"].includes(mediaType) && (
+                {/* Albums, Presets, and Tracks can show their art */}
+                {(isAlbum(media) || isPreset(media) || isTrack(media)) && (
                     <ArtModal
                         media={media}
                         opened={showArtModal}

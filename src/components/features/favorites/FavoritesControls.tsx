@@ -1,21 +1,17 @@
 import React, { FC } from "react";
 import { ActionIcon, Flex, Select, TextInput } from "@mantine/core";
-import { IconSquareX } from "@tabler/icons";
+import { IconSquareX } from "@tabler/icons-react";
 
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
 import {
     FavoriteCollection,
-    resetFavoritesToDefaults,
     setFavoritesActiveCollection,
-    setFavoritesCardGap,
-    setFavoritesCardSize,
     setFavoritesFilterText,
-    setFavoritesShowDetails,
 } from "../../../app/store/userSettingsSlice";
 import FilterInstructions from "../../shared/textDisplay/FilterInstructions";
-import CardControls from "../../shared/buttons/CardControls";
+import MediaWallDisplayControls from "../../shared/buttons/MediaWallDisplayControls";
 import PlayMediaIdsButton from "../../shared/buttons/PlayMediaIdsButton";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 
@@ -32,7 +28,7 @@ import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
-    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
+    const { activeCollection, filterText } = useAppSelector(
         (state: RootState) => state.userSettings.favorites
     );
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
@@ -107,7 +103,7 @@ const FavoritesControls: FC = () => {
                 maxToPlay={100}
             />
 
-            <Flex gap={20} justify="right" sx={{ alignSelf: "flex-end" }}>
+            <Flex gap={20} justify="right" align="center">
                 {/* "Showing x of y favorites" */}
                 <ShowCountLabel
                     showing={
@@ -119,15 +115,7 @@ const FavoritesControls: FC = () => {
                 />
 
                 {/* Card display settings */}
-                <CardControls
-                    cardSize={cardSize}
-                    cardGap={cardGap}
-                    showDetails={showDetails}
-                    cardSizeSetter={setFavoritesCardSize}
-                    cardGapSetter={setFavoritesCardGap}
-                    showDetailsSetter={setFavoritesShowDetails}
-                    resetter={resetFavoritesToDefaults}
-                />
+                <MediaWallDisplayControls applicationFeature="favorites" />
             </Flex>
         </Flex>
     );

@@ -1,5 +1,6 @@
 import React, { FC, useCallback } from "react";
-import { ActionIcon, Box, Flex, Select, TextInput, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, Flex, Select, TextInput, Tooltip, useMantineTheme } from "@mantine/core";
+import { IconHandFinger, IconSquareX } from "@tabler/icons-react";
 
 import { Album, Artist, MediaId, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
@@ -17,7 +18,6 @@ import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useGetArtistsQuery } from "../../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../../app/services/vibinTracks";
-import { IconHandFinger, IconSquareX } from "@tabler/icons";
 import ShowCountLabel from "../../shared/textDisplay/ShowCountLabel";
 import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton";
 
@@ -32,6 +32,7 @@ import CurrentlyPlayingButton from "../../shared/buttons/CurrentlyPlayingButton"
 // ================================================================================================
 
 const ArtistsControls: FC = () => {
+    const theme = useMantineTheme();
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const albumsByArtistName = useAppSelector(
@@ -176,11 +177,12 @@ const ArtistsControls: FC = () => {
                 <Tooltip label="Scroll selected items into view" position="bottom">
                     <Box>
                         <ActionIcon
-                            color="blue"
+                            variant="light"
+                            color={theme.primaryColor}
                             disabled={!selectedArtist && !selectedAlbum && !selectedTrack}
                             onClick={scrollSelectedIntoView}
                         >
-                            <IconHandFinger size="1.2rem" />
+                            <IconHandFinger size="1rem" />
                         </ActionIcon>
                     </Box>
                 </Tooltip>

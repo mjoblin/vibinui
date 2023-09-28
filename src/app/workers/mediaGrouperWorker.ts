@@ -68,8 +68,7 @@ onmessage = (e) => {
         result = payload.reduce(
             // @ts-ignore
             (computedTracksByAlbum, track) => {
-                const thisAlbumId = (track as Track).parentId;
-                // @ts-ignore
+                const thisAlbumId = (track as Track).albumId;
                 const currTracks = computedTracksByAlbum[thisAlbumId] ?? [];
 
                 return {

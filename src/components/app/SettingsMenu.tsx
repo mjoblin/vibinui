@@ -9,7 +9,14 @@ import {
     Switch,
     useMantineColorScheme,
 } from "@mantine/core";
-import { IconBug, IconKeyboard, IconMoon, IconSettings, IconSun } from "@tabler/icons";
+import {
+    IconBug,
+    IconKeyboard,
+    IconMoon,
+    IconSearch,
+    IconSettings,
+    IconSun,
+} from "@tabler/icons-react";
 
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
@@ -36,7 +43,7 @@ import { AudioSource, PowerState } from "../../app/store/systemSlice";
 //  - Amplifier power switch.
 //  - Amplifier audio source selector.
 //  - Dark/light mode toggle.
-//  - Access application-wide modals (keyboard shortcuts, debug).
+//  - Access application-wide modals (media search, keyboard shortcuts, debug).
 // ================================================================================================
 
 const SettingsMenu: FC = () => {
@@ -171,7 +178,7 @@ const SettingsMenu: FC = () => {
                 {/* Application --------------------------------------------------------------- */}
                 <Menu.Label>Application</Menu.Label>
                 <Menu.Item
-                    icon={<IconKeyboard size={14} />}
+                    icon={<IconSearch size={14} />}
                     onClick={() => dispatch(setShowMediaSearch())}
                 >
                     Media Search...

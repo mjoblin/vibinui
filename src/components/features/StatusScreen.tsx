@@ -14,7 +14,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { IconMoodSmile, IconRefresh } from "@tabler/icons";
+import { IconMoodSmile, IconRefresh } from "@tabler/icons-react";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { RootState } from "../../app/store/store";

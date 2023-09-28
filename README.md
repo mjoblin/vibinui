@@ -67,6 +67,8 @@ Vibin's features include:
 * **Browsing local media**.
   * Viewing Artists, Albums, and Tracks.
   * Filtering.
+  * Sorting.
+  * Viewing as art cards or in a table.
   * Searching by title, date, genre, etc.
   * Searching for lyrics.
   * Searching across all media at once (Albums, Tracks, Presets, Favorites).
@@ -168,6 +170,12 @@ The art size can be changed.
 
 ![Albums tiny wall]
 
+#### View media as a table
+
+Media can be viewed either as cards or in a table.
+
+![Albums as table]
+
 #### View artists
 
 The Artists screen provides an artist-oriented display of albums and tracks.
@@ -216,13 +224,14 @@ Media display can be filtered based on various metadata criteria.
 
 <img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_search.jpg" width="400" />
 
-#### Art card display settings
+#### Media display settings
 
-The size and spacing of the art cards can be changed independently for Albums, Tracks, Presets, and
-Favorites. Text details can be turned on and off. These settings will be remembered between
+Media can be displayed as either cards or tables, and can be sorted by metadata fields.
+Cards can have their sizing and spacing configured, and text details can be turned on and off.
+These settings can be configured differently for each screen and will be remembered between
 sessions.
 
-<img src="https://github.com/mjoblin/media/blob/main/vibin/images/general_card_display.jpg" width="250" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/media_display_settings.jpg" width="250" />
 
 #### Input switching
 
@@ -258,6 +267,7 @@ Application features can be triggered using keyboard shortcuts.
 [Playlist manager]: https://github.com/mjoblin/media/blob/main/vibin/images/playlist_manager.jpg?raw=true
 [Albums]: https://github.com/mjoblin/media/blob/main/vibin/images/albums.jpg?raw=true
 [Albums tiny wall]: https://github.com/mjoblin/media/blob/main/vibin/images/albums_tiny_wall.jpg?raw=true
+[Albums as table]: https://github.com/mjoblin/media/blob/main/vibin/images/media_display_table_view.jpg?raw=true
 [Artists]: https://github.com/mjoblin/media/blob/main/vibin/images/artists.jpg?raw=true
 [Tracks filtered by lyrics]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_happy.jpg?raw=true
 [Tracks filtered by title]: https://github.com/mjoblin/media/blob/main/vibin/images/tracks_filtered_love.jpg?raw=true

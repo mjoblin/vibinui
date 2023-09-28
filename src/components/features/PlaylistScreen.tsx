@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useEffect, useRef, useState } from "react";
-import { Box, ScrollArea, Stack } from "@mantine/core";
+import { Box, ScrollArea, Stack, Text } from "@mantine/core";
 import { useWindowEvent } from "@mantine/hooks";
 import throttle from "lodash/throttle";
 
@@ -8,10 +8,11 @@ import { RootState, store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
+import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 import Playlist from "./playlist/Playlist";
 import PlaylistControls from "./playlist/PlaylistControls";
-import PlaylistInactiveBanner from "./playlist/PlaylistInactiveBanner";
 import ScreenHeader from "../app/layout/ScreenHeader";
+import WarningBanner from "../shared/textDisplay/WarningBanner";
 
 // ================================================================================================
 // Playlist screen top-level layout.
@@ -146,7 +147,13 @@ const PlaylistScreen: FC = () => {
                     <PlaylistControls scrollToCurrent={scrollToCurrent} />
 
                     {showingInactivePlaylistBanner && (
-                        <PlaylistInactiveBanner ref={inactiveBannerRef} />
+                        <WarningBanner ref={inactiveBannerRef}>
+                            <Text>
+                                Playlist is currently not being used for playback. Active streamer
+                                source is{" "}
+                            </Text>
+                            <MediaSourceBadge showSource={true} />
+                        </WarningBanner>
                     )}
                 </Stack>
             </ScreenHeader>

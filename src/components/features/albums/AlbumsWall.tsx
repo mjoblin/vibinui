@@ -1,28 +1,34 @@
 import React, { FC, RefObject, useEffect, useRef, useState } from "react";
 import { QueryStatus } from "@reduxjs/toolkit/query";
-import { Box, Center, createStyles, Loader } from "@mantine/core";
+import { Box, Center, createStyles, Loader, MantineColor } from "@mantine/core";
 
 import { Album } from "../../../app/types";
 import type { RootState } from "../../../app/store/store";
+import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import AlbumCard from "./AlbumCard";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
-import { AlbumCollection } from "../../../app/store/userSettingsSlice";
+import { AlbumCollection, MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 
 // ================================================================================================
-// Show a wall of Album art. Reacts to display properties configured via <AlbumsControls>.
+// Show a wall of Albums. Wall will be either art cards or a table. Reacts to display properties
+// configured via <AlbumsControls>.
 // ================================================================================================
 
 type AlbumWallProps = {
     filterText?: string;
     activeCollection?: AlbumCollection;
+    viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
+    tableStripeColor?: MantineColor;
     quietUnlessShowingAlbums?: boolean;
     cacheCardRenderSize?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
@@ -33,9 +39,13 @@ type AlbumWallProps = {
 const AlbumsWall: FC<AlbumWallProps> = ({
     filterText = "",
     activeCollection = "all",
+    viewMode = "cards",
+    sortField,
+    sortDirection,
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
+    tableStripeColor,
     quietUnlessShowingAlbums = false,
     cacheCardRenderSize = true,
     onIsFilteringUpdate,
@@ -45,30 +55,36 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const currentAlbumRef = useRef<HTMLDivElement>(null);
+    const { wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.albums
+    );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const currentAlbumMediaId = useAppSelector(
         (state: RootState) => state.playback.current_album_media_id
     );
     const {
         data: allAlbums,
-        error: allError,
-        isLoading: allIsLoading,
-        status: allStatus,
+        error: allAlbumsError,
+        isLoading: isLoadingAllAlbums,
+        status: allAlbumsStatus,
     } = useGetAlbumsQuery();
     const {
         data: newAlbums,
-        error: newError,
-        isLoading: newIsLoading,
-        status: newStatus,
+        error: newAlbumsError,
+        isLoading: isLoadingNewAlbums,
+        status: newAlbumsStatus,
     } = useGetNewAlbumsQuery();
     const [calculatingAlbumsToDisplay, setCalculatingAlbumsToDisplay] = useState<boolean>(true);
     const [albumsToDisplay, setAlbumsToDisplay] = useState<Album[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        albumWall: {
+        cardWall: {
             display: "grid",
             gap: cardGap,
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
+            paddingBottom: 15,
+        },
+        tableWall: {
             paddingBottom: 15,
         },
     }))();
@@ -94,14 +110,19 @@ const AlbumsWall: FC<AlbumWallProps> = ({
      * Albums" selection, and any filter text.
      */
     useEffect(() => {
-        if (allStatus === QueryStatus.rejected) {
+        if (isLoadingAllAlbums || isLoadingNewAlbums) {
+            return;
+        }
+
+        if (allAlbumsStatus === QueryStatus.rejected) {
             // Inability to retrieve All Albums is considered a significant-enough problem to stop
             // trying to proceed. Inability to retrieve New Albums isn't as severe.
             setCalculatingAlbumsToDisplay(false);
             return;
         }
 
-        if (!allAlbums) {
+        if (!allAlbums || !newAlbums) {
+            setCalculatingAlbumsToDisplay(false);
             return;
         }
 
@@ -113,13 +134,28 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         const collection =
             activeCollection === "all" ? allAlbums : activeCollection === "new" ? newAlbums : [];
 
-        const albumsToDisplay = collectionFilter(collection || [], filterText, "title");
+        let processedAlbums = collectionFilter(collection || [], filterText, "title")
+            .slice()
+            .sort(collectionSorter(sortField || wallSortField, sortDirection || wallSortDirection));
 
-        dispatch(setFilteredAlbumMediaIds(albumsToDisplay.map((album) => album.id)));
+        dispatch(setFilteredAlbumMediaIds(processedAlbums.map((album) => album.id)));
 
+        setAlbumsToDisplay(processedAlbums);
         setCalculatingAlbumsToDisplay(false);
-        setAlbumsToDisplay(albumsToDisplay);
-    }, [allAlbums, allStatus, newAlbums, filterText, activeCollection, dispatch]);
+    }, [
+        activeCollection,
+        allAlbums,
+        allAlbumsStatus,
+        dispatch,
+        filterText,
+        isLoadingAllAlbums,
+        isLoadingNewAlbums,
+        newAlbums,
+        sortDirection,
+        sortField,
+        wallSortDirection,
+        wallSortField,
+    ]);
 
     /**
      * Notify parent component of current filtering state.
@@ -137,7 +173,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
 
     // --------------------------------------------------------------------------------------------
 
-    if (calculatingAlbumsToDisplay || allIsLoading || newIsLoading) {
+    if (calculatingAlbumsToDisplay || isLoadingAllAlbums || isLoadingNewAlbums) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
@@ -145,7 +181,11 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if (allStatus === QueryStatus.rejected) {
+    if (quietUnlessShowingAlbums && albumsToDisplay.length <= 0) {
+        return <></>;
+    }
+
+    if (allAlbumsStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
                 <SadLabel
@@ -159,7 +199,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if (activeCollection === "new" && newStatus === QueryStatus.rejected) {
+    if (activeCollection === "new" && newAlbumsStatus === QueryStatus.rejected) {
         return (
             <Center pt="xl">
                 <SadLabel
@@ -173,14 +213,18 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if (quietUnlessShowingAlbums && albumsToDisplay.length <= 0) {
-        return <></>;
-    }
-
-    if ((activeCollection === "all" && allError) || (activeCollection === "new" && newError)) {
+    if ((activeCollection === "all" && allAlbumsError) || (activeCollection === "new" && newAlbumsError)) {
         return (
             <Center pt="xl">
                 <SadLabel label="Error retrieving Album details" />
+            </Center>
+        );
+    }
+    
+    if (!allAlbums || allAlbums.length <= 0) {
+        return (
+            <Center pt="xl">
+                <SadLabel label="No Albums available" />
             </Center>
         );
     }
@@ -188,17 +232,25 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     if (albumsToDisplay.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel
-                    label={filterText === "" ? "No Albums available" : "No matching Albums"}
-                />
+                <SadLabel label="No matching Albums" />
             </Center>
         );
     }
-
+    
     // --------------------------------------------------------------------------------------------
 
-    return (
-        <Box className={dynamicClasses.albumWall}>
+    return viewMode === "table" ? (
+        <Box className={dynamicClasses.tableWall}>
+            <MediaTable
+                media={albumsToDisplay}
+                columns={["album_art_uri", "title", "artist", "year", "genre"]}
+                stripeColor={tableStripeColor}
+                currentlyPlayingId={currentAlbumMediaId}
+                currentlyPlayingRef={currentAlbumRef}
+            />
+        </Box>
+    ) : (
+        <Box className={dynamicClasses.cardWall}>
             {albumsToDisplay.map((album: Album) =>
                 album.id === currentAlbumMediaId ? (
                     <Box key={album.id} ref={currentAlbumRef}>

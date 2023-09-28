@@ -7,20 +7,27 @@ import { Box, Center, MantineColor, Text, useMantineTheme } from "@mantine/core"
 
 type NoArtPlaceholderProps = {
     artSize?: number;
+    radius?: number;
     backgroundColor?: MantineColor;
+    borderRadius?: number;
 };
 
-const NoArtPlaceholder: FC<NoArtPlaceholderProps> = ({ artSize, backgroundColor }) => {
+const NoArtPlaceholder: FC<NoArtPlaceholderProps> = ({ artSize, backgroundColor, radius = 0 }) => {
     const { colors } = useMantineTheme();
 
     return (
-        <Box w="100%" h="100%" bg={backgroundColor ? backgroundColor : colors.dark[6]}>
+        <Box
+            w="100%"
+            h="100%"
+            bg={backgroundColor ? backgroundColor : colors.dark[5]}
+            sx={{ borderRadius: radius }}
+        >
             <Center w="100%" h="100%">
                 <Text
                     transform="uppercase"
                     weight="bold"
                     sx={{ textAlign: "center" }}
-                    size={artSize && (artSize >= 40 ? 11 : 9)}
+                    size={artSize && (artSize >= 40 ? 11 : 6)}
                 >
                     no art
                 </Text>

@@ -1,8 +1,14 @@
 import React, { FC, ReactNode } from "react";
-import { Box, createStyles, Flex, Image, Paper, Stack, useMantineTheme } from "@mantine/core";
+import {
+    Box,
+    createStyles,
+    Flex,
+    Paper,
+    Stack,
+} from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import NoArtPlaceholder from "./NoArtPlaceholder";
+import MediaArt from "./MediaArt";
 
 // ================================================================================================
 // A compact media card. Shows art on the left, and children (likely media details like title and
@@ -14,6 +20,7 @@ type CompactArtCardProps = {
     actions?: ReactNode;
     selected?: boolean;
     isCurrentlyPlaying?: boolean;
+    showLoading?: boolean;
     onClick?: () => void;
     children: ReactNode;
 };
@@ -23,10 +30,10 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
     actions = null,
     selected = false,
     isCurrentlyPlaying = false,
+    showLoading = true,
     onClick,
     children,
 }) => {
-    const { colors } = useMantineTheme();
     const { SELECTED_COLOR, CURRENTLY_PLAYING_COLOR } = useAppGlobals();
 
     const artSize = 70;
@@ -59,19 +66,11 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
             <Flex align="flex-start" justify="space-between" gap={10} w="100%">
                 <Flex align="flex-start">
                     {artUrl && (
-                        <Image
-                            src={artUrl}
-                            width={artSize}
-                            height={artSize}
+                        <MediaArt
+                            artUri={artUrl}
                             radius={5}
-                            fit="cover"
-                            withPlaceholder={true}
-                            placeholder={
-                                <NoArtPlaceholder
-                                    artSize={artSize}
-                                    backgroundColor={colors.dark[5]}
-                                />
-                            }
+                            size={artSize}
+                            showLoading={showLoading}
                         />
                     )}
                     <Stack spacing={5} p={10}>

@@ -10,7 +10,7 @@ import {
     Text,
     useMantineTheme,
 } from "@mantine/core";
-import { IconGripVertical, IconPlayerPause, IconPlayerPlay, IconTrash } from "@tabler/icons";
+import { IconGripVertical, IconPlayerPause, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import { PlaylistEntry } from "../../../app/types";
@@ -21,7 +21,9 @@ import {
     yearFromDate,
 } from "../../../app/utils";
 import { RootState } from "../../../app/store/store";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppSelector } from "../../../app/hooks/store";
+import { useMediaGroupings } from "../../../app/hooks/useMediaGroupings";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { usePauseMutation, usePlayMutation } from "../../../app/services/vibinTransport";
 import {
@@ -29,12 +31,12 @@ import {
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
 } from "../../../app/services/vibinActivePlaylist";
-import AlbumArt from "../albums/AlbumArt";
+import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
+import MediaArt from "../../shared/mediaDisplay/MediaArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
 import PlaylistEntryActionsButton from "./PlaylistEntryActionsButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import SystemPower from "../../shared/buttons/SystemPower";
-import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 // ================================================================================================
 // Shows the active streamer Playlist.
@@ -85,8 +87,8 @@ const useStyles = createStyles((theme) => ({
             fontSize: 14,
             paddingLeft: 5,
             paddingRight: 5,
-            paddingTop: 8,
-            paddingBottom: 8,
+            paddingTop: 4,
+            paddingBottom: 4,
         },
         "td:first-of-type": {
             fontSize: 12,
@@ -154,6 +156,7 @@ type PlaylistProps = {
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
+    const { trackById } = useMediaGroupings();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
@@ -400,7 +403,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                             </td>
                             {viewMode === "detailed" && (
                                 <td style={{ width: 50 }}>
-                                    <AlbumArt artUri={entry.albumArtURI} size={35} radius={3} />
+                                    <MediaArt artUri={entry.albumArtURI} size={35} />
                                 </td>
                             )}
                             <td
@@ -514,6 +517,14 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                             });
                                         }}
                                     />
+
+                                    <Box miw="1.8rem">
+                                        {trackById[entry.trackMediaId] && (
+                                            <FavoriteIndicator
+                                                media={trackById[entry.trackMediaId]}
+                                            />
+                                        )}
+                                    </Box>
 
                                     <PlaylistEntryActionsButton
                                         entry={entry}

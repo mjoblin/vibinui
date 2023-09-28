@@ -13,6 +13,7 @@ import {
     useMantineTheme, ActionIcon
 } from "@mantine/core";
 import {
+    Icon,
     IconDeviceSpeaker,
     IconDisc,
     IconHeart,
@@ -22,8 +23,7 @@ import {
     IconRadio,
     IconSearch,
     IconUser,
-    TablerIcon,
-} from "@tabler/icons";
+} from "@tabler/icons-react";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppDispatch } from "../../../app/hooks/store";
@@ -31,7 +31,6 @@ import { setShowMediaSearch } from "../../../app/store/internalSlice";
 import SettingsMenu from "../SettingsMenu";
 import WaitingOnAPIIndicator from "../../shared/dataDisplay/WaitingOnAPIIndicator";
 import SystemPower from "../../shared/buttons/SystemPower";
-import MediaSourceBadge from "../../shared/dataDisplay/MediaSourceBadge";
 
 // ================================================================================================
 // Application navigation menu.
@@ -127,9 +126,9 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
     const { classes, cx } = useStyles();
     const { APP_URL_PREFIX, APP_PADDING, NAVBAR_WIDTH } = useAppGlobals();
 
-    const routeInfo: Record<string, { link: string; label: string; icon: TablerIcon }[]> = {
+    const routeInfo: Record<string, { link: string; label: string; icon: Icon }[]> = {
         "Now Playing": [
-            { link: `${APP_URL_PREFIX}/current`, label: "Current Track", icon: IconDeviceSpeaker },
+            { link: `${APP_URL_PREFIX}/current`, label: "Current", icon: IconDeviceSpeaker },
             { link: `${APP_URL_PREFIX}/playlist`, label: "Playlist", icon: IconPlaylist },
         ],
         Browse: [
@@ -208,12 +207,12 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
             </Navbar.Section>
 
             <Box>
-                <MediaSourceBadge showSource={true} />
+                <WaitingOnAPIIndicator stealth />
             </Box>
 
             <Navbar.Section className={classes.footer}>
                 <Flex justify="space-between" align="center">
-                    <Flex gap={10} align="center">
+                    <Flex gap={7} align="center">
                         <SettingsMenu />
 
                         <Tooltip label="Media Search" position="top" withArrow>
@@ -230,7 +229,6 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
                     </Flex>
 
                     <Flex gap={10} align="center">
-                        <WaitingOnAPIIndicator stealth />
                         <SystemPower />
                     </Flex>
                 </Flex>

@@ -6,11 +6,11 @@ import { RootState } from "../../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { Track } from "../../../app/types";
-import { MediaViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaCardViewMode } from "../../../app/store/userSettingsSlice";
 import { setTrackCardRenderDimensions } from "../../../app/store/internalSlice";
 import { secstoHms, yearFromDate } from "../../../app/utils";
-import TrackArt from "./TrackArt";
 import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
+import MediaArt from "../../shared/mediaDisplay/MediaArt";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
 
 // ================================================================================================
@@ -66,7 +66,6 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
             actions={
                 <MediaActionsButton
-                    mediaType="track"
                     media={track}
                     enabledActions={
                         enabledActions || {
@@ -139,13 +138,13 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
 
     return (
         <Box className={dynamicClasses.card}>
-            {/* Track art with play/action controls */}
+            {/* Media art with play/action controls */}
             <Box>
-                <TrackArt
-                    track={track}
+                <MediaArt
+                    media={track}
                     enabledActions={enabledActions}
                     size={size - borderSize * 2}
-                    radius={5}
+                    showControls={true}
                 />
             </Box>
 
@@ -178,7 +177,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
 // ------------------------------------------------------------------------------------------------
 
 type TrackCardProps = {
-    type?: MediaViewMode;
+    type?: MediaCardViewMode;
     track: Track;
     showArt?: boolean;
     enabledActions?: EnabledActions;

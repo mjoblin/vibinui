@@ -4,10 +4,12 @@ import { Box, Center, createStyles, Flex, Paper, Stack, Text } from "@mantine/co
 import { useGetAlbumTracksQuery } from "../../../app/services/vibinAlbums";
 import { Album, Track } from "../../../app/types";
 import { secstoHms } from "../../../app/utils";
+import AppendMediaToPlaylistButton from "../../shared/buttons/AppendMediaToPlaylistButton";
+import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
+import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
 import MediaActionsButton from "../../shared/buttons/MediaActionsButton";
 import MediaSummaryBanner from "../../shared/textDisplay/MediaSummaryBanner";
-import AppendAlbumTrackToPlaylistButton from "./AppendAlbumTrackToPlaylistButton";
-import LoadingDataMessage from "../../shared/textDisplay/LoadingDataMessage";
+import PlayButton from "../../shared/buttons/PlayButton";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 
 // ================================================================================================
@@ -79,7 +81,7 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
 
                     // TODO: Consider whether this should be a table or grid instead (for cleaner
                     //  layout behaviour across tracks).
-                    <Stack sx={{ gap: 0 }}>
+                    <Stack sx={{ gap: 5 }}>
                         {albumTracks.map((track: Track) => (
                             <Paper
                                 key={track.id}
@@ -123,31 +125,25 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                         )}
                                     </Box>
 
+                                    <Text size="sm" color={DIMMED} pr={5}>
+                                        {secstoHms(track.duration)}
+                                    </Text>
+
                                     <Flex
-                                        gap="sm"
+                                        gap={10}
                                         align="center"
                                         justify="flex-end"
                                         sx={{ minWidth: "4rem" }}
                                     >
-                                        <Text size="sm" color={DIMMED}>
-                                            {secstoHms(track.duration)}
-                                        </Text>
-
+                                        <PlayButton media={track} size={20} />
+                                        <AppendMediaToPlaylistButton media={track} size={20} />
                                         <MediaActionsButton
                                             media={track}
-                                            mediaType="track"
-                                            inCircle={false}
-                                            enabledActions={{
-                                                Details: ["all"],
-                                                Favorites: ["all"],
-                                                Navigation: ["ViewInArtists", "ViewInAlbums"],
-                                                Playlist: ["all"],
-                                            }}
-                                            onOpen={() => setActionsMenuOpenFor(track.id!!)}
+                                            size={10}
+                                            onOpen={() => setActionsMenuOpenFor(track.id)}
                                             onClose={() => setActionsMenuOpenFor(undefined)}
                                         />
-
-                                        <AppendAlbumTrackToPlaylistButton item={track} />
+                                        <FavoriteIndicator media={track} />
                                     </Flex>
                                 </Flex>
                             </Paper>

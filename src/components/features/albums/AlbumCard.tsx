@@ -6,11 +6,11 @@ import { Album, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import { setAlbumCardRenderDimensions } from "../../../app/store/internalSlice";
-import { MediaViewMode } from "../../../app/store/userSettingsSlice";
+import { MediaCardViewMode } from "../../../app/store/userSettingsSlice";
 import { yearFromDate } from "../../../app/utils";
 import { secstoHms } from "../../../app/utils";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
-import AlbumArt from "./AlbumArt";
+import MediaArt from "../../shared/mediaDisplay/MediaArt";
 import AlbumTracksModal from "./AlbumTracksModal";
 import CompactArtCard from "../../shared/mediaDisplay/CompactArtCard";
 import MediaActionsButton, { EnabledActions } from "../../shared/buttons/MediaActionsButton";
@@ -88,7 +88,6 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
             artUrl={album.album_art_uri}
             actions={
                 <MediaActionsButton
-                    mediaType="album"
                     media={album}
                     enabledActions={
                         enabledActions || {
@@ -159,10 +158,10 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
 
     return (
         <Box className={dynamicClasses.card}>
-            {/* Album art with play/action controls */}
+            {/* Media art with play/action controls */}
             <Box onClick={() => !isActionsMenuOpen && setShowTracksModal(true)}>
-                <AlbumArt
-                    album={album}
+                <MediaArt
+                    media={album}
                     enabledActions={
                         enabledActions || {
                             Favorites: ["all"],
@@ -172,7 +171,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
                         }
                     }
                     size={size - borderSize * 2}
-                    radius={5}
+                    showControls={true}
                     onActionsMenuOpen={() => setIsActionsMenuOpen(true)}
                     onActionsMenuClosed={() => setIsActionsMenuOpen(false)}
                 />
@@ -209,7 +208,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
 // ------------------------------------------------------------------------------------------------
 
 type AlbumCardProps = {
-    type?: MediaViewMode;
+    type?: MediaCardViewMode;
     album: Album;
     tracks?: Track[];
     enabledActions?: EnabledActions;

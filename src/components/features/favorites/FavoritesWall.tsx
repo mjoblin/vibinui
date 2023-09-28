@@ -1,21 +1,35 @@
 import React, { FC, useEffect, useState } from "react";
-import { Box, Center, createStyles, Loader, Stack, useMantineTheme } from "@mantine/core";
+import {
+    Box,
+    Center,
+    createStyles,
+    Loader,
+    MantineColor,
+    Stack,
+    useMantineTheme,
+} from "@mantine/core";
 
 import { Album, Track } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { RootState } from "../../../app/store/store";
-import { collectionFilter } from "../../../app/utils";
+import { collectionFilter, collectionSorter } from "../../../app/utils";
 import { setFilteredFavoriteMediaIds } from "../../../app/store/internalSlice";
 import { Favorite } from "../../../app/services/vibinFavorites";
-import { FavoriteCollection } from "../../../app/store/userSettingsSlice";
+import {
+    FavoriteCollection,
+    MediaSortDirection,
+    MediaWallViewMode,
+} from "../../../app/store/userSettingsSlice";
 import AlbumCard from "../albums/AlbumCard";
+import MediaTable from "../../shared/mediaDisplay/MediaTable";
 import SadLabel from "../../shared/textDisplay/SadLabel";
 import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
 import TrackCard from "../tracks/TrackCard";
 
 // ================================================================================================
-// Show a wall of Favorites art. Reacts to display properties configured via <FavoritesControls>.
+// Show a wall of Favorites. Wall will be either art cards or a table. Reacts to display properties
+// configured via <FavoritesControls>.
 //
 // Favorites can be Albums or Tracks.
 //
@@ -27,21 +41,29 @@ import TrackCard from "../tracks/TrackCard";
 type FavoritesWallProps = {
     filterText?: string;
     activeCollection?: FavoriteCollection;
+    viewMode?: MediaWallViewMode;
+    sortField?: string;
+    sortDirection?: MediaSortDirection;
     cardSize?: number;
     cardGap?: number;
     showDetails?: boolean;
+    tableStripeColor?: MantineColor;
     quietUnlessShowingFavorites?: boolean;
     cacheCardRenderSize?: boolean;
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
     onDisplayCountUpdate?: (displayCount: number) => void;
-}
+};
 
 const FavoritesWall: FC<FavoritesWallProps> = ({
     filterText = "",
+    viewMode = "cards",
+    sortField,
+    sortDirection,
     activeCollection = "all",
     cardSize = 50,
     cardGap = 50,
     showDetails = true,
+    tableStripeColor,
     quietUnlessShowingFavorites = false,
     cacheCardRenderSize = true,
     onIsFilteringUpdate,
@@ -53,13 +75,27 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
     const { favorites, haveReceivedInitialState } = useAppSelector(
         (state: RootState) => state.favorites
     );
+    const { wallSortDirection, wallSortField } = useAppSelector(
+        (state: RootState) => state.userSettings.favorites
+    );
+    const currentAlbumMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_album_media_id
+    );
+    const currentTrackMediaId = useAppSelector(
+        (state: RootState) => state.playback.current_track_media_id
+    );
     const [favoritesToDisplay, setFavoritesToDisplay] = useState<Favorite[]>([]);
+    const [albumsToDisplay, setAlbumsToDisplay] = useState<Album[]>([]);
+    const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
-        favoritesWall: {
+        cardWall: {
             display: "grid",
             gap: cardGap,
             gridTemplateColumns: `repeat(auto-fit, ${cardSize}px)`,
+            paddingBottom: 15,
+        },
+        tableWall: {
             paddingBottom: 15,
         },
     }))();
@@ -73,48 +109,92 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
 
         const albumFavorites = favorites.filter((favorite) => favorite.type === "album");
         const trackFavorites = favorites.filter((favorite) => favorite.type === "track");
-        const filteredAlbumFavorites = collectionFilter(
+
+        const processedAlbumFavorites = collectionFilter(
             albumFavorites,
             filterText,
             "title",
             "media"
-        );
-        const filteredTrackFavorites = collectionFilter(
+        )
+            .slice()
+            .sort(
+                collectionSorter(
+                    `media.${sortField || wallSortField}`,
+                    sortDirection || wallSortDirection
+                )
+            );
+
+        const processedTrackFavorites = collectionFilter(
             trackFavorites,
             filterText,
             "title",
             "media"
-        );
+        )
+            .slice()
+            .sort(
+                collectionSorter(
+                    `media.${sortField || wallSortField}`,
+                    sortDirection || wallSortDirection
+                )
+            );
 
         if (activeCollection === "all") {
             dispatch(
                 setFilteredFavoriteMediaIds({
-                    albums: filteredAlbumFavorites.map((albumFavorite) => albumFavorite.media_id),
-                    tracks: filteredTrackFavorites.map((trackFavorite) => trackFavorite.media_id),
+                    albums: processedAlbumFavorites.map((albumFavorite) => albumFavorite.media_id),
+                    tracks: processedTrackFavorites.map((trackFavorite) => trackFavorite.media_id),
                 })
             );
 
-            setFavoritesToDisplay([...filteredAlbumFavorites, ...filteredTrackFavorites]);
+            setFavoritesToDisplay([...processedAlbumFavorites, ...processedTrackFavorites]);
         } else {
             dispatch(
                 setFilteredFavoriteMediaIds({
                     albums:
                         activeCollection === "albums"
-                            ? filteredAlbumFavorites.map((albumFavorite) => albumFavorite.media_id)
+                            ? processedAlbumFavorites.map((albumFavorite) => albumFavorite.media_id)
                             : [],
                     tracks:
                         activeCollection === "tracks"
-                            ? filteredTrackFavorites.map((trackFavorite) => trackFavorite.media_id)
+                            ? processedTrackFavorites.map((trackFavorite) => trackFavorite.media_id)
                             : [],
                 })
             );
 
-            activeCollection === "albums" && setFavoritesToDisplay(filteredAlbumFavorites);
-            activeCollection === "tracks" && setFavoritesToDisplay(filteredTrackFavorites);
+            activeCollection === "albums" && setFavoritesToDisplay(processedAlbumFavorites);
+            activeCollection === "tracks" && setFavoritesToDisplay(processedTrackFavorites);
         }
 
         onIsFilteringUpdate && onIsFilteringUpdate(false);
-    }, [favorites, filterText, activeCollection, dispatch, onIsFilteringUpdate]);
+    }, [
+        activeCollection,
+        dispatch,
+        favorites,
+        filterText,
+        onIsFilteringUpdate,
+        sortDirection,
+        sortField,
+        wallSortDirection,
+        wallSortField,
+    ]);
+
+    /**
+     * When the favorites have been processed as a whole, divide them up into the albums and tracks
+     * to be displayed.
+     */
+    useEffect(() => {
+        setAlbumsToDisplay(
+            favoritesToDisplay
+                .filter((favorite) => favorite.type === "album")
+                .map((favorite) => favorite.media as Album)
+        );
+
+        setTracksToDisplay(
+            favoritesToDisplay
+                .filter((favorite) => favorite.type === "track")
+                .map((favorite) => favorite.media as Track)
+        );
+    }, [favoritesToDisplay]);
 
     /**
      * Notify parent component of updated display count.
@@ -147,8 +227,6 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
 
     const favoriteAlbumsCount = favorites.filter((favorite) => favorite.type === "album").length;
     const favoriteTracksCount = favorites.filter((favorite) => favorite.type === "track").length;
-    const albumsToDisplay = favoritesToDisplay.filter((favorite) => favorite.type === "album");
-    const tracksToDisplay = favoritesToDisplay.filter((favorite) => favorite.type === "track");
 
     // --------------------------------------------------------------------------------------------
 
@@ -162,33 +240,44 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                             albums
                         </StylizedLabel>
 
-                        <Box className={dynamicClasses.favoritesWall}>
-                            {albumsToDisplay.length > 0 ? (
-                                albumsToDisplay.map((favorite) => (
-                                    <AlbumCard
-                                        key={favorite.media_id}
-                                        album={favorite.media as Album}
-                                        enabledActions={{
-                                            Details: ["all"],
-                                            Favorites: ["all"],
-                                            Navigation: ["all"],
-                                            Playlist: ["all"],
-                                        }}
-                                        size={cardSize}
-                                        showDetails={showDetails}
-                                        cacheRenderSize={cacheCardRenderSize}
-                                    />
-                                ))
-                            ) : (
-                                <SadLabel
-                                    label={
-                                        favoriteAlbumsCount <= 0
-                                            ? "No favorited Albums"
-                                            : "No matching Albums"
-                                    }
+                        {viewMode === "table" ? (
+                            <Box className={dynamicClasses.tableWall}>
+                                <MediaTable
+                                    media={albumsToDisplay}
+                                    columns={["album_art_uri", "title", "artist", "year", "genre"]}
+                                    stripeColor={tableStripeColor}
+                                    currentlyPlayingId={currentAlbumMediaId}
                                 />
-                            )}
-                        </Box>
+                            </Box>
+                        ) : (
+                            <Box className={dynamicClasses.cardWall}>
+                                {albumsToDisplay.length > 0 ? (
+                                    albumsToDisplay.map((album) => (
+                                        <AlbumCard
+                                            key={album.id}
+                                            album={album}
+                                            enabledActions={{
+                                                Details: ["all"],
+                                                Favorites: ["all"],
+                                                Navigation: ["all"],
+                                                Playlist: ["all"],
+                                            }}
+                                            size={cardSize}
+                                            showDetails={showDetails}
+                                            cacheRenderSize={cacheCardRenderSize}
+                                        />
+                                    ))
+                                ) : (
+                                    <SadLabel
+                                        label={
+                                            favoriteAlbumsCount <= 0
+                                                ? "No favorited Albums"
+                                                : "No matching Albums"
+                                        }
+                                    />
+                                )}
+                            </Box>
+                        )}
                     </>
                 )}
 
@@ -200,33 +289,51 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                             tracks
                         </StylizedLabel>
 
-                        <Box className={dynamicClasses.favoritesWall}>
-                            {tracksToDisplay.length > 0 ? (
-                                tracksToDisplay.map((favorite) => (
-                                    <TrackCard
-                                        key={favorite.media_id}
-                                        track={favorite.media as Track}
-                                        enabledActions={{
-                                            Details: ["all"],
-                                            Favorites: ["all"],
-                                            Navigation: ["all"],
-                                            Playlist: ["all"],
-                                        }}
-                                        size={cardSize}
-                                        showDetails={showDetails}
-                                        cacheRenderSize={cacheCardRenderSize}
-                                    />
-                                ))
-                            ) : (
-                                <SadLabel
-                                    label={
-                                        favoriteTracksCount <= 0
-                                            ? "No favorited Tracks"
-                                            : "No matching Tracks"
-                                    }
+                        {viewMode === "table" ? (
+                            <Box className={dynamicClasses.tableWall}>
+                                <MediaTable
+                                    media={tracksToDisplay}
+                                    columns={[
+                                        "album_art_uri",
+                                        "title",
+                                        "artist",
+                                        "album",
+                                        "year",
+                                        "genre",
+                                    ]}
+                                    stripeColor={tableStripeColor}
+                                    currentlyPlayingId={currentTrackMediaId}
                                 />
-                            )}
-                        </Box>
+                            </Box>
+                        ) : (
+                            <Box className={dynamicClasses.cardWall}>
+                                {tracksToDisplay.length > 0 ? (
+                                    tracksToDisplay.map((track) => (
+                                        <TrackCard
+                                            key={track.id}
+                                            track={track}
+                                            enabledActions={{
+                                                Details: ["all"],
+                                                Favorites: ["all"],
+                                                Navigation: ["all"],
+                                                Playlist: ["all"],
+                                            }}
+                                            size={cardSize}
+                                            showDetails={showDetails}
+                                            cacheRenderSize={cacheCardRenderSize}
+                                        />
+                                    ))
+                                ) : (
+                                    <SadLabel
+                                        label={
+                                            favoriteTracksCount <= 0
+                                                ? "No favorited Tracks"
+                                                : "No matching Tracks"
+                                        }
+                                    />
+                                )}
+                            </Box>
+                        )}
                     </>
                 )}
         </Stack>

@@ -1,6 +1,6 @@
 import React, { FC, ReactElement } from "react";
 import { Flex, Loader, Text, useMantineTheme } from "@mantine/core";
-import { IconPlayerPlay, IconPlayerPause } from "@tabler/icons";
+import { IconPlayerPlay, IconPlayerPause } from "@tabler/icons-react";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";

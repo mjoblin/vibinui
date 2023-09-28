@@ -9,7 +9,7 @@ import {
     Tooltip,
     useMantineTheme,
 } from "@mantine/core";
-import { IconCircleOff, IconPlayerPlay } from "@tabler/icons";
+import { IconCircleOff, IconPlayerPlay } from "@tabler/icons-react";
 
 import { MediaId } from "../../../app/types";
 import { useAppSelector } from "../../../app/hooks/store";

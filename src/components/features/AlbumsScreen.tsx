@@ -4,7 +4,6 @@ import { Box, Stack } from "@mantine/core";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { RootState } from "../../app/store/store";
-import { setAlbumsActiveCollection, setAlbumsFilterText } from "../../app/store/userSettingsSlice";
 import { useWindowScroll } from "../../app/hooks/useWindowScroll";
 import { setAlbumsScrollPosition } from "../../app/store/internalSlice";
 import AlbumsControls from "./albums/AlbumsControls";
@@ -22,9 +21,8 @@ const AlbumsScreen: FC = () => {
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const [currentAlbumRef, setCurrentAlbumRef] = useState<RefObject<HTMLDivElement>>();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.albums);
-    const { activeCollection, cardSize, cardGap, filterText, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
-    );
+    const { activeCollection, cardSize, cardGap, filterText, showDetails, wallViewMode } =
+        useAppSelector((state: RootState) => state.userSettings.albums);
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 
     /**
@@ -51,9 +49,6 @@ const AlbumsScreen: FC = () => {
             return;
         }
 
-        dispatch(setAlbumsActiveCollection("all"));
-        dispatch(setAlbumsFilterText(""));
-
         const buffer = 10;
 
         const currentAlbumTop =
@@ -62,7 +57,7 @@ const AlbumsScreen: FC = () => {
             (HEADER_HEIGHT + SCREEN_HEADER_HEIGHT + buffer);
 
         window.scrollTo({ top: currentAlbumTop });
-    }, [currentAlbumRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT, dispatch]);
+    }, [currentAlbumRef, HEADER_HEIGHT, SCREEN_HEADER_HEIGHT]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -75,6 +70,7 @@ const AlbumsScreen: FC = () => {
                 <AlbumsWall
                     filterText={filterText}
                     activeCollection={activeCollection}
+                    viewMode={wallViewMode}
                     cardSize={cardSize}
                     cardGap={cardGap}
                     showDetails={showDetails}

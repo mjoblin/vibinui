@@ -22,7 +22,7 @@ const TracksScreen: FC = () => {
     const { HEADER_HEIGHT, SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const [currentTrackRef, setCurrentTrackRef] = useState<RefObject<HTMLDivElement>>();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.tracks);
-    const { cardSize, cardGap, filterText, showDetails } = useAppSelector(
+    const { cardSize, cardGap, filterText, showDetails, wallViewMode } = useAppSelector(
         (state: RootState) => state.userSettings.tracks
     );
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
@@ -73,6 +73,7 @@ const TracksScreen: FC = () => {
             <Box pt={SCREEN_HEADER_HEIGHT}>
                 <TracksWall
                     filterText={filterText}
+                    viewMode={wallViewMode}
                     cardSize={cardSize}
                     cardGap={cardGap}
                     showDetails={showDetails}
