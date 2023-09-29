@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import type { RootState } from "../../../app/store/store";
 import { useAppSelector } from "../../../app/hooks/store";
 import { setCurrentlyPlayingArtUrl } from "../../../app/store/internalSlice";
+import { useAppStatus } from "../../../app/hooks/useAppStatus";
 
 // ================================================================================================
 // Manage the setting of the currently-playing art URL in application state, based on whatever is
@@ -14,13 +15,13 @@ import { setCurrentlyPlayingArtUrl } from "../../../app/store/internalSlice";
 
 const BackgroundImageManager: FC = () => {
     const dispatch = useDispatch();
+    const { isLocalMediaActive } = useAppStatus();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id
     );
     const { current_track: currentPlaybackTrack } = useAppSelector((state: RootState) => state.playback);
-    const currentAudioSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
 
     /**
      * Set the background image URL. This will change whenever the current track changes. If
@@ -33,7 +34,7 @@ const BackgroundImageManager: FC = () => {
         if (currentTrackId && trackById[currentTrackId]) {
             dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
         } else if (
-            currentAudioSource?.class === "stream.media" &&
+            isLocalMediaActive &&
             activePlaylist &&
             activePlaylist.entries &&
             activePlaylist.current_track_index !== undefined &&
@@ -49,7 +50,7 @@ const BackgroundImageManager: FC = () => {
         }
     }, [
         dispatch,
-        currentAudioSource,
+        isLocalMediaActive,
         currentTrackId,
         trackById,
         activePlaylist,

@@ -22,6 +22,7 @@ import {
 } from "../../../app/utils";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { useAppStatus } from "../../../app/hooks/useAppStatus";
 import { useAppSelector } from "../../../app/hooks/store";
 import { useMediaGroupings } from "../../../app/hooks/useMediaGroupings";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
@@ -156,12 +157,12 @@ type PlaylistProps = {
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
+    const { isLocalMediaActive } = useAppStatus();
     const { trackById } = useMediaGroupings();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const {
         status: { is_activating_playlist: isActivatingPlaylist },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
@@ -176,8 +177,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const currentEntryRef = useRef<HTMLDivElement>(null);
     const { classes } = useStyles();
 
-    const isPlayingLocalMedia = currentSource?.class === "stream.media";
-    const currentEntryBorderColor = isPlayingLocalMedia ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
+    const currentEntryBorderColor = isLocalMediaActive ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
 
     // Define some CSS to ensure that the currently-playing playlist entry has an active/highlighted
     // border around it.
@@ -418,11 +418,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     //  - If it's not the current track, play track from beginning
                                     // entryCanBePlayed(index) &&
                                     index === activePlaylist.current_track_index &&
-                                    isPlayingLocalMedia &&
+                                    isLocalMediaActive &&
                                     playStatus === "pause"
                                         ? resumePlayback()
                                         : index === activePlaylist.current_track_index &&
-                                          isPlayingLocalMedia &&
+                                          isLocalMediaActive &&
                                           playStatus === "play" &&
                                           streamerPower === "on"
                                         ? pausePlayback()
@@ -475,7 +475,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     {/* Entry Play button. If the entry is the current entry,
                                         then instead implement Pause/Resume behavior. */}
                                     {index ===
-                                    (isPlayingLocalMedia && activePlaylist.current_track_index) ? (
+                                    (isLocalMediaActive && activePlaylist.current_track_index) ? (
                                         playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}

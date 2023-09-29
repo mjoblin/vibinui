@@ -9,6 +9,8 @@ import { RootState } from "../store/store";
 //
 // Globals which don't update during the session (i.e. constants) arguably do not belong here and
 // could be factored out.
+//
+// TODO: Consider whether useAppGlobals() and useAppStatus() should be separate or not.
 // ================================================================================================
 
 export const useAppGlobals = () => {
