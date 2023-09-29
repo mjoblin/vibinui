@@ -6,6 +6,7 @@ import throttle from "lodash/throttle";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { RootState, store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { useAppStatus } from "../../app/hooks/useAppStatus";
 import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
@@ -33,7 +34,7 @@ const PlaylistScreen: FC = () => {
         SCREEN_HEADER_HEIGHT,
         SCROLL_POS_DISPATCH_RATE,
     } = useAppGlobals();
-    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
+    const { isLocalMediaActive } = useAppStatus();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playlistViewportRef = useRef<HTMLDivElement>(null);
@@ -130,13 +131,11 @@ const PlaylistScreen: FC = () => {
         { leading: false }
     );
 
-    // When the streamer is powered on and functioning, but the current audio source is not
-    // "stream.media" (local media), then playlist is being ignored by the streamer (due to another
-    // source like AirPlay being active). We want to inform the user of this.
+    // When the streamer is powered on and functioning, but the current audio source is not local
+    // media, then playlist is being ignored by the streamer (due to another source like AirPlay
+    // being active). We want to inform the user of this.
     const showingInactivePlaylistBanner =
-        streamerPower === "on" &&
-        playStatus !== "not_ready" &&
-        currentSource?.class !== "stream.media";
+        streamerPower === "on" && playStatus !== "not_ready" && !isLocalMediaActive;
 
     // --------------------------------------------------------------------------------------------
 
