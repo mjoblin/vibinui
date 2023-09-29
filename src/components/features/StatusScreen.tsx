@@ -30,6 +30,7 @@ import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import {
     setApplicationAmplifierMaxVolume,
+    setApplicationAutoPlayOnPlaylistActivation,
     setApplicationUseImageBackground,
 } from "../../app/store/userSettingsSlice";
 import { useAmplifierVolumeSetMutation } from "../../app/services/vibinSystem";
@@ -77,7 +78,7 @@ const StatusScreen: FC = () => {
         system_platform: systemPlatform,
         clients,
     } = useAppSelector((state: RootState) => state.vibinStatus);
-    const { amplifierMaxVolume, useImageBackground } = useAppSelector(
+    const { amplifierMaxVolume, autoPlayOnPlaylistActivation, useImageBackground } = useAppSelector(
         (state: RootState) => state.userSettings.application
     );
     const [getSettings, getSettingsResult] = useLazySettingsQuery();
@@ -172,6 +173,18 @@ const StatusScreen: FC = () => {
                         label="Show art image background in Now Playing screens (dark mode only)"
                         onChange={() =>
                             dispatch(setApplicationUseImageBackground(!useImageBackground))
+                        }
+                    />
+
+                    <Checkbox
+                        checked={autoPlayOnPlaylistActivation}
+                        label="Auto-play playlist on activation"
+                        onChange={() =>
+                            dispatch(
+                                setApplicationAutoPlayOnPlaylistActivation(
+                                    !autoPlayOnPlaylistActivation
+                                )
+                            )
                         }
                     />
 
