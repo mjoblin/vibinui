@@ -31,6 +31,7 @@ import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
+    usePlayPlaylistEntryIndexMutation,
 } from "../../../app/services/vibinActivePlaylist";
 import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
 import MediaArt from "../../shared/mediaDisplay/MediaArt";
@@ -157,9 +158,10 @@ type PlaylistProps = {
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
-    const { isLocalMediaActive } = useAppStatus();
+    const { haveActivatedPlaylist, isLocalMediaActive } = useAppStatus();
     const { trackById } = useMediaGroupings();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
+    const { autoPlayOnPlaylistActivation } = useAppSelector((state: RootState) => state.userSettings.application);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -170,6 +172,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
+    const [playPlaylistIndex] = usePlayPlaylistEntryIndexMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
@@ -249,6 +252,20 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     }, [deleteStatus]);
 
     /**
+     * When a playlist has finished activating, start playing the first entry.
+     */
+    useEffect(() => {
+        if (autoPlayOnPlaylistActivation && !isActivatingPlaylist && haveActivatedPlaylist) {
+            playPlaylistIndex({ playlistIndex: 0 });
+        }
+    }, [
+        autoPlayOnPlaylistActivation,
+        haveActivatedPlaylist,
+        isActivatingPlaylist,
+        playPlaylistIndex,
+    ]);
+
+    /**
      * Handle Playlist reordering and optimistic UI updates.
      *
      * Notes on optimistic updates:
@@ -291,7 +308,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
             </Box>
         );
     }
-    
+
     if (!activePlaylist.haveReceivedInitialState || isActivatingPlaylist) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
@@ -338,11 +355,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         if (!albums) {
             return undefined;
         }
-        
+
         const album = albums.find(
             (album) => album.title === title && (album.artist === artist || !album.artist)
         );
-        
+
         return album ? yearFromDate(album.date) : undefined;
     };
 
