@@ -21,6 +21,7 @@ import { IconPlayerPlay } from "@tabler/icons-react";
 import { RootState } from "../../app/store/store";
 import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
+import { useAppStatus } from "../../app/hooks/useAppStatus";
 import { MediaSourceClass, Preset, Track } from "../../app/types";
 import { yearFromDate } from "../../app/utils";
 import { setArtistsScrollToCurrentOnScreenEnter } from "../../app/store/internalSlice";
@@ -137,6 +138,7 @@ const CurrentTrackScreen: FC = () => {
     const navigate = useNavigate();
     const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE, SCREEN_LOADING_PT, BUFFERING_AUDIO_NOTIFY_DELAY } = useAppGlobals();
+    const { isLocalMediaActive } = useAppStatus();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.currentTrack);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
@@ -172,12 +174,11 @@ const CurrentTrackScreen: FC = () => {
             fontWeight: "bold",
             lineHeight: 0.9,
             minHeight: "1.7rem",
-            "&:hover":
-                currentSource?.class === "stream.media"
-                    ? {
-                          cursor: "pointer",
-                      }
-                    : {},
+            "&:hover": isLocalMediaActive
+                ? {
+                      cursor: "pointer",
+                  }
+                : {},
         },
     }))();
 
@@ -371,7 +372,7 @@ const CurrentTrackScreen: FC = () => {
                 </Stack>
 
                 {/* Media actions button */}
-                {currentSource.class === "stream.media" && (
+                {isLocalMediaActive && (
                     <MediaActionsButton
                         media={currentTrack}
                         size="sm"
@@ -421,7 +422,7 @@ const CurrentTrackScreen: FC = () => {
                         <Flex gap={10} justify="space-between" align="center">
                             <Box mih={40} w="fit-content">
                                 <Tooltip
-                                    disabled={currentSource.class !== "stream.media"}
+                                    disabled={!isLocalMediaActive}
                                     label="View Track in Artists screen"
                                     position="bottom"
                                 >
@@ -429,7 +430,7 @@ const CurrentTrackScreen: FC = () => {
                                         size={34}
                                         className={dynamicClasses.currentTrackTitle}
                                         onClick={() => {
-                                            if (currentSource?.class !== "stream.media") {
+                                            if (!isLocalMediaActive) {
                                                 return;
                                             }
 
@@ -461,9 +462,7 @@ const CurrentTrackScreen: FC = () => {
                             <FavoriteIndicator media={currentTrack} size="1.2rem" />
                         </Flex>
 
-                        {(currentSource?.class === "stream.media" ||
-                            currentTrack.artist ||
-                            currentTrack.album) && (
+                        {(isLocalMediaActive || currentTrack.artist || currentTrack.album) && (
                             <FieldValueList
                                 fieldValues={{
                                     Artist: currentTrack.artist,

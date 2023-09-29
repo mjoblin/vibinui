@@ -22,6 +22,7 @@ import {
 } from "../../../app/utils";
 import { RootState } from "../../../app/store/store";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { useAppStatus } from "../../../app/hooks/useAppStatus";
 import { useAppSelector } from "../../../app/hooks/store";
 import { useMediaGroupings } from "../../../app/hooks/useMediaGroupings";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
@@ -30,6 +31,7 @@ import {
     useDeletePlaylistEntryIdMutation,
     useMovePlaylistEntryIdMutation,
     usePlayPlaylistEntryIdMutation,
+    usePlayPlaylistEntryIndexMutation,
 } from "../../../app/services/vibinActivePlaylist";
 import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
 import MediaArt from "../../shared/mediaDisplay/MediaArt";
@@ -156,12 +158,13 @@ type PlaylistProps = {
 const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
+    const { haveActivatedPlaylist, isLocalMediaActive } = useAppStatus();
     const { trackById } = useMediaGroupings();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
+    const { autoPlayOnPlaylistActivation } = useAppSelector((state: RootState) => state.userSettings.application);
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
     const {
         status: { is_activating_playlist: isActivatingPlaylist },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
@@ -169,6 +172,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
     const [movePlaylistId] = useMovePlaylistEntryIdMutation();
     const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
+    const [playPlaylistIndex] = usePlayPlaylistEntryIndexMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
@@ -176,8 +180,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const currentEntryRef = useRef<HTMLDivElement>(null);
     const { classes } = useStyles();
 
-    const isPlayingLocalMedia = currentSource?.class === "stream.media";
-    const currentEntryBorderColor = isPlayingLocalMedia ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
+    const currentEntryBorderColor = isLocalMediaActive ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
 
     // Define some CSS to ensure that the currently-playing playlist entry has an active/highlighted
     // border around it.
@@ -249,6 +252,20 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     }, [deleteStatus]);
 
     /**
+     * When a playlist has finished activating, start playing the first entry.
+     */
+    useEffect(() => {
+        if (autoPlayOnPlaylistActivation && !isActivatingPlaylist && haveActivatedPlaylist) {
+            playPlaylistIndex({ playlistIndex: 0 });
+        }
+    }, [
+        autoPlayOnPlaylistActivation,
+        haveActivatedPlaylist,
+        isActivatingPlaylist,
+        playPlaylistIndex,
+    ]);
+
+    /**
      * Handle Playlist reordering and optimistic UI updates.
      *
      * Notes on optimistic updates:
@@ -291,7 +308,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
             </Box>
         );
     }
-    
+
     if (!activePlaylist.haveReceivedInitialState || isActivatingPlaylist) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
@@ -338,11 +355,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         if (!albums) {
             return undefined;
         }
-        
+
         const album = albums.find(
             (album) => album.title === title && (album.artist === artist || !album.artist)
         );
-        
+
         return album ? yearFromDate(album.date) : undefined;
     };
 
@@ -418,11 +435,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     //  - If it's not the current track, play track from beginning
                                     // entryCanBePlayed(index) &&
                                     index === activePlaylist.current_track_index &&
-                                    isPlayingLocalMedia &&
+                                    isLocalMediaActive &&
                                     playStatus === "pause"
                                         ? resumePlayback()
                                         : index === activePlaylist.current_track_index &&
-                                          isPlayingLocalMedia &&
+                                          isLocalMediaActive &&
                                           playStatus === "play" &&
                                           streamerPower === "on"
                                         ? pausePlayback()
@@ -475,7 +492,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     {/* Entry Play button. If the entry is the current entry,
                                         then instead implement Pause/Resume behavior. */}
                                     {index ===
-                                    (isPlayingLocalMedia && activePlaylist.current_track_index) ? (
+                                    (isLocalMediaActive && activePlaylist.current_track_index) ? (
                                         playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}

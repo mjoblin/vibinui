@@ -81,15 +81,12 @@ const SettingsMenu: FC = () => {
 
             previousPowerState.current = thisPowerState;
 
-            showSuccessNotification({
-                title: `${device} Power`,
-                color: thisPowerState === "on" ? "teal" : "yellow",
-                message: thisPowerState
-                    ? `${device} has been powered ${thisPowerState}`
-                    : `Unknown ${device.toLocaleLowerCase()} power state`,
-            });
-
-            previousPowerState.current = streamer.power;
+            thisPowerState &&
+                showSuccessNotification({
+                    title: `${device} Power`,
+                    color: thisPowerState === "on" ? "teal" : "yellow",
+                    message: `${device} has been powered ${thisPowerState}`,
+                });
         };
 
         checkIfPowerChanged("Amplifier", amplifier?.power, previousAmplifierPowerState);

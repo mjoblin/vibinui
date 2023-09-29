@@ -25,6 +25,7 @@ const DEFAULT_ALBUMS_WALL_SORT_FIELD = "title";
 const DEFAULT_ALBUMS_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_ALBUMS_WALL_VIEW_MODE = "cards";
 const DEFAULT_APPLICATION_AMPLIFIER_MAX_VOLUME = 0.5;
+const DEFAULT_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION = true;
 const DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = false;
 const DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP = 15;
 const DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_SIZE = 200;
@@ -87,6 +88,7 @@ export const LSKEY_ALBUMS_WALL_SORT_DIRECTION = "albums.wallSortDirection";
 export const LSKEY_ALBUMS_WALL_SORT_FIELD = "albums.wallSortField";
 export const LSKEY_ALBUMS_WALL_VIEW_MODE = "albums.wallViewMode";
 export const LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME = "application.amplifierMaxVolume";
+export const LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION = "application.autoPlayOnPlaylistActivation";
 export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP = "application.mediaSearch.cardGap";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE = "application.mediaSearch.cardSize";
@@ -158,6 +160,7 @@ export interface UserSettingsState {
     };
     application: {
         amplifierMaxVolume: number;
+        autoPlayOnPlaylistActivation: boolean;
         haveShownWelcomeMessage: boolean;
         mediaSearch: {
             cardGap: number;
@@ -270,6 +273,10 @@ const initialState: UserSettingsState = {
         amplifierMaxVolume: getLocalStorageValue(
             LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME,
             DEFAULT_APPLICATION_AMPLIFIER_MAX_VOLUME
+        ),
+        autoPlayOnPlaylistActivation: getLocalStorageValue(
+            LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
+            DEFAULT_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION
         ),
         haveShownWelcomeMessage: getLocalStorageValue(
             LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
@@ -484,6 +491,9 @@ export const userSettingsSlice = createSlice({
         setApplicationAmplifierMaxVolume: (state, action: PayloadAction<number>) => {
             state.application.amplifierMaxVolume = action.payload;
         },
+        setApplicationAutoPlayOnPlaylistActivation: (state, action: PayloadAction<boolean>) => {
+            state.application.autoPlayOnPlaylistActivation = action.payload;
+        },
         setApplicationHaveShownWelcomeMessage: (state, action: PayloadAction<boolean>) => {
             state.application.haveShownWelcomeMessage = action.payload;
         },
@@ -652,6 +662,7 @@ export const {
     setAlbumsWallSortField,
     setAlbumsWallViewMode,
     setApplicationAmplifierMaxVolume,
+    setApplicationAutoPlayOnPlaylistActivation,
     setApplicationHaveShownWelcomeMessage,
     setApplicationMediaSearchCardGap,
     setApplicationMediaSearchCardSize,
