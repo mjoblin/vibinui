@@ -486,6 +486,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
                 >
                     <Flex gap="md" align="flex-end">
                         <TextInput
+                            data-autofocus
                             label="Playlist name"
                             placeholder="Enter Playlist name"
                             {...newPlaylistForm.getInputProps("name")}
