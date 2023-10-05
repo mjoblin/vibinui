@@ -47,7 +47,7 @@ type PresetCardProps = {
 
 const PresetCard: FC<PresetCardProps> = ({
     preset,
-    size = 50,
+    size = 200,
     showDetails = true,
     showLoading = true,
 }) => {
@@ -108,6 +108,7 @@ const PresetCard: FC<PresetCardProps> = ({
     const { classes: dynamicClasses } = createStyles((theme) => ({
         presetCard: {
             width: size,
+            borderRadius: 5,
             border: presetIsCurrentlyPlaying
                 ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
                 : `${borderSize}px solid rgb(0, 0, 0, 0)`,
@@ -117,47 +118,46 @@ const PresetCard: FC<PresetCardProps> = ({
     }))();
 
     return (
-        <Card radius="sm" className={dynamicClasses.presetCard}>
-            <Card.Section>
-                <MediaArt
-                    media={preset}
-                    showLoading={showLoading}
-                    showActions={false}
-                    showFavoriteIndicator={false}
-                    showPlayButton={true}
-                    centerPlayButton={true}
-                    onPlay={() => playPresetId(preset.id)}
-                />
+        <Box className={dynamicClasses.presetCard}>
+            <MediaArt
+                media={preset}
+                size={size - borderSize * 2}
+                showLoading={showLoading}
+                showActions={false}
+                showFavoriteIndicator={false}
+                showPlayButton={true}
+                centerPlayButton={true}
+                onPlay={() => playPresetId(preset.id)}
+            />
 
-                {playState === "connecting" && preset.is_playing && (
-                    <Center w={overlayWidth} h={overlayHeight} className={classes.presetConnecting}>
-                        <Stack spacing={5} align="center">
-                            <Loader size="md" />
-                            <Text>connecting...</Text>
-                        </Stack>
-                    </Center>
-                )}
+            {playState === "connecting" && preset.is_playing && (
+                <Center w={overlayWidth} h={overlayHeight} className={classes.presetConnecting}>
+                    <Stack spacing={5} align="center">
+                        <Loader size="md" />
+                        <Text>connecting...</Text>
+                    </Stack>
+                </Center>
+            )}
 
-                {showDetails && (
-                    <Flex justify="space-between" gap={5}>
-                        {/* Preset number */}
-                        <Box pl={3} pt={4}>
-                            <NumericSwatch number={preset.id} />
-                        </Box>
+            {showDetails && (
+                <Flex justify="space-between" gap={5}>
+                    {/* Preset number */}
+                    <Box pl={3} pt={4}>
+                        <NumericSwatch number={preset.id} />
+                    </Box>
 
-                        {/* Preset details */}
-                        <Stack spacing={0} pr={7} pt={7} pb={3} sx={{ flexGrow: 1 }}>
-                            <Text size="sm" weight="bold" sx={{ lineHeight: 1 }}>
-                                {preset.name}
-                            </Text>
-                            <Text size="xs" color={theme.colors.gray[6]}>
-                                {preset.type}
-                            </Text>
-                        </Stack>
-                    </Flex>
-                )}
-            </Card.Section>
-        </Card>
+                    {/* Preset details */}
+                    <Stack spacing={0} pr={7} pt={7} pb={3} sx={{ flexGrow: 1 }}>
+                        <Text size="sm" weight="bold" sx={{ lineHeight: 1 }}>
+                            {preset.name}
+                        </Text>
+                        <Text size="xs" color={theme.colors.gray[6]}>
+                            {preset.type}
+                        </Text>
+                    </Stack>
+                </Flex>
+            )}
+        </Box>
     );
 };
 
