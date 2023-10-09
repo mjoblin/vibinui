@@ -85,6 +85,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
 
     return (
         <CompactArtCard
+            media={album}
             artUrl={album.album_art_uri}
             actions={
                 <MediaActionsButton

@@ -542,7 +542,6 @@ const ArtistsWall: FC = () => {
                                     <TrackCard
                                         type="compact"
                                         track={track}
-                                        showArt={false}
                                         enabledActions={{
                                             Details: ["all"],
                                             Favorites: ["all"],

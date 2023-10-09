@@ -63,6 +63,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
 
     return (
         <CompactArtCard
+            media={track}
             artUrl={showArt && track.album_art_uri ? track.album_art_uri : undefined}
             actions={
                 <MediaActionsButton
