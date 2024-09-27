@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ThunkDispatch } from "@reduxjs/toolkit";
 
 import {
+    AmplifierAction,
     AudioSource,
     DeviceDisplay,
     setAmplifierState,
@@ -136,6 +137,7 @@ type SystemPayload = {
     };
     amplifier: {
         name: string;
+        actions: AmplifierAction[] | undefined;
         power: "on" | "off" | undefined;
         mute: "on" | "off" | undefined;
         volume: number | undefined;
