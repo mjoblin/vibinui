@@ -8,6 +8,7 @@ import PlaybackControls from "../../shared/playbackControls/PlaybackControls";
 import StylizedLabel from "../../shared/textDisplay/StylizedLabel";
 import VibinLogo from "../../shared/VibinLogo";
 import VolumeControl from "../../shared/buttons/VolumeControl";
+import VolumeUpDownControl from "../../shared/buttons/VolumeUpDownControl";
 import WarningMessage from "../../shared/textDisplay/WarningMessage";
 
 // ================================================================================================
@@ -29,6 +30,7 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const streamerName = useAppSelector((state: RootState) => state.system.streamer.name);
+    const amplifierActions = useAppSelector((state: RootState) => state.system.amplifier.actions);
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );
@@ -71,7 +73,14 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                 )}
 
                 <Box pl={10}>
-                    <VolumeControl />
+                    {/* For backwards compatability, tolerate absense of the actions list */}
+                    {!amplifierActions || amplifierActions.includes("volume") ? (
+                        <VolumeControl />
+                    ) : amplifierActions.includes("volume_up_down") ? (
+                        <VolumeUpDownControl />
+                    ) : (
+                        <></>
+                    )}
                 </Box>
             </Flex>
         </Header>
