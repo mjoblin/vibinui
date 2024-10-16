@@ -10,12 +10,12 @@ import {
     useAmplifierVolumeDownMutation,
     useAmplifierVolumeUpMutation,
 } from "../../../app/services/vibinSystem";
-import { IconVolume, IconVolume2 } from "@tabler/icons-react";
+import { IconSquareRoundedMinusFilled, IconSquareRoundedPlusFilled } from "@tabler/icons-react";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 
 const VolumeUpDownControl: FC = () => {
     const theme = useMantineTheme();
-    const { HEADER_ICON_SIZE, STYLE_DISABLEABLE } = useAppGlobals();
+    const { STYLE_DISABLEABLE } = useAppGlobals();
     const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
     const [amplifierVolumeUp] = useAmplifierVolumeUpMutation();
     const [amplifierVolumeDown] = useAmplifierVolumeDownMutation();
@@ -31,24 +31,14 @@ const VolumeUpDownControl: FC = () => {
                 sx={STYLE_DISABLEABLE}
                 onClick={() => amplifierVolumeDown()}
             >
-                <IconVolume2
-                    size={HEADER_ICON_SIZE}
-                    stroke={1}
-                    color={colorStandard}
-                    fill={colorStandard}
-                />
+                <IconSquareRoundedMinusFilled style={{ color: colorStandard }} />
             </ActionIcon>
             <ActionIcon
                 disabled={isAmpOff}
                 sx={STYLE_DISABLEABLE}
                 onClick={() => amplifierVolumeUp()}
             >
-                <IconVolume
-                    size={HEADER_ICON_SIZE}
-                    stroke={1}
-                    color={colorStandard}
-                    fill={colorStandard}
-                />
+                <IconSquareRoundedPlusFilled style={{ color: colorStandard }} />
             </ActionIcon>
         </Flex>
     );
