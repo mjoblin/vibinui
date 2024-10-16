@@ -30,7 +30,9 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const streamerName = useAppSelector((state: RootState) => state.system.streamer.name);
-    const amplifierActions = useAppSelector((state: RootState) => state.system.amplifier?.actions);
+    const amplifierActions = useAppSelector(
+        (state: RootState) => state.system.amplifier?.supported_actions
+    );
     const currentScreen = useAppSelector(
         (state: RootState) => state.internal.application.currentScreen
     );

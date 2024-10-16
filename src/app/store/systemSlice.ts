@@ -65,7 +65,7 @@ export interface MediaServerState extends DeviceState {}
 export type AmplifierAction = "power" | "volume" | "mute" | "volume_up_down" | "audio_source";
 
 export interface AmplifierState extends DeviceState {
-    actions: AmplifierAction[] | undefined;
+    supported_actions: AmplifierAction[] | undefined;
     power: PowerState | undefined;
     mute: MuteState | undefined;
     volume: number | undefined;
@@ -92,7 +92,7 @@ const initialState: SystemState = {
     },
     amplifier: {
         name: "",
-        actions: [],
+        supported_actions: [],
         power: undefined,
         mute: undefined,
         volume: undefined,

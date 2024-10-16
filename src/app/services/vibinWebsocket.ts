@@ -137,7 +137,7 @@ type SystemPayload = {
     };
     amplifier: {
         name: string;
-        actions: AmplifierAction[] | undefined;
+        supported_actions: AmplifierAction[] | undefined;
         power: "on" | "off" | undefined;
         mute: "on" | "off" | undefined;
         volume: number | undefined;
