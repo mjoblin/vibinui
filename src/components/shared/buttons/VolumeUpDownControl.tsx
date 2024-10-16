@@ -25,7 +25,7 @@ const VolumeUpDownControl: FC = () => {
         theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[3];
 
     return (
-        <Flex gap={3} align="center">
+        <Flex gap={1} align="center">
             <ActionIcon
                 disabled={isAmpOff}
                 sx={STYLE_DISABLEABLE}
