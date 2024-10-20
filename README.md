@@ -3,12 +3,16 @@
 `vibinui` is a browser-based user interface for [StreamMagic] audio streamers. `vibinui` also
 requires installation of the [`vibin`](https://github.com/mjoblin/vibin) backend.
 
-Vibin was developed for my specific music streaming needs. It should however work for anyone with a
-StreamMagic audio streamer, but has only been tested with the following:
+Vibin should work for anyone with a StreamMagic audio streamer, although it has only been tested
+with the following:
 
 * [Cambridge Audio] CXNv2 ([StreamMagic]) streamer.
-* Local media stored on a NAS running [Asset UPnP] (optional).
-* A [Hegel] amplifier for volume/mute control (optional).
+* Local media:
+  * On a NAS running [Asset UPnP] (optional).
+  * Over USB (optional).
+* Volume/mute controls:
+  * A [StreamMagic] streamer in Pre-Amp mode or over the Control Bus in Amplifier mode.
+  * A [Hegel] amplifier.
 * AirPlay from a MacBook.
 * Running the UI in Chrome on a MacBook and iPad.
 
@@ -56,7 +60,9 @@ Vibin's features include:
 
 * **Streamer transport controls**.
   * Play, pause, next track, previous track, shuffle, repeat, etc.
-* **Amplifier volume and mute controls**.
+* **Volume and mute controls**.
+  * StreamMagic streamers in Pre-Amp mode or the Control Bus in Amplifier mode.
+  * Hegel amplifiers.
 * **Streamer and amplifier source selection**.
 * **Showing what's currently playing on the streamer**.
   * Track details.
@@ -64,7 +70,7 @@ Vibin's features include:
   * Lyrics.
   * Waveform.
   * Related links to external sites.
-* **Browsing local media**.
+* **Browsing local media** (NAS and USB).
   * Viewing Artists, Albums, and Tracks.
   * Filtering.
   * Sorting.
