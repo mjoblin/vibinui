@@ -60,12 +60,14 @@ export interface StreamerState extends DeviceState {
     display: DeviceDisplay | undefined;
 }
 
-export interface MediaServerState extends DeviceState {
-}
+export interface MediaServerState extends DeviceState {}
+
+export type AmplifierAction = "power" | "volume" | "mute" | "volume_up_down" | "audio_source";
 
 export interface AmplifierState extends DeviceState {
-    power: PowerState;
-    mute: MuteState;
+    supported_actions: AmplifierAction[] | undefined;
+    power: PowerState | undefined;
+    mute: MuteState | undefined;
     volume: number | undefined;
     sources: AudioSources | undefined;
 }
@@ -90,11 +92,12 @@ const initialState: SystemState = {
     },
     amplifier: {
         name: "",
+        supported_actions: [],
         power: undefined,
         mute: undefined,
         volume: undefined,
         sources: undefined,
-    }
+    },
 };
 
 export const systemSlice = createSlice({

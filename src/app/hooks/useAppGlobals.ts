@@ -53,6 +53,7 @@ export const useAppGlobals = () => {
         APP_MODAL_BLUR: 0.5,
         CURRENTLY_PLAYING_COLOR: theme.colors.yellow[4],
         HEADER_HEIGHT: 60,
+        HEADER_ICON_SIZE: 20,
         LARGE_SCREEN: largeScreen,
         MAX_TABLE_ITEMS_TO_DISPLAY: 500,
         NAVBAR_WIDTH: largeScreen === false ? 160 : 180,
@@ -81,6 +82,13 @@ export const useAppGlobals = () => {
                 display: "flex",
                 gap: 7,
                 alignItems: "center",
+            },
+        },
+        STYLE_DISABLEABLE: {
+            "&[data-disabled]": {
+                backgroundColor: "rgb(0, 0, 0, 0)",
+                opacity: 0.4,
+                border: "none",
             },
         },
         TEMPORARY_ACTIVITY_COLOR: theme.colors.yellow[4],

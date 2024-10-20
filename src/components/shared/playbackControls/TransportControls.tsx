@@ -20,6 +20,7 @@ import {
     useToggleShuffleMutation,
 } from "../../../app/services/vibinTransport";
 import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
+import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 
@@ -39,6 +40,7 @@ import { RootState } from "../../../app/store/store";
 
 const TransportControls: FC = () => {
     const theme = useMantineTheme();
+    const { HEADER_ICON_SIZE, STYLE_DISABLEABLE } = useAppGlobals();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const activeTransportActions = useAppSelector(
         (state: RootState) => state.playback.active_transport_actions
@@ -58,14 +60,6 @@ const TransportControls: FC = () => {
     const [toggleShuffle] = useToggleShuffleMutation();
     const [playPresetId] = useLazyPlayPresetIdQuery();
 
-    const disabledStyles = {
-        "&[data-disabled]": {
-            backgroundColor: "rgb(0, 0, 0, 0)",
-            opacity: 0.4,
-            border: "none",
-        },
-    };
-
     const colorStandard = theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[3];
     const colorActive = theme.colorScheme === "dark" ? theme.colors.blue[5] : theme.colors.blue[8];
 
@@ -74,11 +68,11 @@ const TransportControls: FC = () => {
             {/* Previous */}
             <ActionIcon
                 disabled={!activeTransportActions.includes("previous")}
-                sx={disabledStyles}
+                sx={STYLE_DISABLEABLE}
                 onClick={() => previousTrack()}
             >
                 <IconPlayerTrackPrev
-                    size={20}
+                    size={HEADER_ICON_SIZE}
                     stroke={1}
                     color={colorStandard}
                     fill={colorStandard}
@@ -94,7 +88,7 @@ const TransportControls: FC = () => {
                         !activeTransportActions.includes("pause") &&
                         !activeTransportActions.includes("stop")
                     }
-                    sx={disabledStyles}
+                    sx={STYLE_DISABLEABLE}
                     onClick={() =>
                         activeTransportActions.includes("toggle_playback") ||
                         activeTransportActions.includes("pause")
@@ -105,14 +99,14 @@ const TransportControls: FC = () => {
                     {activeTransportActions.includes("toggle_playback") ||
                     activeTransportActions.includes("pause") ? (
                         <IconPlayerPause
-                            size={20}
+                            size={HEADER_ICON_SIZE}
                             stroke={1}
                             color={colorStandard}
                             fill={colorStandard}
                         />
                     ) : (
                         <IconPlayerStop
-                            size={20}
+                            size={HEADER_ICON_SIZE}
                             stroke={1}
                             color={colorStandard}
                             fill={colorStandard}
@@ -126,7 +120,7 @@ const TransportControls: FC = () => {
                         !activeTransportActions.includes("toggle_playback") &&
                         !activeTransportActions.includes("play")
                     }
-                    sx={disabledStyles}
+                    sx={STYLE_DISABLEABLE}
                     onClick={() => {
                         if (currentStreamerSource?.class === "stream.radio") {
                             const active_preset = presets.find((preset) => preset.is_playing);
@@ -137,7 +131,7 @@ const TransportControls: FC = () => {
                     }}
                 >
                     <IconPlayerPlay
-                        size={20}
+                        size={HEADER_ICON_SIZE}
                         stroke={1}
                         color={colorStandard}
                         fill={colorStandard}
@@ -148,11 +142,11 @@ const TransportControls: FC = () => {
             {/* Next */}
             <ActionIcon
                 disabled={!activeTransportActions.includes("next")}
-                sx={disabledStyles}
+                sx={STYLE_DISABLEABLE}
                 onClick={() => nextTrack()}
             >
                 <IconPlayerTrackNext
-                    size={20}
+                    size={HEADER_ICON_SIZE}
                     stroke={1}
                     color={colorStandard}
                     fill={colorStandard}
@@ -163,11 +157,11 @@ const TransportControls: FC = () => {
             <Stack spacing={0}>
                 <ActionIcon
                     disabled={!activeTransportActions.includes("repeat")}
-                    mih={20}
-                    miw={20}
-                    mah={20}
-                    maw={20}
-                    sx={disabledStyles}
+                    mih={HEADER_ICON_SIZE}
+                    miw={HEADER_ICON_SIZE}
+                    mah={HEADER_ICON_SIZE}
+                    maw={HEADER_ICON_SIZE}
+                    sx={STYLE_DISABLEABLE}
                     onClick={() => toggleRepeat()}
                 >
                     <IconRepeat
@@ -179,11 +173,11 @@ const TransportControls: FC = () => {
 
                 <ActionIcon
                     disabled={!activeTransportActions.includes("shuffle")}
-                    mih={20}
-                    miw={20}
-                    mah={20}
-                    maw={20}
-                    sx={disabledStyles}
+                    mih={HEADER_ICON_SIZE}
+                    miw={HEADER_ICON_SIZE}
+                    mah={HEADER_ICON_SIZE}
+                    maw={HEADER_ICON_SIZE}
+                    sx={STYLE_DISABLEABLE}
                     onClick={() => toggleShuffle()}
                 >
                     <IconArrowsShuffle
