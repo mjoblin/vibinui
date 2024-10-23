@@ -104,6 +104,21 @@ type MediaArtProps = {
     onActionsMenuClosed?: () => void;
 };
 
+/** Image URL for given media. */
+function mediaArtUrl(media?: Media): string | undefined {
+    if (!media) {
+        return undefined;
+    } else if (isAlbum(media)) {
+        return media.album_art_uri;
+    } else if (isTrack(media)) {
+        return media.art_url ? media.art_url : media.album_art_uri;
+    } else if (isPreset(media)) {
+        return media.art_url;
+    } else {
+        return undefined;
+    }
+}
+
 const MediaArt: FC<MediaArtProps> = ({
     media,
     artUri,
@@ -128,7 +143,9 @@ const MediaArt: FC<MediaArtProps> = ({
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const { classes } = useStyles();
     const { isFavoritedMedia } = useFavorites();
-    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(true);
+
+    const resolvedArtUri = artUri ?? mediaArtUrl(media);
+    const [isLoadingArt, setIsLoadingArt] = useState<boolean>(!!resolvedArtUri);
 
     const isStreamerOff = streamerPower === "off";
 
@@ -158,23 +175,6 @@ const MediaArt: FC<MediaArtProps> = ({
     }
 
     /**
-     * Image URL for given media.
-     */
-    const mediaArtUrl = (media: Media | undefined): string | undefined => {
-        if (artUri) {
-            return artUri;
-        } else if (typeof media === "undefined") {
-            return undefined;
-        } else if (isAlbum(media)) {
-            return media.album_art_uri;
-        } else if (isTrack(media)) {
-            return media.art_url ? media.art_url : media.album_art_uri;
-        } else if (isPreset(media)) {
-            return media.art_url;
-        }
-    };
-
-    /**
      * Alt text for given media.
      */
     const imageAlt = (media: Media): string => {
@@ -195,7 +195,7 @@ const MediaArt: FC<MediaArtProps> = ({
             <Box className={classes.mediaArtContent}>
                 <Skeleton visible={showLoading && isLoadingArt}>
                     <Image
-                        src={mediaArtUrl(media)}
+                        src={resolvedArtUri}
                         alt={alt ? alt : media ? imageAlt(media) : undefined}
                         fit={fit}
                         radius={radius}
