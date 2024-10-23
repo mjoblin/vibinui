@@ -268,7 +268,6 @@ const CurrentTrackScreen: FC = () => {
      */
     useEffect(() => {
         const p = presets.find((preset) => preset.is_playing);
-        console.log("P", p);
         setActivePreset(presets.find((preset) => preset.is_playing));
     }, [presets]);
 

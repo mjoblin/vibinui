@@ -74,8 +74,6 @@ const TracksWall: FC<TrackWallProps> = ({
     const [calculatingTracksToDisplay, setCalculatingTracksToDisplay] = useState<boolean>(true);
     const [tracksToDisplay, setTracksToDisplay] = useState<Track[]>([]);
 
-    console.log(`TOP: ${calculatingTracksToDisplay} :: ${tracksToDisplay.length}`);
-
     const { classes: dynamicClasses } = createStyles((theme) => ({
         cardWall: {
             display: "grid",
