@@ -328,7 +328,8 @@ const MediaTable: FC<MediaTableProps> = ({
         },
         genre: {
             heading: "genre",
-            valueGenerator: (value: any): string => (value.includes("Unknown") ? "" : value),
+            valueGenerator: (value: any): string =>
+                !value || value.includes("Unknown") ? "" : value,
         },
         id: {
             heading: "ID",
