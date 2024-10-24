@@ -204,6 +204,7 @@ const MediaArt: FC<MediaArtProps> = ({
                         withPlaceholder={true}
                         placeholder={<NoArtPlaceholder artSize={size} radius={radius} />}
                         onLoad={() => setIsLoadingArt(false)}
+                        onError={(e) => setIsLoadingArt(false)}
                     />
                 </Skeleton>
             </Box>
