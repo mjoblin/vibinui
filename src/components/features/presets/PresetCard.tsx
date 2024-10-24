@@ -121,6 +121,7 @@ const PresetCard: FC<PresetCardProps> = ({
             <Card.Section>
                 <MediaArt
                     media={preset}
+                    size={size}
                     showLoading={showLoading}
                     showActions={false}
                     showFavoriteIndicator={false}
