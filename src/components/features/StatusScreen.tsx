@@ -152,8 +152,9 @@ const StatusScreen: FC = () => {
             dispatch(setApplicationAmplifierMaxVolume(normalizedMaxVolume));
 
             amplifier?.volume &&
-                normalizedMaxVolume < amplifier.volume &&
-                volumeSet(normalizedMaxVolume);
+                amplifier.max_volume &&
+                normalizedMaxVolume * amplifier.max_volume < amplifier.volume &&
+                volumeSet(Math.floor(normalizedMaxVolume * amplifier.max_volume));
 
             showSuccessNotification({ title: "Maximum volume updated" });
         }, [normalizedMaxVolume, amplifier, dispatch, volumeSet]);

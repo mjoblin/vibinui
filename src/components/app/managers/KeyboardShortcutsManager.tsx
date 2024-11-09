@@ -38,7 +38,7 @@ const KeyboardShortcutsManager: FC = () => {
     const { showKeyboardShortcuts } = useAppSelector(
         (state: RootState) => state.internal.application
     );
-    const maxVolume = useAppSelector(
+    const volumeLimitFraction = useAppSelector(
         (state: RootState) => state.userSettings.application.amplifierMaxVolume
     );
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -72,11 +72,16 @@ const KeyboardShortcutsManager: FC = () => {
     // stomped on by a laggy backend volume update).
     const backendVolumeOverrideDelay = 1000;
 
-    // We support two levels of volume increment: 1 unit (0.01) and 5 units (0.05). We use 0.01
-    // instead of useAmplifierVolumeUpMutation() and useAmplifierVolumeDownMutation() due to the
-    // way we're handling local volume changes vs. backend-driven updates.
-    const smallVolumeDelta = 0.01;
-    const largeVolumeDelta = 0.05;
+    // We support two levels of volume increment: 1 unit and 5 units We use this instead of
+    // useAmplifierVolumeUpMutation() and useAmplifierVolumeDownMutation() due to the way we're
+    // handling local volume changes vs. backend-driven updates.
+    const smallVolumeDelta = 1;
+    const largeVolumeDelta = 5;
+
+    // Avoid setting the volume above the limit set in the status page
+    const volumeLimit = amplifier.max_volume
+        ? amplifier.max_volume * volumeLimitFraction
+        : Number.MAX_VALUE;
 
     /**
      * Whenever the local volume state changes, send a volumeSet request to the amplifier.
@@ -163,9 +168,9 @@ const KeyboardShortcutsManager: FC = () => {
                 "ArrowUp",
                 () =>
                     typeof localVolume.value !== "undefined" &&
-                    localVolume.value < maxVolume &&
+                    localVolume.value < volumeLimit &&
                     setLocalVolume({
-                        value: Math.min(localVolume.value + smallVolumeDelta, maxVolume),
+                        value: Math.min(localVolume.value + smallVolumeDelta, volumeLimit),
                         whenSet: Date.now(),
                     }),
             ],
@@ -175,7 +180,7 @@ const KeyboardShortcutsManager: FC = () => {
                     typeof localVolume.value !== "undefined" &&
                     localVolume.value > 0 &&
                     setLocalVolume({
-                        value: Math.max(localVolume.value - smallVolumeDelta, 0.0),
+                        value: Math.max(localVolume.value - smallVolumeDelta, 0),
                         whenSet: Date.now(),
                     }),
             ],
@@ -183,9 +188,9 @@ const KeyboardShortcutsManager: FC = () => {
                 "shift+ArrowUp",
                 () =>
                     typeof localVolume.value !== "undefined" &&
-                    localVolume.value < maxVolume &&
+                    localVolume.value < volumeLimit &&
                     setLocalVolume({
-                        value: Math.min(localVolume.value + largeVolumeDelta, maxVolume),
+                        value: Math.min(localVolume.value + largeVolumeDelta, volumeLimit),
                         whenSet: Date.now(),
                     }),
             ],
@@ -195,13 +200,13 @@ const KeyboardShortcutsManager: FC = () => {
                     typeof localVolume.value !== "undefined" &&
                     localVolume.value > 0 &&
                     setLocalVolume({
-                        value: Math.max(localVolume.value - largeVolumeDelta, 0.0),
+                        value: Math.max(localVolume.value - largeVolumeDelta, 0),
                         whenSet: Date.now(),
                     }),
             ],
             ["ctrl+shift+ArrowDown", () => amplifierMuteToggle()],
         ];
-    }, [amplifierMuteToggle, localVolume, maxVolume]);
+    }, [amplifierMuteToggle, localVolume, volumeLimit]);
 
     /**
      * Set which hotkeys are active whenever the amplifier becomes available or goes away.

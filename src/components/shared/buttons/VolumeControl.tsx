@@ -40,8 +40,8 @@ const VolumeControl: FC = () => {
     const [amplifierVolumeSet] = useAmplifierVolumeSetMutation();
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [localVolume, setLocalVolume] = useState<number>(0);
-    const { amplifierMaxVolume } = useAppSelector(
-        (state: RootState) => state.userSettings.application
+    const volumeLimitFraction = useAppSelector(
+        (state: RootState) => state.userSettings.application.amplifierMaxVolume
     );
 
     const isAmpOn = amplifier?.power === "on";
@@ -60,14 +60,19 @@ const VolumeControl: FC = () => {
         !amplifier ||
         amplifier.mute === null ||
         amplifier.power == null ||
+        amplifier.max_volume == null ||
         amplifier.volume == null
     ) {
         return <></>;
     }
 
-    const { mute, volume } = amplifier;
-    const currentVolume = (volume || 0) * 100;
-    const maxVolume = amplifierMaxVolume * 100;
+    const { mute, volume, max_volume } = amplifier;
+    const volumeLimit = volumeLimitFraction * max_volume;
+
+    // RingProgress uses values out of 100
+    const progressCurrentVolume = (volume * 100) / max_volume;
+    const progressVolumeLimit = ((volumeLimit - volume) * 100) / max_volume;
+    const progressAboveVolumeLimit = ((max_volume - volumeLimit) * 100) / max_volume;
 
     return (
         <Popover
@@ -84,13 +89,13 @@ const VolumeControl: FC = () => {
                     size={HEADER_HEIGHT * 0.9}
                     thickness={5}
                     sections={[
-                        { value: currentVolume, color: isAmpOn ? "blue" : colors.gray[7] },
+                        { value: progressCurrentVolume, color: isAmpOn ? "blue" : colors.gray[7] },
                         {
-                            value: maxVolume - currentVolume,
+                            value: progressVolumeLimit,
                             color: isAmpOn ? colors.gray[7] : colors.gray[8],
                         },
                         {
-                            value: 100 - maxVolume,
+                            value: progressAboveVolumeLimit,
                             color: isAmpOn ? colors.gray[8] : colors.gray[9],
                         },
                     ]}
@@ -111,7 +116,7 @@ const VolumeControl: FC = () => {
                                 align="center"
                                 size={13}
                             >
-                                {Math.round((volume || 0) * 100)}
+                                {volume}
                             </Text>
                         )
                     }
@@ -133,14 +138,14 @@ const VolumeControl: FC = () => {
                     <Box sx={{ flexGrow: 1 }}>
                         <Slider
                             w="100%"
-                            min={0.0}
-                            max={amplifierMaxVolume}
-                            step={0.01}
-                            precision={2}
+                            min={0}
+                            max={volumeLimit}
+                            step={1}
+                            precision={0}
                             value={localVolume}
                             label={(value) => (
                                 <Center>
-                                    <Text size={10}>{Math.round(value * 100)}</Text>
+                                    <Text size={10}>{value}</Text>
                                 </Center>
                             )}
                             styles={(theme) => ({
