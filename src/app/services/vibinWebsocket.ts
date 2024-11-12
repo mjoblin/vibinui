@@ -140,6 +140,7 @@ type SystemPayload = {
         supported_actions: AmplifierAction[] | undefined;
         power: "on" | "off" | undefined;
         mute: "on" | "off" | undefined;
+        max_volume: number | undefined;
         volume: number | undefined;
         sources: {
             active: AudioSource,

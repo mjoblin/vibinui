@@ -30,7 +30,7 @@ export const vibinSystemApi = createApi({
             query: () => ({ url: `amplifier/volume/down`, method: "POST" }),
         }),
         amplifierVolumeSet: builder.mutation<void, number>({
-            query: (volume) => ({ url: `amplifier/volume/${volume.toFixed(2)}`, method: "POST" }),
+            query: (volume) => ({ url: `amplifier/volume/${volume}`, method: "POST" }),
         }),
         amplifierVolumeUp: builder.mutation<void, void>({
             query: () => ({ url: `amplifier/volume/up`, method: "POST" }),

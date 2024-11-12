@@ -68,6 +68,7 @@ export interface AmplifierState extends DeviceState {
     supported_actions: AmplifierAction[] | undefined;
     power: PowerState | undefined;
     mute: MuteState | undefined;
+    max_volume: number | undefined;
     volume: number | undefined;
     sources: AudioSources | undefined;
 }
@@ -95,6 +96,7 @@ const initialState: SystemState = {
         supported_actions: [],
         power: undefined,
         mute: undefined,
+        max_volume: undefined,
         volume: undefined,
         sources: undefined,
     },
