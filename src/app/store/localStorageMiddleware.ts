@@ -12,7 +12,6 @@ import {
     LSKEY_ALBUMS_WALL_SORT_DIRECTION,
     LSKEY_ALBUMS_WALL_SORT_FIELD,
     LSKEY_ALBUMS_WALL_VIEW_MODE,
-    LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME,
     LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
     LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP,
@@ -25,6 +24,7 @@ import {
     LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE,
     LSKEY_APPLICATION_THEME,
     LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
+    LSKEY_APPLICATION_VOLUME_LIMIT,
     LSKEY_ARTISTS_ACTIVE_COLLECTION,
     LSKEY_ARTISTS_CARD_GAP,
     LSKEY_ARTISTS_CARD_SIZE,
@@ -70,7 +70,6 @@ import {
     setAlbumsWallSortDirection,
     setAlbumsWallSortField,
     setAlbumsWallViewMode,
-    setApplicationAmplifierMaxVolume,
     setApplicationAutoPlayOnPlaylistActivation,
     setApplicationHaveShownWelcomeMessage,
     setApplicationMediaSearchCardGap,
@@ -83,6 +82,7 @@ import {
     setApplicationMediaSearchWallViewMode,
     setApplicationTheme,
     setApplicationUseImageBackground,
+    setApplicationVolumeLimit,
     setArtistsActiveCollection,
     setArtistsCardGap,
     setArtistsCardSize,
@@ -148,7 +148,6 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setAlbumsWallSortDirection.type]: LSKEY_ALBUMS_WALL_SORT_DIRECTION,
     [setAlbumsWallSortField.type]: LSKEY_ALBUMS_WALL_SORT_FIELD,
     [setAlbumsWallViewMode.type]: LSKEY_ALBUMS_WALL_VIEW_MODE,
-    [setApplicationAmplifierMaxVolume.type]: LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME,
     [setApplicationAutoPlayOnPlaylistActivation.type]: LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
     [setApplicationHaveShownWelcomeMessage.type]: LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     [setApplicationMediaSearchCardGap.type]: LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP,
@@ -162,6 +161,7 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setApplicationMediaSearchWallViewMode.type]: LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE,
     [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,
     [setApplicationUseImageBackground.type]: LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
+    [setApplicationVolumeLimit.type]: LSKEY_APPLICATION_VOLUME_LIMIT,
     [setArtistsActiveCollection.type]: LSKEY_ARTISTS_ACTIVE_COLLECTION,
     [setArtistsCardGap.type]: LSKEY_ARTISTS_CARD_GAP,
     [setArtistsCardSize.type]: LSKEY_ARTISTS_CARD_SIZE,
@@ -210,7 +210,6 @@ localStorageMiddleware.startListening({
         setAlbumsWallSortDirection,
         setAlbumsWallSortField,
         setAlbumsWallViewMode,
-        setApplicationAmplifierMaxVolume,
         setApplicationAutoPlayOnPlaylistActivation,
         setApplicationHaveShownWelcomeMessage,
         setApplicationMediaSearchCardGap,
@@ -223,6 +222,7 @@ localStorageMiddleware.startListening({
         setApplicationMediaSearchWallViewMode,
         setApplicationTheme,
         setApplicationUseImageBackground,
+        setApplicationVolumeLimit,
         setArtistsActiveCollection,
         setArtistsCardGap,
         setArtistsCardSize,
@@ -313,10 +313,13 @@ localStorageMiddleware.startListening({
         // Store the given key/value pair in local storage. Local storage wants string values, so
         // JSON.stringify() is used. Anything wishing to use these stored values (userSettingsSlice)
         // needs to run them through JSON.parse().
-        key &&
-            value !== null &&
-            value !== undefined &&
-            localStorage.setItem(key, JSON.stringify(value));
+        if (key) {
+            if (value !== null && value !== undefined) {
+                localStorage.setItem(key, JSON.stringify(value));
+            } else {
+                localStorage.removeItem(key);
+            }
+        }
     },
 });
 

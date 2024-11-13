@@ -38,8 +38,8 @@ const KeyboardShortcutsManager: FC = () => {
     const { showKeyboardShortcuts } = useAppSelector(
         (state: RootState) => state.internal.application
     );
-    const volumeLimitFraction = useAppSelector(
-        (state: RootState) => state.userSettings.application.amplifierMaxVolume
+    const applicationVolumeLimit = useAppSelector(
+        (state: RootState) => state.userSettings.application.volumeLimit
     );
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const activeTransportActions = useAppSelector(
@@ -79,9 +79,7 @@ const KeyboardShortcutsManager: FC = () => {
     const largeVolumeDelta = 5;
 
     // Avoid setting the volume above the limit set in the status page
-    const volumeLimit = amplifier.max_volume
-        ? amplifier.max_volume * volumeLimitFraction
-        : Number.MAX_VALUE;
+    const volumeLimit = applicationVolumeLimit ?? amplifier?.max_volume ?? Number.MAX_VALUE;
 
     /**
      * Whenever the local volume state changes, send a volumeSet request to the amplifier.
