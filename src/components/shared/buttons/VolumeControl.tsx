@@ -40,8 +40,8 @@ const VolumeControl: FC = () => {
     const [amplifierVolumeSet] = useAmplifierVolumeSetMutation();
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [localVolume, setLocalVolume] = useState<number>(0);
-    const volumeLimitFraction = useAppSelector(
-        (state: RootState) => state.userSettings.application.amplifierMaxVolume
+    const applicationVolumeLimit = useAppSelector(
+        (state: RootState) => state.userSettings.application.volumeLimit
     );
 
     const isAmpOn = amplifier?.power === "on";
@@ -67,7 +67,7 @@ const VolumeControl: FC = () => {
     }
 
     const { mute, volume, max_volume } = amplifier;
-    const volumeLimit = volumeLimitFraction * max_volume;
+    const volumeLimit = applicationVolumeLimit ?? max_volume;
 
     // RingProgress uses values out of 100
     const progressCurrentVolume = (volume * 100) / max_volume;

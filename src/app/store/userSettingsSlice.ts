@@ -24,7 +24,6 @@ const DEFAULT_ALBUMS_SHOW_DETAILS = true;
 const DEFAULT_ALBUMS_WALL_SORT_FIELD = "title";
 const DEFAULT_ALBUMS_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_ALBUMS_WALL_VIEW_MODE = "cards";
-const DEFAULT_APPLICATION_AMPLIFIER_MAX_VOLUME = 0.5;
 const DEFAULT_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION = true;
 const DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = false;
 const DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP = 15;
@@ -42,6 +41,7 @@ const DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION = "ascending";
 const DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE = "cards";
 const DEFAULT_APPLICATION_THEME = "dark";
 const DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND = true;
+const DEFAULT_APPLICATION_VOLUME_LIMIT = null;
 const DEFAULT_ARTISTS_ACTIVE_COLLECTION = "with_albums";
 const DEFAULT_ARTISTS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
 const DEFAULT_ARTISTS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
@@ -87,7 +87,6 @@ export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
 export const LSKEY_ALBUMS_WALL_SORT_DIRECTION = "albums.wallSortDirection";
 export const LSKEY_ALBUMS_WALL_SORT_FIELD = "albums.wallSortField";
 export const LSKEY_ALBUMS_WALL_VIEW_MODE = "albums.wallViewMode";
-export const LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME = "application.amplifierMaxVolume";
 export const LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION = "application.autoPlayOnPlaylistActivation";
 export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP = "application.mediaSearch.cardGap";
@@ -100,6 +99,7 @@ export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD = "application.media
 export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE = "application.mediaSearch.wallViewMode";
 export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
+export const LSKEY_APPLICATION_VOLUME_LIMIT = "application.volumeLimit";
 export const LSKEY_ARTISTS_ACTIVE_COLLECTION = "artists.activeCollection";
 export const LSKEY_ARTISTS_CARD_GAP = "artists.cardGap";
 export const LSKEY_ARTISTS_CARD_SIZE = "artists.cardSize";
@@ -159,7 +159,6 @@ export interface UserSettingsState {
         wallViewMode: MediaWallViewMode;
     };
     application: {
-        amplifierMaxVolume: number;
         autoPlayOnPlaylistActivation: boolean;
         haveShownWelcomeMessage: boolean;
         mediaSearch: {
@@ -174,6 +173,7 @@ export interface UserSettingsState {
         }
         theme: ApplicationTheme;
         useImageBackground: boolean;
+        volumeLimit: number | null;
     };
     artists: {
         activeCollection: ArtistCollection;
@@ -270,10 +270,6 @@ const initialState: UserSettingsState = {
         ),
     },
     application: {
-        amplifierMaxVolume: getLocalStorageValue(
-            LSKEY_APPLICATION_AMPLIFIER_MAX_VOLUME,
-            DEFAULT_APPLICATION_AMPLIFIER_MAX_VOLUME
-        ),
         autoPlayOnPlaylistActivation: getLocalStorageValue(
             LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
             DEFAULT_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION
@@ -320,6 +316,10 @@ const initialState: UserSettingsState = {
         useImageBackground: getLocalStorageValue(
             LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
             DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND
+        ),
+        volumeLimit: getLocalStorageValue(
+            LSKEY_APPLICATION_VOLUME_LIMIT,
+            DEFAULT_APPLICATION_VOLUME_LIMIT
         ),
     },
     artists: {
@@ -488,9 +488,6 @@ export const userSettingsSlice = createSlice({
         setAlbumsWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
             state.albums.wallViewMode = action.payload;
         },
-        setApplicationAmplifierMaxVolume: (state, action: PayloadAction<number>) => {
-            state.application.amplifierMaxVolume = action.payload;
-        },
         setApplicationAutoPlayOnPlaylistActivation: (state, action: PayloadAction<boolean>) => {
             state.application.autoPlayOnPlaylistActivation = action.payload;
         },
@@ -529,6 +526,9 @@ export const userSettingsSlice = createSlice({
         },
         setApplicationUseImageBackground: (state, action: PayloadAction<boolean>) => {
             state.application.useImageBackground = action.payload;
+        },
+        setApplicationVolumeLimit: (state, action: PayloadAction<number | null>) => {
+            state.application.volumeLimit = action.payload;
         },
         setArtistsActiveCollection: (state, action: PayloadAction<ArtistCollection>) => {
             state.artists.activeCollection = action.payload;
@@ -661,7 +661,6 @@ export const {
     setAlbumsWallSortDirection,
     setAlbumsWallSortField,
     setAlbumsWallViewMode,
-    setApplicationAmplifierMaxVolume,
     setApplicationAutoPlayOnPlaylistActivation,
     setApplicationHaveShownWelcomeMessage,
     setApplicationMediaSearchCardGap,
@@ -674,6 +673,7 @@ export const {
     setApplicationMediaSearchWallViewMode,
     setApplicationTheme,
     setApplicationUseImageBackground,
+    setApplicationVolumeLimit,
     setArtistsActiveCollection,
     setArtistsCardGap,
     setArtistsCardSize,

@@ -29,9 +29,9 @@ import { useGetArtistsQuery } from "../../app/services/vibinArtists";
 import { useGetTracksQuery } from "../../app/services/vibinTracks";
 import { showErrorNotification, showSuccessNotification } from "../../app/utils";
 import {
-    setApplicationAmplifierMaxVolume,
     setApplicationAutoPlayOnPlaylistActivation,
     setApplicationUseImageBackground,
+    setApplicationVolumeLimit,
 } from "../../app/store/userSettingsSlice";
 import { useAmplifierVolumeSetMutation } from "../../app/services/vibinSystem";
 import StylizedLabel from "../shared/textDisplay/StylizedLabel";
@@ -78,17 +78,16 @@ const StatusScreen: FC = () => {
         system_platform: systemPlatform,
         clients,
     } = useAppSelector((state: RootState) => state.vibinStatus);
-    const { amplifierMaxVolume, autoPlayOnPlaylistActivation, useImageBackground } = useAppSelector(
-        (state: RootState) => state.userSettings.application
-    );
+    const { autoPlayOnPlaylistActivation, useImageBackground, volumeLimit } =
+        useAppSelector((state: RootState) => state.userSettings.application);
     const [getSettings, getSettingsResult] = useLazySettingsQuery();
     const [updateSettings, updateSettingsResult] = useLazyUpdateSettingsQuery();
     const [volumeSet] = useAmplifierVolumeSetMutation();
     const [allAlbumsPath, setAllAlbumsPath] = useState<string>()
     const [newAlbumsPath, setNewAlbumsPath] = useState<string>()
     const [allArtistsPath, setAllArtistsPath] = useState<string>();
-    const [normalizedMaxVolume, setNormalizedMaxVolume] = useState<number>(0.0);
-    const maxVolumeInputRef = useRef<HTMLInputElement>(null);
+    const [localVolumeLimit, setLocalVolumeLimit] = useState<number | null>(null);
+    const volumeLimitInputRef = useRef<HTMLInputElement>(null);
 
     /**
      * Retrieve the current settings when the component mounts.
@@ -130,34 +129,29 @@ const StatusScreen: FC = () => {
     }, [updateSettingsResult, getSettings]);
 
     /**
-     * Store user input for maximum volume in local state.
+     * Store user input for volume limit in local state.
      */
-    const maxVolumeChangeHandler = useCallback(
-        (value: number | "") => {
-            if (value === "") {
-                return;
-            }
-
-            setNormalizedMaxVolume(value / 100);
-        },
-        []
-    );
+    const volumeLimitChangeHandler = useCallback((value: number | "") => {
+        setLocalVolumeLimit(value === "" ? null : value);
+    }, []);
 
     /**
-     * When user is done editing maximum volume, store value in app storage and update the
-     * amplifier's current volume if it's currently higher than the new max.
+     * When user is done editing volume limit, store value in app storage and update the
+     * amplifier's current volume if it's currently higher than the new limit.
      */
-    const maxVolumeBlurHandler = useCallback(
-        () => {
-            dispatch(setApplicationAmplifierMaxVolume(normalizedMaxVolume));
+    const volumeLimitBlurHandler = useCallback(() => {
+        dispatch(setApplicationVolumeLimit(localVolumeLimit));
 
-            amplifier?.volume &&
-                amplifier.max_volume &&
-                normalizedMaxVolume * amplifier.max_volume < amplifier.volume &&
-                volumeSet(Math.floor(normalizedMaxVolume * amplifier.max_volume));
-
-            showSuccessNotification({ title: "Maximum volume updated" });
-        }, [normalizedMaxVolume, amplifier, dispatch, volumeSet]);
+        if (
+            amplifier?.supported_actions?.includes("volume") &&
+            amplifier.volume &&
+            localVolumeLimit != null &&
+            localVolumeLimit < amplifier.volume
+        ) {
+            volumeSet(localVolumeLimit);
+            showSuccessNotification({ title: "Volume limit updated" });
+        }
+    }, [localVolumeLimit, amplifier, dispatch, volumeSet]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -190,20 +184,30 @@ const StatusScreen: FC = () => {
                     />
 
                     <NumberInput
-                        ref={maxVolumeInputRef}
-                        label="Maximum amplifier volume"
-                        description="From 0 to 100, step is 1"
+                        ref={volumeLimitInputRef}
+                        label="Volume limit"
+                        description="Prevents dangerous volumes"
                         min={0}
-                        max={100}
+                        max={amplifier?.max_volume ?? Number.MAX_VALUE}
                         precision={0}
-                        value={amplifierMaxVolume * 100}
+                        value={
+                            amplifier?.supported_actions?.includes("volume")
+                                ? volumeLimit ?? ""
+                                : ""
+                        }
                         maw="12rem"
-                        onChange={maxVolumeChangeHandler}
-                        onBlur={maxVolumeBlurHandler}
+                        onChange={volumeLimitChangeHandler}
+                        onBlur={volumeLimitBlurHandler}
+                        disabled={!amplifier?.supported_actions?.includes("volume")}
                     />
                     {!amplifier && (
                         <Text size="sm" color={colors.red[7]}>
-                            Currently has no effect (no amplifier registered with Vibin)
+                            Has no effect - no amplifier registered with Vibin
+                        </Text>
+                    )}
+                    {amplifier && !amplifier.supported_actions?.includes("volume") && (
+                        <Text size="sm" color={colors.red[7]}>
+                            Has no effect - amplifier doesn't allow setting volume
                         </Text>
                     )}
                 </Stack>
