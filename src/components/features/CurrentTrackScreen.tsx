@@ -266,10 +266,10 @@ const CurrentTrackScreen: FC = () => {
     /**
      * Keep track of which Preset is currently playing (if any).
      */
-    useEffect(() => {
-        const p = presets.find((preset) => preset.is_playing);
-        setActivePreset(presets.find((preset) => preset.is_playing));
-    }, [presets]);
+    useEffect(
+        () => setActivePreset(presets.find((preset) => preset.is_playing)),
+        [presets]
+    );
 
     // --------------------------------------------------------------------------------------------
 
