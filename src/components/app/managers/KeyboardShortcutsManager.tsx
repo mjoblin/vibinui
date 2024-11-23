@@ -211,7 +211,7 @@ const KeyboardShortcutsManager: FC = () => {
                     }),
             ],
         ],
-        [localVolume, volumeLimit, setLocalVolume]
+        [localVolume, volumeLimit]
     );
 
     // Hotkeys for amplifiers that support nudging the volume up and down.
