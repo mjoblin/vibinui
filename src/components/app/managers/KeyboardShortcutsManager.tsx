@@ -7,7 +7,9 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
     useAmplifierMuteToggleMutation,
+    useAmplifierVolumeDownMutation,
     useAmplifierVolumeSetMutation,
+    useAmplifierVolumeUpMutation,
     useSystemPowerSetMutation,
 } from "../../../app/services/vibinSystem";
 import {
@@ -53,6 +55,8 @@ const KeyboardShortcutsManager: FC = () => {
     const [debouncedAmplifierVolume] = useDebouncedValue(amplifierVolume, 2000);
     const [systemPowerSet] = useSystemPowerSetMutation();
     const [volumeSet] = useAmplifierVolumeSetMutation();
+    const [volumeDown] = useAmplifierVolumeDownMutation();
+    const [volumeUp] = useAmplifierVolumeUpMutation();
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [pausePlayback] = usePauseMutation();
     const [playPlayback] = usePlayMutation();
@@ -159,12 +163,13 @@ const KeyboardShortcutsManager: FC = () => {
         ]
     );
 
-    // Amplifier specific hotkeys. These are ignore when there's no amplifier.
-    const amplifierHotkeys: HotkeyItem[] = useMemo(() => {
-        return [
+    // Hotkeys for amplifiers that support setting the volume numerically.
+    const volumeSetHotkeys: HotkeyItem[] = useMemo(
+        () => [
             [
                 "ArrowUp",
-                () =>
+                (event) =>
+                    !event.repeat &&
                     typeof localVolume.value !== "undefined" &&
                     localVolume.value < volumeLimit &&
                     setLocalVolume({
@@ -174,7 +179,8 @@ const KeyboardShortcutsManager: FC = () => {
             ],
             [
                 "ArrowDown",
-                () =>
+                (event) =>
+                    !event.repeat &&
                     typeof localVolume.value !== "undefined" &&
                     localVolume.value > 0 &&
                     setLocalVolume({
@@ -184,7 +190,8 @@ const KeyboardShortcutsManager: FC = () => {
             ],
             [
                 "shift+ArrowUp",
-                () =>
+                (event) =>
+                    !event.repeat &&
                     typeof localVolume.value !== "undefined" &&
                     localVolume.value < volumeLimit &&
                     setLocalVolume({
@@ -194,7 +201,8 @@ const KeyboardShortcutsManager: FC = () => {
             ],
             [
                 "shift+ArrowDown",
-                () =>
+                (event) =>
+                    !event.repeat &&
                     typeof localVolume.value !== "undefined" &&
                     localVolume.value > 0 &&
                     setLocalVolume({
@@ -202,16 +210,40 @@ const KeyboardShortcutsManager: FC = () => {
                         whenSet: Date.now(),
                     }),
             ],
-            ["ctrl+shift+ArrowDown", () => amplifierMuteToggle()],
-        ];
-    }, [amplifierMuteToggle, localVolume, volumeLimit]);
+        ],
+        [localVolume, volumeLimit]
+    );
 
-    /**
-     * Set which hotkeys are active whenever the amplifier becomes available or goes away.
-     */
+    // Hotkeys for amplifiers that support nudging the volume up and down.
+    const volumeNudgeHotkeys: HotkeyItem[] = useMemo(
+        () => [
+            ["ArrowUp", (event) => !event.repeat && volumeUp()],
+            ["ArrowDown", (event) => !event.repeat && volumeDown()],
+        ],
+        [volumeDown, volumeUp]
+    );
+
+    // Hotkeys for amplifiers which support muting
+    const volumeMuteHotkeys: HotkeyItem[] = useMemo(
+        () => [["ctrl+shift+ArrowDown", (event) => !event.repeat && amplifierMuteToggle()]],
+        [amplifierMuteToggle]
+    );
+
+    // Choose Hotkeys according to capabilities of the amplifier
+    const amplifierHotkeys: HotkeyItem[] = useMemo(() => {
+        const actions = amplifier?.supported_actions;
+        const hotkeys: HotkeyItem[] = [];
+
+        if (actions?.includes("volume")) hotkeys.push(...volumeSetHotkeys);
+        else if (actions?.includes("volume_up_down")) hotkeys.push(...volumeNudgeHotkeys);
+
+        if (actions?.includes("mute")) hotkeys.push(...volumeMuteHotkeys);
+        return hotkeys;
+    }, [amplifier, volumeSetHotkeys, volumeNudgeHotkeys, volumeMuteHotkeys]);
+
     useEffect(() => {
-        setActiveHotkeys([...defaultHotkeys, ...(amplifier ? amplifierHotkeys : [])]);
-    }, [amplifier, amplifierHotkeys, defaultHotkeys]);
+        setActiveHotkeys([...defaultHotkeys, ...amplifierHotkeys]);
+    }, [amplifierHotkeys, defaultHotkeys]);
 
     useHotkeys(activeHotkeys);
 
