@@ -16,25 +16,27 @@ import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 const VolumeUpDownControl: FC = () => {
     const theme = useMantineTheme();
     const { STYLE_DISABLEABLE } = useAppGlobals();
-    const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
+    const system = useAppSelector((state: RootState) => state.system);
     const [amplifierVolumeUp] = useAmplifierVolumeUpMutation();
     const [amplifierVolumeDown] = useAmplifierVolumeDownMutation();
 
-    const isAmpOff = amplifier?.power === "off";
+    const amplifier = system.amplifier;
+    const isAmpOn =
+        amplifier && (amplifier.power ? amplifier.power === "on" : system.power === "on");
     const colorStandard =
         theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[3];
 
     return (
         <Flex gap={1} align="center">
             <ActionIcon
-                disabled={isAmpOff}
+                disabled={!isAmpOn}
                 sx={STYLE_DISABLEABLE}
                 onClick={() => amplifierVolumeDown()}
             >
                 <IconSquareRoundedMinusFilled style={{ color: colorStandard }} />
             </ActionIcon>
             <ActionIcon
-                disabled={isAmpOff}
+                disabled={!isAmpOn}
                 sx={STYLE_DISABLEABLE}
                 onClick={() => amplifierVolumeUp()}
             >
