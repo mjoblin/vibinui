@@ -53,8 +53,9 @@ const SettingsMenu: FC = () => {
     const [streamerPowerToggle] = useStreamerPowerToggleMutation();
     const [amplifierSourceSet] = useAmplifierSourceSetMutation();
     const [streamerSourceSet] = useStreamerSourceSetMutation();
-    const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
-    const streamer = useAppSelector((state: RootState) => state.system.streamer);
+    const system = useAppSelector((state: RootState) => state.system);
+    const amplifier = system.amplifier;
+    const streamer = system.streamer;
     const previousAmplifierPowerState = useRef<PowerState>(amplifier?.power);
     const previousStreamerPowerState = useRef<PowerState>(streamer.power);
 
@@ -92,6 +93,11 @@ const SettingsMenu: FC = () => {
         checkIfPowerChanged("Amplifier", amplifier?.power, previousAmplifierPowerState);
         checkIfPowerChanged("Streamer", streamer.power, previousStreamerPowerState);
     }, [amplifier?.power, streamer.power]);
+
+    const showAmplifierPower = amplifier?.power != null
+    const showAmplifierSources = amplifier?.sources != null
+    const isAmpAvailable =
+        amplifier && (amplifier.power ? amplifier.power === "on" : system.power === "on");
 
     return (
         <Menu shadow="md" width={210} position="top-start" withArrow arrowPosition="center">
@@ -134,39 +140,47 @@ const SettingsMenu: FC = () => {
                 </Menu.Item>
 
                 {/* Amplifier ----------------------------------------------------------------- */}
-                {!!amplifier && (
+                {(showAmplifierPower || showAmplifierSources) && (
                     <>
                         <Menu.Label>Amplifier</Menu.Label>
 
                         {/* Power */}
-                        <Menu.Item closeMenuOnClick={false}>
-                            <Switch
-                                label="Power"
-                                checked={amplifier?.power === "on"}
-                                onChange={(event) => amplifierPowerToggle()}
-                                onLabel="on"
-                                offLabel="off"
-                            />
-                        </Menu.Item>
+                        {showAmplifierPower && (
+                            <Menu.Item closeMenuOnClick={false}>
+                                <Switch
+                                    label="Power"
+                                    checked={amplifier?.power === "on"}
+                                    disabled={!amplifier?.supported_actions?.includes("power")}
+                                    onChange={(event) => amplifierPowerToggle()}
+                                    onLabel="on"
+                                    offLabel="off"
+                                />
+                            </Menu.Item>
+                        )}
 
                         {/* Source selector */}
-                        <Menu.Item closeMenuOnClick={false}>
-                            <Select
-                                disabled={amplifier.power !== "on"}
-                                value={amplifier?.sources?.active?.name}
-                                dropdownPosition="top"
-                                maxDropdownHeight={500}
-                                onChange={(value) =>
-                                    value && amplifierSourceSet(value)
-                                }
-                                data={
-                                    amplifier?.sources?.available?.map((source: AudioSource) => ({
-                                        value: source.name,
-                                        label: source.name,
-                                    })) || []
-                                }
-                            />
-                        </Menu.Item>
+                        {showAmplifierSources && (
+                            <Menu.Item closeMenuOnClick={false}>
+                                <Select
+                                    disabled={
+                                        !isAmpAvailable ||
+                                        !amplifier?.supported_actions?.includes("audio_source")
+                                    }
+                                    value={amplifier?.sources?.active?.name}
+                                    dropdownPosition="top"
+                                    maxDropdownHeight={500}
+                                    onChange={(value) => value && amplifierSourceSet(value)}
+                                    data={
+                                        amplifier?.sources?.available?.map(
+                                            (source: AudioSource) => ({
+                                                value: source.name,
+                                                label: source.name,
+                                            })
+                                        ) || []
+                                    }
+                                />
+                            </Menu.Item>
+                        )}
 
                         <Menu.Divider />
                     </>
