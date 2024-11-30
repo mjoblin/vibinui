@@ -36,7 +36,7 @@ const VolumeControl: FC = () => {
     const { colors } = useMantineTheme();
     const [opened, { close, open }] = useDisclosure(false);
     const { HEADER_HEIGHT } = useAppGlobals();
-    const amplifier = useAppSelector((state: RootState) => state.system.amplifier);
+    const system = useAppSelector((state: RootState) => state.system);
     const [amplifierVolumeSet] = useAmplifierVolumeSetMutation();
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [localVolume, setLocalVolume] = useState<number>(0);
@@ -44,8 +44,10 @@ const VolumeControl: FC = () => {
         (state: RootState) => state.userSettings.application.volumeLimit
     );
 
-    const isAmpOn = amplifier?.power === "on";
-    const canControlMute = amplifier?.mute === "on" || amplifier?.mute === "off";
+    const amplifier = system.amplifier;
+    const isAmpOn =
+        amplifier && (amplifier.power ? amplifier.power === "on" : system.power === "on");
+    const canControlMute = amplifier?.supported_actions?.includes("mute");
 
     /**
      * Whenever a new volume setting comes in from the amplifier, force our local volume state
@@ -59,7 +61,6 @@ const VolumeControl: FC = () => {
     if (
         !amplifier ||
         amplifier.mute === null ||
-        amplifier.power == null ||
         amplifier.max_volume == null ||
         amplifier.volume == null
     ) {

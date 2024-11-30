@@ -267,6 +267,7 @@ const StatusScreen: FC = () => {
                             rowHeight={1.3}
                             fieldValues={{
                                 Streamer: streamer.name || "",
+                                Amplifier: amplifier?.name || "<none>",
                                 "Media Server": mediaServer?.name || "<none>",
                                 "Play State": <PlayStateIndicator />,
                                 Source: <MediaSourceBadge />,
