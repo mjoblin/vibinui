@@ -24,7 +24,7 @@ import {
     useAmplifierPowerToggleMutation,
     useAmplifierSourceSetMutation,
     useStreamerPowerToggleMutation,
-    useStreamerSourceSetMutation
+    useStreamerSourceSetMutation,
 } from "../../app/services/vibinSystem";
 import {
     setShowDebugPanel,
@@ -94,8 +94,8 @@ const SettingsMenu: FC = () => {
         checkIfPowerChanged("Streamer", streamer.power, previousStreamerPowerState);
     }, [amplifier?.power, streamer.power]);
 
-    const showAmplifierPower = amplifier?.power != null
-    const showAmplifierSources = amplifier?.sources != null
+    const showAmplifierPower = amplifier?.power != null;
+    const showAmplifierSources = amplifier?.sources != null;
     const isAmpAvailable =
         amplifier && (amplifier.power ? amplifier.power === "on" : system.power === "on");
 
