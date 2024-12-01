@@ -63,7 +63,7 @@ export const store = configureStore({
             vibinTracksApi.middleware,
             vibinTransportApi.middleware,
             vibinVibinApi.middleware,
-            vibinWebsocket.middleware
+            vibinWebsocket.middleware,
         ),
     devTools: {
         stateSanitizer: (state) =>

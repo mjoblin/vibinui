@@ -9,7 +9,7 @@ type ShowCountLabelProps = {
     showing: number;
     of: number;
     type: string;
-}
+};
 
 const ShowCountLabel: FC<ShowCountLabelProps> = ({ showing, of, type }) => {
     const { colors } = useMantineTheme();

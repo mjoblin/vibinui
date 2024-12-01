@@ -77,7 +77,7 @@ export type Track = {
     date?: string;
     year?: number;
     art_url: string;
-    album_art_uri?: string;  // TODO: Fix "art_url" vs. "album_art_uri"
+    album_art_uri?: string; // TODO: Fix "art_url" vs. "album_art_uri"
     genre?: string;
 };
 
@@ -90,15 +90,15 @@ export type Format = {
     sample_rate: number;
     bit_depth: number;
     encoding: string;
-}
+};
 
 // A file being streamed for playback.
 export type Stream = {
     url: string;
-}
+};
 
 // A collection of tracks defining track playback sequence.
-export type Playlist = PlaylistEntry[]
+export type Playlist = PlaylistEntry[];
 
 export type PlaylistEntry = {
     album: string;
@@ -113,20 +113,21 @@ export type PlaylistEntry = {
     uri: string;
     albumMediaId: MediaId;
     trackMediaId: MediaId;
-}
+};
 
 export type MediaSourceClass =
-    "digital.coax" |
-    "digital.toslink" |
-    "digital.usb" |
-    "stream.media" |
-    "stream.radio" |
-    "stream.service.airplay" |
-    "stream.service.cast" |
-    "stream.service.roon" |
-    "stream.service.spotify" |
-    "stream.service.tidal";
+    | "digital.coax"
+    | "digital.toslink"
+    | "digital.usb"
+    | "stream.media"
+    | "stream.radio"
+    | "stream.service.airplay"
+    | "stream.service.cast"
+    | "stream.service.roon"
+    | "stream.service.spotify"
+    | "stream.service.tidal";
 
 export const isAlbum = (media: Media): media is Album => !isTrack(media) && !isPreset(media);
-export const isTrack = (media: Media): media is Track => (media as Track).track_number !== undefined;
+export const isTrack = (media: Media): media is Track =>
+    (media as Track).track_number !== undefined;
 export const isPreset = (media: Media): media is Preset => (media as Preset).class !== undefined;

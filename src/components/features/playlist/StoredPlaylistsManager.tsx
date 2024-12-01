@@ -73,7 +73,7 @@ const StoredPlaylistsManager: FC = () => {
         status: { active_id: activeStoredPlaylistId },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { sortField: playlistEditorSortField } = useAppSelector(
-        (state: RootState) => state.userSettings.playlist.editor
+        (state: RootState) => state.userSettings.playlist.editor,
     );
     const [deleteStoredPlaylist, deleteStoredPlaylistStatus] = useLazyDeleteStoredPlaylistQuery();
     const [updateStoredPlaylistName, updateStoredPlaylistNameStatus] =
@@ -221,7 +221,7 @@ const StoredPlaylistsManager: FC = () => {
                                                               maw="6rem"
                                                               onClick={() =>
                                                                   deleteStoredPlaylist(
-                                                                      storedPlaylist.id
+                                                                      storedPlaylist.id,
                                                                   )
                                                               }
                                                           >

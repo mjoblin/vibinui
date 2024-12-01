@@ -31,10 +31,10 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const streamerName = useAppSelector((state: RootState) => state.system.streamer.name);
     const amplifierActions = useAppSelector(
-        (state: RootState) => state.system.amplifier?.supported_actions
+        (state: RootState) => state.system.amplifier?.supported_actions,
     );
     const currentScreen = useAppSelector(
-        (state: RootState) => state.internal.application.currentScreen
+        (state: RootState) => state.internal.application.currentScreen,
     );
 
     return (
@@ -48,8 +48,8 @@ const AppHeader: FC<AppHeaderProps> = ({ noBackground = false }) => {
                     backgroundColor: noBackground
                         ? "rgb(0, 0, 0, 0)"
                         : theme.colorScheme === "dark"
-                        ? theme.colors.dark[6]
-                        : theme.white,
+                          ? theme.colors.dark[6]
+                          : theme.white,
                 },
             }}
         >

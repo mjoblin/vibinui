@@ -38,14 +38,14 @@ const KeyboardShortcutsManager: FC = () => {
     const { colors } = useMantineTheme();
     const { APP_MODAL_BLUR, SEEK_OFFSET_SECS } = useAppGlobals();
     const { showKeyboardShortcuts } = useAppSelector(
-        (state: RootState) => state.internal.application
+        (state: RootState) => state.internal.application,
     );
     const applicationVolumeLimit = useAppSelector(
-        (state: RootState) => state.userSettings.application.volumeLimit
+        (state: RootState) => state.userSettings.application.volumeLimit,
     );
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const activeTransportActions = useAppSelector(
-        (state: RootState) => state.playback.active_transport_actions
+        (state: RootState) => state.playback.active_transport_actions,
     );
     const duration = useAppSelector((state: RootState) => state.playback.current_track?.duration);
     const position = useAppSelector((state: RootState) => state.playback.playhead.position);
@@ -160,7 +160,7 @@ const KeyboardShortcutsManager: FC = () => {
             systemPower,
             systemPowerSet,
             showKeyboardShortcuts,
-        ]
+        ],
     );
 
     // Hotkeys for amplifiers that support setting the volume numerically.
@@ -211,7 +211,7 @@ const KeyboardShortcutsManager: FC = () => {
                     }),
             ],
         ],
-        [localVolume, volumeLimit]
+        [localVolume, volumeLimit],
     );
 
     // Hotkeys for amplifiers that support nudging the volume up and down.
@@ -220,13 +220,13 @@ const KeyboardShortcutsManager: FC = () => {
             ["ArrowUp", (event) => !event.repeat && volumeUp()],
             ["ArrowDown", (event) => !event.repeat && volumeDown()],
         ],
-        [volumeDown, volumeUp]
+        [volumeDown, volumeUp],
     );
 
     // Hotkeys for amplifiers which support muting
     const volumeMuteHotkeys: HotkeyItem[] = useMemo(
         () => [["ctrl+shift+ArrowDown", (event) => !event.repeat && amplifierMuteToggle()]],
-        [amplifierMuteToggle]
+        [amplifierMuteToggle],
     );
 
     // Choose Hotkeys according to capabilities of the amplifier

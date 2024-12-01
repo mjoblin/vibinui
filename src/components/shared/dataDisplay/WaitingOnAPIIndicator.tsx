@@ -18,7 +18,7 @@ const apiRegex = new RegExp("^vibin.*Api$");
 
 type WaitingOnAPIIndicatorProps = {
     stealth?: boolean;
-}
+};
 
 const WaitingOnAPIIndicator: FC<WaitingOnAPIIndicatorProps> = ({ stealth = false }) => {
     const theme = useMantineTheme();
@@ -39,7 +39,7 @@ const WaitingOnAPIIndicator: FC<WaitingOnAPIIndicatorProps> = ({ stealth = false
         return apis.reduce((pendingQueries: any[], apiName: string) => {
             // @ts-ignore
             const thisApiPendingQueries = Object.values(state[apiName].queries).filter(
-                (query: any) => query && query.status === "pending"
+                (query: any) => query && query.status === "pending",
             );
 
             return [...pendingQueries, ...thisApiPendingQueries];
@@ -61,18 +61,15 @@ const WaitingOnAPIIndicator: FC<WaitingOnAPIIndicatorProps> = ({ stealth = false
             opened={queryPopoverOpened}
         >
             <Popover.Target>
-                <Tooltip
-                    label="Lit when API calls are pending"
-                    disabled={pendingQueryCount > 0}
-                >
+                <Tooltip label="Lit when API calls are pending" disabled={pendingQueryCount > 0}>
                     <ColorSwatch
                         size={20}
                         color={
                             pendingQueryCount
                                 ? TEMPORARY_ACTIVITY_COLOR
                                 : theme.colorScheme === "dark"
-                                ? theme.colors.dark[6]
-                                : theme.colors.gray[2]
+                                  ? theme.colors.dark[6]
+                                  : theme.colors.gray[2]
                         }
                         sx={{ boxShadow: theme.colorScheme === "dark" ? undefined : "none" }}
                         onMouseEnter={openQueryPopover}

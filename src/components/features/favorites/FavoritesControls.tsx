@@ -29,11 +29,11 @@ const FavoritesControls: FC = () => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { activeCollection, filterText } = useAppSelector(
-        (state: RootState) => state.userSettings.favorites
+        (state: RootState) => state.userSettings.favorites,
     );
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { filteredFavoriteMediaIds } = useAppSelector(
-        (state: RootState) => state.internal.favorites
+        (state: RootState) => state.internal.favorites,
     );
 
     return (

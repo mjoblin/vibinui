@@ -115,7 +115,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const [playPlaylistId, playStatus] = usePlayPlaylistEntryIdMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { albumById, artistByName, trackById } = useAppSelector(
-        (state: RootState) => state.mediaGroups
+        (state: RootState) => state.mediaGroups,
     );
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const [showTrackLinksModal, setShowTrackLinksModal] = useState<boolean>(false);
@@ -212,8 +212,8 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                                 ? darkDisabled
                                                 : darkEnabled
                                             : isStreamerOff
-                                                ? lightDisabled
-                                                : lightEnabled
+                                              ? lightDisabled
+                                              : lightEnabled
                                     }
                                 />
                             }
@@ -378,7 +378,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             onClick={() => {
                                 dispatch(setAlbumsActiveCollection("all"));
                                 dispatch(
-                                    setAlbumsFilterText(`${entry.album} artist:(${entry.artist})`)
+                                    setAlbumsFilterText(`${entry.album} artist:(${entry.artist})`),
                                 );
                                 navigate("/ui/albums");
                             }}
@@ -390,7 +390,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             icon={<IconMicrophone2 size={14} />}
                             onClick={() => {
                                 dispatch(
-                                    setTracksFilterText(`${entry.title} album:(${entry.album})`)
+                                    setTracksFilterText(`${entry.title} album:(${entry.album})`),
                                 );
                                 navigate("/ui/tracks");
                             }}

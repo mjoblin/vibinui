@@ -52,7 +52,7 @@ export const albumTransformer = (album: BackendAlbum): Album => {
         artist: album.artist,
         genre: album.genre,
         album_art_uri: album.album_art_uri,
-    }
+    };
 };
 
 export const trackTransformer = (track: BackendTrack): Track => {
@@ -73,7 +73,7 @@ export const trackTransformer = (track: BackendTrack): Track => {
         date: track.date,
         year: isNaN(year) ? 0 : year,
         genre: track.genre,
-    }
+    };
 };
 
 export const vibinAlbumsApi = createApi({

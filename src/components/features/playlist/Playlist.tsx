@@ -111,11 +111,13 @@ const useStyles = createStyles((theme) => ({
         },
     },
     highlight: {
-        backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
+        backgroundColor:
+            theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
     },
     highlightOnHover: {
         "&:hover": {
-            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
+            backgroundColor:
+                theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.yellow[2],
         },
     },
     pointerOnHover: {
@@ -143,7 +145,7 @@ const useStyles = createStyles((theme) => ({
 type PlaylistProps = {
     onNewCurrentEntryRef?: (ref: HTMLDivElement) => void;
     onPlaylistModified?: () => void;
-}
+};
 
 /**
  * Play Now (Inserts Track or Album after current Track in Playlist, and plays)
@@ -161,7 +163,9 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const { haveActivatedPlaylist, isLocalMediaActive } = useAppStatus();
     const { trackById } = useMediaGroupings();
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
-    const { autoPlayOnPlaylistActivation } = useAppSelector((state: RootState) => state.userSettings.application);
+    const { autoPlayOnPlaylistActivation } = useAppSelector(
+        (state: RootState) => state.userSettings.application,
+    );
     const { viewMode } = useAppSelector((state: RootState) => state.userSettings.playlist);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -227,7 +231,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         } else {
             return {
                 table: {
-                    [`tbody > tr:nth-of-type(${activePlaylist.current_track_index})`]: previousRowCSS,
+                    [`tbody > tr:nth-of-type(${activePlaylist.current_track_index})`]:
+                        previousRowCSS,
                     [`tbody > tr:nth-of-type(${activePlaylist.current_track_index + 1})`]:
                         currentlyPlayingRowCSS,
                 },
@@ -321,8 +326,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         optimisticPlaylistEntries.length > 0
             ? optimisticPlaylistEntries
             : activePlaylist?.entries && activePlaylist.entries.length > 0
-            ? activePlaylist.entries
-            : [];
+              ? activePlaylist.entries
+              : [];
 
     if (playlistEntries.length <= 0) {
         return (
@@ -336,12 +341,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     //  (artist name and year/genre) might be wider than the main text above it (song title and
     //  album name).
 
-    const maxTitleWidth = Math.max(
-        ...playlistEntries.map((elem) => getTextWidth(elem.title))
-    );
-    const maxAlbumWidth = Math.max(
-        ...playlistEntries.map((elem) => getTextWidth(elem.album))
-    );
+    const maxTitleWidth = Math.max(...playlistEntries.map((elem) => getTextWidth(elem.title)));
+    const maxAlbumWidth = Math.max(...playlistEntries.map((elem) => getTextWidth(elem.album)));
 
     /**
      * Find the album year for the first album matching the given title & artist. This is a little
@@ -357,7 +358,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         }
 
         const album = albums.find(
-            (album) => album.title === title && (album.artist === artist || !album.artist)
+            (album) => album.title === title && (album.artist === artist || !album.artist),
         );
 
         return album ? yearFromDate(album.date) : undefined;
@@ -373,17 +374,18 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         .map((entry, index) => {
             const year = albumYear(entry.album, entry.artist);
             // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
-            const genre = entry.genre === "(Unknown Genre)" ? undefined : entry.genre?.toLocaleUpperCase();
+            const genre =
+                entry.genre === "(Unknown Genre)" ? undefined : entry.genre?.toLocaleUpperCase();
 
             // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
             const albumSubtitle =
                 year && genre
                     ? `${year} • ${genre}`
                     : !year && !genre
-                    ? ""
-                    : year && !genre
-                    ? year
-                    : genre;
+                      ? ""
+                      : year && !genre
+                        ? year
+                        : genre;
 
             return (
                 <Draggable key={`${entry.id}`} index={index} draggableId={`${entry.id}`}>
@@ -439,11 +441,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                     playStatus === "pause"
                                         ? resumePlayback()
                                         : index === activePlaylist.current_track_index &&
-                                          isLocalMediaActive &&
-                                          playStatus === "play" &&
-                                          streamerPower === "on"
-                                        ? pausePlayback()
-                                        : playPlaylistId({ playlistId: entry.id });
+                                            isLocalMediaActive &&
+                                            playStatus === "play" &&
+                                            streamerPower === "on"
+                                          ? pausePlayback()
+                                          : playPlaylistId({ playlistId: entry.id });
                                 }}
                             >
                                 <Stack spacing={0}>
@@ -582,8 +584,8 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                             moveArrayElement(
                                 optimisticPlaylistEntries,
                                 source.index,
-                                destination.index
-                            )
+                                destination.index,
+                            ),
                         );
 
                         // Request the playlist item move in the backend. The new backend playlist

@@ -87,15 +87,19 @@ export const LSKEY_ALBUMS_SHOW_DETAILS = "albums.showDetails";
 export const LSKEY_ALBUMS_WALL_SORT_DIRECTION = "albums.wallSortDirection";
 export const LSKEY_ALBUMS_WALL_SORT_FIELD = "albums.wallSortField";
 export const LSKEY_ALBUMS_WALL_VIEW_MODE = "albums.wallViewMode";
-export const LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION = "application.autoPlayOnPlaylistActivation";
+export const LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION =
+    "application.autoPlayOnPlaylistActivation";
 export const LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE = "application.haveShownWelcomeMessage";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP = "application.mediaSearch.cardGap";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE = "application.mediaSearch.cardSize";
-export const LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES = "application.mediaSearch.displayCategories";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES =
+    "application.mediaSearch.displayCategories";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_FILTER_TEXT = "application.mediaSearch.filterText";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS = "application.mediaSearch.showDetails";
-export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION = "application.mediaSearch.wallSortDirection";
-export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD = "application.mediaSearch.wallSortField";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION =
+    "application.mediaSearch.wallSortDirection";
+export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD =
+    "application.mediaSearch.wallSortField";
 export const LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE = "application.mediaSearch.wallViewMode";
 export const LSKEY_APPLICATION_THEME = "application.theme";
 export const LSKEY_APPLICATION_USE_IMAGE_BACKGROUND = "application.useImageBackground";
@@ -170,7 +174,7 @@ export interface UserSettingsState {
             wallSortDirection: MediaSortDirection;
             wallSortField: string;
             wallViewMode: MediaWallViewMode;
-        }
+        };
         theme: ApplicationTheme;
         useImageBackground: boolean;
         volumeLimit: number | null;
@@ -246,86 +250,86 @@ const initialState: UserSettingsState = {
     albums: {
         activeCollection: getLocalStorageValue(
             LSKEY_ALBUMS_ACTIVE_COLLECTION,
-            DEFAULT_ALBUMS_ACTIVE_COLLECTION
+            DEFAULT_ALBUMS_ACTIVE_COLLECTION,
         ),
         cardGap: getLocalStorageValue(LSKEY_ALBUMS_CARD_GAP, DEFAULT_ALBUMS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_ALBUMS_CARD_SIZE, DEFAULT_ALBUMS_CARD_SIZE),
         filterText: getLocalStorageValue(LSKEY_ALBUMS_FILTER_TEXT, DEFAULT_ALBUMS_FILTER_TEXT),
         followCurrentlyPlaying: getLocalStorageValue(
             LSKEY_ALBUMS_FOLLOW_CURRENTLY_PLAYING,
-            DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING
+            DEFAULT_ALBUMS_FOLLOW_CURRENTLY_PLAYING,
         ),
         showDetails: getLocalStorageValue(LSKEY_ALBUMS_SHOW_DETAILS, DEFAULT_ALBUMS_SHOW_DETAILS),
         wallSortDirection: getLocalStorageValue(
             LSKEY_ALBUMS_WALL_SORT_DIRECTION,
-            DEFAULT_ALBUMS_WALL_SORT_DIRECTION
+            DEFAULT_ALBUMS_WALL_SORT_DIRECTION,
         ),
         wallSortField: getLocalStorageValue(
             LSKEY_ALBUMS_WALL_SORT_FIELD,
-            DEFAULT_ALBUMS_WALL_SORT_FIELD
+            DEFAULT_ALBUMS_WALL_SORT_FIELD,
         ),
         wallViewMode: getLocalStorageValue(
             LSKEY_ALBUMS_WALL_VIEW_MODE,
-            DEFAULT_ALBUMS_WALL_VIEW_MODE
+            DEFAULT_ALBUMS_WALL_VIEW_MODE,
         ),
     },
     application: {
         autoPlayOnPlaylistActivation: getLocalStorageValue(
             LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
-            DEFAULT_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION
+            DEFAULT_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
         ),
         haveShownWelcomeMessage: getLocalStorageValue(
             LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
-            DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE
+            DEFAULT_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
         ),
         mediaSearch: {
             cardGap: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP
+                DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_GAP,
             ),
             cardSize: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_SIZE
+                DEFAULT_APPLICATION_MEDIA_SEARCH_CARD_SIZE,
             ),
             displayCategories: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES
+                DEFAULT_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES,
             ),
             filterText: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_FILTER_TEXT,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_FILTER_TEXT
+                DEFAULT_APPLICATION_MEDIA_SEARCH_FILTER_TEXT,
             ),
             showDetails: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS
+                DEFAULT_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS,
             ),
             wallSortDirection: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION
+                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION,
             ),
             wallSortField: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD
+                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD,
             ),
             wallViewMode: getLocalStorageValue(
                 LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE,
-                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE
+                DEFAULT_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE,
             ),
         },
         theme: getLocalStorageValue(LSKEY_APPLICATION_THEME, DEFAULT_APPLICATION_THEME),
         useImageBackground: getLocalStorageValue(
             LSKEY_APPLICATION_USE_IMAGE_BACKGROUND,
-            DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND
+            DEFAULT_APPLICATION_USE_IMAGE_BACKGROUND,
         ),
         volumeLimit: getLocalStorageValue(
             LSKEY_APPLICATION_VOLUME_LIMIT,
-            DEFAULT_APPLICATION_VOLUME_LIMIT
+            DEFAULT_APPLICATION_VOLUME_LIMIT,
         ),
     },
     artists: {
         activeCollection: getLocalStorageValue(
             LSKEY_ARTISTS_ACTIVE_COLLECTION,
-            DEFAULT_ARTISTS_ACTIVE_COLLECTION
+            DEFAULT_ARTISTS_ACTIVE_COLLECTION,
         ),
         cardGap: getLocalStorageValue(LSKEY_ARTISTS_CARD_GAP, DEFAULT_ARTISTS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_ARTISTS_CARD_SIZE, DEFAULT_ARTISTS_CARD_SIZE),
@@ -339,47 +343,47 @@ const initialState: UserSettingsState = {
     favorites: {
         activeCollection: getLocalStorageValue(
             LSKEY_FAVORITES_ACTIVE_COLLECTION,
-            DEFAULT_FAVORITES_ACTIVE_COLLECTION
+            DEFAULT_FAVORITES_ACTIVE_COLLECTION,
         ),
         cardGap: getLocalStorageValue(LSKEY_FAVORITES_CARD_GAP, DEFAULT_FAVORITES_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_FAVORITES_CARD_SIZE, DEFAULT_FAVORITES_CARD_SIZE),
         filterText: getLocalStorageValue(
             LSKEY_FAVORITES_FILTER_TEXT,
-            DEFAULT_FAVORITES_FILTER_TEXT
+            DEFAULT_FAVORITES_FILTER_TEXT,
         ),
         showDetails: getLocalStorageValue(
             LSKEY_FAVORITES_SHOW_DETAILS,
-            DEFAULT_FAVORITES_SHOW_DETAILS
+            DEFAULT_FAVORITES_SHOW_DETAILS,
         ),
         wallSortDirection: getLocalStorageValue(
             LSKEY_FAVORITES_WALL_SORT_DIRECTION,
-            DEFAULT_FAVORITES_WALL_SORT_DIRECTION
+            DEFAULT_FAVORITES_WALL_SORT_DIRECTION,
         ),
         wallSortField: getLocalStorageValue(
             LSKEY_FAVORITES_WALL_SORT_FIELD,
-            DEFAULT_FAVORITES_WALL_SORT_FIELD
+            DEFAULT_FAVORITES_WALL_SORT_FIELD,
         ),
         wallViewMode: getLocalStorageValue(
             LSKEY_FAVORITES_WALL_VIEW_MODE,
-            DEFAULT_FAVORITES_WALL_VIEW_MODE
+            DEFAULT_FAVORITES_WALL_VIEW_MODE,
         ),
     },
     currentTrack: {
         activeTab: getLocalStorageValue(
             LSKEY_CURRENTTRACK_ACTIVETAB,
-            DEFAULT_CURRENTTRACK_ACTIVETAB
+            DEFAULT_CURRENTTRACK_ACTIVETAB,
         ),
     },
     playlist: {
         editor: {
             sortField: getLocalStorageValue(
                 LSKEY_PLAYLIST_EDITOR_SORTFIELD,
-                DEFAULT_PLAYLIST_EDITOR_SORTFIELD
+                DEFAULT_PLAYLIST_EDITOR_SORTFIELD,
             ),
         },
         followCurrentlyPlaying: getLocalStorageValue(
             LSKEY_PLAYLIST_FOLLOW_CURRENTLY_PLAYING,
-            DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING
+            DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING,
         ),
         viewMode: getLocalStorageValue(LSKEY_PLAYLIST_VIEWMODE, DEFAULT_PLAYLIST_VIEWMODE),
     },
@@ -390,15 +394,15 @@ const initialState: UserSettingsState = {
         showDetails: getLocalStorageValue(LSKEY_PRESETS_SHOW_DETAILS, DEFAULT_PRESETS_SHOW_DETAILS),
         wallSortDirection: getLocalStorageValue(
             LSKEY_PRESETS_WALL_SORT_DIRECTION,
-            DEFAULT_PRESETS_WALL_SORT_DIRECTION
+            DEFAULT_PRESETS_WALL_SORT_DIRECTION,
         ),
         wallSortField: getLocalStorageValue(
             LSKEY_PRESETS_WALL_SORT_FIELD,
-            DEFAULT_PRESETS_WALL_SORT_FIELD
+            DEFAULT_PRESETS_WALL_SORT_FIELD,
         ),
         wallViewMode: getLocalStorageValue(
             LSKEY_PRESETS_WALL_VIEW_MODE,
-            DEFAULT_PRESETS_WALL_VIEW_MODE
+            DEFAULT_PRESETS_WALL_VIEW_MODE,
         ),
     },
     tracks: {
@@ -407,21 +411,21 @@ const initialState: UserSettingsState = {
         filterText: getLocalStorageValue(LSKEY_TRACKS_FILTER_TEXT, DEFAULT_TRACKS_FILTER_TEXT),
         followCurrentlyPlaying: getLocalStorageValue(
             LSKEY_TRACKS_FOLLOW_CURRENTLY_PLAYING,
-            DEFAULT_TRACKS_FOLLOW_CURRENTLY_PLAYING
+            DEFAULT_TRACKS_FOLLOW_CURRENTLY_PLAYING,
         ),
         lyricsSearchText: "",
         showDetails: getLocalStorageValue(LSKEY_TRACKS_SHOW_DETAILS, DEFAULT_TRACKS_SHOW_DETAILS),
         wallSortDirection: getLocalStorageValue(
             LSKEY_TRACKS_WALL_SORT_DIRECTION,
-            DEFAULT_TRACKS_WALL_SORT_DIRECTION
+            DEFAULT_TRACKS_WALL_SORT_DIRECTION,
         ),
         wallSortField: getLocalStorageValue(
             LSKEY_TRACKS_WALL_SORT_FIELD,
-            DEFAULT_TRACKS_WALL_SORT_FIELD
+            DEFAULT_TRACKS_WALL_SORT_FIELD,
         ),
         wallViewMode: getLocalStorageValue(
             LSKEY_TRACKS_WALL_VIEW_MODE,
-            DEFAULT_TRACKS_WALL_VIEW_MODE
+            DEFAULT_TRACKS_WALL_VIEW_MODE,
         ),
     },
 };
@@ -502,7 +506,7 @@ export const userSettingsSlice = createSlice({
         },
         setApplicationMediaSearchDisplayCategories: (
             state,
-            action: PayloadAction<MediaSearchDisplayCategory[]>
+            action: PayloadAction<MediaSearchDisplayCategory[]>,
         ) => {
             state.application.mediaSearch.displayCategories = action.payload;
         },
@@ -512,13 +516,19 @@ export const userSettingsSlice = createSlice({
         setApplicationMediaSearchShowDetails: (state, action: PayloadAction<boolean>) => {
             state.application.mediaSearch.showDetails = action.payload;
         },
-        setApplicationMediaSearchWallSortDirection: (state, action: PayloadAction<MediaSortDirection>) => {
+        setApplicationMediaSearchWallSortDirection: (
+            state,
+            action: PayloadAction<MediaSortDirection>,
+        ) => {
             state.application.mediaSearch.wallSortDirection = action.payload;
         },
         setApplicationMediaSearchWallSortField: (state, action: PayloadAction<MediaSortField>) => {
             state.application.mediaSearch.wallSortField = action.payload;
         },
-        setApplicationMediaSearchWallViewMode: (state, action: PayloadAction<MediaWallViewMode>) => {
+        setApplicationMediaSearchWallViewMode: (
+            state,
+            action: PayloadAction<MediaWallViewMode>,
+        ) => {
             state.application.mediaSearch.wallViewMode = action.payload;
         },
         setApplicationTheme: (state, action: PayloadAction<ApplicationTheme>) => {

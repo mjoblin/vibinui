@@ -26,13 +26,15 @@ const sourceClassToColor: Record<MediaSourceClass, string> = {
 
 type MediaSourceBadgeProps = {
     showSource?: boolean;
-}
+};
 
 /**
  *
  */
 const MediaSourceBadge: FC<MediaSourceBadgeProps> = ({ showSource = false }) => {
-    const currentSource = useAppSelector((state: RootState) => state.system.streamer.sources?.active);
+    const currentSource = useAppSelector(
+        (state: RootState) => state.system.streamer.sources?.active,
+    );
     const display = useAppSelector((state: RootState) => state.system.streamer.display);
 
     if (!currentSource?.name) {
@@ -42,7 +44,7 @@ const MediaSourceBadge: FC<MediaSourceBadgeProps> = ({ showSource = false }) => 
             </Badge>
         );
     }
-    
+
     const badgeLabel =
         currentSource.class === "stream.service.airplay" && showSource && display?.playback_source
             ? `${currentSource.name} / ${display.playback_source}`

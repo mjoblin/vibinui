@@ -16,6 +16,6 @@ const ConnectingLoader: FC = () => {
             <Text weight={400}>connecting...</Text>
         </Flex>
     );
-}
+};
 
 export default ConnectingLoader;

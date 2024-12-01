@@ -18,10 +18,10 @@ export const useAppGlobals = () => {
     const largeScreen = useMediaQuery("(min-width: 88em)");
     const { currentScreen } = useAppSelector((state: RootState) => state.internal.application);
     const { useImageBackground } = useAppSelector(
-        (state: RootState) => state.userSettings.application
+        (state: RootState) => state.userSettings.application,
     );
     const { currentlyPlayingArtUrl } = useAppSelector(
-        (state: RootState) => state.internal.application
+        (state: RootState) => state.internal.application,
     );
 
     // Prepare for rendering a blurred album art background behind the entire application. This is

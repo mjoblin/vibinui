@@ -1,13 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from "react";
-import {
-    Box,
-    Card,
-    createStyles,
-    Flex,
-    Stack,
-    Text,
-    useMantineTheme,
-} from "@mantine/core";
+import { Box, Card, createStyles, Flex, Stack, Text, useMantineTheme } from "@mantine/core";
 import VisibilitySensor from "react-visibility-sensor";
 
 import { Album, Artist, Track } from "../../../app/types";
@@ -93,9 +85,15 @@ const ArtistCardCompact: FC<ArtistCardTypeProps> = ({
     );
 };
 
-const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({ artist, albums, tracks, showLoading, onClick }) => {
+const ArtistCardArtFocused: FC<ArtistCardTypeProps> = ({
+    artist,
+    albums,
+    tracks,
+    showLoading,
+    onClick,
+}) => {
     const { cardSize, showDetails } = useAppSelector(
-        (state: RootState) => state.userSettings.artists
+        (state: RootState) => state.userSettings.artists,
     );
 
     const borderSize = 2;
@@ -159,7 +157,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const latestVisibleRenderSize = useAppSelector(
-        (state: RootState) => state.internal.artists.artistCard
+        (state: RootState) => state.internal.artists.artistCard,
     );
     const theme = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -186,7 +184,7 @@ const ArtistCard: FC<ArtistCardProps> = ({
                     setArtistCardRenderDimensions({
                         width: newRenderWidth,
                         height: newRenderHeight,
-                    })
+                    }),
                 );
         }
     }, [

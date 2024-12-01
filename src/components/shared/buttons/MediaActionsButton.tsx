@@ -89,11 +89,11 @@ export type PlaylistAction =
 export type MediaAction = DetailsAction | FavoritesAction | NavigationAction | PlaylistAction;
 
 export type EnabledActions = {
-    Details?: DetailsAction[],
-    Favorites?: FavoritesAction[],
-    Navigation?: NavigationAction[],
-    Playlist?: PlaylistAction[],
-}
+    Details?: DetailsAction[];
+    Favorites?: FavoritesAction[];
+    Navigation?: NavigationAction[];
+    Playlist?: PlaylistAction[];
+};
 
 const sizeMd = 15;
 const sizeSm = 11;
@@ -216,7 +216,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const wantViewInArtists = wantAction(enabledActions.Navigation!!, "ViewInArtists");
     const wantViewCurrentInArtists = wantAction(
         enabledActions.Navigation!!,
-        "ViewCurrentInArtists"
+        "ViewCurrentInArtists",
     );
 
     return (
@@ -337,8 +337,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                                         ? darkDisabled
                                                         : darkEnabled
                                                     : isStreamerOff
-                                                    ? lightDisabled
-                                                    : lightEnabled
+                                                      ? lightDisabled
+                                                      : lightEnabled
                                             }
                                         />
                                     }
@@ -477,18 +477,22 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 
                                         if (isAlbum(media)) {
                                             dispatch(
-                                                setArtistsSelectedArtist(artistByName[media.artist])
+                                                setArtistsSelectedArtist(
+                                                    artistByName[media.artist],
+                                                ),
                                             );
                                             dispatch(setArtistsSelectedAlbum(albumById[media.id]));
                                             dispatch(setArtistsSelectedTrack(undefined));
                                         } else if (isTrack(media)) {
                                             dispatch(
-                                                setArtistsSelectedArtist(artistByName[media.artist])
+                                                setArtistsSelectedArtist(
+                                                    artistByName[media.artist],
+                                                ),
                                             );
                                             dispatch(
                                                 setArtistsSelectedAlbum(
-                                                    albumById[(media as Track).albumId]
-                                                )
+                                                    albumById[(media as Track).albumId],
+                                                ),
                                             );
                                             dispatch(setArtistsSelectedTrack(media as Track));
                                         }
@@ -516,8 +520,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                                     ? `${media.title} artist:(${media.artist})`
                                                     : `${(media as Track).album} artist:(${
                                                           media.artist
-                                                      })`
-                                            )
+                                                      })`,
+                                            ),
                                         );
                                         navigate("/ui/albums");
                                     }}
@@ -536,8 +540,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                                     ? `artist:(${media.artist}) album:(${media.title})`
                                                     : `${media.title} album:(${
                                                           (media as Track).album
-                                                      })`
-                                            )
+                                                      })`,
+                                            ),
                                         );
                                         navigate("/ui/tracks");
                                     }}

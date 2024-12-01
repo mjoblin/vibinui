@@ -10,7 +10,11 @@ import SadLabel from "../../shared/textDisplay/SadLabel";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { useGetAlbumsQuery, useGetNewAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { setFilteredAlbumMediaIds } from "../../../app/store/internalSlice";
-import { AlbumCollection, MediaSortDirection, MediaWallViewMode } from "../../../app/store/userSettingsSlice";
+import {
+    AlbumCollection,
+    MediaSortDirection,
+    MediaWallViewMode,
+} from "../../../app/store/userSettingsSlice";
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import { collectionFilter, collectionSorter } from "../../../app/utils";
 
@@ -34,7 +38,7 @@ type AlbumWallProps = {
     onIsFilteringUpdate?: (isFiltering: boolean) => void;
     onDisplayCountUpdate?: (displayCount: number) => void;
     onNewCurrentAlbumRef?: (ref: RefObject<HTMLDivElement>) => void;
-}
+};
 
 const AlbumsWall: FC<AlbumWallProps> = ({
     filterText = "",
@@ -56,11 +60,11 @@ const AlbumsWall: FC<AlbumWallProps> = ({
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const currentAlbumRef = useRef<HTMLDivElement>(null);
     const { wallSortDirection, wallSortField } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
+        (state: RootState) => state.userSettings.albums,
     );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const {
         data: allAlbums,
@@ -213,14 +217,17 @@ const AlbumsWall: FC<AlbumWallProps> = ({
         );
     }
 
-    if ((activeCollection === "all" && allAlbumsError) || (activeCollection === "new" && newAlbumsError)) {
+    if (
+        (activeCollection === "all" && allAlbumsError) ||
+        (activeCollection === "new" && newAlbumsError)
+    ) {
         return (
             <Center pt="xl">
                 <SadLabel label="Error retrieving Album details" />
             </Center>
         );
     }
-    
+
     if (!allAlbums || allAlbums.length <= 0) {
         return (
             <Center pt="xl">
@@ -236,7 +243,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
             </Center>
         );
     }
-    
+
     // --------------------------------------------------------------------------------------------
 
     return viewMode === "table" ? (
@@ -269,7 +276,7 @@ const AlbumsWall: FC<AlbumWallProps> = ({
                         showDetails={showDetails}
                         cacheRenderSize={cacheCardRenderSize}
                     />
-                )
+                ),
             )}
         </Box>
     );

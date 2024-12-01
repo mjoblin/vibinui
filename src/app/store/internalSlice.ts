@@ -30,7 +30,7 @@ export interface InternalState {
             renderWidth: number;
             renderHeight: number;
         };
-        scrollPosition: number,
+        scrollPosition: number;
     };
     artists: {
         filteredArtistCount: number;
@@ -59,7 +59,7 @@ export interface InternalState {
             renderWidth: number;
             renderHeight: number;
         };
-        scrollPosition: number,
+        scrollPosition: number;
     };
     playlist: {
         scrollPosition: number;
@@ -67,12 +67,12 @@ export interface InternalState {
     presets: {
         filteredPresetCount: number;
         filteredPresetIds: number[];
-        scrollPosition: number,
+        scrollPosition: number;
     };
     tracks: {
         filteredTrackCount: number;
         filteredTrackMediaIds: MediaId[];
-        scrollPosition: number,
+        scrollPosition: number;
         trackCard: {
             renderWidth: number;
             renderHeight: number;
@@ -165,7 +165,7 @@ export const internalSlice = createSlice({
     reducers: {
         setAlbumCardRenderDimensions: (
             state,
-            action: PayloadAction<{ width: number; height: number }>
+            action: PayloadAction<{ width: number; height: number }>,
         ) => {
             state.albums.albumCard.renderWidth = action.payload.width;
             state.albums.albumCard.renderHeight = action.payload.height;
@@ -175,14 +175,14 @@ export const internalSlice = createSlice({
         },
         setArtistCardRenderDimensions: (
             state,
-            action: PayloadAction<{ width: number; height: number }>
+            action: PayloadAction<{ width: number; height: number }>,
         ) => {
             state.artists.artistCard.renderWidth = action.payload.width;
             state.artists.artistCard.renderHeight = action.payload.height;
         },
         setArtistsScrollPos: (
             state,
-            action: PayloadAction<{ category: "artists" | "albums" | "tracks"; pos: number }>
+            action: PayloadAction<{ category: "artists" | "albums" | "tracks"; pos: number }>,
         ) => {
             state.artists.scrollPos[action.payload.category] = action.payload.pos;
         },
@@ -206,7 +206,7 @@ export const internalSlice = createSlice({
         },
         setFavoriteCardRenderDimensions: (
             state,
-            action: PayloadAction<{ width: number; height: number }>
+            action: PayloadAction<{ width: number; height: number }>,
         ) => {
             state.favorites.favoriteCard.renderWidth = action.payload.width;
             state.favorites.favoriteCard.renderHeight = action.payload.height;
@@ -239,7 +239,7 @@ export const internalSlice = createSlice({
         },
         setFilteredFavoriteMediaIds: (
             state,
-            action: PayloadAction<{ albums: MediaId[]; tracks: MediaId[] }>
+            action: PayloadAction<{ albums: MediaId[]; tracks: MediaId[] }>,
         ) => {
             state.favorites.filteredFavoriteMediaIds = action.payload;
         },
@@ -262,7 +262,8 @@ export const internalSlice = createSlice({
             state.presets.scrollPosition = action.payload;
         },
         setShowCurrentTrackLyrics: (state, action: PayloadAction<boolean | undefined>) => {
-            state.application.showCurrentTrackLyrics = action.payload === undefined ? true : action.payload;
+            state.application.showCurrentTrackLyrics =
+                action.payload === undefined ? true : action.payload;
         },
         setShowDebugPanel: (state, action: PayloadAction<boolean | undefined>) => {
             state.application.showDebugPanel = action.payload === undefined ? true : action.payload;
@@ -277,7 +278,7 @@ export const internalSlice = createSlice({
         },
         setTrackCardRenderDimensions: (
             state,
-            action: PayloadAction<{ width: number; height: number }>
+            action: PayloadAction<{ width: number; height: number }>,
         ) => {
             state.tracks.trackCard.renderWidth = action.payload.width;
             state.tracks.trackCard.renderHeight = action.payload.height;

@@ -19,7 +19,7 @@ import { useSeekMutation } from "../../../../app/services/vibinTransport";
 // ================================================================================================
 
 const leadingZeros = new RegExp("^00:");
-const negativeTimeScreenSize = 5;  // Allow for minus sign when end time style is timeRemaining
+const negativeTimeScreenSize = 5; // Allow for minus sign when end time style is timeRemaining
 
 /**
  * Convert a duration in seconds into "hh:mm:ss", without the hh: if it would have been "00:".
@@ -31,7 +31,7 @@ const Playhead: FC = () => {
     const currentTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playhead = useAppSelector((state: RootState) => state.playback.playhead);
     const activeTransportActions = useAppSelector(
-        (state: RootState) => state.playback.active_transport_actions
+        (state: RootState) => state.playback.active_transport_actions,
     );
     const [isBeingManuallyUpdated, setIsBeingManuallyUpdated] = useState<boolean>(false);
     const [manualPosition, setManualPosition] = useState<number>(0);
@@ -47,8 +47,8 @@ const Playhead: FC = () => {
                 {isBeingManuallyUpdated
                     ? prettyDuration(manualPosition)
                     : playhead.position && typeof playhead.position === "number"
-                    ? prettyDuration(playhead.position)
-                    : "00:00"}
+                      ? prettyDuration(playhead.position)
+                      : "00:00"}
             </Text>
 
             {/* Display the slider. This can be manually updated, which will result in a playhead

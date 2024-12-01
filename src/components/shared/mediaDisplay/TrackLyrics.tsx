@@ -101,7 +101,7 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
     if (getLyricsStatus.isFetching || getLyricsStatus.isLoading) {
         return <LoadingDataMessage message="Retrieving lyrics..." />;
     }
-    
+
     if (
         // TODO: Define vibin's error response types in the RTK Query endpoint definitions.
         //  https://redux-toolkit.js.org/rtk-query/usage-with-typescript

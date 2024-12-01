@@ -73,16 +73,16 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const { colors } = useMantineTheme();
     const { favorites, haveReceivedInitialState } = useAppSelector(
-        (state: RootState) => state.favorites
+        (state: RootState) => state.favorites,
     );
     const { wallSortDirection, wallSortField } = useAppSelector(
-        (state: RootState) => state.userSettings.favorites
+        (state: RootState) => state.userSettings.favorites,
     );
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const [favoritesToDisplay, setFavoritesToDisplay] = useState<Favorite[]>([]);
     const [albumsToDisplay, setAlbumsToDisplay] = useState<Album[]>([]);
@@ -114,28 +114,28 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
             albumFavorites,
             filterText,
             "title",
-            "media"
+            "media",
         )
             .slice()
             .sort(
                 collectionSorter(
                     `media.${sortField || wallSortField}`,
-                    sortDirection || wallSortDirection
-                )
+                    sortDirection || wallSortDirection,
+                ),
             );
 
         const processedTrackFavorites = collectionFilter(
             trackFavorites,
             filterText,
             "title",
-            "media"
+            "media",
         )
             .slice()
             .sort(
                 collectionSorter(
                     `media.${sortField || wallSortField}`,
-                    sortDirection || wallSortDirection
-                )
+                    sortDirection || wallSortDirection,
+                ),
             );
 
         if (activeCollection === "all") {
@@ -143,7 +143,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                 setFilteredFavoriteMediaIds({
                     albums: processedAlbumFavorites.map((albumFavorite) => albumFavorite.media_id),
                     tracks: processedTrackFavorites.map((trackFavorite) => trackFavorite.media_id),
-                })
+                }),
             );
 
             setFavoritesToDisplay([...processedAlbumFavorites, ...processedTrackFavorites]);
@@ -158,7 +158,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                         activeCollection === "tracks"
                             ? processedTrackFavorites.map((trackFavorite) => trackFavorite.media_id)
                             : [],
-                })
+                }),
             );
 
             activeCollection === "albums" && setFavoritesToDisplay(processedAlbumFavorites);
@@ -186,13 +186,13 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
         setAlbumsToDisplay(
             favoritesToDisplay
                 .filter((favorite) => favorite.type === "album")
-                .map((favorite) => favorite.media as Album)
+                .map((favorite) => favorite.media as Album),
         );
 
         setTracksToDisplay(
             favoritesToDisplay
                 .filter((favorite) => favorite.type === "track")
-                .map((favorite) => favorite.media as Track)
+                .map((favorite) => favorite.media as Track),
         );
     }, [favoritesToDisplay]);
 

@@ -16,6 +16,6 @@ const BufferingLoader: FC = () => {
             <Text weight={400}>buffering audio...</Text>
         </Flex>
     );
-}
+};
 
 export default BufferingLoader;

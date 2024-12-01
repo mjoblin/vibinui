@@ -14,7 +14,7 @@ const BackgroundComputeIndicator: FC = () => {
     const theme = useMantineTheme();
     const { TEMPORARY_ACTIVITY_COLOR } = useAppGlobals();
     const { isComputingInBackground } = useAppSelector(
-        (state: RootState) => state.internal.application
+        (state: RootState) => state.internal.application,
     );
 
     return (
@@ -25,8 +25,8 @@ const BackgroundComputeIndicator: FC = () => {
                     isComputingInBackground
                         ? TEMPORARY_ACTIVITY_COLOR
                         : theme.colorScheme === "dark"
-                        ? theme.colors.dark[6]
-                        : theme.colors.gray[2]
+                          ? theme.colors.dark[6]
+                          : theme.colors.gray[2]
                 }
                 sx={{ boxShadow: theme.colorScheme === "dark" ? undefined : "none" }}
             />

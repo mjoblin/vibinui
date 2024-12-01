@@ -38,10 +38,10 @@ const PlayButton: FC<PlayButtonProps> = ({
     const { colors } = useMantineTheme();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const presets = useAppSelector((state: RootState) => state.presets.presets);
     const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
@@ -136,8 +136,8 @@ const PlayButton: FC<PlayButtonProps> = ({
                                     isAlbum(media)
                                         ? "with Album"
                                         : isTrack(media)
-                                        ? "with Track"
-                                        : ""
+                                          ? "with Track"
+                                          : ""
                                 }`,
                                 message: media.title,
                             });

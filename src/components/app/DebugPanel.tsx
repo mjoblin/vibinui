@@ -56,7 +56,7 @@ const DebugPanel: FC = () => {
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
     const { showDebugPanel, websocketStatus } = useAppSelector(
-        (state: RootState) => state.internal.application
+        (state: RootState) => state.internal.application,
     );
 
     useHotkeys([["shift+D", () => dispatch(setShowDebugPanel(!showDebugPanel))]]);
@@ -162,10 +162,12 @@ const DebugPanel: FC = () => {
                             fieldValues={{
                                 activeStoredPlaylistId:
                                     storedPlaylists.status.active_id || "undefined",
-                                activeSyncedWithStore: storedPlaylists.status.is_active_synced_with_store
+                                activeSyncedWithStore: storedPlaylists.status
+                                    .is_active_synced_with_store
                                     ? "True"
                                     : "False",
-                                activatingStoredPlaylist: storedPlaylists.status.is_activating_playlist
+                                activatingStoredPlaylist: storedPlaylists.status
+                                    .is_activating_playlist
                                     ? "True"
                                     : "False",
                                 count: storedPlaylists.playlists.length,

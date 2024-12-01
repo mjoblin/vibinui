@@ -86,7 +86,7 @@ const albumArtWidth = 300;
 const useStyles = createStyles((theme) => ({
     pausedStatusContainer: {
         position: "absolute",
-        zIndex: 9,  // TODO: Remove reliance on zIndex when MediaArt no longer uses zIndex
+        zIndex: 9, // TODO: Remove reliance on zIndex when MediaArt no longer uses zIndex
         width: albumArtWidth,
         height: albumArtWidth,
         borderRadius: 5,
@@ -99,7 +99,7 @@ const useStyles = createStyles((theme) => ({
  */
 const PlaybackPaused: FC = () => {
     const activeTransportActions = useAppSelector(
-        (state: RootState) => state.playback.active_transport_actions
+        (state: RootState) => state.playback.active_transport_actions,
     );
     const [playPlayback] = usePlayMutation();
     const [togglePlayback] = useTogglePlaybackMutation();
@@ -144,13 +144,13 @@ const CurrentTrackScreen: FC = () => {
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
     const currentTrackId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const presets = useAppSelector((state: RootState) => state.presets.presets);
     const streamerPower = useAppSelector((state: RootState) => state.system.streamer.power);
     const streamerDisplay = useAppSelector((state: RootState) => state.system.streamer.display);
     const currentSource = useAppSelector(
-        (state: RootState) => state.system.streamer.sources?.active
+        (state: RootState) => state.system.streamer.sources?.active,
     );
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
@@ -165,7 +165,7 @@ const CurrentTrackScreen: FC = () => {
     const [showBuffering, setShowBuffering] = useState<boolean>(false);
     const { start: startBufferTimeout, clear: clearBufferTimeout } = useTimeout(
         () => setShowBuffering(true),
-        BUFFERING_AUDIO_NOTIFY_DELAY
+        BUFFERING_AUDIO_NOTIFY_DELAY,
     );
 
     const { classes: dynamicClasses } = createStyles((theme) => ({
@@ -266,10 +266,7 @@ const CurrentTrackScreen: FC = () => {
     /**
      * Keep track of which Preset is currently playing (if any).
      */
-    useEffect(
-        () => setActivePreset(presets.find((preset) => preset.is_playing)),
-        [presets]
-    );
+    useEffect(() => setActivePreset(presets.find((preset) => preset.is_playing)), [presets]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -440,13 +437,13 @@ const CurrentTrackScreen: FC = () => {
                                             dispatch(setArtistsActiveCollection("all"));
                                             dispatch(
                                                 setArtistsSelectedArtist(
-                                                    artistByName[currentTrack.artist]
-                                                )
+                                                    artistByName[currentTrack.artist],
+                                                ),
                                             );
                                             dispatch(
                                                 setArtistsSelectedAlbum(
-                                                    albumById[currentTrack.albumId]
-                                                )
+                                                    albumById[currentTrack.albumId],
+                                                ),
                                             );
                                             dispatch(setArtistsSelectedTrack(currentTrack));
                                             dispatch(setArtistsScrollToCurrentOnScreenEnter(true));

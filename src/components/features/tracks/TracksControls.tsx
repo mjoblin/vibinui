@@ -35,19 +35,19 @@ const stripParens = new RegExp(/^\(?([^)]+)\)?$/);
 
 type TracksControlsProps = {
     scrollToCurrent?: () => void;
-}
+};
 
 const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allTracks } = useGetTracksQuery();
     const { filterText, followCurrentlyPlaying } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
+        (state: RootState) => state.userSettings.tracks,
     );
     const { filteredTrackMediaIds } = useAppSelector((state: RootState) => state.internal.tracks);
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const [currentIsShown, setCurrentIsShown] = useState<boolean>(false);
 
@@ -85,22 +85,22 @@ const TracksControls: FC<TracksControlsProps> = ({ scrollToCurrent }) => {
             const searchNoParens = lyricSearch[2].match(stripParens);
 
             dispatch(
-                setTracksLyricsSearchText(searchNoParens ? searchNoParens[1] : lyricSearch[2])
+                setTracksLyricsSearchText(searchNoParens ? searchNoParens[1] : lyricSearch[2]),
             );
         } else {
             dispatch(setTracksLyricsSearchText(""));
         }
     }, [debouncedFilterText, dispatch]);
 
-   /**
+    /**
      * Keep track of whether the currently-playing track is in the list of tracks being displayed.
      */
     useEffect(
         () =>
             setCurrentIsShown(
-                !!(currentTrackMediaId && filteredTrackMediaIds.includes(currentTrackMediaId))
+                !!(currentTrackMediaId && filteredTrackMediaIds.includes(currentTrackMediaId)),
             ),
-        [currentTrackMediaId, filteredTrackMediaIds]
+        [currentTrackMediaId, filteredTrackMediaIds],
     );
 
     // --------------------------------------------------------------------------------------------

@@ -22,10 +22,10 @@ const ArtModal: FC<ArtModalProps> = ({ media, opened, onClose = undefined }) => 
     const title = isAlbum(media)
         ? "Album Art"
         : isTrack(media)
-        ? "Track Art"
-        : isPreset(media)
-        ? "Preset Art"
-        : "Art";
+          ? "Track Art"
+          : isPreset(media)
+            ? "Preset Art"
+            : "Art";
 
     return (
         <Modal
