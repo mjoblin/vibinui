@@ -38,7 +38,7 @@ export type RMS = {
     rms: number;
     peak: number;
     rms_to_peak: number;
-}
+};
 
 export const vibinTracksApi = createApi({
     reducerPath: "vibinTracksApi",
@@ -102,8 +102,8 @@ export const vibinTracksApi = createApi({
                         format === "json"
                             ? "application/json"
                             : format === "png"
-                            ? "image/png"
-                            : "application/octet-stream",
+                              ? "image/png"
+                              : "application/octet-stream",
                 },
                 responseHandler: "content-type",
             }),

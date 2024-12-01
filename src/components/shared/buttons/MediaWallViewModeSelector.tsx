@@ -15,7 +15,10 @@ type MediaWallViewModeSelectorProps = {
     viewModeSetter?: ActionCreator<any>;
 };
 
-const MediaWallViewModeSelector: FC<MediaWallViewModeSelectorProps> = ({ viewMode, viewModeSetter }) => {
+const MediaWallViewModeSelector: FC<MediaWallViewModeSelectorProps> = ({
+    viewMode,
+    viewModeSetter,
+}) => {
     const dispatch = useAppDispatch();
 
     return (

@@ -36,17 +36,17 @@ const ArtistsControls: FC = () => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const albumsByArtistName = useAppSelector(
-        (state: RootState) => state.mediaGroups.albumsByArtistName
+        (state: RootState) => state.mediaGroups.albumsByArtistName,
     );
     const { filteredArtistMediaIds, scrollCurrentIntoView, scrollSelectedIntoView } =
         useAppSelector((state: RootState) => state.internal.artists);
     const { activeCollection, filterText, selectedAlbum, selectedArtist, selectedTrack } =
         useAppSelector((state: RootState) => state.userSettings.artists);
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const { data: allArtists } = useGetArtistsQuery();
     const { data: allTracks } = useGetTracksQuery();
@@ -82,7 +82,7 @@ const ArtistsControls: FC = () => {
         // currentAlbum might be undefined, which is expected sometimes (e.g. if the current track
         // is from a compilation album where the artist doesn't have any of their own albums).
         const currentAlbum = albumsByArtistName[artistName].find(
-            (album: Album) => album.id === currentAlbumMediaId
+            (album: Album) => album.id === currentAlbumMediaId,
         );
 
         if (currentArtist && (currentAlbum || currentTrack)) {
@@ -91,23 +91,26 @@ const ArtistsControls: FC = () => {
             dispatch(setArtistsSelectedAlbum(currentAlbum));
             dispatch(setArtistsSelectedTrack(currentTrack));
         }
-    }
+    };
 
-    const onArtistCollectionChange = useCallback((value: unknown) => {
-        if (value) {
-            dispatch(setArtistsActiveCollection(value as ArtistCollection));
-            dispatch(setArtistsFilterText(""));
-        }
+    const onArtistCollectionChange = useCallback(
+        (value: unknown) => {
+            if (value) {
+                dispatch(setArtistsActiveCollection(value as ArtistCollection));
+                dispatch(setArtistsFilterText(""));
+            }
 
-        if (value !== "current") {
-            dispatch(setArtistsSelectedArtist(undefined));
-            dispatch(setArtistsSelectedAlbum(undefined));
-            dispatch(setArtistsSelectedTrack(undefined));
-            return;
-        }
+            if (value !== "current") {
+                dispatch(setArtistsSelectedArtist(undefined));
+                dispatch(setArtistsSelectedAlbum(undefined));
+                dispatch(setArtistsSelectedTrack(undefined));
+                return;
+            }
 
-        // currentTrackMediaId && emitNewSelection(currentTrackMediaId);
-    }, [dispatch]);
+            // currentTrackMediaId && emitNewSelection(currentTrackMediaId);
+        },
+        [dispatch],
+    );
 
     // --------------------------------------------------------------------------------------------
 

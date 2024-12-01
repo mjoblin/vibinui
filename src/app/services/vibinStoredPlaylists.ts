@@ -17,7 +17,7 @@ export type StoredPlaylist = {
     created: number;
     updated: number;
     entry_ids: MediaId[];
-}
+};
 
 export const vibinStoredPlaylistsApi = createApi({
     reducerPath: "vibinStoredPlaylistsApi",
@@ -63,7 +63,7 @@ export const vibinStoredPlaylistsApi = createApi({
             }),
         }),
         activateStoredPlaylist: builder.query<StoredPlaylist, StoredPlaylistId>({
-            query: ( storedPlaylistId ) => ({
+            query: (storedPlaylistId) => ({
                 url: `${storedPlaylistId}/make_current`,
                 method: "POST",
             }),

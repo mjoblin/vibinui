@@ -1,16 +1,17 @@
 import React, { FC } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
+    ActionIcon,
     Box,
     createStyles,
-    getStylesRef,
     Flex,
+    getStylesRef,
     Navbar,
     rem,
     Stack,
     Text,
     Tooltip,
-    useMantineTheme, ActionIcon
+    useMantineTheme,
 } from "@mantine/core";
 import {
     Icon,
@@ -163,8 +164,8 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
                     backgroundColor: noBackground
                         ? "rgb(0, 0, 0, 0)"
                         : theme.colorScheme === "dark"
-                        ? theme.colors.dark[6]
-                        : theme.white,
+                          ? theme.colors.dark[6]
+                          : theme.white,
                 },
             }}
         >

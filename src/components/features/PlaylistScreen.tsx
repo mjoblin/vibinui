@@ -87,26 +87,29 @@ const PlaylistScreen: FC = () => {
     /**
      * Scroll to the currently-playing Playlist Entry.
      */
-    const scrollToCurrent = useCallback((options?: { offset?: number }) => {
-        // TODO: This is a pretty disappointing way to find the top of the playlist (it assumes
-        //  the currentEntryRef is a div wrapping a <td> in the current entry's table row; so it
-        //  walks up the hierarchy to the top of the table). The goal is to figure out where in
-        //  the playlistViewport to scroll to -- there is (hopefully) a better way to figure that
-        //  out.
-        const playlistTop =
-            currentEntryRef?.parentNode?.parentNode?.parentNode?.parentNode?.parentElement?.getBoundingClientRect()
-                .top;
-        const entryTop = currentEntryRef?.getBoundingClientRect().top;
+    const scrollToCurrent = useCallback(
+        (options?: { offset?: number }) => {
+            // TODO: This is a pretty disappointing way to find the top of the playlist (it assumes
+            //  the currentEntryRef is a div wrapping a <td> in the current entry's table row; so it
+            //  walks up the hierarchy to the top of the table). The goal is to figure out where in
+            //  the playlistViewport to scroll to -- there is (hopefully) a better way to figure that
+            //  out.
+            const playlistTop =
+                currentEntryRef?.parentNode?.parentNode?.parentNode?.parentNode?.parentElement?.getBoundingClientRect()
+                    .top;
+            const entryTop = currentEntryRef?.getBoundingClientRect().top;
 
-        if (playlistViewportRef?.current && playlistTop && entryTop) {
-            const offset = 40 + (options?.offset || 0);
+            if (playlistViewportRef?.current && playlistTop && entryTop) {
+                const offset = 40 + (options?.offset || 0);
 
-            playlistViewportRef.current.scrollTo({
-                top: entryTop - playlistTop - offset,
-                behavior: "smooth",
-            });
-        }
-    }, [playlistViewportRef, currentEntryRef]);
+                playlistViewportRef.current.scrollTo({
+                    top: entryTop - playlistTop - offset,
+                    behavior: "smooth",
+                });
+            }
+        },
+        [playlistViewportRef, currentEntryRef],
+    );
 
     /**
      * Keep track of the window dimensions if the window is resized.
@@ -128,7 +131,7 @@ const PlaylistScreen: FC = () => {
             dispatch(setPlaylistScrollPosition(value.y));
         },
         SCROLL_POS_DISPATCH_RATE,
-        { leading: false }
+        { leading: false },
     );
 
     // When the streamer is powered on and functioning, but the current audio source is not local

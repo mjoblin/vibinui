@@ -148,7 +148,8 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
     [setAlbumsWallSortDirection.type]: LSKEY_ALBUMS_WALL_SORT_DIRECTION,
     [setAlbumsWallSortField.type]: LSKEY_ALBUMS_WALL_SORT_FIELD,
     [setAlbumsWallViewMode.type]: LSKEY_ALBUMS_WALL_VIEW_MODE,
-    [setApplicationAutoPlayOnPlaylistActivation.type]: LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
+    [setApplicationAutoPlayOnPlaylistActivation.type]:
+        LSKEY_APPLICATION_AUTO_PLAY_ON_PLAYLIST_ACTIVATION,
     [setApplicationHaveShownWelcomeMessage.type]: LSKEY_APPLICATION_HAVE_SHOWN_WELCOME_MESSAGE,
     [setApplicationMediaSearchCardGap.type]: LSKEY_APPLICATION_MEDIA_SEARCH_CARD_GAP,
     [setApplicationMediaSearchCardSize.type]: LSKEY_APPLICATION_MEDIA_SEARCH_CARD_SIZE,
@@ -156,7 +157,8 @@ export const actionToLocalStorageKeyMapper: Record<string, string> = {
         LSKEY_APPLICATION_MEDIA_SEARCH_DISPLAY_CATEGORIES,
     [setApplicationMediaSearchFilterText.type]: LSKEY_APPLICATION_MEDIA_SEARCH_FILTER_TEXT,
     [setApplicationMediaSearchShowDetails.type]: LSKEY_APPLICATION_MEDIA_SEARCH_SHOW_DETAILS,
-    [setApplicationMediaSearchWallSortDirection.type]: LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION,
+    [setApplicationMediaSearchWallSortDirection.type]:
+        LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_DIRECTION,
     [setApplicationMediaSearchWallSortField.type]: LSKEY_APPLICATION_MEDIA_SEARCH_WALL_SORT_FIELD,
     [setApplicationMediaSearchWallViewMode.type]: LSKEY_APPLICATION_MEDIA_SEARCH_WALL_VIEW_MODE,
     [setApplicationTheme.type]: LSKEY_APPLICATION_THEME,

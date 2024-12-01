@@ -34,7 +34,8 @@ export const storedPlaylistsSlice = createSlice({
         setStoredPlaylistsState: (state, action: PayloadAction<StoredPlaylistsState>) => {
             state.playlists = action.payload.playlists;
             state.status.active_id = action.payload.status.active_id;
-            state.status.is_active_synced_with_store = action.payload.status.is_active_synced_with_store;
+            state.status.is_active_synced_with_store =
+                action.payload.status.is_active_synced_with_store;
             state.status.is_activating_playlist = action.payload.status.is_activating_playlist;
         },
     },

@@ -19,7 +19,7 @@ const PlaylistDuration: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const playheadPosition = useAppSelector((state: RootState) => state.playback.playhead.position);
     const playheadPositionNormalized = useAppSelector(
-        (state: RootState) => state.playback.playhead.position_normalized
+        (state: RootState) => state.playback.playhead.position_normalized,
     );
 
     /**
@@ -39,7 +39,11 @@ const PlaylistDuration: FC = () => {
      * into the current Playlist Entry (see next effect).
      */
     useEffect(() => {
-        if (!activePlaylistTrackIndex || !activePlaylistEntries || activePlaylistEntries.length <= 0) {
+        if (
+            !activePlaylistTrackIndex ||
+            !activePlaylistEntries ||
+            activePlaylistEntries.length <= 0
+        ) {
             setCompletedEntriesProgress(0);
             return;
         }
@@ -75,15 +79,18 @@ const PlaylistDuration: FC = () => {
                 duration:
             </Text>
             <Text size="xs" pr={10} color={colors.dark[2]} weight="bold">{`${secstoHms(
-                activePlaylistDuration
+                activePlaylistDuration,
             )}s`}</Text>
 
             {!isNaN(completed) && (
                 <>
                     <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
-                    <Text size="xs" color={colors.blue[5]} weight="bold" miw="1.80rem">{`${completed.toFixed(
-                        0
-                    )}%`}</Text>
+                    <Text
+                        size="xs"
+                        color={colors.blue[5]}
+                        weight="bold"
+                        miw="1.80rem"
+                    >{`${completed.toFixed(0)}%`}</Text>
                 </>
             )}
         </Flex>

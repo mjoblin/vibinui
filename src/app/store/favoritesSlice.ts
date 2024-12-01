@@ -35,8 +35,8 @@ export const presetsSlice = createSlice({
                 action.payload.favorites.reduce(
                     (accum, favorite) =>
                         favorite.type === "album" ? [...accum, favorite.media.id] : accum,
-                    [] as MediaId[]
-                )
+                    [] as MediaId[],
+                ),
             );
             updateIfDifferent(
                 state,
@@ -44,8 +44,8 @@ export const presetsSlice = createSlice({
                 action.payload.favorites.reduce(
                     (accum, favorite) =>
                         favorite.type === "track" ? [...accum, favorite.media.id] : accum,
-                    [] as MediaId[]
-                )
+                    [] as MediaId[],
+                ),
             );
 
             state.haveReceivedInitialState = true;

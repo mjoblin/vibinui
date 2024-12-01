@@ -12,12 +12,12 @@ import { Album, Artist, Track } from "../types";
 // ================================================================================================
 
 export interface MediaGroupsState {
-    albumById: Record<string, Album>,
-    albumsByArtistName: Record<string, Album[]>,
+    albumById: Record<string, Album>;
+    albumsByArtistName: Record<string, Album[]>;
     artistByName: Record<string, Artist>;
     trackById: Record<string, Track>;
-    tracksByAlbumId: Record<string, Track[]>,
-    tracksByArtistName: Record<string, Track[]>,
+    tracksByAlbumId: Record<string, Track[]>;
+    tracksByArtistName: Record<string, Track[]>;
 }
 
 const initialState: MediaGroupsState = {

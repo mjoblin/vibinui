@@ -95,14 +95,14 @@ const MediaWallDisplayControls: FC<MediaWallDisplayControlsProps> = ({ applicati
         applicationFeature === "albums"
             ? state.userSettings.albums
             : applicationFeature === "favorites"
-            ? state.userSettings.favorites
-            : applicationFeature === "mediaSearch"
-            ? state.userSettings.application.mediaSearch
-            : applicationFeature === "presets"
-            ? state.userSettings.presets
-            : applicationFeature === "tracks"
-            ? state.userSettings.tracks
-            : undefined
+              ? state.userSettings.favorites
+              : applicationFeature === "mediaSearch"
+                ? state.userSettings.application.mediaSearch
+                : applicationFeature === "presets"
+                  ? state.userSettings.presets
+                  : applicationFeature === "tracks"
+                    ? state.userSettings.tracks
+                    : undefined,
     );
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 

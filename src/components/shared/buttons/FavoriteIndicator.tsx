@@ -40,16 +40,16 @@ const FavoriteIndicator: FC<FavoriteIndicatorProps> = ({
     const paintBorderColor = highContrast
         ? "rgb(255, 255, 255, 0.5)"
         : isFavorite
-        ? favoritedColor
-        : unfavoritedColor;
+          ? favoritedColor
+          : unfavoritedColor;
 
     const paintFillColor = highContrast
         ? isFavorite
             ? theme.colors.red[8]
             : "rgb(0, 0, 0, 0.6)"
         : isFavorite
-        ? favoritedColor
-        : "rgb(0, 0, 0, 0)";
+          ? favoritedColor
+          : "rgb(0, 0, 0, 0)";
 
     /**
      * Inform the user if there was an error while attempting to favorite/unfavorite the media.

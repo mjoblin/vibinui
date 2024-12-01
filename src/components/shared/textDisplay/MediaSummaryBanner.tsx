@@ -43,21 +43,21 @@ const MediaSummaryBanner: FC<MediaSummaryBannerProps> = ({
             )}
 
             {(isAlbum(media) || isTrack(media)) && (
-                    <Stack sx={{ gap: 0, flexGrow: 1 }}>
-                        <Text size="lg" weight="bold" sx={{ lineHeight: 1.25 }}>
-                            {media.title}
-                        </Text>
-                        <Text size="md" sx={{ lineHeight: 1.25 }}>
-                            {media.artist}
-                        </Text>
-                        <Text size="xs" weight="bold" color={colors.dark[3]}>
-                            {(media.date && yearFromDate(media.date)) || ""}
-                            {media.genre && media.genre.toLowerCase() !== "unknown"
-                                ? ` • ${media.genre.toUpperCase()}`
-                                : ""}
-                        </Text>
-                    </Stack>
-                )}
+                <Stack sx={{ gap: 0, flexGrow: 1 }}>
+                    <Text size="lg" weight="bold" sx={{ lineHeight: 1.25 }}>
+                        {media.title}
+                    </Text>
+                    <Text size="md" sx={{ lineHeight: 1.25 }}>
+                        {media.artist}
+                    </Text>
+                    <Text size="xs" weight="bold" color={colors.dark[3]}>
+                        {(media.date && yearFromDate(media.date)) || ""}
+                        {media.genre && media.genre.toLowerCase() !== "unknown"
+                            ? ` • ${media.genre.toUpperCase()}`
+                            : ""}
+                    </Text>
+                </Stack>
+            )}
 
             {isPreset(media) && (
                 <Stack sx={{ gap: 0, flexGrow: 1 }}>

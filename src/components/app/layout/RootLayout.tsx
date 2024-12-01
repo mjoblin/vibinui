@@ -80,14 +80,14 @@ const RootLayout: FC = () => {
         websocketStatus,
     } = useAppSelector((state: RootState) => state.internal.application);
     const { haveShownWelcomeMessage } = useAppSelector(
-        (state: RootState) => state.userSettings.application
-    );    
+        (state: RootState) => state.userSettings.application,
+    );
     const currentTrackId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const currentPlaybackTrack = useAppSelector((state: RootState) => state.playback.current_track);
     const [backgroundUniqueKey, setBackgroundUniqueKey] = useState<string>(
-        `${window.innerWidth}x${window.innerHeight}`
+        `${window.innerWidth}x${window.innerHeight}`,
     );
     const [willShowTrackLyrics, setWillShowTrackLyrics] = useState<boolean>(false);
 
@@ -134,7 +134,7 @@ const RootLayout: FC = () => {
         (event: UIEvent) =>
             event.target &&
             setBackgroundUniqueKey(`${currentScreen}::${window.innerWidth}x${window.innerHeight}`),
-        [currentScreen]
+        [currentScreen],
     );
 
     useWindowEvent("resize", windowResizeHandler);
@@ -168,8 +168,8 @@ const RootLayout: FC = () => {
                         backgroundColor: RENDER_APP_BACKGROUND_IMAGE
                             ? "rgb(0, 0, 0, 0)"
                             : theme.colorScheme === "dark"
-                            ? theme.colors.dark[8]
-                            : theme.colors.gray[0],
+                              ? theme.colors.dark[8]
+                              : theme.colors.gray[0],
                     },
                 })}
             >

@@ -57,10 +57,10 @@ const TracksWall: FC<TrackWallProps> = ({
     const [debouncedFilterText] = useDebouncedValue(filterText, 250);
     const currentTrackRef = useRef<HTMLDivElement>(null);
     const { lyricsSearchText, wallSortDirection, wallSortField } = useAppSelector(
-        (state: RootState) => state.userSettings.tracks
+        (state: RootState) => state.userSettings.tracks,
     );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const {
@@ -276,7 +276,7 @@ const TracksWall: FC<TrackWallProps> = ({
                             showDetails={showDetails}
                             cacheRenderSize={cacheCardRenderSize}
                         />
-                    )
+                    ),
                 )}
         </Box>
     );

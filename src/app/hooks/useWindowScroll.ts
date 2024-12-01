@@ -41,7 +41,7 @@ function scrollTo({ x, y }: Partial<ScrollPosition>) {
 export function useWindowScroll(options?: Partial<{ delay: number }>) {
     const [position, setPosition] = useDebouncedState<ScrollPosition>(
         { x: 0, y: 0 },
-        options?.delay || 500
+        options?.delay || 500,
     );
 
     useWindowEvent("scroll", () => setPosition(getScrollPosition()));

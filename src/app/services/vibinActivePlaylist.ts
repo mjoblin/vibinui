@@ -26,12 +26,12 @@ import { API_REFRESH_INTERVAL } from "../constants";
  */
 
 type PlaylistAddMediaAction =
-    | "REPLACE"  // Track or Album. Replaces the entire playlist.
-    | "PLAY_NOW"  // Track or Album. Adds after the currently-playing entry, and starts playing the new entry.
-    | "PLAY_NEXT"  // Track or Album. Adds after the current playlist entry, without changing what's currently playing.
-    | "PLAY_FROM_HERE"  // Track only. Replaces the playlist with the track's entire Album, and plays the Track.
-    | "APPEND"  // Track or Album. Adds to the end of the playlist, without changing what's currently playing.
-    | "INSERT";  // Track only. Inserts into the playlist at the given index, without changing what's currently playing.
+    | "REPLACE" // Track or Album. Replaces the entire playlist.
+    | "PLAY_NOW" // Track or Album. Adds after the currently-playing entry, and starts playing the new entry.
+    | "PLAY_NEXT" // Track or Album. Adds after the current playlist entry, without changing what's currently playing.
+    | "PLAY_FROM_HERE" // Track only. Replaces the playlist with the track's entire Album, and plays the Track.
+    | "APPEND" // Track or Album. Adds to the end of the playlist, without changing what's currently playing.
+    | "INSERT"; // Track only. Inserts into the playlist at the given index, without changing what's currently playing.
 type PlaylistEntryId = number;
 type PlaylistEntryIndex = number;
 
@@ -106,7 +106,7 @@ export const vibinActivePlaylistApi = createApi({
                 method: "POST",
             }),
         }),
-        setPlaylistMediaIds: builder.mutation<void, { mediaIds: MediaId[], maxCount?: number }>({
+        setPlaylistMediaIds: builder.mutation<void, { mediaIds: MediaId[]; maxCount?: number }>({
             query: ({ mediaIds, maxCount = 10 }) => ({
                 url: `modify`,
                 method: "POST",

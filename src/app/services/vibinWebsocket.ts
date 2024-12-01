@@ -83,7 +83,7 @@ type MediaFormat = {
     sample_format: string;
     mqa: string;
     codec: string;
-    lossless: boolean,
+    lossless: boolean;
     sample_rate: number;
     bit_depth: number;
     encoding: string;
@@ -126,10 +126,12 @@ type SystemPayload = {
     streamer: {
         name: string;
         power: "on" | "off" | undefined;
-        sources: {
-            active: AudioSource,
-            available: AudioSource[],
-        } | undefined;
+        sources:
+            | {
+                  active: AudioSource;
+                  available: AudioSource[];
+              }
+            | undefined;
         display: DeviceDisplay | undefined;
     };
     media: {
@@ -142,18 +144,20 @@ type SystemPayload = {
         mute: "on" | "off" | undefined;
         max_volume: number | undefined;
         volume: number | undefined;
-        sources: {
-            active: AudioSource,
-            available: AudioSource[],
-        } | undefined;
-    }
+        sources:
+            | {
+                  active: AudioSource;
+                  available: AudioSource[];
+              }
+            | undefined;
+    };
 };
 
 type TransportStatePayload = {
-    play_state: PlayStatus,
-    active_controls: TransportAction[],
-    repeat: RepeatState,
-    shuffle: ShuffleState,
+    play_state: PlayStatus;
+    active_controls: TransportAction[];
+    repeat: RepeatState;
+    shuffle: ShuffleState;
 };
 
 type UPnPPropertiesPayload = {
@@ -198,7 +202,7 @@ export type VibinMessage = {
  * @param input
  */
 const purifyData = (
-    input: SimpleObject | any[] | string | number | undefined | null
+    input: SimpleObject | any[] | string | number | undefined | null,
 ): SimpleObject | any[] | string | number | undefined | null => {
     if (typeof input !== "object" || input === null) {
         return input;
@@ -238,7 +242,7 @@ const purifyData = (
 function messageHandler(
     updateCachedData: any,
     getState: () => any, // TODO: The return type here is really RootState
-    dispatch: ThunkDispatch<any, any, any>
+    dispatch: ThunkDispatch<any, any, any>,
 ): (event: MessageEvent) => void {
     return (event: MessageEvent) => {
         // TODO: Can message payload munging/purification be done by implementing transformResponse
@@ -269,7 +273,7 @@ function messageHandler(
                 getState().mediaGroups.trackById[currentlyPlaying.track_media_id];
 
             dispatch(
-                setCurrentTrack(localMediaTrackDetails || (currentlyPlaying.active_track as Track))
+                setCurrentTrack(localMediaTrackDetails || (currentlyPlaying.active_track as Track)),
             );
             dispatch(setCurrentTrackMediaId(currentlyPlaying.track_media_id));
             dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
@@ -298,7 +302,7 @@ function messageHandler(
         } else if (data.type === "TransportState") {
             const payload = data.payload as TransportStatePayload;
 
-            dispatch(setPlayStatus(payload.play_state));  // "play", "pause", etc
+            dispatch(setPlayStatus(payload.play_state)); // "play", "pause", etc
             dispatch(setActiveTransportActions(payload.active_controls));
             dispatch(setRepeat(payload.repeat));
             dispatch(setShuffle(payload.shuffle));
@@ -340,7 +344,7 @@ export const vibinWebsocket = createApi({
             queryFn: () => ({ data: [] }),
             async onCacheEntryAdded(
                 arg,
-                { updateCachedData, cacheDataLoaded, cacheEntryRemoved, getState, dispatch }
+                { updateCachedData, cacheDataLoaded, cacheEntryRemoved, getState, dispatch },
             ) {
                 const connectToVibinServer = async () => {
                     dispatch(setWebsocketStatus("connecting"));
@@ -366,7 +370,7 @@ export const vibinWebsocket = createApi({
                 };
 
                 await connectToVibinServer();
-                
+
                 // cacheEntryRemoved will resolve when the cache subscription is no longer active
                 await cacheEntryRemoved;
             },

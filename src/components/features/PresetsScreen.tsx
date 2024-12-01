@@ -21,7 +21,7 @@ const PresetsScreen: FC = () => {
     const { SCREEN_HEADER_HEIGHT } = useAppGlobals();
     const { scrollPosition } = useAppSelector((state: RootState) => state.internal.presets);
     const { cardSize, cardGap, filterText, showDetails, wallViewMode } = useAppSelector(
-        (state: RootState) => state.userSettings.presets
+        (state: RootState) => state.userSettings.presets,
     );
     const [scroll, scrollTo] = useWindowScroll({ delay: 500 });
 

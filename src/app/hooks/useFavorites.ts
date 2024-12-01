@@ -8,7 +8,7 @@ import { isAlbum, isTrack, Media, MediaId } from "../types";
 
 export const useFavorites = () => {
     const { favoriteAlbumMediaIds, favoriteTrackMediaIds } = useAppSelector(
-        (state: RootState) => state.favorites
+        (state: RootState) => state.favorites,
     );
     const isFavoritable = (media: Media) => isAlbum(media) || isTrack(media);
 

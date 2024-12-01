@@ -19,9 +19,11 @@ const BackgroundImageManager: FC = () => {
     const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
     const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const currentTrackId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
-    const { current_track: currentPlaybackTrack } = useAppSelector((state: RootState) => state.playback);
+    const { current_track: currentPlaybackTrack } = useAppSelector(
+        (state: RootState) => state.playback,
+    );
 
     /**
      * Set the background image URL. This will change whenever the current track changes. If
@@ -42,8 +44,8 @@ const BackgroundImageManager: FC = () => {
         ) {
             dispatch(
                 setCurrentlyPlayingArtUrl(
-                    activePlaylist.entries[activePlaylist.current_track_index]?.albumArtURI
-                )
+                    activePlaylist.entries[activePlaylist.current_track_index]?.albumArtURI,
+                ),
             );
         } else if (currentPlaybackTrack?.art_url) {
             dispatch(setCurrentlyPlayingArtUrl(currentPlaybackTrack.art_url));

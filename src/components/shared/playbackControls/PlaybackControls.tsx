@@ -26,14 +26,16 @@ const PlaybackControls: FC = () => {
     const { colors } = useMantineTheme();
     const { LARGE_SCREEN, BUFFERING_AUDIO_NOTIFY_DELAY } = useAppGlobals();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const currentScreen = useAppSelector((state: RootState) => state.internal.application.currentScreen);
+    const currentScreen = useAppSelector(
+        (state: RootState) => state.internal.application.currentScreen,
+    );
     const transportActions = useAppSelector(
-        (state: RootState) => state.playback.active_transport_actions
+        (state: RootState) => state.playback.active_transport_actions,
     );
     const [showBuffering, setShowBuffering] = useState<boolean>(false);
     const { start: startBufferTimeout, clear: clearBufferTimeout } = useTimeout(
         () => setShowBuffering(true),
-        BUFFERING_AUDIO_NOTIFY_DELAY
+        BUFFERING_AUDIO_NOTIFY_DELAY,
     );
 
     /**
@@ -50,7 +52,6 @@ const PlaybackControls: FC = () => {
             clearBufferTimeout();
             setShowBuffering(false);
         }
-
     }, [playStatus, currentScreen, startBufferTimeout, clearBufferTimeout]);
 
     const componentHeight = 40;

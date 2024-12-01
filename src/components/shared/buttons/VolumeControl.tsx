@@ -41,7 +41,7 @@ const VolumeControl: FC = () => {
     const [amplifierMuteToggle] = useAmplifierMuteToggleMutation();
     const [localVolume, setLocalVolume] = useState<number>(0);
     const applicationVolumeLimit = useAppSelector(
-        (state: RootState) => state.userSettings.application.volumeLimit
+        (state: RootState) => state.userSettings.application.volumeLimit,
     );
 
     const amplifier = system.amplifier;

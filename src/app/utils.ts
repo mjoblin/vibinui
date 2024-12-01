@@ -85,7 +85,7 @@ export const yearFromDate = (date: string): number | undefined => {
     }
 
     return year;
-}
+};
 
 interface VibinNotification {
     id?: string;
@@ -136,7 +136,12 @@ export const showWarningNotification = ({
         title,
         message,
         color: color || "yellow",
-        icon: icon || createElement(IconAlertCircle, { size: 21, style: { paddingRight: 1, paddingBottom: 2 } }),
+        icon:
+            icon ||
+            createElement(IconAlertCircle, {
+                size: 21,
+                style: { paddingRight: 1, paddingBottom: 2 },
+            }),
         loading,
         autoClose,
     });
@@ -244,7 +249,7 @@ export function collectionFilter<T extends Object>(
         return collection;
     }
 
-    const filterTextLowerCase = filterText.toLocaleLowerCase()
+    const filterTextLowerCase = filterText.toLocaleLowerCase();
 
     const matches = [...filterTextLowerCase.matchAll(filterTokenizerRegex)];
 
@@ -252,8 +257,8 @@ export function collectionFilter<T extends Object>(
     // collection, then treat this as a zero-match result.
     const validMatches = matches.filter((match) =>
         collection.some((item) =>
-            flattenKeys(item).includes(searchRoot ? `${searchRoot}.${match[1]}` : match[1])
-        )
+            flattenKeys(item).includes(searchRoot ? `${searchRoot}.${match[1]}` : match[1]),
+        ),
     );
 
     if (validMatches.length !== matches.length) {
@@ -291,11 +296,12 @@ export function collectionFilter<T extends Object>(
 
             if (typeof thisValue === "undefined") {
                 return false;
-            }
-            else if (typeof thisValue === "string" && !thisValue.toLocaleLowerCase().includes(searchValue)) {
+            } else if (
+                typeof thisValue === "string" &&
+                !thisValue.toLocaleLowerCase().includes(searchValue)
+            ) {
                 return false;
-            }
-            else if (typeof thisValue === "number" && thisValue !== parseFloat(searchValue)) {
+            } else if (typeof thisValue === "number" && thisValue !== parseFloat(searchValue)) {
                 return false;
             }
         }

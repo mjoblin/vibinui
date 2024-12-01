@@ -69,7 +69,7 @@ const SettingsMenu: FC = () => {
         const checkIfPowerChanged = (
             device: string,
             thisPowerState: PowerState,
-            previousPowerState: MutableRefObject<PowerState>
+            previousPowerState: MutableRefObject<PowerState>,
         ) => {
             if (thisPowerState === previousPowerState.current) {
                 return;
@@ -175,7 +175,7 @@ const SettingsMenu: FC = () => {
                                             (source: AudioSource) => ({
                                                 value: source.name,
                                                 label: source.name,
-                                            })
+                                            }),
                                         ) || []
                                     }
                                 />

@@ -19,11 +19,11 @@ const SelfUpdatingRelativeDate: FC<UpdatingRelativeDateProps> = ({
     interval = 5000,
 }) => {
     const [dateString, setDateString] = useState<string>(
-        epochSecondsToStringRelative(epochSeconds)
+        epochSecondsToStringRelative(epochSeconds),
     );
     const updater = useInterval(
         () => setDateString(() => epochSecondsToStringRelative(epochSeconds)),
-        interval
+        interval,
     );
 
     useEffect(() => {

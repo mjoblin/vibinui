@@ -47,7 +47,7 @@ onmessage = (e) => {
                     [thisArtist]: [...currAlbums, album],
                 };
             },
-            {}
+            {},
         );
     } else if (type === "allTracksByArtistName") {
         result = payload.reduce(
@@ -62,7 +62,7 @@ onmessage = (e) => {
                     [thisArtist]: [...currTracks, track],
                 };
             },
-            {}
+            {},
         );
     } else if (type === "allTracksByAlbumId") {
         result = payload.reduce(
@@ -76,7 +76,7 @@ onmessage = (e) => {
                     [thisAlbumId]: [...currTracks, track],
                 };
             },
-            {}
+            {},
         );
     } else if (type === "artistByName") {
         const r: Record<string, Artist> = {};

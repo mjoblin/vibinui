@@ -32,17 +32,17 @@ import FollowCurrentlyPlayingToggle from "../../shared/buttons/FollowCurrentlyPl
 
 type AlbumsControlsProps = {
     scrollToCurrent?: () => void;
-}
+};
 
 const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     const dispatch = useAppDispatch();
     const { STYLE_LABEL_BESIDE_COMPONENT } = useAppGlobals();
     const { data: allAlbums } = useGetAlbumsQuery();
     const { activeCollection, filterText, followCurrentlyPlaying } = useAppSelector(
-        (state: RootState) => state.userSettings.albums
+        (state: RootState) => state.userSettings.albums,
     );
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const { filteredAlbumMediaIds } = useAppSelector((state: RootState) => state.internal.albums);
     const [currentIsShown, setCurrentIsShown] = useState<boolean>(false);
@@ -75,11 +75,11 @@ const AlbumsControls: FC<AlbumsControlsProps> = ({ scrollToCurrent }) => {
     useEffect(
         () =>
             setCurrentIsShown(
-                !!(currentAlbumMediaId && filteredAlbumMediaIds.includes(currentAlbumMediaId))
+                !!(currentAlbumMediaId && filteredAlbumMediaIds.includes(currentAlbumMediaId)),
             ),
-        [currentAlbumMediaId, filteredAlbumMediaIds]
+        [currentAlbumMediaId, filteredAlbumMediaIds],
     );
-    
+
     // --------------------------------------------------------------------------------------------
 
     return (

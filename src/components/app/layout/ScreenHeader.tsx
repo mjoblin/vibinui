@@ -23,8 +23,8 @@ const ScreenHeader: FC<ScreenHeaderProps> = ({ height, noBackground = false, chi
             background: noBackground
                 ? "rgb(0, 0, 0, 0)"
                 : theme.colorScheme === "dark"
-                ? theme.colors.dark[8]
-                : theme.white,
+                  ? theme.colors.dark[8]
+                  : theme.white,
             height,
             zIndex: 100,
             top: HEADER_HEIGHT,

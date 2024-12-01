@@ -77,7 +77,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
     onClick,
 }) => {
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
 
     const isCurrentlyPlaying = currentAlbumMediaId === album.id;
@@ -130,7 +130,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
     //     (state: RootState) => state.userSettings.albums
     // );
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const [isActionsMenuOpen, setIsActionsMenuOpen] = useState<boolean>(false);
     const [showTracksModal, setShowTracksModal] = useState<boolean>(false);
@@ -149,8 +149,8 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
             backgroundColor: selected
                 ? SELECTED_COLOR
                 : theme.colorScheme === "dark"
-                ? theme.colors.dark[6]
-                : theme.colors.gray[3],
+                  ? theme.colors.dark[6]
+                  : theme.colors.gray[3],
         },
     }))();
 
@@ -233,7 +233,7 @@ const AlbumCard: FC<AlbumCardProps & { cacheRenderSize?: boolean }> = ({
 }) => {
     const dispatch = useAppDispatch();
     const latestVisibleRenderSize = useAppSelector(
-        (state: RootState) => state.internal.albums.albumCard
+        (state: RootState) => state.internal.albums.albumCard,
     );
     const theme = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -264,7 +264,7 @@ const AlbumCard: FC<AlbumCardProps & { cacheRenderSize?: boolean }> = ({
                     setAlbumCardRenderDimensions({
                         width: newRenderWidth,
                         height: newRenderHeight,
-                    })
+                    }),
                 );
         }
     }, [cardRef, cacheRenderSize, isVisible, size, showDetails, latestVisibleRenderSize, dispatch]);

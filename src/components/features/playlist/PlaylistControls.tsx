@@ -85,17 +85,23 @@ const PlaylistSelectItem = forwardRef<HTMLDivElement, PlaylistSelectItemProps>(
                 <Group noWrap>
                     <Stack spacing={0} w="100%">
                         <Text size="sm">{label}</Text>
-                        {/* @ts-ignore */}
-                        <Text color={others["data-selected"] ? colors.gray[5] : colors.gray[6]} size="xs">
+                        <Text
+                            color={
+                                others["data-selected" as keyof typeof others]
+                                    ? colors.gray[5]
+                                    : colors.gray[6]
+                            }
+                            size="xs"
+                        >
                             {`${entryCount} entries, updated ${epochSecondsToStringRelative(
-                                updated
+                                updated,
                             )}`}
                         </Text>
                     </Stack>
                 </Group>
             </Box>
         );
-    }
+    },
 );
 
 // ================================================================================================
@@ -109,7 +115,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     const { colors } = useMantineTheme();
     const dispatch = useAppDispatch();
     const { followCurrentlyPlaying, viewMode } = useAppSelector(
-        (state: RootState) => state.userSettings.playlist
+        (state: RootState) => state.userSettings.playlist,
     );
     const {
         playlists: storedPlaylists,
@@ -121,7 +127,7 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const { current_track_index: activePlaylistTrackIndex } = useAppSelector(
-        (state: RootState) => state.activePlaylist
+        (state: RootState) => state.activePlaylist,
     );
     const [streamerPowerToggle] = useStreamerPowerToggleMutation();
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();

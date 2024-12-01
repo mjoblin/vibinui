@@ -27,7 +27,7 @@ const FollowCurrentlyPlayingToggle: FC<CurrentlyPlayingToggleProps> = ({
 }) => {
     const theme = useMantineTheme();
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
 
     return (

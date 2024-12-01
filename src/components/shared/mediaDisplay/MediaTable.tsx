@@ -39,7 +39,11 @@ type TableRowProps = {
 /**
  * Get the value to display in the given column for the given media item.
  */
-const columnValueGetter = (media: Media, columnConfig: ColumnConfiguration, column: string): any => {
+const columnValueGetter = (
+    media: Media,
+    columnConfig: ColumnConfiguration,
+    column: string,
+): any => {
     if (!media.hasOwnProperty(column)) {
         return "";
     }
@@ -163,7 +167,7 @@ const MediaTable: FC<MediaTableProps> = ({
     const { CURRENTLY_PLAYING_COLOR, MAX_TABLE_ITEMS_TO_DISPLAY } = useAppGlobals();
     const { classes } = useStyles();
     const currentSource = useAppSelector(
-        (state: RootState) => state.system.streamer.sources?.active
+        (state: RootState) => state.system.streamer.sources?.active,
     );
     const [mediaToDisplay, setMediaToDisplay] = useState<{ isTruncated: boolean; media: Media[] }>({
         isTruncated: false,
@@ -205,8 +209,8 @@ const MediaTable: FC<MediaTableProps> = ({
                     backgroundColor: stripeColor
                         ? stripeColor
                         : theme.colorScheme === "dark"
-                        ? theme.colors.dark[7]
-                        : theme.colors.gray[2],
+                          ? theme.colors.dark[7]
+                          : theme.colors.gray[2],
                 },
             },
         };
@@ -224,7 +228,8 @@ const MediaTable: FC<MediaTableProps> = ({
         // as well as the box background color.
         const currentlyPlayingRowCSS = {
             color: theme.white,
-            backgroundColor: theme.colorScheme === "dark" ? "rgb(70, 70, 70, 0.5)" : theme.colors.yellow[6],
+            backgroundColor:
+                theme.colorScheme === "dark" ? "rgb(70, 70, 70, 0.5)" : theme.colors.yellow[6],
             border: `1px solid ${currentEntryBorderColor} !important`,
         };
 
@@ -239,7 +244,7 @@ const MediaTable: FC<MediaTableProps> = ({
         } else {
             // The previous row is a normal table row.
             const currentlyPlayingRowIndex = media.findIndex(
-                (mediaItem) => mediaItem.id === currentlyPlayingId
+                (mediaItem) => mediaItem.id === currentlyPlayingId,
             );
 
             if (currentlyPlayingRowIndex) {

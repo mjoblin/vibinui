@@ -49,7 +49,7 @@ const PlayheadManager: FC = () => {
         typeof position === "number" &&
             currentTrack?.duration &&
             dispatch(
-                setPlayheadPositionNormalized(normalizePosition(position, currentTrack.duration))
+                setPlayheadPositionNormalized(normalizePosition(position, currentTrack.duration)),
             );
     }, [dispatch, position, currentTrack]);
 
@@ -66,12 +66,15 @@ const PlayheadManager: FC = () => {
         currentTrack?.duration &&
             dispatch(
                 setPlayheadPositionNormalized(
-                    normalizePosition(position + secondsSinceLastBackendSync, currentTrack.duration)
-                )
+                    normalizePosition(
+                        position + secondsSinceLastBackendSync,
+                        currentTrack.duration,
+                    ),
+                ),
             );
     }, PLAYHEAD_UPDATE_INTERVAL);
 
     return null;
-}
+};
 
 export default PlayheadManager;

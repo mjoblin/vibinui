@@ -30,7 +30,9 @@ const RateYourMusicLogo: FC = () => {
     return (
         <Flex gap={7}>
             <Image src={RateYourMusicImage} width="fit-content" height={25} radius={3} />
-            <Text size="sm" weight="bold">RYM</Text>
+            <Text size="sm" weight="bold">
+                RYM
+            </Text>
         </Flex>
     );
 };
@@ -80,7 +82,13 @@ type TrackLinksProps = {
 };
 
 const TrackLinks: FC<TrackLinksProps> = ({ trackId, artist, album, title }) => {
-    const { data, isFetching } = useGetLinksQuery({ trackId, artist, album, title, allTypes: true });
+    const { data, isFetching } = useGetLinksQuery({
+        trackId,
+        artist,
+        album,
+        title,
+        allTypes: true,
+    });
 
     if (isFetching) {
         return <LoadingDataMessage message="Retrieving links..." />;
@@ -96,7 +104,7 @@ const TrackLinks: FC<TrackLinksProps> = ({ trackId, artist, album, title }) => {
                 .filter(([service, links]) => links.length > 0)
                 .sort(([serviceA], [serviceB]) =>
                     // Sort alphabetically by service name
-                    serviceA < serviceB ? -1 : serviceA > serviceB ? 1 : 0
+                    serviceA < serviceB ? -1 : serviceA > serviceB ? 1 : 0,
                 )
                 .map(([service, links], index) => (
                     <Stack key={service} spacing="sm" align="flex-start">

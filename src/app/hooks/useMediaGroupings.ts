@@ -77,7 +77,7 @@ export const useMediaGroupings = () => {
     const [trackById, setTrackById] = useState<Record<string, Track>>({});
     const mediaGrouperWorker: Worker = useMemo(
         () => new Worker(new URL("../workers/mediaGrouperWorker.ts", import.meta.url)),
-        []
+        [],
     );
 
     mediaGrouperWorker.onmessage = (e) => {
@@ -91,7 +91,7 @@ export const useMediaGroupings = () => {
         type === "trackById" && setTrackById(result);
 
         localDispatch({ type: "remove_compute_label", payload: e.data.type });
-    }
+    };
 
     /**
      *

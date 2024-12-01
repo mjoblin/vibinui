@@ -18,10 +18,10 @@ import { AudioSource } from "../../../app/store/systemSlice";
 const MediaSourceManager: FC = () => {
     const dispatch = useDispatch();
     const currentStreamerSource = useAppSelector(
-        (state: RootState) => state.system.streamer.sources?.active
+        (state: RootState) => state.system.streamer.sources?.active,
     );
     const currentAmplifierSource = useAppSelector(
-        (state: RootState) => state.system.amplifier?.sources?.active
+        (state: RootState) => state.system.amplifier?.sources?.active,
     );
     const previousStreamerSource = useRef<AudioSource | undefined>(currentStreamerSource);
     const previousAmplifierSource = useRef<AudioSource | undefined>(currentAmplifierSource);
@@ -35,7 +35,10 @@ const MediaSourceManager: FC = () => {
      *  * Reset the current track and album media ids.
      */
     useEffect(() => {
-        if (currentStreamerSource?.name && currentStreamerSource.name !== previousStreamerSource.current?.name) {
+        if (
+            currentStreamerSource?.name &&
+            currentStreamerSource.name !== previousStreamerSource.current?.name
+        ) {
             dispatch(restartPlayhead());
             dispatch(setCurrentTrackMediaId(undefined));
             dispatch(setCurrentAlbumMediaId(undefined));
@@ -52,7 +55,10 @@ const MediaSourceManager: FC = () => {
 
         previousStreamerSource.current = currentStreamerSource;
 
-        if (currentAmplifierSource?.name && currentAmplifierSource.name !== previousAmplifierSource.current?.name) {
+        if (
+            currentAmplifierSource?.name &&
+            currentAmplifierSource.name !== previousAmplifierSource.current?.name
+        ) {
             if (previousAmplifierSource.current !== undefined) {
                 showSuccessNotification({
                     title: "Amplifier Audio Source",

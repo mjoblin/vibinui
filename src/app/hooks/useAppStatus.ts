@@ -14,7 +14,7 @@ import { RootState } from "../store/store";
 
 export const useAppStatus = () => {
     const currentSource = useAppSelector(
-        (state: RootState) => state.system.streamer.sources?.active
+        (state: RootState) => state.system.streamer.sources?.active,
     );
     const {
         status: { is_activating_playlist: isActivatingPlaylist },

@@ -49,10 +49,10 @@ const PresetsWall: FC<PresetsWallProps> = ({
     const dispatch = useAppDispatch();
     const { SCREEN_LOADING_PT } = useAppGlobals();
     const { presets, haveReceivedInitialState } = useAppSelector(
-        (state: RootState) => state.presets
+        (state: RootState) => state.presets,
     );
     const { wallSortDirection, wallSortField } = useAppSelector(
-        (state: RootState) => state.userSettings.presets
+        (state: RootState) => state.userSettings.presets,
     );
     const [presetsToDisplay, setPresetsToDisplay] = useState<Preset[]>([]);
     const [haveProcessedPresets, setHaveProcessedPresets] = useState<boolean>(false);

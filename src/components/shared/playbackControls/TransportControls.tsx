@@ -43,13 +43,13 @@ const TransportControls: FC = () => {
     const { HEADER_ICON_SIZE, STYLE_DISABLEABLE } = useAppGlobals();
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const activeTransportActions = useAppSelector(
-        (state: RootState) => state.playback.active_transport_actions
+        (state: RootState) => state.playback.active_transport_actions,
     );
     const presets = useAppSelector((state: RootState) => state.presets.presets);
     const repeatState = useAppSelector((state: RootState) => state.playback.repeat);
     const shuffleState = useAppSelector((state: RootState) => state.playback.shuffle);
     const currentStreamerSource = useAppSelector(
-        (state: RootState) => state.system.streamer.sources?.active
+        (state: RootState) => state.system.streamer.sources?.active,
     );
     const [nextTrack] = useNextTrackMutation();
     const [pausePlayback] = usePauseMutation();
@@ -60,7 +60,8 @@ const TransportControls: FC = () => {
     const [toggleShuffle] = useToggleShuffleMutation();
     const [playPresetId] = useLazyPlayPresetIdQuery();
 
-    const colorStandard = theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[3];
+    const colorStandard =
+        theme.colorScheme === "dark" ? theme.colors.dark[1] : theme.colors.dark[3];
     const colorActive = theme.colorScheme === "dark" ? theme.colors.blue[5] : theme.colors.blue[8];
 
     return (

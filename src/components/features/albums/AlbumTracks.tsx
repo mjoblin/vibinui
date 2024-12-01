@@ -93,8 +93,8 @@ const AlbumTracks: FC<AlbumTracksProps> = ({ album }) => {
                                     actionsMenuOpenFor === track.id
                                         ? classes.highlight
                                         : actionsMenuOpenFor
-                                        ? ""
-                                        : classes.highlightOnHover
+                                          ? ""
+                                          : classes.highlightOnHover
                                 }
                             >
                                 <Flex gap="sm" align="center" justify="space-between">

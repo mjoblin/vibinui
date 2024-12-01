@@ -73,16 +73,16 @@ const ArtistsWall: FC = () => {
     const { activeCollection, selectedAlbum, selectedArtist, selectedTrack, viewMode } =
         useAppSelector((state: RootState) => state.userSettings.artists);
     const { cardSize, cardGap, filterText } = useAppSelector(
-        (state: RootState) => state.userSettings.artists
+        (state: RootState) => state.userSettings.artists,
     );
     const currentAlbumMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_album_media_id
+        (state: RootState) => state.playback.current_album_media_id,
     );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
     const { albumsByArtistName, tracksByAlbumId, tracksByArtistName } = useAppSelector(
-        (state: RootState) => state.mediaGroups
+        (state: RootState) => state.mediaGroups,
     );
     const mediaServer = useAppSelector((state: RootState) => state.system.media_server);
     const [artistIdsWithAlbums, setArtistIdsWithAlbums] = useState<MediaId[]>([]);
@@ -183,7 +183,7 @@ const ArtistsWall: FC = () => {
             dispatch(setArtistsScrollPos({ category: "artists", pos: value.y }));
         },
         SCROLL_POS_DISPATCH_RATE,
-        { leading: false }
+        { leading: false },
     );
 
     const throttledAlbumsPosChange = throttle(
@@ -191,7 +191,7 @@ const ArtistsWall: FC = () => {
             dispatch(setArtistsScrollPos({ category: "albums", pos: value.y }));
         },
         SCROLL_POS_DISPATCH_RATE,
-        { leading: false }
+        { leading: false },
     );
 
     const throttledTracksPosChange = throttle(
@@ -199,7 +199,7 @@ const ArtistsWall: FC = () => {
             dispatch(setArtistsScrollPos({ category: "tracks", pos: value.y }));
         },
         SCROLL_POS_DISPATCH_RATE,
-        { leading: false }
+        { leading: false },
     );
 
     /**
@@ -410,8 +410,8 @@ const ArtistsWall: FC = () => {
                                     artist.title === currentArtist?.title
                                         ? artistCurrentScrollRef
                                         : artist.id === selectedArtist?.id
-                                        ? artistSelectedScrollRef
-                                        : undefined
+                                          ? artistSelectedScrollRef
+                                          : undefined
                                 }
                             >
                                 <ArtistCard
@@ -461,8 +461,8 @@ const ArtistsWall: FC = () => {
                                                     album.id === currentAlbumMediaId
                                                         ? albumCurrentScrollRef
                                                         : album.id === selectedAlbum?.id
-                                                        ? albumSelectedScrollRef
-                                                        : undefined
+                                                          ? albumSelectedScrollRef
+                                                          : undefined
                                                 }
                                             >
                                                 <AlbumCard
@@ -485,7 +485,7 @@ const ArtistsWall: FC = () => {
                                                 />
                                             </Box>
                                         );
-                                    }
+                                    },
                                 )
                             ) : (
                                 // Artist with no Albums
@@ -500,12 +500,7 @@ const ArtistsWall: FC = () => {
                                 </Text>
                             )
                         ) : (
-                            <Text
-                                size="sm"
-                                transform="uppercase"
-                                color={colors.dark[3]}
-                                w={250}
-                            >
+                            <Text size="sm" transform="uppercase" color={colors.dark[3]} w={250}>
                                 No artist selected
                             </Text>
                         )}
@@ -566,8 +561,8 @@ const ArtistsWall: FC = () => {
                                             track.id === currentTrackMediaId
                                                 ? trackCurrentScrollRef
                                                 : track.id === selectedTrack?.id
-                                                ? trackSelectedScrollRef
-                                                : undefined
+                                                  ? trackSelectedScrollRef
+                                                  : undefined
                                         }
                                     >
                                         <TrackCard
@@ -581,16 +576,11 @@ const ArtistsWall: FC = () => {
                                             }
                                         />
                                     </Box>
-                                )
+                                ),
                             )
                         ) : (
                             // Artist has Albums but none are selected, so no Tracks to display
-                            <Text
-                                size="sm"
-                                transform="uppercase"
-                                color={colors.dark[3]}
-                                w={250}
-                            >
+                            <Text size="sm" transform="uppercase" color={colors.dark[3]} w={250}>
                                 No album selected
                             </Text>
                         )}

@@ -56,7 +56,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
     onClick,
 }) => {
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
 
     const isCurrentlyPlaying = currentTrackMediaId === track.id;
@@ -113,7 +113,7 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
     //     (state: RootState) => state.userSettings.tracks
     // );
     const currentTrackMediaId = useAppSelector(
-        (state: RootState) => state.playback.current_track_media_id
+        (state: RootState) => state.playback.current_track_media_id,
     );
 
     const isCurrentlyPlaying = currentTrackMediaId === track.id;
@@ -122,15 +122,16 @@ const TrackCardArtFocused: FC<TrackCardTypeProps> = ({
     const { classes: dynamicClasses } = createStyles((theme) => ({
         card: {
             width: size,
-            border: highlightIfPlaying && isCurrentlyPlaying
-                ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
-                : `${borderSize}px solid rgb(0, 0, 0, 0)`,
+            border:
+                highlightIfPlaying && isCurrentlyPlaying
+                    ? `${borderSize}px solid ${CURRENTLY_PLAYING_COLOR}`
+                    : `${borderSize}px solid rgb(0, 0, 0, 0)`,
             borderRadius: 5,
             backgroundColor: selected
                 ? SELECTED_COLOR
                 : theme.colorScheme === "dark"
-                ? theme.colors.dark[6]
-                : theme.colors.gray[3],
+                  ? theme.colors.dark[6]
+                  : theme.colors.gray[3],
         },
     }))();
 
@@ -205,7 +206,7 @@ const TrackCard: FC<TrackCardProps & { cacheRenderSize?: boolean }> = ({
     //     (state: RootState) => state.userSettings.tracks
     // );
     const latestVisibleRenderSize = useAppSelector(
-        (state: RootState) => state.internal.tracks.trackCard
+        (state: RootState) => state.internal.tracks.trackCard,
     );
     const theme = useMantineTheme();
     const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -236,7 +237,7 @@ const TrackCard: FC<TrackCardProps & { cacheRenderSize?: boolean }> = ({
                     setTrackCardRenderDimensions({
                         width: newRenderWidth,
                         height: newRenderHeight,
-                    })
+                    }),
                 );
         }
     }, [cardRef, cacheRenderSize, isVisible, size, showDetails, latestVisibleRenderSize, dispatch]);
@@ -273,9 +274,10 @@ const TrackCard: FC<TrackCardProps & { cacheRenderSize?: boolean }> = ({
                             style={{
                                 width: latestVisibleRenderSize.renderWidth,
                                 height: latestVisibleRenderSize.renderHeight,
-                                backgroundColor: theme.colorScheme === "dark"
-                                    ? theme.colors.dark[6]
-                                    : theme.colors.gray[3],
+                                backgroundColor:
+                                    theme.colorScheme === "dark"
+                                        ? theme.colors.dark[6]
+                                        : theme.colors.gray[3],
                             }}
                         ></div>
                     )

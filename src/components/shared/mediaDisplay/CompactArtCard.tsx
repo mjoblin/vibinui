@@ -1,11 +1,5 @@
 import React, { FC, ReactNode } from "react";
-import {
-    Box,
-    createStyles,
-    Flex,
-    Paper,
-    Stack,
-} from "@mantine/core";
+import { Box, createStyles, Flex, Paper, Stack } from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
 import MediaArt from "./MediaArt";
@@ -47,8 +41,8 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
             backgroundColor: selected
                 ? SELECTED_COLOR
                 : theme.colorScheme === "dark"
-                ? theme.colors.dark[6]
-                : theme.colors.gray[3],
+                  ? theme.colors.dark[6]
+                  : theme.colors.gray[3],
             "&:hover": {
                 cursor: onClick ? "pointer" : "inherit",
             },

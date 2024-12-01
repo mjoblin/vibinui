@@ -65,11 +65,13 @@ const StatusScreen: FC = () => {
     const { refetch: refetchNewAlbums } = useGetNewAlbumsQuery();
     const { refetch: refetchArtists } = useGetArtistsQuery();
     const { refetch: refetchTracks } = useGetTracksQuery();
-    const { streamer, media_server: mediaServer, amplifier } = useAppSelector(
-        (state: RootState) => state.system
-    );
+    const {
+        streamer,
+        media_server: mediaServer,
+        amplifier,
+    } = useAppSelector((state: RootState) => state.system);
     const { websocketClientId, websocketStatus } = useAppSelector(
-        (state: RootState) => state.internal.application
+        (state: RootState) => state.internal.application,
     );
     const {
         vibin_version: vibinVersion,
@@ -78,13 +80,14 @@ const StatusScreen: FC = () => {
         system_platform: systemPlatform,
         clients,
     } = useAppSelector((state: RootState) => state.vibinStatus);
-    const { autoPlayOnPlaylistActivation, useImageBackground, volumeLimit } =
-        useAppSelector((state: RootState) => state.userSettings.application);
+    const { autoPlayOnPlaylistActivation, useImageBackground, volumeLimit } = useAppSelector(
+        (state: RootState) => state.userSettings.application,
+    );
     const [getSettings, getSettingsResult] = useLazySettingsQuery();
     const [updateSettings, updateSettingsResult] = useLazyUpdateSettingsQuery();
     const [volumeSet] = useAmplifierVolumeSetMutation();
-    const [allAlbumsPath, setAllAlbumsPath] = useState<string>()
-    const [newAlbumsPath, setNewAlbumsPath] = useState<string>()
+    const [allAlbumsPath, setAllAlbumsPath] = useState<string>();
+    const [newAlbumsPath, setNewAlbumsPath] = useState<string>();
     const [allArtistsPath, setAllArtistsPath] = useState<string>();
     const [localVolumeLimit, setLocalVolumeLimit] = useState<number | null>(null);
     const volumeLimitInputRef = useRef<HTMLInputElement>(null);
@@ -122,8 +125,7 @@ const StatusScreen: FC = () => {
         } else if (updateSettingsResult.isSuccess) {
             showSuccessNotification({ title: "Media path details updated" });
             getSettings();
-        }
-        else if (updateSettingsResult.isError) {
+        } else if (updateSettingsResult.isError) {
             showErrorNotification({ title: "Could not update media path details" });
         }
     }, [updateSettingsResult, getSettings]);
@@ -177,8 +179,8 @@ const StatusScreen: FC = () => {
                         onChange={() =>
                             dispatch(
                                 setApplicationAutoPlayOnPlaylistActivation(
-                                    !autoPlayOnPlaylistActivation
-                                )
+                                    !autoPlayOnPlaylistActivation,
+                                ),
                             )
                         }
                     />
@@ -192,7 +194,7 @@ const StatusScreen: FC = () => {
                         precision={0}
                         value={
                             amplifier?.supported_actions?.includes("volume")
-                                ? volumeLimit ?? ""
+                                ? (volumeLimit ?? "")
                                 : ""
                         }
                         maw="12rem"
@@ -457,8 +459,8 @@ const StatusScreen: FC = () => {
                                                 undefined,
                                                 {
                                                     numeric: true,
-                                                }
-                                            )
+                                                },
+                                            ),
                                     )
                                     .map((client) => (
                                         <tr key={client.id}>
