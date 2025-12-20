@@ -12,13 +12,15 @@ import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsS
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 import Playlist from "./playlist/Playlist";
 import PlaylistControls from "./playlist/PlaylistControls";
+import Queue from "./queue/Queue";
+import QueueControls from "./queue/QueueControls";
 import ScreenHeader from "../app/layout/ScreenHeader";
 import WarningBanner from "../shared/textDisplay/WarningBanner";
 
 // ================================================================================================
-// Playlist screen top-level layout.
+// Queue screen top-level layout.
 //
-// Contains a <ScreenHeader>, <PlaylistControls>, and <Playlist>.
+// Contains a <ScreenHeader>, <QueueControls>, and <Queue>.
 // ================================================================================================
 
 type WindowDimensions = {
@@ -26,7 +28,7 @@ type WindowDimensions = {
     width: number;
 };
 
-const PlaylistScreen: FC = () => {
+const QueueScreen: FC = () => {
     const dispatch = useAppDispatch();
     const {
         HEADER_HEIGHT,
@@ -146,7 +148,8 @@ const PlaylistScreen: FC = () => {
         <Stack spacing={0}>
             <ScreenHeader height={SCREEN_HEADER_HEIGHT} noBackground={RENDER_APP_BACKGROUND_IMAGE}>
                 <Stack spacing={10}>
-                    <PlaylistControls scrollToCurrent={scrollToCurrent} />
+                    {/*<PlaylistControls scrollToCurrent={scrollToCurrent} />*/}
+                    <QueueControls scrollToCurrent={scrollToCurrent} />
 
                     {showingInactivePlaylistBanner && (
                         <WarningBanner ref={inactiveBannerRef}>
@@ -173,7 +176,18 @@ const PlaylistScreen: FC = () => {
                     onScrollPositionChange={throttledPlaylistPositionChange}
                     offsetScrollbars
                 >
-                    <Playlist
+                    {/*<Playlist*/}
+                    {/*    onNewCurrentEntryRef={setCurrentEntryRef}*/}
+                    {/*    onPlaylistModified={() =>*/}
+                    {/*        // When the Playlist gets modified, disabling the follow feature avoids*/}
+                    {/*        // weird-feeling UI updates while modifying. Although this requires the*/}
+                    {/*        // user to be aware that they might want to re-enable Follow once*/}
+                    {/*        // finished modifying.*/}
+                    {/*        dispatch(setPlaylistFollowCurrentlyPlaying(false))*/}
+                    {/*    }*/}
+                    {/*/>*/}
+
+                    <Queue
                         onNewCurrentEntryRef={setCurrentEntryRef}
                         onPlaylistModified={() =>
                             // When the Playlist gets modified, disabling the follow feature avoids
@@ -189,4 +203,4 @@ const PlaylistScreen: FC = () => {
     );
 };
 
-export default PlaylistScreen;
+export default QueueScreen;

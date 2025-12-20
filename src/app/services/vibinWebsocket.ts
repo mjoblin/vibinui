@@ -29,11 +29,12 @@ import {
 import { WEBSOCKET_RECONNECT_DELAY, WEBSOCKET_URL } from "../constants";
 import { setWebsocketClientId, setWebsocketStatus } from "../store/internalSlice";
 import { setCurrentTrackIndex, setEntries } from "../store/activePlaylistSlice";
+import { setQueue } from "../store/queueSlice";
 import { setPresetsState, PresetsState } from "../store/presetsSlice";
 import { setFavoritesState, FavoritesState } from "../store/favoritesSlice";
 import { setStoredPlaylistsState, StoredPlaylistsState } from "../store/storedPlaylistsSlice";
 import { setVibinStatusState, VibinStatusState } from "../store/vibinStatusSlice";
-import { MediaId, PlaylistEntry, Track } from "../types";
+import { MediaId, PlaylistEntry, Queue, Track } from "../types";
 
 // ================================================================================================
 // Handle the WebSocket connection to the vibin backend.
@@ -62,6 +63,7 @@ type MessageType =
     | "Favorites"
     | "Position"
     | "Presets"
+    | "Queue"
     | "StoredPlaylists"
     | "System"
     | "TransportState"
@@ -103,10 +105,12 @@ type CurrentlyPlayingPayload = {
     album_media_id: MediaId;
     track_media_id: MediaId;
     active_track: ActiveTrack;
+    // TODO: Deprecate Playlist
     playlist: {
         current_track_index: number;
         entries: PlaylistEntry[];
     };
+    queue: Queue;
     format: MediaFormat;
     stream: MediaStream;
 };
@@ -118,6 +122,8 @@ type PositionPayload = {
 };
 
 type PresetsPayload = PresetsState;
+
+type QueuePayload = Queue;
 
 type StoredPlaylistsPayload = StoredPlaylistsState;
 
@@ -183,6 +189,7 @@ export type VibinMessage = {
         | FavoritesPayload
         | PositionPayload
         | PresetsPayload
+        | QueuePayload
         | StoredPlaylistsPayload
         | SystemPayload
         | TransportStatePayload
@@ -279,6 +286,7 @@ function messageHandler(
             dispatch(setCurrentAlbumMediaId(currentlyPlaying.album_media_id));
             dispatch(setCurrentFormat(currentlyPlaying.format));
             dispatch(setCurrentStream(currentlyPlaying.stream));
+            // TODO: Migrate to Queue
             dispatch(setCurrentTrackIndex(currentlyPlaying.playlist.current_track_index));
             dispatch(setEntries(currentlyPlaying.playlist.entries));
         } else if (data.type === "Favorites") {
@@ -290,6 +298,8 @@ function messageHandler(
             });
         } else if (data.type === "Presets") {
             dispatch(setPresetsState(data.payload as PresetsState));
+        } else if (data.type === "Queue") {
+            dispatch(setQueue(data.payload as Queue));
         } else if (data.type === "StoredPlaylists") {
             dispatch(setStoredPlaylistsState(data.payload as StoredPlaylistsPayload));
         } else if (data.type === "System") {

@@ -7,6 +7,7 @@ import favoritesReducer from "./favoritesSlice";
 import mediaGroupsReducer from "./mediaGroupsSlice";
 import playbackReducer from "./playbackSlice";
 import activePlaylistReducer from "./activePlaylistSlice";
+import queueReducer from "./queueSlice";
 import presetsReducer from "./presetsSlice";
 import storedPlaylistsReducer from "./storedPlaylistsSlice";
 import userSettingsReducer from "./userSettingsSlice";
@@ -17,6 +18,7 @@ import { vibinArtistsApi } from "../services/vibinArtists";
 import { vibinFavoritesApi } from "../services/vibinFavorites";
 import { vibinActivePlaylistApi } from "../services/vibinActivePlaylist";
 import { vibinPresetsApi } from "../services/vibinPresets";
+import { vibinQueueApi } from "../services/vibinQueue";
 import { vibinStoredPlaylistsApi } from "../services/vibinStoredPlaylists";
 import { vibinSystemApi } from "../services/vibinSystem";
 import { vibinTracksApi } from "../services/vibinTracks";
@@ -32,6 +34,7 @@ export const store = configureStore({
         mediaGroups: mediaGroupsReducer,
         playback: playbackReducer,
         activePlaylist: activePlaylistReducer,
+        queue: queueReducer,
         presets: presetsReducer,
         storedPlaylists: storedPlaylistsReducer,
         userSettings: userSettingsReducer,
@@ -41,6 +44,7 @@ export const store = configureStore({
         [vibinFavoritesApi.reducerPath]: vibinFavoritesApi.reducer,
         [vibinActivePlaylistApi.reducerPath]: vibinActivePlaylistApi.reducer,
         [vibinPresetsApi.reducerPath]: vibinPresetsApi.reducer,
+        [vibinQueueApi.reducerPath]: vibinQueueApi.reducer,
         [vibinStoredPlaylistsApi.reducerPath]: vibinStoredPlaylistsApi.reducer,
         [vibinSystemApi.reducerPath]: vibinSystemApi.reducer,
         [vibinTracksApi.reducerPath]: vibinTracksApi.reducer,
@@ -58,6 +62,7 @@ export const store = configureStore({
             vibinFavoritesApi.middleware,
             vibinActivePlaylistApi.middleware,
             vibinPresetsApi.middleware,
+            vibinQueueApi.middleware,
             vibinStoredPlaylistsApi.middleware,
             vibinSystemApi.middleware,
             vibinTracksApi.middleware,

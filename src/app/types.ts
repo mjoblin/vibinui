@@ -97,6 +97,7 @@ export type Stream = {
     url: string;
 };
 
+// TODO: Deprecate Playlist and PlaylistEntry
 // A collection of tracks defining track playback sequence.
 export type Playlist = PlaylistEntry[];
 
@@ -113,6 +114,29 @@ export type PlaylistEntry = {
     uri: string;
     albumMediaId: MediaId;
     trackMediaId: MediaId;
+};
+
+export type QueueItem = {
+    id: number;
+    position: number;
+    metadata: Record<string, any>; // TODO: Figure out possible QueueItem metadata values
+
+    // TODO: Is the backend populating these yet
+    albumMediaId: MediaId;
+    trackMediaId: MediaId;
+}
+
+export type Queue = {
+    count: number;
+    items: QueueItem[];
+    play_id: number | null;
+    play_position: number | null; // Between start and (total - 1)
+    presettable: boolean;
+    start: number;
+    total: number;
+
+    // TODO: Do we really want to mix this in here with the backend state?
+    haveReceivedInitialState: boolean;
 };
 
 export type MediaSourceClass =
