@@ -35,7 +35,7 @@ export type TransportAction =
     | "stop"
     | "toggle_playback";
 
-export type RepeatState = "off" | "all";
+export type RepeatState = "off" | "one" | "all";
 
 export type ShuffleState = "off" | "all";
 
