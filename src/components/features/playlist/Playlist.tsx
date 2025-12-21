@@ -13,9 +13,10 @@ import {
 import { IconGripVertical, IconPlayerPause, IconPlayerPlay, IconTrash } from "@tabler/icons-react";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
-import { PlaylistEntry } from "../../../app/types";
+import { QueueItem } from "../../../app/types";
 import {
     getTextWidth,
+    secstoHms,
     showErrorNotification,
     showSuccessNotification,
     yearFromDate,
@@ -162,7 +163,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
     const { haveActivatedPlaylist, isLocalMediaActive } = useAppStatus();
     const { trackById } = useMediaGroupings();
-    const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
+    const queue = useAppSelector((state: RootState) => state.queue);
     const { autoPlayOnPlaylistActivation } = useAppSelector(
         (state: RootState) => state.userSettings.application,
     );
@@ -180,9 +181,11 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
-    const [optimisticPlaylistEntries, setOptimisticPlaylistEntries] = useState<PlaylistEntry[]>([]);
+    const [optimisticQueueItems, setOptimisticQueueItems] = useState<QueueItem[]>([]);
     const currentEntryRef = useRef<HTMLDivElement>(null);
     const { classes } = useStyles();
+
+    const currentTrackIndex = queue.play_position;
 
     const currentEntryBorderColor = isLocalMediaActive ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
 
@@ -201,10 +204,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     //    enabled (see the table's CSS defined earlier).
 
     const { classes: dynamicClasses } = createStyles((theme) => {
-        if (
-            typeof activePlaylist.current_track_index === "undefined" ||
-            isNaN(activePlaylist.current_track_index)
-        ) {
+        if (currentTrackIndex === null || currentTrackIndex === undefined) {
             return {
                 table: {},
             };
@@ -221,7 +221,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
             border: `1px solid ${currentEntryBorderColor} !important`,
         };
 
-        if (activePlaylist.current_track_index === 0) {
+        if (currentTrackIndex === 0) {
             return {
                 table: {
                     "thead > tr": previousRowCSS,
@@ -231,9 +231,9 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         } else {
             return {
                 table: {
-                    [`tbody > tr:nth-of-type(${activePlaylist.current_track_index})`]:
+                    [`tbody > tr:nth-of-type(${currentTrackIndex})`]:
                         previousRowCSS,
-                    [`tbody > tr:nth-of-type(${activePlaylist.current_track_index + 1})`]:
+                    [`tbody > tr:nth-of-type(${currentTrackIndex + 1})`]:
                         currentlyPlayingRowCSS,
                 },
             };
@@ -271,17 +271,17 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     ]);
 
     /**
-     * Handle Playlist reordering and optimistic UI updates.
+     * Handle Queue reordering and optimistic UI updates.
      *
      * Notes on optimistic updates:
      *
-     * This component uses the playlist from Redux state *and* a local copy of that state (in
-     * optimisticPlaylistEntries) to support optimistic UI updates when playlist entries are
-     * reordered. When reordering, this component will reorder optimisticPlaylistEntries for
+     * This component uses the queue from Redux state *and* a local copy of that state (in
+     * optimisticQueueItems) to support optimistic UI updates when queue items are
+     * reordered. When reordering, this component will reorder optimisticQueueItems for
      * immediate rendering updates, as well as request the reordering in the backend (using
-     * useMovePlaylistEntryIdMutation()). The backend will then announce the new playlist order,
-     * which will update the Redux playlist state, which will in turn reset
-     * optimisticPlaylistEntries to now reflect the backend's playlist order.
+     * useMoveQueueItemIdMutation()). The backend will then announce the new queue order,
+     * which will update the Redux queue state, which will in turn reset
+     * optimisticQueueItems to now reflect the backend's queue order.
      *
      * Note also that Mantine has a useListState() hook which provides convenient ways to interface
      * with lists, including a reorder() method. That approach is not being used here, but might
@@ -289,17 +289,17 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
      */
 
     useEffect(() => {
-        setOptimisticPlaylistEntries(activePlaylist?.entries || []);
-    }, [activePlaylist?.entries]);
+        setOptimisticQueueItems(queue?.items || []);
+    }, [queue?.items]);
 
     /**
-     * Inform the parent component when the current Playlist entry changes.
+     * Inform the parent component when the current Queue item changes.
      */
     useEffect(() => {
         if (onNewCurrentEntryRef && currentEntryRef && currentEntryRef.current) {
             onNewCurrentEntryRef(currentEntryRef.current);
         }
-    }, [currentEntryRef, onNewCurrentEntryRef, activePlaylist.current_track_index]);
+    }, [currentEntryRef, onNewCurrentEntryRef, currentTrackIndex]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -314,7 +314,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         );
     }
 
-    if (!activePlaylist.haveReceivedInitialState || isActivatingPlaylist) {
+    if (!queue.haveReceivedInitialState || isActivatingPlaylist) {
         return (
             <Center pt={SCREEN_LOADING_PT}>
                 <Loader variant="dots" size="md" />
@@ -322,17 +322,17 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         );
     }
 
-    const playlistEntries: PlaylistEntry[] =
-        optimisticPlaylistEntries.length > 0
-            ? optimisticPlaylistEntries
-            : activePlaylist?.entries && activePlaylist.entries.length > 0
-              ? activePlaylist.entries
+    const queueItems: QueueItem[] =
+        optimisticQueueItems.length > 0
+            ? optimisticQueueItems
+            : queue?.items && queue.items.length > 0
+              ? queue.items
               : [];
 
-    if (playlistEntries.length <= 0) {
+    if (queueItems.length <= 0) {
         return (
             <Center pt="xl">
-                <SadLabel label="No Playlist to display" />
+                <SadLabel label="No Queue to display" />
             </Center>
         );
     }
@@ -341,16 +341,16 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     //  (artist name and year/genre) might be wider than the main text above it (song title and
     //  album name).
 
-    const maxTitleWidth = Math.max(...playlistEntries.map((elem) => getTextWidth(elem.title)));
-    const maxAlbumWidth = Math.max(...playlistEntries.map((elem) => getTextWidth(elem.album)));
+    const maxTitleWidth = Math.max(...queueItems.map((item) => getTextWidth(item.metadata?.title || "")));
+    const maxAlbumWidth = Math.max(...queueItems.map((item) => getTextWidth(item.metadata?.album || "")));
 
     /**
      * Find the album year for the first album matching the given title & artist. This is a little
-     * flaky as it's taking a playlist title/artist and assuming it will match an album in the
-     * albums list. Also, the playlist artist could be a track artist which can be different from
+     * flaky as it's taking a queue item title/artist and assuming it will match an album in the
+     * albums list. Also, the queue item artist could be a track artist which can be different from
      * an album artist.
      *
-     * TODO: See if this "playlist entry to full album entry" lookup can be made more reliable.
+     * TODO: See if this "queue item to full album entry" lookup can be made more reliable.
      */
     const albumYear = (title: string, artist: string): number | undefined => {
         if (!albums) {
@@ -367,15 +367,20 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
     // ============================================================================================
 
     /**
-     * Generate an array of table rows; one row per playlist entry.
+     * Generate an array of table rows; one row per queue item.
      */
-    const renderedPlaylistEntries = playlistEntries
-        // .sort((a, b) => a.index - b.index)
-        .map((entry, index) => {
-            const year = albumYear(entry.album, entry.artist);
+    const renderedQueueItems = queueItems
+        .map((item, index) => {
+            const metadata = item.metadata;
+            const title = metadata?.title || "";
+            const artist = metadata?.artist || "";
+            const album = metadata?.album || "";
+            const artUrl = metadata?.art_url || "";
+            const duration = metadata?.duration;
+            const year = albumYear(album, artist);
             // TODO: Figure out where "(Unknown Genre)" is coming from; this hardcoding is awkward
             const genre =
-                entry.genre === "(Unknown Genre)" ? undefined : entry.genre?.toLocaleUpperCase();
+                metadata?.genre === "(Unknown Genre)" ? undefined : metadata?.genre?.toLocaleUpperCase();
 
             // TODO: The date and genre processing here is similar to <AlbumTracks>. Consider extracting.
             const albumSubtitle =
@@ -388,15 +393,15 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                         : genre;
 
             return (
-                <Draggable key={`${entry.id}`} index={index} draggableId={`${entry.id}`}>
+                <Draggable key={`${item.id}`} index={index} draggableId={`${item.id}`}>
                     {(provided) => (
                         <tr
                             ref={provided.innerRef}
                             {...provided.draggableProps}
-                            key={entry.id.toString()}
+                            key={item.id.toString()}
                             className={`${
-                                index !== activePlaylist.current_track_index && actionsMenuOpenFor
-                                    ? actionsMenuOpenFor === entry.id
+                                index !== currentTrackIndex && actionsMenuOpenFor
+                                    ? actionsMenuOpenFor === item.id
                                         ? classes.highlight
                                         : ""
                                     : classes.highlightOnHover
@@ -406,75 +411,74 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                 className={`${classes.alignRight} ${classes.dimmed}`}
                                 style={{ width: 35 }}
                             >
-                                {/* Attach a reference to the currently-playing entry so the
+                                {/* Attach a reference to the currently-playing item so the
                                     "scroll to current" feature has something to work with. */}
                                 <Box
                                     ref={
-                                        index === activePlaylist.current_track_index
+                                        index === currentTrackIndex
                                             ? currentEntryRef
                                             : undefined
                                     }
                                 >
                                     <Text size={12} color={colors.dark[3]}>
-                                        {entry.index + 1}
+                                        {item.position + 1}
                                     </Text>
                                 </Box>
                             </td>
                             {viewMode === "detailed" && (
                                 <td style={{ width: 50 }}>
-                                    <MediaArt artUri={entry.albumArtURI} size={35} />
+                                    <MediaArt artUri={artUrl} size={35} />
                                 </td>
                             )}
                             <td
                                 className={classes.pointerOnHover}
                                 style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    // Heuristic when user clicks a playlist entry:
+                                    // Heuristic when user clicks a queue item:
                                     //  - If it's the current track:
                                     //      - If currently playing, pause the track
                                     //      - If currently paused, resume playback
                                     //      - If source is not local media, play track from beginning
                                     //  - If it's not the current track, play track from beginning
-                                    // entryCanBePlayed(index) &&
-                                    index === activePlaylist.current_track_index &&
+                                    index === currentTrackIndex &&
                                     isLocalMediaActive &&
                                     playStatus === "pause"
                                         ? resumePlayback()
-                                        : index === activePlaylist.current_track_index &&
+                                        : index === currentTrackIndex &&
                                             isLocalMediaActive &&
                                             playStatus === "play" &&
                                             streamerPower === "on"
                                           ? pausePlayback()
-                                          : playQueueItem({ itemId: entry.id });
+                                          : playQueueItem({ itemId: item.id });
                                 }}
                             >
                                 <Stack spacing={0}>
-                                    <Text>{entry.title}</Text>
+                                    <Text>{title}</Text>
                                     {viewMode === "detailed" && (
                                         <Text
                                             size={12}
                                             color={colors.dark[3]}
                                             style={{ whiteSpace: "nowrap" }}
                                         >
-                                            {entry.artist}
+                                            {artist}
                                         </Text>
                                     )}
                                 </Stack>
                             </td>
                             <td
                                 className={
-                                    index !== activePlaylist.current_track_index
+                                    index !== currentTrackIndex
                                         ? classes.pointerOnHover
                                         : ""
                                 }
                                 style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    index !== activePlaylist.current_track_index &&
-                                        playQueueItem({ itemId: entry.id });
+                                    index !== currentTrackIndex &&
+                                        playQueueItem({ itemId: item.id });
                                 }}
                             >
                                 <Stack spacing={0}>
-                                    <Text>{entry.album}</Text>
+                                    <Text>{album}</Text>
                                     {viewMode === "detailed" && (
                                         <Text
                                             size={12}
@@ -487,14 +491,14 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                 </Stack>
                             </td>
                             <td className={classes.alignRight} style={{ width: 85 }}>
-                                {durationDisplay(entry.duration)}
+                                {duration !== null && duration !== undefined ? secstoHms(duration) : ""}
                             </td>
                             <td style={{ width: 45 }}>
                                 <Flex pl={5} gap={5} align="center">
-                                    {/* Entry Play button. If the entry is the current entry,
+                                    {/* Item Play button. If the item is the current item,
                                         then instead implement Pause/Resume behavior. */}
                                     {index ===
-                                    (isLocalMediaActive && activePlaylist.current_track_index) ? (
+                                    (isLocalMediaActive && currentTrackIndex) ? (
                                         playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}
@@ -518,7 +522,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                             container={false}
                                             fill={true}
                                             tooltipLabel="Play"
-                                            onClick={() => playQueueItem({ itemId: entry.id })}
+                                            onClick={() => playQueueItem({ itemId: item.id })}
                                         />
                                     )}
 
@@ -527,29 +531,29 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                         container={false}
                                         tooltipLabel="Remove from Queue"
                                         onClick={() => {
-                                            deleteQueueItem({ itemId: entry.id });
+                                            deleteQueueItem({ itemId: item.id });
                                             onPlaylistModified && onPlaylistModified();
 
                                             showSuccessNotification({
                                                 title: "Entry removed from Queue",
-                                                message: entry.title,
+                                                message: title,
                                             });
                                         }}
                                     />
 
                                     <Box miw="1.8rem">
-                                        {trackById[entry.trackMediaId] && (
+                                        {item.trackMediaId && trackById[item.trackMediaId] && (
                                             <FavoriteIndicator
-                                                media={trackById[entry.trackMediaId]}
+                                                media={trackById[item.trackMediaId]}
                                             />
                                         )}
                                     </Box>
 
                                     <PlaylistEntryActionsButton
-                                        entry={entry}
-                                        entryCount={renderedPlaylistEntries.length}
-                                        currentlyPlayingIndex={activePlaylist.current_track_index}
-                                        onOpen={() => setActionsMenuOpenFor(entry.id)}
+                                        entry={item}
+                                        entryCount={renderedQueueItems.length}
+                                        currentlyPlayingIndex={currentTrackIndex}
+                                        onOpen={() => setActionsMenuOpenFor(item.id)}
                                         onClose={() => setActionsMenuOpenFor(undefined)}
                                     />
                                 </Flex>
@@ -577,21 +581,21 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                             return;
                         }
 
-                        // Reorder the component's local copy of the playlist entries used for
+                        // Reorder the component's local copy of the queue items used for
                         // rendering. This is done as a form of optimistic update, to ensure the UI
-                        // is immediately showing the new playlist ordering.
-                        setOptimisticPlaylistEntries(
+                        // is immediately showing the new queue ordering.
+                        setOptimisticQueueItems(
                             moveArrayElement(
-                                optimisticPlaylistEntries,
+                                optimisticQueueItems,
                                 source.index,
                                 destination.index,
                             ),
                         );
 
-                        // Request the playlist item move in the backend. The new backend playlist
+                        // Request the queue item move in the backend. The new backend queue
                         // ordering will then be announced back to the UI, at which point the UI
                         // will mirror the backend state again (which presumably will also match
-                        // the local optimistic view of the playlist).
+                        // the local optimistic view of the queue).
                         moveQueueItem({
                             itemId: parseInt(draggableId, 10),
                             fromPosition: source.index,
@@ -620,7 +624,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                     <Droppable droppableId="dnd-list" direction="vertical">
                         {(provided) => (
                             <tbody {...provided.droppableProps} ref={provided.innerRef}>
-                                {renderedPlaylistEntries}
+                                {renderedQueueItems}
                                 {provided.placeholder}
                             </tbody>
                         )}

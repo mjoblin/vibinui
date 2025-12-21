@@ -3,7 +3,7 @@ import { Flex, RingProgress, Text, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
-import { queueItemsDuration, secstoHms } from "../../../app/utils";
+import { queueDuration as calculateQueueDuration, secstoHms } from "../../../app/utils";
 
 // ================================================================================================
 // Display the duration of the active Playlist, e.g. "duration: 03:10:19s".
@@ -14,7 +14,7 @@ const QueueDuration: FC = () => {
     const [queueDuration, setQueueDuration] = useState<number>(0);
     const [completedItemsProgress, setCompletedItemsProgress] = useState<number>(0);
     const [totalProgress, setTotalProgress] = useState<number>(0);
-    const { play_position: queuePlayPosition, items: queueItems } = useAppSelector((state: RootState) => state.queue);
+    const { play_position: queueIndex, items: queueItems } = useAppSelector((state: RootState) => state.queue);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const playheadPosition = useAppSelector((state: RootState) => state.playback.playhead.position);
     const playheadPositionNormalized = useAppSelector(
@@ -30,7 +30,7 @@ const QueueDuration: FC = () => {
             return;
         }
 
-        setQueueDuration(queueItemsDuration(queueItems));
+        setQueueDuration(calculateQueueDuration(queueItems));
     }, [queueItems]);
 
     /**
@@ -39,7 +39,7 @@ const QueueDuration: FC = () => {
      */
     useEffect(() => {
         if (
-            !queuePlayPosition ||
+            !queueIndex ||
             !queueItems ||
             queueItems.length <= 0
         ) {
@@ -48,11 +48,11 @@ const QueueDuration: FC = () => {
         }
 
         const progress = queueItems
-            .filter((entry) => entry.position < queuePlayPosition)
+            .filter((entry) => entry.position < queueIndex)
             .reduce((totalDuration, entry) => totalDuration + (entry.metadata?.duration ?? 0), 0);
 
         setCompletedItemsProgress(progress);
-    }, [queueItems, queuePlayPosition, playStatus]);
+    }, [queueItems, queueIndex, playStatus]);
 
     /**
      * Calculate the total progress through the Queue, which is the sum of the completed items plus

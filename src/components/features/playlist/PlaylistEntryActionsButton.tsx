@@ -19,7 +19,7 @@ import {
     IconWaveSine,
 } from "@tabler/icons-react";
 
-import { PlaylistEntry } from "../../../app/types";
+import { QueueItem } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
@@ -86,9 +86,9 @@ const useMenuStyles = createStyles((theme) => ({
 }));
 
 type PlaylistEntryActionsButtonProps = {
-    entry: PlaylistEntry;
+    entry: QueueItem;
     entryCount: number;
-    currentlyPlayingIndex: number | undefined;
+    currentlyPlayingIndex: number | null | undefined;
     onOpen?: () => void;
     onClose?: () => void;
 };
@@ -104,6 +104,10 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     onOpen = undefined,
     onClose = undefined,
 }) => {
+    const metadata = entry.metadata;
+    const title = metadata?.title || "";
+    const artist = metadata?.artist || "";
+    const album = metadata?.album || "";
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const theme = useMantineTheme();
@@ -146,7 +150,9 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     }, [moveQueueItemStatus, deleteStatus, playStatus]);
 
     const isStreamerOff = streamerPower === "off";
-    const isFavorited = !!favorites.find((favorite) => favorite.media_id === entry.trackMediaId);
+    const isFavorited = entry.trackMediaId
+        ? !!favorites.find((favorite) => favorite.media_id === entry.trackMediaId)
+        : false;
 
     // --------------------------------------------------------------------------------------------
 
@@ -188,13 +194,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             onClick={() => {
                                 moveQueueItem({
                                     itemId: entry.id,
-                                    fromPosition: entry.index,
+                                    fromPosition: entry.position,
                                     toPosition: 0,
                                 });
 
                                 showSuccessNotification({
                                     title: "Entry moved to top of Queue",
-                                    message: entry.title,
+                                    message: title,
                                 });
                             }}
                         >
@@ -225,10 +231,10 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                         </Menu.Item>
 
                         <Menu.Item
-                            disabled={isStreamerOff || !currentlyPlayingIndex}
+                            disabled={isStreamerOff || currentlyPlayingIndex === null || currentlyPlayingIndex === undefined}
                             icon={<IconCornerDownRightDouble size={14} />}
                             onClick={() => {
-                                if (!currentlyPlayingIndex) {
+                                if (currentlyPlayingIndex === null || currentlyPlayingIndex === undefined) {
                                     return;
                                 }
 
@@ -236,13 +242,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                                 moveQueueItem({
                                     itemId: entry.id,
-                                    fromPosition: entry.index,
+                                    fromPosition: entry.position,
                                     toPosition: newPosition,
                                 });
 
                                 showSuccessNotification({
                                     title: `Entry moved to play next (#${newPosition + 1})`,
-                                    message: entry.title,
+                                    message: title,
                                 });
                             }}
                         >
@@ -255,13 +261,13 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             onClick={() => {
                                 moveQueueItem({
                                     itemId: entry.id,
-                                    fromPosition: entry.index,
+                                    fromPosition: entry.position,
                                     toPosition: entryCount - 1,
                                 });
 
                                 showSuccessNotification({
                                     title: "Entry moved to bottom of Queue",
-                                    message: entry.title,
+                                    message: title,
                                 });
                             }}
                         >
@@ -276,7 +282,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                                 showSuccessNotification({
                                     title: "Entry removed from Queue",
-                                    message: entry.title,
+                                    message: title,
                                 });
                             }}
                         >
@@ -321,14 +327,16 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                         <Menu.Item
                             icon={<IconHeart size={14} />}
-                            disabled={isFavorited}
+                            disabled={isFavorited || !entry.trackMediaId}
                             onClick={() => {
-                                addFavorite({ type: "track", mediaId: entry.trackMediaId });
+                                if (entry.trackMediaId) {
+                                    addFavorite({ type: "track", mediaId: entry.trackMediaId });
 
-                                showSuccessNotification({
-                                    title: "Track added to Favorites",
-                                    message: entry.title,
-                                });
+                                    showSuccessNotification({
+                                        title: "Track added to Favorites",
+                                        message: title,
+                                    });
+                                }
                             }}
                         >
                             Add to Favorites
@@ -336,14 +344,16 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                         <Menu.Item
                             icon={<IconHeartOff size={14} />}
-                            disabled={!isFavorited}
+                            disabled={!isFavorited || !entry.trackMediaId}
                             onClick={() => {
-                                deleteFavorite({ mediaId: entry.trackMediaId });
+                                if (entry.trackMediaId) {
+                                    deleteFavorite({ mediaId: entry.trackMediaId });
 
-                                showSuccessNotification({
-                                    title: "Track removed from Favorites",
-                                    message: entry.title,
-                                });
+                                    showSuccessNotification({
+                                        title: "Track removed from Favorites",
+                                        message: title,
+                                    });
+                                }
                             }}
                         >
                             Remove from Favorites
@@ -355,13 +365,15 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                         <Menu.Item
                             icon={<IconDisc size={14} />}
+                            disabled={!entry.albumMediaId || !entry.trackMediaId}
                             onClick={() => {
+                                if (!entry.albumMediaId || !entry.trackMediaId) return;
                                 dispatch(setArtistsActiveCollection("all"));
-                                dispatch(setArtistsSelectedArtist(artistByName[entry.artist]));
+                                dispatch(setArtistsSelectedArtist(artistByName[artist]));
                                 dispatch(setArtistsSelectedAlbum(albumById[entry.albumMediaId]));
                                 dispatch(setArtistsSelectedTrack(trackById[entry.trackMediaId]));
 
-                                if (entry.index === currentlyPlayingIndex) {
+                                if (entry.position === currentlyPlayingIndex) {
                                     dispatch(setArtistsScrollToCurrentOnScreenEnter(true));
                                 } else {
                                     dispatch(setArtistsScrollToSelectedOnScreenEnter(true));
@@ -378,7 +390,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             onClick={() => {
                                 dispatch(setAlbumsActiveCollection("all"));
                                 dispatch(
-                                    setAlbumsFilterText(`${entry.album} artist:(${entry.artist})`),
+                                    setAlbumsFilterText(`${album} artist:(${artist})`),
                                 );
                                 navigate("/ui/albums");
                             }}
@@ -390,7 +402,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             icon={<IconMicrophone2 size={14} />}
                             onClick={() => {
                                 dispatch(
-                                    setTracksFilterText(`${entry.title} album:(${entry.album})`),
+                                    setTracksFilterText(`${title} album:(${album})`),
                                 );
                                 navigate("/ui/tracks");
                             }}
@@ -403,7 +415,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                 {/* Details modals ------------------------------------------------------------ */}
 
                 {/* Tracks can show their lyrics, waveform, and links */}
-                {trackById[entry.trackMediaId] && (
+                {entry.trackMediaId && trackById[entry.trackMediaId] && (
                     <>
                         <TrackLyricsModal
                             track={trackById[entry.trackMediaId]}

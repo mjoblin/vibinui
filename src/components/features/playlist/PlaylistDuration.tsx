@@ -3,19 +3,19 @@ import { Flex, RingProgress, Text, useMantineTheme } from "@mantine/core";
 
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
-import { hmsToSecs, playlistDuration, secstoHms } from "../../../app/utils";
+import { secstoHms } from "../../../app/utils";
 
 // ================================================================================================
-// Display the duration of the active Playlist, e.g. "duration: 03:10:19s".
+// Display the duration of the active Queue, e.g. "duration: 03:10:19s".
 // ================================================================================================
 
 const PlaylistDuration: FC = () => {
     const { colors } = useMantineTheme();
-    const [activePlaylistDuration, setActivePlaylistDuration] = useState<number>(0);
-    const [completedEntriesProgress, setCompletedEntriesProgress] = useState<number>(0);
+    const [queueDuration, setQueueDuration] = useState<number>(0);
+    const [completedItemsProgress, setCompletedItemsProgress] = useState<number>(0);
     const [totalProgress, setTotalProgress] = useState<number>(0);
-    const { current_track_index: activePlaylistTrackIndex, entries: activePlaylistEntries } =
-        useAppSelector((state: RootState) => state.activePlaylist);
+    const { play_position: currentTrackIndex, items: queueItems } =
+        useAppSelector((state: RootState) => state.queue);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const playheadPosition = useAppSelector((state: RootState) => state.playback.playhead.position);
     const playheadPositionNormalized = useAppSelector(
@@ -23,53 +23,59 @@ const PlaylistDuration: FC = () => {
     );
 
     /**
-     * Calculate the total length of the Playlist whenever the Playlist Entries are updated.
+     * Calculate the total length of the Queue whenever the Queue items are updated.
      */
     useEffect(() => {
-        if (!activePlaylistEntries || activePlaylistEntries.length <= 0) {
-            setActivePlaylistDuration(0);
+        if (!queueItems || queueItems.length <= 0) {
+            setQueueDuration(0);
             return;
         }
 
-        setActivePlaylistDuration(playlistDuration(activePlaylistEntries));
-    }, [activePlaylistEntries]);
+        // Sum all item durations (duration is in seconds)
+        const totalDuration = queueItems.reduce(
+            (total, item) => total + (item.metadata?.duration || 0),
+            0
+        );
+        setQueueDuration(totalDuration);
+    }, [queueItems]);
 
     /**
-     * Sum the duration of all completed Playlist Entries. This has no awareness of any progress
-     * into the current Playlist Entry (see next effect).
+     * Sum the duration of all completed Queue items. This has no awareness of any progress
+     * into the current Queue item (see next effect).
      */
     useEffect(() => {
         if (
-            !activePlaylistTrackIndex ||
-            !activePlaylistEntries ||
-            activePlaylistEntries.length <= 0
+            currentTrackIndex === null ||
+            currentTrackIndex === undefined ||
+            !queueItems ||
+            queueItems.length <= 0
         ) {
-            setCompletedEntriesProgress(0);
+            setCompletedItemsProgress(0);
             return;
         }
 
-        const progress = activePlaylistEntries
-            .filter((entry) => entry.index < activePlaylistTrackIndex)
-            .reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
+        const progress = queueItems
+            .filter((item) => item.position < currentTrackIndex)
+            .reduce((totalDuration, item) => totalDuration + (item.metadata?.duration || 0), 0);
 
-        setCompletedEntriesProgress(progress);
-    }, [activePlaylistEntries, activePlaylistTrackIndex, playStatus]);
+        setCompletedItemsProgress(progress);
+    }, [queueItems, currentTrackIndex, playStatus]);
 
     /**
-     * Calculate the total progress through the Playlist, which is the sum of the completed Entries
-     * plus the distance into the current Entry.
+     * Calculate the total progress through the Queue, which is the sum of the completed items
+     * plus the distance into the current item.
      */
     useEffect(() => {
         // The check for buffering and playheadPositionNormalized is to reduce the chances that
-        // the totalProgress will (briefly) add the progress of the *next* playlist entry to the
+        // the totalProgress will (briefly) add the progress of the *next* queue item to the
         // *end time* of the previous track. This results in the totalProgress skipping ahead by
         // a full track duration before being reset back to where it should be.
         playStatus !== "buffering" &&
             playheadPositionNormalized < 0.95 &&
-            setTotalProgress(completedEntriesProgress + playheadPosition);
-    }, [completedEntriesProgress, playheadPosition, playheadPositionNormalized, playStatus]);
+            setTotalProgress(completedItemsProgress + playheadPosition);
+    }, [completedItemsProgress, playheadPosition, playheadPositionNormalized, playStatus]);
 
-    const completed = (totalProgress / activePlaylistDuration) * 100;
+    const completed = (totalProgress / queueDuration) * 100;
 
     // --------------------------------------------------------------------------------------------
 
@@ -79,7 +85,7 @@ const PlaylistDuration: FC = () => {
                 duration:
             </Text>
             <Text size="xs" pr={10} color={colors.dark[2]} weight="bold">{`${secstoHms(
-                activePlaylistDuration,
+                queueDuration,
             )}s`}</Text>
 
             {!isNaN(completed) && (

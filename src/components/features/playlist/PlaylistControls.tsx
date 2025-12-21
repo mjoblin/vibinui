@@ -37,7 +37,7 @@ import {
     setPlaylistFollowCurrentlyPlaying,
     setPlaylistViewMode,
 } from "../../../app/store/userSettingsSlice";
-import { setHaveReceivedInitialState } from "../../../app/store/activePlaylistSlice";
+import { setHaveReceivedInitialState } from "../../../app/store/queueSlice";
 import {
     useLazyActivateStoredPlaylistQuery,
     useLazyStoreCurrentPlaylistQuery,
@@ -126,8 +126,8 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
         },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
-    const { current_track_index: activePlaylistTrackIndex } = useAppSelector(
-        (state: RootState) => state.activePlaylist,
+    const { play_position: currentTrackIndex } = useAppSelector(
+        (state: RootState) => state.queue,
     );
     const [streamerPowerToggle] = useStreamerPowerToggleMutation();
     const [activeStoredPlaylistName, setActiveStoredPlaylistName] = useState<string | undefined>();
@@ -161,10 +161,11 @@ const PlaylistControls: FC<PlaylistControlsProps> = ({ scrollToCurrent }) => {
      */
     useEffect(() => {
         followCurrentlyPlaying &&
-            activePlaylistTrackIndex !== undefined &&
+            currentTrackIndex !== null &&
+            currentTrackIndex !== undefined &&
             scrollToCurrent &&
             scrollToCurrent({ offset: 45 }); // Offset results in previous track still being visible
-    }, [followCurrentlyPlaying, activePlaylistTrackIndex, scrollToCurrent]);
+    }, [followCurrentlyPlaying, currentTrackIndex, scrollToCurrent]);
 
     /**
      * Whenever the active stored playlist id changes, store the name of that playlist in component

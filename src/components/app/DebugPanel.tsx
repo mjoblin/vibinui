@@ -53,7 +53,7 @@ const DebugPanel: FC = () => {
     const { classes } = useStyles();
     const system = useAppSelector((state: RootState) => state.system);
     const playback = useAppSelector((state: RootState) => state.playback);
-    const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
+    const queue = useAppSelector((state: RootState) => state.queue);
     const storedPlaylists = useAppSelector((state: RootState) => state.storedPlaylists);
     const { showDebugPanel, websocketStatus } = useAppSelector(
         (state: RootState) => state.internal.application,
@@ -135,18 +135,19 @@ const DebugPanel: FC = () => {
                         />
                     </Stack>
 
-                    {/* Playlist */}
+                    {/* Queue */}
                     <Stack spacing={0}>
                         <Title size={fontSize} transform="uppercase">
-                            Current Playlist
+                            Queue
                         </Title>
                         <FieldValueList
                             fieldValues={{
-                                entryCount: activePlaylist.entries?.length || 0,
-                                currentTrackIndex:
-                                    typeof activePlaylist.current_track_index === "undefined"
-                                        ? "undefined"
-                                        : activePlaylist.current_track_index,
+                                itemCount: queue.items?.length || 0,
+                                playPosition:
+                                    queue.play_position === null || queue.play_position === undefined
+                                        ? "null"
+                                        : queue.play_position,
+                                playId: queue.play_id ?? "null",
                             }}
                             keySize={fontSize}
                             valueSize={fontSize}

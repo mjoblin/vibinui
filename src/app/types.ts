@@ -97,25 +97,6 @@ export type Stream = {
     url: string;
 };
 
-// TODO: Deprecate Playlist and PlaylistEntry
-// A collection of tracks defining track playback sequence.
-export type Playlist = PlaylistEntry[];
-
-export type PlaylistEntry = {
-    album: string;
-    albumArtURI: string;
-    artist: string;
-    duration: string;
-    genre: string;
-    id: number;
-    index: number;
-    originalTrackNumber: string;
-    title: string;
-    uri: string;
-    albumMediaId: MediaId;
-    trackMediaId: MediaId;
-};
-
 export type QueueItemMetadata = {
     class: string | null;        // e.g., "md.track.library"
     source: string | null;       // e.g., "MEDIA_PLAYER"
@@ -141,7 +122,7 @@ export type Queue = {
     count: number;
     items: QueueItem[];
     play_id: number | null;
-    play_position: number | null; // Between start and (total - 1)
+    play_position: number | null; // Index of currently playing item in queue
     presettable: boolean;
     start: number;
     total: number;

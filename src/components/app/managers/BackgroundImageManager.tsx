@@ -16,7 +16,7 @@ import { useAppStatus } from "../../../app/hooks/useAppStatus";
 const BackgroundImageManager: FC = () => {
     const dispatch = useDispatch();
     const { isLocalMediaActive } = useAppStatus();
-    const activePlaylist = useAppSelector((state: RootState) => state.activePlaylist);
+    const queue = useAppSelector((state: RootState) => state.queue);
     const trackById = useAppSelector((state: RootState) => state.mediaGroups.trackById);
     const currentTrackId = useAppSelector(
         (state: RootState) => state.playback.current_track_media_id,
@@ -27,7 +27,7 @@ const BackgroundImageManager: FC = () => {
 
     /**
      * Set the background image URL. This will change whenever the current track changes. If
-     * there's no current track then attempt to fall back on the current playlist entry and finally
+     * there's no current track then attempt to fall back on the current queue item and finally
      * the currentPlaybackTrack (e.g. AirPlay).
      *
      * The currentlyPlayingArtUrl is used by <RootLayout> to render the background image div.
@@ -37,15 +37,15 @@ const BackgroundImageManager: FC = () => {
             dispatch(setCurrentlyPlayingArtUrl(trackById[currentTrackId].album_art_uri));
         } else if (
             isLocalMediaActive &&
-            activePlaylist &&
-            activePlaylist.entries &&
-            activePlaylist.current_track_index !== undefined &&
-            activePlaylist.current_track_index !== -1
+            queue &&
+            queue.items &&
+            queue.play_position !== null &&
+            queue.play_position !== undefined &&
+            queue.play_position >= 0
         ) {
+            const currentItem = queue.items[queue.play_position];
             dispatch(
-                setCurrentlyPlayingArtUrl(
-                    activePlaylist.entries[activePlaylist.current_track_index]?.albumArtURI,
-                ),
+                setCurrentlyPlayingArtUrl(currentItem?.metadata?.art_url || undefined),
             );
         } else if (currentPlaybackTrack?.art_url) {
             dispatch(setCurrentlyPlayingArtUrl(currentPlaybackTrack.art_url));
@@ -55,7 +55,7 @@ const BackgroundImageManager: FC = () => {
         isLocalMediaActive,
         currentTrackId,
         trackById,
-        activePlaylist,
+        queue,
         currentPlaybackTrack,
     ]);
 
