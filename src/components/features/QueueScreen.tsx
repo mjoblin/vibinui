@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks/store";
 import { RootState, store } from "../../app/store/store";
 import { useAppGlobals } from "../../app/hooks/useAppGlobals";
 import { useAppStatus } from "../../app/hooks/useAppStatus";
-import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
+import { setQueueScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
 import Queue from "./queue/Queue";
@@ -51,7 +51,7 @@ const QueueScreen: FC = () => {
      * Scroll to last-known scroll position when the screen mounts.
      */
     useEffect(() => {
-        const lastScrollPos = store.getState().internal.playlist.scrollPosition;
+        const lastScrollPos = store.getState().internal.queue.scrollPosition;
 
         setTimeout(() => {
             playlistViewportRef.current &&
@@ -128,7 +128,7 @@ const QueueScreen: FC = () => {
      */
     const throttledPlaylistPositionChange = throttle(
         (value) => {
-            dispatch(setPlaylistScrollPosition(value.y));
+            dispatch(setQueueScrollPosition(value.y));
         },
         SCROLL_POS_DISPATCH_RATE,
         { leading: false },

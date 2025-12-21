@@ -185,7 +185,7 @@ export const playlistDuration = (playlist: Playlist) =>
  * Compute the duration (in seconds) of the given Queue.
  */
 export const queueItemsDuration = (items: QueueItem[]) =>
-    items.reduce((totalDuration, item) => totalDuration + (item.metadata.duration ?? 0), 0);
+    items.reduce((totalDuration, item) => totalDuration + (item.metadata?.duration ?? 0), 0);
 
 const filterTokenizerRegex = /(\S+):(\([^)]+?\)|[^( ]+)/g;
 const parentStripperRegex = /^\(?(.*?)\)?$/;

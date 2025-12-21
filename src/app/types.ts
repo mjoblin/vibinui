@@ -116,14 +116,25 @@ export type PlaylistEntry = {
     trackMediaId: MediaId;
 };
 
+export type QueueItemMetadata = {
+    class: string | null;        // e.g., "md.track.library"
+    source: string | null;       // e.g., "MEDIA_PLAYER"
+    name: string | null;         // e.g., "Media Library"
+    title: string | null;
+    art_url: string | null;
+    track_number: number | null;
+    duration: number | null;     // Duration in seconds
+    genre: string | null;
+    album: string | null;
+    artist: string | null;
+};
+
 export type QueueItem = {
     id: number;
     position: number;
-    metadata: Record<string, any>; // TODO: Figure out possible QueueItem metadata values
-
-    // TODO: Is the backend populating these yet
-    albumMediaId: MediaId;
-    trackMediaId: MediaId;
+    metadata: QueueItemMetadata | null;
+    albumMediaId: MediaId | null;   // Populated by backend from art_url
+    trackMediaId: MediaId | null;   // May not always be available
 }
 
 export type Queue = {
