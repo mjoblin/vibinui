@@ -23,10 +23,10 @@ import { PlaylistEntry } from "../../../app/types";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
 import {
-    useDeletePlaylistEntryIdMutation,
-    useMovePlaylistEntryIdMutation,
-    usePlayPlaylistEntryIdMutation,
-} from "../../../app/services/vibinActivePlaylist";
+    useDeleteQueueItemIdMutation,
+    useMoveQueueItemIdMutation,
+    usePlayQueueItemIdMutation,
+} from "../../../app/services/vibinQueue";
 import {
     useAddFavoriteMutation,
     useDeleteFavoriteMutation,
@@ -108,11 +108,11 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
     const navigate = useNavigate();
     const theme = useMantineTheme();
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
-    const [moveEntry, moveEntryStatus] = useMovePlaylistEntryIdMutation();
-    const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
+    const [moveQueueItem, moveQueueItemStatus] = useMoveQueueItemIdMutation();
+    const [deleteQueueItem, deleteStatus] = useDeleteQueueItemIdMutation();
     const [addFavorite] = useAddFavoriteMutation();
     const [deleteFavorite] = useDeleteFavoriteMutation();
-    const [playPlaylistId, playStatus] = usePlayPlaylistEntryIdMutation();
+    const [playQueueItem, playStatus] = usePlayQueueItemIdMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
     const { albumById, artistByName, trackById } = useAppSelector(
         (state: RootState) => state.mediaGroups,
@@ -132,18 +132,18 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
      * the update's notification to reflect success/fail.
      */
     useEffect(() => {
-        if (moveEntryStatus.isError || deleteStatus.isError || playStatus.isError) {
-            const { status, data } = moveEntryStatus.error as FetchBaseQueryError;
+        if (moveQueueItemStatus.isError || deleteStatus.isError || playStatus.isError) {
+            const { status, data } = moveQueueItemStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
                 title:
-                    moveEntryStatus.isError || deleteStatus.isError
-                        ? "Error updating Playlist"
+                    moveQueueItemStatus.isError || deleteStatus.isError
+                        ? "Error updating Queue"
                         : "Error playing Entry",
                 message: `[${status}] ${data}`,
             });
         }
-    }, [moveEntryStatus, deleteStatus, playStatus]);
+    }, [moveQueueItemStatus, deleteStatus, playStatus]);
 
     const isStreamerOff = streamerPower === "off";
     const isFavorited = !!favorites.find((favorite) => favorite.media_id === entry.trackMediaId);
@@ -178,22 +178,22 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
 
                 <Menu.Dropdown>
                     <>
-                        {/* Playlist actions -------------------------------------------------- */}
+                        {/* Queue actions ----------------------------------------------------- */}
 
-                        <Menu.Label>Playlist</Menu.Label>
+                        <Menu.Label>Queue</Menu.Label>
 
                         <Menu.Item
                             disabled={isStreamerOff}
                             icon={<IconArrowBarToUp size={14} />}
                             onClick={() => {
-                                moveEntry({
-                                    playlistId: entry.id,
-                                    fromIndex: entry.index,
-                                    toIndex: 0,
+                                moveQueueItem({
+                                    itemId: entry.id,
+                                    fromPosition: entry.index,
+                                    toPosition: 0,
                                 });
 
                                 showSuccessNotification({
-                                    title: "Entry moved to top of Playlist",
+                                    title: "Entry moved to top of Queue",
                                     message: entry.title,
                                 });
                             }}
@@ -218,7 +218,7 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                 />
                             }
                             onClick={() => {
-                                playPlaylistId({ playlistId: entry.id });
+                                playQueueItem({ itemId: entry.id });
                             }}
                         >
                             Play now
@@ -232,16 +232,16 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                                     return;
                                 }
 
-                                const newIndex = currentlyPlayingIndex + 1;
+                                const newPosition = currentlyPlayingIndex + 1;
 
-                                moveEntry({
-                                    playlistId: entry.id,
-                                    fromIndex: entry.index,
-                                    toIndex: newIndex,
+                                moveQueueItem({
+                                    itemId: entry.id,
+                                    fromPosition: entry.index,
+                                    toPosition: newPosition,
                                 });
 
                                 showSuccessNotification({
-                                    title: `Entry moved to play next (#${newIndex + 1})`,
+                                    title: `Entry moved to play next (#${newPosition + 1})`,
                                     message: entry.title,
                                 });
                             }}
@@ -253,14 +253,14 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             disabled={isStreamerOff}
                             icon={<IconArrowBarToDown size={12} />}
                             onClick={() => {
-                                moveEntry({
-                                    playlistId: entry.id,
-                                    fromIndex: entry.index,
-                                    toIndex: entryCount - 1,
+                                moveQueueItem({
+                                    itemId: entry.id,
+                                    fromPosition: entry.index,
+                                    toPosition: entryCount - 1,
                                 });
 
                                 showSuccessNotification({
-                                    title: "Entry moved to bottom of Playlist",
+                                    title: "Entry moved to bottom of Queue",
                                     message: entry.title,
                                 });
                             }}
@@ -272,15 +272,15 @@ const PlaylistEntryActionsButton: FC<PlaylistEntryActionsButtonProps> = ({
                             disabled={isStreamerOff}
                             icon={<IconTrash size={14} />}
                             onClick={() => {
-                                deletePlaylistId({ playlistId: entry.id });
+                                deleteQueueItem({ itemId: entry.id });
 
                                 showSuccessNotification({
-                                    title: "Entry removed from Playlist",
+                                    title: "Entry removed from Queue",
                                     message: entry.title,
                                 });
                             }}
                         >
-                            Remove from Playlist
+                            Remove from Queue
                         </Menu.Item>
 
                         {/* Details actions --------------------------------------------------- */}

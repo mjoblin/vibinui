@@ -28,11 +28,11 @@ import { useMediaGroupings } from "../../../app/hooks/useMediaGroupings";
 import { useGetAlbumsQuery } from "../../../app/services/vibinAlbums";
 import { usePauseMutation, usePlayMutation } from "../../../app/services/vibinTransport";
 import {
-    useDeletePlaylistEntryIdMutation,
-    useMovePlaylistEntryIdMutation,
-    usePlayPlaylistEntryIdMutation,
-    usePlayPlaylistEntryIndexMutation,
-} from "../../../app/services/vibinActivePlaylist";
+    useDeleteQueueItemIdMutation,
+    useMoveQueueItemIdMutation,
+    usePlayQueueItemIdMutation,
+    usePlayQueueItemPositionMutation,
+} from "../../../app/services/vibinQueue";
 import FavoriteIndicator from "../../shared/buttons/FavoriteIndicator";
 import MediaArt from "../../shared/mediaDisplay/MediaArt";
 import VibinIconButton from "../../shared/buttons/VibinIconButton";
@@ -173,10 +173,10 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
         status: { is_activating_playlist: isActivatingPlaylist },
     } = useAppSelector((state: RootState) => state.storedPlaylists);
     const { data: albums } = useGetAlbumsQuery();
-    const [deletePlaylistId, deleteStatus] = useDeletePlaylistEntryIdMutation();
-    const [movePlaylistId] = useMovePlaylistEntryIdMutation();
-    const [playPlaylistId] = usePlayPlaylistEntryIdMutation();
-    const [playPlaylistIndex] = usePlayPlaylistEntryIndexMutation();
+    const [deleteQueueItem, deleteStatus] = useDeleteQueueItemIdMutation();
+    const [moveQueueItem] = useMoveQueueItemIdMutation();
+    const [playQueueItem] = usePlayQueueItemIdMutation();
+    const [playQueuePosition] = usePlayQueueItemPositionMutation();
     const [pausePlayback] = usePauseMutation();
     const [resumePlayback] = usePlayMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
@@ -250,7 +250,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
             const { status, data } = deleteStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
-                title: "Error removing Entry from Playlist",
+                title: "Error removing Entry from Queue",
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
@@ -261,13 +261,13 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
      */
     useEffect(() => {
         if (autoPlayOnPlaylistActivation && !isActivatingPlaylist && haveActivatedPlaylist) {
-            playPlaylistIndex({ playlistIndex: 0 });
+            playQueuePosition({ itemPosition: 0 });
         }
     }, [
         autoPlayOnPlaylistActivation,
         haveActivatedPlaylist,
         isActivatingPlaylist,
-        playPlaylistIndex,
+        playQueuePosition,
     ]);
 
     /**
@@ -445,7 +445,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                             playStatus === "play" &&
                                             streamerPower === "on"
                                           ? pausePlayback()
-                                          : playPlaylistId({ playlistId: entry.id });
+                                          : playQueueItem({ itemId: entry.id });
                                 }}
                             >
                                 <Stack spacing={0}>
@@ -470,7 +470,7 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                 style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
                                     index !== activePlaylist.current_track_index &&
-                                        playPlaylistId({ playlistId: entry.id });
+                                        playQueueItem({ itemId: entry.id });
                                 }}
                             >
                                 <Stack spacing={0}>
@@ -518,20 +518,20 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                                             container={false}
                                             fill={true}
                                             tooltipLabel="Play"
-                                            onClick={() => playPlaylistId({ playlistId: entry.id })}
+                                            onClick={() => playQueueItem({ itemId: entry.id })}
                                         />
                                     )}
 
                                     <VibinIconButton
                                         icon={IconTrash}
                                         container={false}
-                                        tooltipLabel="Remove from Playlist"
+                                        tooltipLabel="Remove from Queue"
                                         onClick={() => {
-                                            deletePlaylistId({ playlistId: entry.id });
+                                            deleteQueueItem({ itemId: entry.id });
                                             onPlaylistModified && onPlaylistModified();
 
                                             showSuccessNotification({
-                                                title: "Entry removed from Playlist",
+                                                title: "Entry removed from Queue",
                                                 message: entry.title,
                                             });
                                         }}
@@ -592,10 +592,10 @@ const Playlist: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified 
                         // ordering will then be announced back to the UI, at which point the UI
                         // will mirror the backend state again (which presumably will also match
                         // the local optimistic view of the playlist).
-                        movePlaylistId({
-                            playlistId: parseInt(draggableId, 10),
-                            fromIndex: source.index,
-                            toIndex: destination.index,
+                        moveQueueItem({
+                            itemId: parseInt(draggableId, 10),
+                            fromPosition: source.index,
+                            toPosition: destination.index,
                         });
                     }
                 }}

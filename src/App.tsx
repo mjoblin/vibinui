@@ -75,11 +75,11 @@ export default function App() {
                 },
                 {
                     path: "*",
-                    element: <Navigate to="/ui/playlist" replace />,
+                    element: <Navigate to="/ui/queue" replace />,
                 },
                 {
                     index: true,
-                    element: <Navigate to="/ui/playlist" replace />,
+                    element: <Navigate to="/ui/queue" replace />,
                 },
             ],
         },

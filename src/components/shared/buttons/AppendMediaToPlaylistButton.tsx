@@ -4,7 +4,7 @@ import { ActionIcon, Box, createStyles, Tooltip, useMantineTheme } from "@mantin
 import { IconPlaylistAdd } from "@tabler/icons-react";
 
 import { Album, Track } from "../../../app/types";
-import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
+import { useAddMediaToQueueMutation } from "../../../app/services/vibinQueue";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 
 // ================================================================================================
@@ -40,7 +40,7 @@ const AppendMediaToPlaylistButton: FC<AppendMediaToPlaylistButtonProps> = ({
     fill = true,
 }) => {
     const theme = useMantineTheme();
-    const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
+    const [addMediaToQueue, addStatus] = useAddMediaToQueueMutation();
     const { classes } = useStyles();
 
     // TODO: This is effectively a runtime type check. Consider adding user-defined type guards.
@@ -52,7 +52,7 @@ const AppendMediaToPlaylistButton: FC<AppendMediaToPlaylistButtonProps> = ({
     useEffect(() => {
         if (addStatus.isSuccess) {
             showSuccessNotification({
-                title: `${itemType} appended to Playlist`,
+                title: `${itemType} appended to Queue`,
                 message: media.title,
             });
         } else if (addStatus.isError) {
@@ -62,7 +62,7 @@ const AppendMediaToPlaylistButton: FC<AppendMediaToPlaylistButtonProps> = ({
             const issue = err.data || "Unknown error";
 
             showErrorNotification({
-                title: "Error updating Playlist",
+                title: "Error updating Queue",
                 message: `${media.title}: [${status}] ${issue}`,
             });
         }
@@ -72,7 +72,7 @@ const AppendMediaToPlaylistButton: FC<AppendMediaToPlaylistButtonProps> = ({
 
     return (
         <Box>
-            <Tooltip label={`Append ${itemType} to Playlist`}>
+            <Tooltip label={`Append ${itemType} to Queue`}>
                 <ActionIcon
                     className={classes.appendContainer}
                     disabled={disabled}
@@ -83,7 +83,7 @@ const AppendMediaToPlaylistButton: FC<AppendMediaToPlaylistButtonProps> = ({
                     radius={size / 2}
                     onClick={(event) => {
                         event.stopPropagation();
-                        addMediaToPlaylist({ mediaId: media.id, action: "APPEND" });
+                        addMediaToQueue({ mediaId: media.id, action: "APPEND" });
                     }}
                 >
                     <IconPlaylistAdd size={size / 1.6} />

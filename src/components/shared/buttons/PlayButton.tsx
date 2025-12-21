@@ -3,7 +3,7 @@ import { ActionIcon, Box, createStyles, getStylesRef, useMantineTheme } from "@m
 import { IconPlayerPause, IconPlayerPlay } from "@tabler/icons-react";
 
 import { isAlbum, isPreset, isTrack, Media } from "../../../app/types";
-import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
+import { useAddMediaToQueueMutation } from "../../../app/services/vibinQueue";
 import { showErrorNotification, showSuccessNotification } from "../../../app/utils";
 import { useLazyPlayPresetIdQuery } from "../../../app/services/vibinPresets";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query";
@@ -44,7 +44,7 @@ const PlayButton: FC<PlayButtonProps> = ({
         (state: RootState) => state.playback.current_track_media_id,
     );
     const presets = useAppSelector((state: RootState) => state.presets.presets);
-    const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
+    const [addMediaToQueue, addStatus] = useAddMediaToQueueMutation();
     const [playPresetId] = useLazyPlayPresetIdQuery();
     const [pausePlayback] = usePauseMutation();
     const [playPlayback] = usePlayMutation();
@@ -103,7 +103,7 @@ const PlayButton: FC<PlayButtonProps> = ({
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
-                title: "Error replacing Playlist",
+                title: "Error replacing Queue",
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
@@ -129,10 +129,10 @@ const PlayButton: FC<PlayButtonProps> = ({
                         }
 
                         if (isAlbum(media) || isTrack(media)) {
-                            addMediaToPlaylist({ mediaId: media.id, action: "REPLACE" });
+                            addMediaToQueue({ mediaId: media.id, action: "REPLACE" });
 
                             showSuccessNotification({
-                                title: `Replaced Playlist ${
+                                title: `Replaced Queue ${
                                     isAlbum(media)
                                         ? "with Album"
                                         : isTrack(media)

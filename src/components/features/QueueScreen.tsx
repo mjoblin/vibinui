@@ -10,8 +10,6 @@ import { useAppStatus } from "../../app/hooks/useAppStatus";
 import { setPlaylistScrollPosition } from "../../app/store/internalSlice";
 import { setPlaylistFollowCurrentlyPlaying } from "../../app/store/userSettingsSlice";
 import MediaSourceBadge from "../shared/dataDisplay/MediaSourceBadge";
-import Playlist from "./playlist/Playlist";
-import PlaylistControls from "./playlist/PlaylistControls";
 import Queue from "./queue/Queue";
 import QueueControls from "./queue/QueueControls";
 import ScreenHeader from "../app/layout/ScreenHeader";

@@ -22,7 +22,7 @@ import {
 } from "@tabler/icons-react";
 
 import { Album, isAlbum, isPreset, isTrack, Media, Track } from "../../../app/types";
-import { useAddMediaToPlaylistMutation } from "../../../app/services/vibinActivePlaylist";
+import { useAddMediaToQueueMutation } from "../../../app/services/vibinQueue";
 import {
     useAddFavoriteMutation,
     useDeleteFavoriteMutation,
@@ -168,7 +168,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 }) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-    const [addMediaToPlaylist, addStatus] = useAddMediaToPlaylistMutation();
+    const [addMediaToQueue, addStatus] = useAddMediaToQueueMutation();
     const [addFavorite] = useAddFavoriteMutation();
     const [deleteFavorite] = useDeleteFavoriteMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
@@ -193,7 +193,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
             const { status, data } = addStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
-                title: "Error updating Playlist",
+                title: "Error updating Queue",
                 message: `[${status}] ${data}`,
             });
         }
@@ -323,7 +323,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
 
                     {showPlaylistActions && (isAlbum(media) || isTrack(media)) && (
                         <>
-                            <Menu.Label>Playlist</Menu.Label>
+                            <Menu.Label>Queue</Menu.Label>
 
                             {wantAction(enabledActions.Playlist!!, "ReplaceAndPlayNow") && (
                                 <Menu.Item
@@ -343,13 +343,13 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                         />
                                     }
                                     onClick={() => {
-                                        addMediaToPlaylist({
+                                        addMediaToQueue({
                                             mediaId: media.id,
                                             action: "REPLACE",
                                         });
 
                                         showSuccessNotification({
-                                            title: `Replaced Playlist with ${mediaTypeDisplay}`,
+                                            title: `Replaced Queue with ${mediaTypeDisplay}`,
                                             message: media.title,
                                         });
                                     }}
@@ -363,13 +363,13 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     disabled={isStreamerOff}
                                     icon={<IconCornerDownRight size={14} />}
                                     onClick={() => {
-                                        addMediaToPlaylist({
+                                        addMediaToQueue({
                                             mediaId: media.id,
                                             action: "PLAY_NOW",
                                         });
 
                                         showSuccessNotification({
-                                            title: `${mediaTypeDisplay} inserted into Playlist and now playing`,
+                                            title: `${mediaTypeDisplay} inserted into Queue and now playing`,
                                             message: media.title,
                                         });
                                     }}
@@ -383,13 +383,13 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     disabled={isStreamerOff}
                                     icon={<IconCornerDownRightDouble size={14} />}
                                     onClick={() => {
-                                        addMediaToPlaylist({
+                                        addMediaToQueue({
                                             mediaId: media.id,
                                             action: "PLAY_NEXT",
                                         });
 
                                         showSuccessNotification({
-                                            title: `${mediaTypeDisplay} inserted next in Playlist`,
+                                            title: `${mediaTypeDisplay} inserted next in Queue`,
                                             message: media.title,
                                         });
                                     }}
@@ -403,10 +403,10 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     disabled={isStreamerOff}
                                     icon={<IconPlaylistAdd size={12} />}
                                     onClick={() => {
-                                        addMediaToPlaylist({ mediaId: media.id, action: "APPEND" });
+                                        addMediaToQueue({ mediaId: media.id, action: "APPEND" });
 
                                         showSuccessNotification({
-                                            title: `${mediaTypeDisplay} appended to end of Playlist`,
+                                            title: `${mediaTypeDisplay} appended to end of Queue`,
                                             message: media.title,
                                         });
                                     }}

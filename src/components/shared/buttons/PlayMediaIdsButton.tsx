@@ -14,7 +14,7 @@ import { IconCircleOff, IconPlayerPlay } from "@tabler/icons-react";
 import { MediaId } from "../../../app/types";
 import { useAppSelector } from "../../../app/hooks/store";
 import { RootState } from "../../../app/store/store";
-import { useSetPlaylistMediaIdsMutation } from "../../../app/services/vibinActivePlaylist";
+import { useSetPlaylistMediaIdsMutation } from "../../../app/services/vibinQueue";
 import { showSuccessNotification } from "../../../app/utils";
 
 // ================================================================================================
@@ -47,9 +47,9 @@ type PlayMediaIdsButtonProps = {
 const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
     mediaIds,
     disabled = false,
-    tooltipLabel = "Replace Playlist with filtered results",
-    menuItemLabel = "Replace Playlist with filtered items",
-    notificationLabel = "Playlist replaced with filtered results",
+    tooltipLabel = "Replace Queue with filtered results",
+    menuItemLabel = "Replace Queue with filtered items",
+    notificationLabel = "Queue replaced with filtered results",
     maxToPlay = 10,
 }) => {
     const theme = useMantineTheme();
@@ -93,7 +93,7 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
                         </ActionIcon>
                     </Menu.Target>
                     <Menu.Dropdown>
-                        <Menu.Label>Modify Playlist</Menu.Label>
+                        <Menu.Label>Modify Queue</Menu.Label>
                         <Menu.Item
                             icon={
                                 <IconPlayerPlay
@@ -105,7 +105,7 @@ const PlayMediaIdsButton: FC<PlayMediaIdsButtonProps> = ({
                                 setPlaylistIds({ mediaIds, maxCount: maxToPlay });
 
                                 showSuccessNotification({
-                                    title: "Playlist replaced",
+                                    title: "Queue replaced",
                                     message: notificationLabel,
                                 });
                             }}
