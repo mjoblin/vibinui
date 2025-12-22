@@ -146,7 +146,6 @@ const QueueScreen: FC = () => {
         <Stack spacing={0}>
             <ScreenHeader height={SCREEN_HEADER_HEIGHT} noBackground={RENDER_APP_BACKGROUND_IMAGE}>
                 <Stack spacing={10}>
-                    {/*<PlaylistControls scrollToCurrent={scrollToCurrent} />*/}
                     <QueueControls scrollToCurrent={scrollToCurrent} />
 
                     {showingInactivePlaylistBanner && (
@@ -174,17 +173,6 @@ const QueueScreen: FC = () => {
                     onScrollPositionChange={throttledPlaylistPositionChange}
                     offsetScrollbars
                 >
-                    {/*<Playlist*/}
-                    {/*    onNewCurrentEntryRef={setCurrentEntryRef}*/}
-                    {/*    onPlaylistModified={() =>*/}
-                    {/*        // When the Playlist gets modified, disabling the follow feature avoids*/}
-                    {/*        // weird-feeling UI updates while modifying. Although this requires the*/}
-                    {/*        // user to be aware that they might want to re-enable Follow once*/}
-                    {/*        // finished modifying.*/}
-                    {/*        dispatch(setPlaylistFollowCurrentlyPlaying(false))*/}
-                    {/*    }*/}
-                    {/*/>*/}
-
                     <Queue
                         onNewCurrentEntryRef={setCurrentEntryRef}
                         onPlaylistModified={() =>
