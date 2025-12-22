@@ -68,7 +68,7 @@ import QueueDuration from "./QueueDuration";
 
 type QueueSelectItemProps = {
     label: string;
-    itemCount: number;
+    entryCount: number;
     updated: number;
 };
 
@@ -77,7 +77,7 @@ type QueueSelectItemProps = {
  * entry count and time since it was last modified.
  */
 const QueueSelectItem = forwardRef<HTMLDivElement, QueueSelectItemProps>(
-    ({ label, itemCount, updated, ...others }: QueueSelectItemProps, ref) => {
+    ({ label, entryCount, updated, ...others }: QueueSelectItemProps, ref) => {
         const { colors } = useMantineTheme();
 
         return (
@@ -93,7 +93,7 @@ const QueueSelectItem = forwardRef<HTMLDivElement, QueueSelectItemProps>(
                             }
                             size="xs"
                         >
-                            {`${itemCount} entries, updated ${epochSecondsToStringRelative(
+                            {`${entryCount} entries, updated ${epochSecondsToStringRelative(
                                 updated,
                             )}`}
                         </Text>
