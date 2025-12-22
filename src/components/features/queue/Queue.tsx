@@ -65,9 +65,9 @@ const durationDisplay = (duration: string): string =>
 const moveArrayElement = (inArray: any[], fromIndex: number, toIndex: number): any[] => {
     const outArray = [...inArray];
 
-    const movedEntry = outArray[fromIndex];
+    const movedItem = outArray[fromIndex];
     outArray.splice(fromIndex, 1);
-    outArray.splice(toIndex, 0, movedEntry);
+    outArray.splice(toIndex, 0, movedItem);
 
     return outArray;
 };
@@ -143,7 +143,7 @@ const useStyles = createStyles((theme) => ({
 }));
 
 type PlaylistProps = {
-    onNewCurrentEntryRef?: (ref: HTMLDivElement) => void;
+    onNewCurrentItemRef?: (ref: HTMLDivElement) => void;
     onPlaylistModified?: () => void;
 };
 
@@ -157,7 +157,7 @@ type PlaylistProps = {
  * @constructor
  */
 
-const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) => {
+const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) => {
     const { colors } = useMantineTheme();
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
     const { haveActivatedPlaylist, isLocalMediaActive } = useAppStatus();
@@ -181,10 +181,10 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
     const [resumePlayback] = usePlayMutation();
     const [actionsMenuOpenFor, setActionsMenuOpenFor] = useState<number | undefined>(undefined);
     const [optimisticQueueItems, setOptimisticQueueItems] = useState<QueueItem[]>([]);
-    const currentEntryRef = useRef<HTMLDivElement>(null);
+    const currentItemRef = useRef<HTMLDivElement>(null);
     const { classes } = useStyles();
 
-    const currentEntryBorderColor = isLocalMediaActive ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
+    const currentItemBorderColor = isLocalMediaActive ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
 
     // Define some CSS to ensure that the currently-playing playlist entry has an active/highlighted
     // border around it.
@@ -212,14 +212,14 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
         }
 
         const previousRowCSS = {
-            borderBottom: `1px solid ${currentEntryBorderColor} !important`,
+            borderBottom: `1px solid ${currentItemBorderColor} !important`,
         };
 
         const currentlyPlayingRowCSS = {
             color: theme.white,
             backgroundColor:
                 theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.yellow[6],
-            border: `1px solid ${currentEntryBorderColor} !important`,
+            border: `1px solid ${currentItemBorderColor} !important`,
         };
 
         if (queue.play_position === 0) {
@@ -244,21 +244,21 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
     // --------------------------------------------------------------------------------------------
 
     /**
-     * Inform the user if there was an error while attempting to remove a Playlist Entry.
+     * Inform the user if there was an error while attempting to remove a Queue Item.
      */
     useEffect(() => {
         if (deleteStatus.isError) {
             const { status, data } = deleteStatus.error as FetchBaseQueryError;
 
             showErrorNotification({
-                title: "Error removing Entry from Playlist",
+                title: "Error removing Item from Queue",
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         }
     }, [deleteStatus]);
 
     /**
-     * When a playlist has finished activating, start playing the first entry.
+     * When a playlist has finished activating, start playing the first item.
      */
     useEffect(() => {
         if (autoPlayOnPlaylistActivation && !isActivatingPlaylist && haveActivatedPlaylist) {
@@ -294,13 +294,13 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
     }, [queue?.items]);
 
     /**
-     * Inform the parent component when the current Playlist entry changes.
+     * Inform the parent component when the current Queue Item changes.
      */
     useEffect(() => {
-        if (onNewCurrentEntryRef && currentEntryRef && currentEntryRef.current) {
-            onNewCurrentEntryRef(currentEntryRef.current);
+        if (onNewCurrentItemRef && currentItemRef && currentItemRef.current) {
+            onNewCurrentItemRef(currentItemRef.current);
         }
-    }, [currentEntryRef, onNewCurrentEntryRef, queue.play_position]);
+    }, [currentItemRef, onNewCurrentItemRef, queue.play_position]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -408,12 +408,12 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
                                 className={`${classes.alignRight} ${classes.dimmed}`}
                                 style={{ width: 35 }}
                             >
-                                {/* Attach a reference to the currently-playing entry so the
+                                {/* Attach a reference to the currently-playing item so the
                                     "scroll to current" feature has something to work with. */}
                                 <Box
                                     ref={
                                         index === queue.play_position
-                                            ? currentEntryRef
+                                            ? currentItemRef
                                             : undefined
                                     }
                                 >
@@ -431,7 +431,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
                                 className={classes.pointerOnHover}
                                 style={{ width: maxTitleWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    // Heuristic when user clicks a playlist entry:
+                                    // Heuristic when user clicks a Queue Item:
                                     //  - If it's the current track:
                                     //      - If currently playing, pause the track
                                     //      - If currently paused, resume playback
@@ -493,7 +493,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
                             </td>
                             <td style={{ width: 45 }}>
                                 <Flex pl={5} gap={5} align="center">
-                                    {/* Entry Play button. If the entry is the current entry,
+                                    {/* Item Play button. If the item is the current item,
                                         then instead implement Pause/Resume behavior. */}
                                     {index ===
                                     (isLocalMediaActive && queue.play_position) ? (
@@ -533,7 +533,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
                                             onPlaylistModified && onPlaylistModified();
 
                                             showSuccessNotification({
-                                                title: "Entry removed from Playlist",
+                                                title: "Item removed from Queue",
                                                 message: metadata.title ?? undefined,
                                             });
                                         }}
@@ -549,7 +549,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentEntryRef, onPlaylistModified }) 
 
                                     <QueueItemActionsButton
                                         item={item}
-                                        entryCount={renderedPlaylistItems.length}
+                                        itemCount={renderedPlaylistItems.length}
                                         currentlyPlayingPosition={queue.play_position ?? undefined}
                                         onOpen={() => setActionsMenuOpenFor(item.id)}
                                         onClose={() => setActionsMenuOpenFor(undefined)}

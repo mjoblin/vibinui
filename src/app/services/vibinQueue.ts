@@ -6,8 +6,8 @@ import { API_REFRESH_INTERVAL } from "../constants";
 // ================================================================================================
 // Interact with the vibin backend's /queue endpoint.
 //
-// Features: Interact with the current Queue (add entries, move entries, delete entries, play
-//  entries, etc).
+// Features: Interact with the current Queue (add items, move items, delete items, play items,
+//  etc).
 //
 // NOTE: The current streamer Queue is the source of truth for what is currently playing and what
 //  is to be played next. Simple actions like playing an Album are actually implemented on the

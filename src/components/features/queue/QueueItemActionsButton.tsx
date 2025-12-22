@@ -51,7 +51,7 @@ import TrackLinksModal from "../../shared/mediaDisplay/TrackLinksModal";
 import ArtModal from "../../shared/mediaDisplay/ArtModal";
 
 // ================================================================================================
-// Button which reveals an overlay menu of actions that can be performed on the Playlist entry.
+// Button which reveals an overlay menu of actions that can be performed on a Queue Item.
 //
 // NOTE: This component is very similar to <MediaActionsButton>. Currently, the two components are
 //  separate as they differ enough to make generalizing them a little unwieldy -- but that may not
@@ -87,7 +87,7 @@ const useMenuStyles = createStyles((theme) => ({
 
 type QueueItemActionsButtonProps = {
     item: QueueItem;
-    entryCount: number;
+    itemCount: number;
     currentlyPlayingPosition: number | undefined;
     onOpen?: () => void;
     onClose?: () => void;
@@ -99,7 +99,7 @@ type QueueItemActionsButtonProps = {
 
 const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
     item,
-    entryCount,
+    itemCount,
     currentlyPlayingPosition = undefined,
     onOpen = undefined,
     onClose = undefined,
@@ -138,8 +138,8 @@ const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
             showErrorNotification({
                 title:
                     moveItemStatus.isError || deleteItemStatus.isError
-                        ? "Error updating Playlist"
-                        : "Error playing Entry",
+                        ? "Error updating Queue"
+                        : "Error playing Item",
                 message: `[${status}] ${data}`,
             });
         }
@@ -172,7 +172,7 @@ const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
                 zIndex={999}
             >
                 <Menu.Target>
-                    <Tooltip label="Entry actions" disabled={isActionsMenuOpen}>
+                    <Tooltip label="Item actions" disabled={isActionsMenuOpen}>
                         <Box pt={4} className={classes.button}>
                             <IconDotsVertical size={15} />
                         </Box>
@@ -196,7 +196,7 @@ const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
                                 });
 
                                 showSuccessNotification({
-                                    title: "Entry moved to top of Playlist",
+                                    title: "Item moved to top of Queue",
                                     message: item.metadata?.title ?? undefined,
                                 });
                             }}
@@ -244,7 +244,7 @@ const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
                                 });
 
                                 showSuccessNotification({
-                                    title: `Entry moved to play next (#${newPosition + 1})`,
+                                    title: `Item moved to play next (#${newPosition + 1})`,
                                     message: item.metadata?.title ?? undefined,
                                 });
                             }}
@@ -259,11 +259,11 @@ const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
                                 moveItem({
                                     itemId: item.id,
                                     fromPosition: item.position,
-                                    toPosition: entryCount - 1,
+                                    toPosition: itemCount - 1,
                                 });
 
                                 showSuccessNotification({
-                                    title: "Entry moved to bottom of Playlist",
+                                    title: "Item moved to bottom of Queue",
                                     message: item.metadata?.title ?? undefined,
                                 });
                             }}
@@ -278,12 +278,12 @@ const QueueItemActionsButton: FC<QueueItemActionsButtonProps> = ({
                                 deleteQueueItemId({ itemId: item.id });
 
                                 showSuccessNotification({
-                                    title: "Entry removed from Playlist",
+                                    title: "Item removed from Queue",
                                     message: item.metadata?.title ?? undefined,
                                 });
                             }}
                         >
-                            Remove from Playlist
+                            Remove from Queue
                         </Menu.Item>
 
                         {/* Details actions --------------------------------------------------- */}

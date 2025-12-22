@@ -48,8 +48,8 @@ const QueueDuration: FC = () => {
         }
 
         const progress = queueItems
-            .filter((entry) => entry.position < queueIndex)
-            .reduce((totalDuration, entry) => totalDuration + (entry.metadata?.duration ?? 0), 0);
+            .filter((item) => item.position < queueIndex)
+            .reduce((totalDuration, item) => totalDuration + (item.metadata?.duration ?? 0), 0);
 
         setCompletedItemsProgress(progress);
     }, [queueItems, queueIndex, playStatus]);

@@ -38,7 +38,7 @@ const QueueScreen: FC = () => {
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const playlistViewportRef = useRef<HTMLDivElement>(null);
-    const [currentEntryRef, setCurrentEntryRef] = useState<HTMLDivElement>();
+    const [currentItemRef, setCurrentItemRef] = useState<HTMLDivElement>();
     const [playlistHeight, setPlaylistHeight] = useState<number>(300);
     const inactiveBannerRef = useRef<HTMLDivElement>(null);
     const [inactiveBannerHeight, setInactiveBannerHeight] = useState<number>(0);
@@ -85,30 +85,30 @@ const QueueScreen: FC = () => {
     }, [playStatus, streamerPower]);
 
     /**
-     * Scroll to the currently-playing Playlist Entry.
+     * Scroll to the currently-playing Queue Item.
      */
     const scrollToCurrent = useCallback(
         (options?: { offset?: number }) => {
             // TODO: This is a pretty disappointing way to find the top of the playlist (it assumes
-            //  the currentEntryRef is a div wrapping a <td> in the current entry's table row; so it
+            //  the currentItemRef is a div wrapping a <td> in the current item's table row; so it
             //  walks up the hierarchy to the top of the table). The goal is to figure out where in
             //  the playlistViewport to scroll to -- there is (hopefully) a better way to figure that
             //  out.
             const playlistTop =
-                currentEntryRef?.parentNode?.parentNode?.parentNode?.parentNode?.parentElement?.getBoundingClientRect()
+                currentItemRef?.parentNode?.parentNode?.parentNode?.parentNode?.parentElement?.getBoundingClientRect()
                     .top;
-            const entryTop = currentEntryRef?.getBoundingClientRect().top;
+            const itemTop = currentItemRef?.getBoundingClientRect().top;
 
-            if (playlistViewportRef?.current && playlistTop && entryTop) {
+            if (playlistViewportRef?.current && playlistTop && itemTop) {
                 const offset = 40 + (options?.offset || 0);
 
                 playlistViewportRef.current.scrollTo({
-                    top: entryTop - playlistTop - offset,
+                    top: itemTop - playlistTop - offset,
                     behavior: "smooth",
                 });
             }
         },
-        [playlistViewportRef, currentEntryRef],
+        [playlistViewportRef, currentItemRef],
     );
 
     /**
@@ -174,7 +174,7 @@ const QueueScreen: FC = () => {
                     offsetScrollbars
                 >
                     <Queue
-                        onNewCurrentEntryRef={setCurrentEntryRef}
+                        onNewCurrentItemRef={setCurrentItemRef}
                         onPlaylistModified={() =>
                             // When the Playlist gets modified, disabling the follow feature avoids
                             // weird-feeling UI updates while modifying. Although this requires the

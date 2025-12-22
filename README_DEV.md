@@ -169,7 +169,7 @@ When the UI's WebSocket connection is first established, **the back-end will sen
 messages** (one each of most types) so the UI will know the current state of everything.
 
 From that point on, subsequent messages of a given type are usually being sent only because
-something has **changed** (e.g. a Queue Entry was added; a new Stored Playlist was created, a Track
+something has **changed** (e.g. a Queue Item was added; a new Stored Playlist was created, a Track
 was favorited, etc).
 
 However, even though messages are usually being sent because something has _changed_, the message
