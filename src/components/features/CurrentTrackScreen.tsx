@@ -522,13 +522,11 @@ const CurrentTrackScreen: FC = () => {
                                 {tabsToDisplay.includes("waveform") && (
                                     <Tabs.Panel value="waveform">
                                         <ScrollArea h={tabContentHeight}>
-                                            {currentTrackId && (
-                                                <TrackWaveform
-                                                    trackId={currentTrackId}
-                                                    width={2048}
-                                                    height={700}
-                                                />
-                                            )}
+                                            <TrackWaveform
+                                                trackId={currentTrackId}
+                                                width={2048}
+                                                height={700}
+                                            />
                                         </ScrollArea>
                                     </Tabs.Panel>
                                 )}

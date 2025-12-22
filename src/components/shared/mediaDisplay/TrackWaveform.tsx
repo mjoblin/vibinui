@@ -130,7 +130,7 @@ const TrackWaveformProgress: FC = () => {
 // ------------------------------------------------------------------------------------------------
 
 type TrackWaveformProps = {
-    trackId: MediaId;
+    trackId?: MediaId;
     width?: number;
     height?: number;
     showProgress?: boolean;
@@ -146,7 +146,9 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
     const dispatch = useAppDispatch();
     const { waveformsSupported } = useAppSelector((state: RootState) => state.internal.application);
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const { data: rms, isSuccess: haveRMS, isError: gotRMSError } = useGetRMSQuery(trackId);
+    const { data: rms, isSuccess: haveRMS, isError: gotRMSError } = useGetRMSQuery(trackId!, {
+        skip: !trackId,
+    });
     const [isLoadingWaveform, setIsLoadingWaveform] = useState<boolean>(true);
 
     // The waveform container needs to maintain an aspect ratio based on the given width:height.
@@ -168,12 +170,24 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
      * If a request for RMS fails, then assume that the backend doesn't support waveforms. This is
      * a bit hacky. A better solution might involve having the backend announce what features it
      * supports in its VibinStatus message.
+     *
+     * Reset waveformsSupported to true on success, in case a previous error set it to false.
      */
     useEffect(() => {
         if (gotRMSError) {
             dispatch(setWaveformsSupported(false));
+        } else if (haveRMS) {
+            dispatch(setWaveformsSupported(true));
         }
-    }, [dispatch, gotRMSError]);
+    }, [dispatch, gotRMSError, haveRMS]);
+
+    if (!trackId) {
+        return (
+            <Text size={14} color={colors.dark[2]}>
+                Waveforms require local media playback.
+            </Text>
+        );
+    }
 
     if (!waveformsSupported) {
         return (
