@@ -68,7 +68,7 @@ const QueueDuration: FC = () => {
             setTotalProgress(completedItemsProgress + playheadPosition);
     }, [completedItemsProgress, playheadPosition, playheadPositionNormalized, playStatus]);
 
-    const completed = (totalProgress / queueDuration) * 100;
+    const completed = queueDuration > 0 ? (totalProgress / queueDuration) * 100 : 0;
 
     // --------------------------------------------------------------------------------------------
 
@@ -81,7 +81,7 @@ const QueueDuration: FC = () => {
                 queueDuration,
             )}s`}</Text>
 
-            {!isNaN(completed) && (
+            {isFinite(completed) && (
                 <>
                     <RingProgress size={40} sections={[{ value: completed, color: "blue" }]} />
                     <Text
