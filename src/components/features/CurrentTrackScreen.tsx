@@ -204,7 +204,7 @@ const CurrentTrackScreen: FC = () => {
     useEffect(() => {
         setTrackYearAndGenre(undefined);
 
-        if (currentTrackId) {
+        if (currentTrackId && isLocalMediaActive) {
             getTrack(currentTrackId);
         } else if (currentPlaybackTrack) {
             // currentPlaybackTrack gets populated from sources like AirPlay. When it looks like
@@ -221,7 +221,7 @@ const CurrentTrackScreen: FC = () => {
 
             setPreparingForDisplay(false);
         }
-    }, [currentTrackId, currentPlaybackTrack, getTrack]);
+    }, [currentTrackId, currentPlaybackTrack, getTrack, isLocalMediaActive]);
 
     /**
      * When a new Track's details have been retrieved from the backend (for local media), update
@@ -268,6 +268,20 @@ const CurrentTrackScreen: FC = () => {
      * Keep track of which Preset is currently playing (if any).
      */
     useEffect(() => setActivePreset(presets.find((preset) => preset.is_playing)), [presets]);
+
+    /**
+     * Auto-select the first available tab when the current tab is not available
+     * for the current source (e.g., switching from local media to AirPlay).
+     */
+    useEffect(() => {
+        const tabsForSource = currentSource
+            ? sourcesSupportingDisplayDetails[currentSource.class]
+            : undefined;
+
+        if (tabsForSource && tabsForSource.length > 0 && !tabsForSource.includes(activeTab)) {
+            dispatch(setCurrentTrackActiveTab(tabsForSource[0]));
+        }
+    }, [currentSource, activeTab, dispatch]);
 
     // --------------------------------------------------------------------------------------------
 
@@ -381,7 +395,7 @@ const CurrentTrackScreen: FC = () => {
                     />
                 )}
 
-                {activePreset && (
+                {activePreset && !isLocalMediaActive && (
                     <MediaActionsButton
                         media={activePreset}
                         size="sm"
