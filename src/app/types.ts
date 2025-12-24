@@ -97,22 +97,38 @@ export type Stream = {
     url: string;
 };
 
-// A collection of tracks defining track playback sequence.
-export type Playlist = PlaylistEntry[];
+export type QueueItemMetadata = {
+    class: string | null;        // e.g., "md.track.library"
+    source: string | null;       // e.g., "MEDIA_PLAYER"
+    name: string | null;         // e.g., "Media Library"
+    title: string | null;
+    art_url: string | null;
+    track_number: number | null;
+    duration: number | null;     // Duration in seconds
+    genre: string | null;
+    album: string | null;
+    artist: string | null;
+};
 
-export type PlaylistEntry = {
-    album: string;
-    albumArtURI: string;
-    artist: string;
-    duration: string;
-    genre: string;
+export type QueueItem = {
     id: number;
-    index: number;
-    originalTrackNumber: string;
-    title: string;
-    uri: string;
-    albumMediaId: MediaId;
-    trackMediaId: MediaId;
+    position: number;
+    metadata: QueueItemMetadata | null;
+    albumMediaId: MediaId | null;   // Populated by backend from art_url
+    trackMediaId: MediaId | null;   // May not always be available
+}
+
+export type Queue = {
+    count: number;
+    items: QueueItem[];
+    play_id: number | null;
+    play_position: number | null; // Index of currently playing item in queue
+    presettable: boolean;
+    start: number;
+    total: number;
+
+    // TODO: Do we really want to mix this in here with the backend state?
+    haveReceivedInitialState: boolean;
 };
 
 export type MediaSourceClass =

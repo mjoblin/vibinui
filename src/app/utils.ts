@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import localizedFormat from "dayjs/plugin/localizedFormat";
 import relativeTime from "dayjs/plugin/relativeTime";
 
-import { Playlist } from "./types";
+import { QueueItem } from "./types";
 import { MediaSortDirection } from "./store/userSettingsSlice";
 
 // ================================================================================================
@@ -168,14 +168,11 @@ export const showErrorNotification = ({
         autoClose,
     });
 
-// TODO: This does not need to be specific to playlists. It would be nice to have it support arrays
-//  Of any object with a "duration" key (e.g. Track). Currently Track and PlaylistEntry have
-//  different duration formats, which would ideally be standardized in the back end first.
 /**
- * Compute the duration (in seconds) of the given Playlist.
+ * Compute the duration (in seconds) of the given Queue.
  */
-export const playlistDuration = (playlist: Playlist) =>
-    playlist.reduce((totalDuration, entry) => totalDuration + hmsToSecs(entry.duration), 0);
+export const queueDuration = (items: QueueItem[]) =>
+    items.reduce((totalDuration, item) => totalDuration + (item.metadata?.duration ?? 0), 0);
 
 const filterTokenizerRegex = /(\S+):(\([^)]+?\)|[^( ]+)/g;
 const parentStripperRegex = /^\(?(.*?)\)?$/;

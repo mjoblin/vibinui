@@ -61,7 +61,7 @@ export interface InternalState {
         };
         scrollPosition: number;
     };
-    playlist: {
+    queue: {
         scrollPosition: number;
     };
     presets: {
@@ -137,7 +137,7 @@ const initialState: InternalState = {
         },
         scrollPosition: 0,
     },
-    playlist: {
+    queue: {
         scrollPosition: 0,
     },
     presets: {
@@ -255,11 +255,11 @@ export const internalSlice = createSlice({
         setFilteredTrackMediaIds: (state, action: PayloadAction<MediaId[]>) => {
             state.tracks.filteredTrackMediaIds = action.payload;
         },
-        setPlaylistScrollPosition: (state, action: PayloadAction<number>) => {
-            state.playlist.scrollPosition = action.payload;
-        },
         setPresetsScrollPosition: (state, action: PayloadAction<number>) => {
             state.presets.scrollPosition = action.payload;
+        },
+        setQueueScrollPosition: (state, action: PayloadAction<number>) => {
+            state.queue.scrollPosition = action.payload;
         },
         setShowCurrentTrackLyrics: (state, action: PayloadAction<boolean | undefined>) => {
             state.application.showCurrentTrackLyrics =
@@ -322,8 +322,8 @@ export const {
     setFilteredPresetIds,
     setFilteredTrackCount,
     setFilteredTrackMediaIds,
-    setPlaylistScrollPosition,
     setPresetsScrollPosition,
+    setQueueScrollPosition,
     setShowCurrentTrackLyrics,
     setShowDebugPanel,
     setShowKeyboardShortcuts,

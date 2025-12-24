@@ -6,7 +6,7 @@ requires installation of the [`vibin`](https://github.com/mjoblin/vibin) backend
 Vibin should work for anyone with a StreamMagic audio streamer, although it has only been tested
 with the following:
 
-* [Cambridge Audio] CXNv2 ([StreamMagic]) streamer.
+* [Cambridge Audio] CXNv2 & Evo 150 ([StreamMagic]) streamers.
 * Local media:
   * On a NAS running [Asset UPnP] (optional).
   * Over USB (optional).

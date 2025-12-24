@@ -6,7 +6,7 @@ import systemReducer from "./systemSlice";
 import favoritesReducer from "./favoritesSlice";
 import mediaGroupsReducer from "./mediaGroupsSlice";
 import playbackReducer from "./playbackSlice";
-import activePlaylistReducer from "./activePlaylistSlice";
+import queueReducer from "./queueSlice";
 import presetsReducer from "./presetsSlice";
 import storedPlaylistsReducer from "./storedPlaylistsSlice";
 import userSettingsReducer from "./userSettingsSlice";
@@ -15,7 +15,7 @@ import { localStorageMiddleware } from "./localStorageMiddleware";
 import { vibinAlbumsApi } from "../services/vibinAlbums";
 import { vibinArtistsApi } from "../services/vibinArtists";
 import { vibinFavoritesApi } from "../services/vibinFavorites";
-import { vibinActivePlaylistApi } from "../services/vibinActivePlaylist";
+import { vibinQueueApi } from "../services/vibinQueue";
 import { vibinPresetsApi } from "../services/vibinPresets";
 import { vibinStoredPlaylistsApi } from "../services/vibinStoredPlaylists";
 import { vibinSystemApi } from "../services/vibinSystem";
@@ -31,7 +31,7 @@ export const store = configureStore({
         favorites: favoritesReducer,
         mediaGroups: mediaGroupsReducer,
         playback: playbackReducer,
-        activePlaylist: activePlaylistReducer,
+        queue: queueReducer,
         presets: presetsReducer,
         storedPlaylists: storedPlaylistsReducer,
         userSettings: userSettingsReducer,
@@ -39,8 +39,8 @@ export const store = configureStore({
         [vibinAlbumsApi.reducerPath]: vibinAlbumsApi.reducer,
         [vibinArtistsApi.reducerPath]: vibinArtistsApi.reducer,
         [vibinFavoritesApi.reducerPath]: vibinFavoritesApi.reducer,
-        [vibinActivePlaylistApi.reducerPath]: vibinActivePlaylistApi.reducer,
         [vibinPresetsApi.reducerPath]: vibinPresetsApi.reducer,
+        [vibinQueueApi.reducerPath]: vibinQueueApi.reducer,
         [vibinStoredPlaylistsApi.reducerPath]: vibinStoredPlaylistsApi.reducer,
         [vibinSystemApi.reducerPath]: vibinSystemApi.reducer,
         [vibinTracksApi.reducerPath]: vibinTracksApi.reducer,
@@ -56,8 +56,8 @@ export const store = configureStore({
             vibinAlbumsApi.middleware,
             vibinArtistsApi.middleware,
             vibinFavoritesApi.middleware,
-            vibinActivePlaylistApi.middleware,
             vibinPresetsApi.middleware,
+            vibinQueueApi.middleware,
             vibinStoredPlaylistsApi.middleware,
             vibinSystemApi.middleware,
             vibinTracksApi.middleware,

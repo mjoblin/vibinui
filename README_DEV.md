@@ -103,6 +103,7 @@ The `src/` directory is broadly laid out as follows:
 │   │   ├── favorites/   Components for the "Favorites" screen
 │   │   ├── playlist/    Components for the "Playlist" screen
 │   │   ├── presets/     Components for the "Presets" screen
+│   │   ├── queue/       Components for the "Queue" screen
 │   │   └── tracks/      Components for the "Tracks" screen
 │   └── shared/          Application-wide shared components
 ├── index.css
@@ -121,7 +122,7 @@ The high-level data flow between the UI and the backend is shown below:
    This includes changes to:
    * Playhead position.
    * The current Track.
-   * The current Playlist.
+   * The current Queue.
    * Favorites.
    * Stored Playlists.
    * Media source.
@@ -133,10 +134,10 @@ The high-level data flow between the UI and the backend is shown below:
 1. The UI uses the backend's REST API mostly for:
    * **The initial bulk retrieval** of information on Tracks, Albums, and Artists.
    * **Details on the currently-playing Track** (lyrics, waveform, etc).
-   * **Performing actions on the streamer** such as pause/play, modifying the current Playlist, etc.
+   * **Performing actions on the streamer** such as pause/play, modifying the current Queue, etc.
    * **Performing actions on the amplifier** such as volume control, mute, etc.
-   * **Persisting information to the backend**, such as saving Playlists, marking Tracks or Albums
-     as Favorites, etc.
+   * **Persisting information to the backend**, such as saving stored Playlists, marking Tracks or
+     Albums as Favorites, etc.
 1. The REST API handlers can be found in `src/app/services/vibin*.ts`.
 1. The Redux store definitions can be found in `src/app/store`.
 
@@ -168,8 +169,8 @@ When the UI's WebSocket connection is first established, **the back-end will sen
 messages** (one each of most types) so the UI will know the current state of everything.
 
 From that point on, subsequent messages of a given type are usually being sent only because
-something has **changed** (e.g. a Playlist Entry was added; a new Stored Playlist was created, a
-Track was favorited, etc).
+something has **changed** (e.g. a Queue Item was added; a new Stored Playlist was created, a Track
+was favorited, etc).
 
 However, even though messages are usually being sent because something has _changed_, the message
 itself will usually describe **the entire state of the data the message represents**. For example,
@@ -219,7 +220,7 @@ although their `payload` shape will be different.
 
 The following message types are received:
 
-* `CurrentlyPlaying`: Information about what's currently playing (current track, current playlist,
+* `CurrentlyPlaying`: Information about what's currently playing (current track, current queue,
    format details, stream details, etc).
 * `Favorites`: Information on Favorite Albums and Tracks.
 * `Position`: Playhead position.

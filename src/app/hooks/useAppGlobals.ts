@@ -42,7 +42,7 @@ export const useAppGlobals = () => {
     const renderAppBackgroundImage = !!(
         useImageBackground &&
         theme.colorScheme === "dark" &&
-        (currentScreen === "current" || currentScreen === "playlist") &&
+        (currentScreen === "current" || currentScreen === "queue") &&
         currentlyPlayingArtUrl
     );
 

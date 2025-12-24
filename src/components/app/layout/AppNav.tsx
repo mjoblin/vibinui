@@ -130,7 +130,7 @@ const AppNav: FC<AppNavProps> = ({ noBackground = false }) => {
     const routeInfo: Record<string, { link: string; label: string; icon: Icon }[]> = {
         "Now Playing": [
             { link: `${APP_URL_PREFIX}/current`, label: "Current", icon: IconDeviceSpeaker },
-            { link: `${APP_URL_PREFIX}/playlist`, label: "Playlist", icon: IconPlaylist },
+            { link: `${APP_URL_PREFIX}/queue`, label: "Queue", icon: IconPlaylist },
         ],
         Browse: [
             { link: `${APP_URL_PREFIX}/artists`, label: "Artists", icon: IconUser },

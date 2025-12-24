@@ -13,7 +13,7 @@ import ArtistsScreen from "./components/features/ArtistsScreen";
 import FavoritesScreen from "./components/features/FavoritesScreen";
 import CurrentTrackScreen from "./components/features/CurrentTrackScreen";
 import PresetsScreen from "./components/features/PresetsScreen";
-import PlaylistScreen from "./components/features/PlaylistScreen";
+import QueueScreen from "./components/features/QueueScreen";
 import PlayheadManager from "./components/app/managers/PlayheadManager";
 import MediaGroupsManager from "./components/app/managers/MediaGroupsManager";
 import MediaSourceManager from "./components/app/managers/MediaSourceManager";
@@ -46,8 +46,8 @@ export default function App() {
                     element: <CurrentTrackScreen />,
                 },
                 {
-                    path: "playlist",
-                    element: <PlaylistScreen />,
+                    path: "queue",
+                    element: <QueueScreen />,
                 },
                 {
                     path: "artists",
@@ -75,11 +75,11 @@ export default function App() {
                 },
                 {
                     path: "*",
-                    element: <Navigate to="/ui/playlist" replace />,
+                    element: <Navigate to="/ui/queue" replace />,
                 },
                 {
                     index: true,
-                    element: <Navigate to="/ui/playlist" replace />,
+                    element: <Navigate to="/ui/queue" replace />,
                 },
             ],
         },

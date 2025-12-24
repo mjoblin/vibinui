@@ -7,6 +7,7 @@ import {
     IconPlayerTrackNext,
     IconPlayerTrackPrev,
     IconRepeat,
+    IconRepeatOnce,
     IconArrowsShuffle,
 } from "@tabler/icons-react";
 
@@ -165,11 +166,19 @@ const TransportControls: FC = () => {
                     sx={STYLE_DISABLEABLE}
                     onClick={() => toggleRepeat()}
                 >
-                    <IconRepeat
-                        size={12}
-                        stroke={2}
-                        color={repeatState === "all" ? colorActive : colorStandard}
-                    />
+                    {repeatState === "one" ? (
+                        <IconRepeatOnce
+                            size={12}
+                            stroke={2}
+                            color={colorActive}
+                        />
+                    ) : (
+                        <IconRepeat
+                            size={12}
+                            stroke={2}
+                            color={repeatState === "all" ? colorActive : colorStandard}
+                        />
+                    )}
                 </ActionIcon>
 
                 <ActionIcon
