@@ -19,7 +19,6 @@ export interface InternalState {
         showDebugPanel: boolean;
         showKeyboardShortcuts: boolean;
         showMediaSearch: boolean;
-        waveformsSupported: boolean;
         websocketClientId: string | undefined;
         websocketStatus: WebsocketStatus;
     };
@@ -89,7 +88,6 @@ const initialState: InternalState = {
         showDebugPanel: false,
         showKeyboardShortcuts: false,
         showMediaSearch: false,
-        waveformsSupported: true,
         websocketClientId: undefined,
         websocketStatus: "disconnected",
     },
@@ -286,9 +284,6 @@ export const internalSlice = createSlice({
         setTracksScrollPosition: (state, action: PayloadAction<number>) => {
             state.tracks.scrollPosition = action.payload;
         },
-        setWaveformsSupported: (state, action: PayloadAction<boolean>) => {
-            state.application.waveformsSupported = action.payload;
-        },
         setWebsocketClientId: (state, action: PayloadAction<string>) => {
             state.application.websocketClientId = action.payload;
         },
@@ -330,7 +325,6 @@ export const {
     setShowMediaSearch,
     setTrackCardRenderDimensions,
     setTracksScrollPosition,
-    setWaveformsSupported,
     setWebsocketClientId,
     setWebsocketStatus,
 } = internalSlice.actions;

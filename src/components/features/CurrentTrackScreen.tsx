@@ -140,6 +140,7 @@ const CurrentTrackScreen: FC = () => {
     const { APP_ALT_FONTFACE, SCREEN_LOADING_PT, BUFFERING_AUDIO_NOTIFY_DELAY } = useAppGlobals();
     const { isLocalMediaActive } = useAppStatus();
     const { activeTab } = useAppSelector((state: RootState) => state.userSettings.currentTrack);
+    const { lyrics_enabled: lyricsEnabled } = useAppSelector((state: RootState) => state.vibinStatus);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [currentTrack, setCurrentTrack] = useState<Track | undefined>(undefined);
@@ -513,6 +514,7 @@ const CurrentTrackScreen: FC = () => {
                                                     trackId={currentTrackId}
                                                     artist={currentTrack.artist}
                                                     title={currentTrack.title}
+                                                    lyricsEnabled={lyricsEnabled}
                                                 />
                                             )}
                                         </ScrollArea>

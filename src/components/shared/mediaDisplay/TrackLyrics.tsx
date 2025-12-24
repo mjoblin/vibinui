@@ -38,9 +38,10 @@ type TrackLyricsProps = {
     trackId?: string;
     artist?: string;
     title?: string;
+    lyricsEnabled: boolean;
 };
 
-const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
+const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title, lyricsEnabled }) => {
     const { colors } = useMantineTheme();
     const { APP_ALT_FONTFACE } = useAppGlobals();
     const [lyrics, setLyrics] = useState<Lyrics | undefined>(undefined);
@@ -71,8 +72,11 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
      * or by artist/title (for other sources like AirPlay)..
      */
     useEffect(() => {
+        if (!lyricsEnabled) {
+            return;
+        }
         getLyrics({ trackId, artist, title });
-    }, [getLyrics, trackId, artist, title]);
+    }, [getLyrics, lyricsEnabled, trackId, artist, title]);
 
     /**
      * Store lyrics in component state for rendering.
@@ -97,6 +101,14 @@ const TrackLyrics: FC<TrackLyricsProps> = ({ trackId, artist, title }) => {
 
         setMaxLineWidth(Math.max(...allLineWidths));
     }, [getLyricsStatus.data]);
+
+    if (!lyricsEnabled) {
+        return (
+            <Text size={14} color={colors.dark[2]}>
+                Lyrics are not enabled in the Vibin backend.
+            </Text>
+        );
+    }
 
     if (getLyricsStatus.isFetching || getLyricsStatus.isLoading) {
         return <LoadingDataMessage message="Retrieving lyrics..." />;

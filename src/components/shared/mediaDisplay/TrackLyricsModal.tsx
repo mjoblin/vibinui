@@ -2,6 +2,8 @@ import React, { FC } from "react";
 import { Modal, ScrollArea, Stack } from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { useAppSelector } from "../../../app/hooks/store";
+import { RootState } from "../../../app/store/store";
 import { Track } from "../../../app/types";
 import MediaSummaryBanner from "../textDisplay/MediaSummaryBanner";
 import TrackLyrics from "./TrackLyrics";
@@ -18,6 +20,7 @@ type TrackLyricsModalProps = {
 
 const TrackLyricsModal: FC<TrackLyricsModalProps> = ({ track, opened, onClose = undefined }) => {
     const { APP_MODAL_BLUR } = useAppGlobals();
+    const { lyrics_enabled: lyricsEnabled } = useAppSelector((state: RootState) => state.vibinStatus);
 
     return (
         <Modal
@@ -33,7 +36,12 @@ const TrackLyricsModal: FC<TrackLyricsModalProps> = ({ track, opened, onClose = 
                 <MediaSummaryBanner media={track} />
 
                 <ScrollArea h={`calc(80vh - 275px)`}>
-                    <TrackLyrics trackId={track.id} artist={track.artist} title={track.title} />
+                    <TrackLyrics
+                        trackId={track.id}
+                        artist={track.artist}
+                        title={track.title}
+                        lyricsEnabled={lyricsEnabled}
+                    />
                 </ScrollArea>
             </Stack>
         </Modal>
