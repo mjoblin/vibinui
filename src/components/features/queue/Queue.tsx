@@ -158,7 +158,8 @@ type PlaylistProps = {
  */
 
 const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) => {
-    const { colors } = useMantineTheme();
+    const theme = useMantineTheme();
+    const { colors } = theme;
     const { CURRENTLY_PLAYING_COLOR, SCREEN_LOADING_PT } = useAppGlobals();
     const { haveActivatedPlaylist, isLocalMediaActive } = useAppStatus();
     const { trackById } = useMediaGroupings();
@@ -186,60 +187,26 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
 
     const currentItemBorderColor = isLocalMediaActive ? CURRENTLY_PLAYING_COLOR : colors.gray[7];
 
-    // Define some CSS to ensure that the currently-playing playlist entry has an active/highlighted
-    // border around it.
+    // Dynamic CSS classes for currently-playing row styling.
     //
-    // Note:
-    //  * A table row border is made up of the left/right/bottom borders of the row itself, and the
-    //    bottom border of the row above it. This is due to 'borderCollapse: "collapse"' on the
-    //    table itself.
-    //  * This means the first table body's row has its top border defined by the bottom border of
-    //    the table head.
-    //  * Table rows start at 1, whereas the playlist index starts at 0.
-    //  * When a row isn't being highlighted, it still renders a transparent border of the same
-    //    thickness. This is to prevent rows slightly moving up/down when the highlighted border is
-    //    enabled (see the table's CSS defined earlier).
-
-    const { classes: dynamicClasses } = createStyles((theme) => {
-        console.log(queue);
-        if (
-            queue.play_position === null || typeof queue.play_position === "undefined" ||
-            isNaN(queue.play_position)
-        ) {
-            return {
-                table: {},
-            };
-        }
-
-        const previousRowCSS = {
-            borderBottom: `1px solid ${currentItemBorderColor} !important`,
-        };
-
-        const currentlyPlayingRowCSS = {
+    // We use `outline` instead of `border` because:
+    // 1. The table uses borderCollapse: "collapse", which merges adjacent borders
+    // 2. During drag-and-drop, the library applies CSS transforms to shift items visually
+    // 3. Collapsed borders don't render correctly when elements are transformed
+    // 4. Outline doesn't participate in border-collapse, so it moves correctly with transforms
+    //
+    // We apply classes based on item.position (the actual queue position from the backend)
+    // rather than using nth-of-type CSS selectors (which target DOM position). This ensures the
+    // styling stays with the correct track during drag-and-drop, since item.position is stable
+    // while the DOM order changes during dragging.
+    const { classes: dynamicClasses } = createStyles(() => ({
+        currentlyPlaying: {
             color: theme.white,
-            backgroundColor:
-                theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.yellow[6],
-            border: `1px solid ${currentItemBorderColor} !important`,
-        };
-
-        if (queue.play_position === 0) {
-            return {
-                table: {
-                    "thead > tr": previousRowCSS,
-                    "tbody > tr:nth-of-type(1)": currentlyPlayingRowCSS,
-                },
-            };
-        } else {
-            return {
-                table: {
-                    [`tbody > tr:nth-of-type(${queue.play_position})`]:
-                        previousRowCSS,
-                    [`tbody > tr:nth-of-type(${queue.play_position + 1})`]:
-                        currentlyPlayingRowCSS,
-                },
-            };
-        }
-    })();
+            backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.yellow[6],
+            outline: `1px solid ${currentItemBorderColor}`,
+            outlineOffset: "-1px",
+        },
+    }))();
 
     // --------------------------------------------------------------------------------------------
 
@@ -371,7 +338,6 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
      * Generate an array of table rows; one row per playlist entry.
      */
     const renderedPlaylistItems = queueItems
-        // .sort((a, b) => a.index - b.index)
         .map((item, index) => {
             const metadata: Partial<QueueItemMetadata> = item.metadata || {};
             const year = albumYear(metadata.album ?? "", metadata.artist ?? "");
@@ -389,6 +355,22 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                         ? year
                         : genre;
 
+            const isCurrentlyPlaying = item.position === queue.play_position;
+
+            // Build the className for this row.
+            const rowClassName = [
+                // Hover/highlight behavior
+                !isCurrentlyPlaying && actionsMenuOpenFor
+                    ? actionsMenuOpenFor === item.id
+                        ? classes.highlight
+                        : ""
+                    : classes.highlightOnHover,
+                // Currently-playing styling (outline + background)
+                isCurrentlyPlaying ? dynamicClasses.currentlyPlaying : "",
+            ]
+                .filter(Boolean)
+                .join(" ");
+
             return (
                 <Draggable key={`${item.id}`} index={index} draggableId={`${item.id}`}>
                     {(provided) => (
@@ -396,13 +378,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                             ref={provided.innerRef}
                             {...provided.draggableProps}
                             key={item.id.toString()}
-                            className={`${
-                                index !== queue.play_position && actionsMenuOpenFor
-                                    ? actionsMenuOpenFor === item.id
-                                        ? classes.highlight
-                                        : ""
-                                    : classes.highlightOnHover
-                            }`}
+                            className={rowClassName}
                         >
                             <td
                                 className={`${classes.alignRight} ${classes.dimmed}`}
@@ -411,11 +387,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                                 {/* Attach a reference to the currently-playing item so the
                                     "scroll to current" feature has something to work with. */}
                                 <Box
-                                    ref={
-                                        index === queue.play_position
-                                            ? currentItemRef
-                                            : undefined
-                                    }
+                                    ref={isCurrentlyPlaying ? currentItemRef : undefined}
                                 >
                                     <Text size={12} color={colors.dark[3]}>
                                         {item.position + 1}
@@ -437,12 +409,11 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                                     //      - If currently paused, resume playback
                                     //      - If source is not local media, play track from beginning
                                     //  - If it's not the current track, play track from beginning
-                                    // entryCanBePlayed(index) &&
-                                    index === queue.play_position &&
+                                    isCurrentlyPlaying &&
                                     isLocalMediaActive &&
                                     playStatus === "pause"
                                         ? resumePlayback()
-                                        : index === queue.play_position &&
+                                        : isCurrentlyPlaying &&
                                             isLocalMediaActive &&
                                             playStatus === "play" &&
                                             streamerPower === "on"
@@ -465,13 +436,13 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                             </td>
                             <td
                                 className={
-                                    index !== queue.play_position
+                                    !isCurrentlyPlaying
                                         ? classes.pointerOnHover
                                         : ""
                                 }
                                 style={{ width: maxAlbumWidth + TITLE_AND_ALBUM_COLUMN_GAP }}
                                 onClick={() => {
-                                    index !== queue.play_position &&
+                                    !isCurrentlyPlaying &&
                                         playQueueItemId({ itemId: item.id });
                                 }}
                             >
@@ -495,8 +466,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                                 <Flex pl={5} gap={5} align="center">
                                     {/* Item Play button. If the item is the current item,
                                         then instead implement Pause/Resume behavior. */}
-                                    {index ===
-                                    (isLocalMediaActive && queue.play_position) ? (
+                                    {isCurrentlyPlaying && isLocalMediaActive ? (
                                         playStatus === "play" && streamerPower === "on" ? (
                                             <VibinIconButton
                                                 icon={IconPlayerPause}
@@ -557,7 +527,11 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                                 </Flex>
                             </td>
                             <td style={{ width: 15 }}>
-                                <div className={classes.dragHandle} {...provided.dragHandleProps}>
+                                <div
+                                    className={classes.dragHandle}
+                                    {...(isCurrentlyPlaying ? {} : provided.dragHandleProps)}
+                                    style={isCurrentlyPlaying ? { opacity: 0.3, cursor: "default" } : undefined}
+                                >
                                     <IconGripVertical size={18} stroke={1.5} />
                                 </div>
                             </td>
@@ -603,7 +577,7 @@ const Queue: FC<PlaylistProps> = ({ onNewCurrentItemRef, onPlaylistModified }) =
                 }}
             >
                 <table
-                    className={`${classes.table} ${dynamicClasses.table} ${
+                    className={`${classes.table} ${
                         viewMode === "simple" ? classes.tableSimple : ""
                     }`}
                 >
