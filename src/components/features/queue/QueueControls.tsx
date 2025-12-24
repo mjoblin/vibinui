@@ -186,12 +186,15 @@ const QueueControls: FC<QueueControlsProps> = ({ scrollToCurrent }) => {
     useEffect(() => {
         if (activatePlaylistStatus.isError) {
             const { status, data } = activatePlaylistStatus.error as FetchBaseQueryError;
+            dispatch(setHaveReceivedInitialState(true));
 
             showErrorNotification({
                 title: "Error activating Playlist",
                 message: `[${status}] ${JSON.stringify(data)}`,
             });
         } else if (activatePlaylistStatus.isSuccess) {
+            dispatch(setHaveReceivedInitialState(true));
+
             showSuccessNotification({
                 title: "Playlist activated",
                 message: activeStoredPlaylistName,
@@ -202,6 +205,7 @@ const QueueControls: FC<QueueControlsProps> = ({ scrollToCurrent }) => {
         activatePlaylistStatus.isError,
         activatePlaylistStatus.error,
         activeStoredPlaylistName,
+        dispatch,
     ]);
 
     /**
