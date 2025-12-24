@@ -21,6 +21,8 @@ export interface VibinStatusState {
     system_platform: string;
     system_version: string;
     clients: ClientWebsocketClient[];
+    lyrics_enabled: boolean;
+    waveforms_enabled: boolean;
 }
 
 const initialState: VibinStatusState = {
@@ -30,6 +32,8 @@ const initialState: VibinStatusState = {
     system_platform: "",
     system_version: "",
     clients: [],
+    lyrics_enabled: false,
+    waveforms_enabled: false,
 };
 
 export const vibinStatusSlice = createSlice({
@@ -43,6 +47,8 @@ export const vibinStatusSlice = createSlice({
             updateIfDifferent(state, "system_platform", action.payload.system_platform);
             updateIfDifferent(state, "system_version", action.payload.system_version);
             updateIfDifferent(state, "clients", action.payload.clients);
+            updateIfDifferent(state, "lyrics_enabled", action.payload.lyrics_enabled);
+            updateIfDifferent(state, "waveforms_enabled", action.payload.waveforms_enabled);
         },
     },
 });

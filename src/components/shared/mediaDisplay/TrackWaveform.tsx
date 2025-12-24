@@ -14,10 +14,9 @@ import Draggable, { DraggableData } from "react-draggable";
 
 import { MediaId } from "../../../app/types";
 import { RootState } from "../../../app/store/store";
-import { useAppSelector, useAppDispatch } from "../../../app/hooks/store";
+import { useAppSelector } from "../../../app/hooks/store";
 import { useSeekMutation } from "../../../app/services/vibinTransport";
 import { useGetRMSQuery } from "../../../app/services/vibinTracks";
-import { setWaveformsSupported } from "../../../app/store/internalSlice";
 
 // ================================================================================================
 // Display a waveform for a Track. Optionally displays the current playhead progress over the
@@ -143,11 +142,12 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
     showProgress = true,
 }) => {
     const { colors } = useMantineTheme();
-    const dispatch = useAppDispatch();
-    const { waveformsSupported } = useAppSelector((state: RootState) => state.internal.application);
+    const { waveforms_enabled: waveformsEnabled } = useAppSelector(
+        (state: RootState) => state.vibinStatus
+    );
     const playStatus = useAppSelector((state: RootState) => state.playback.play_status);
-    const { data: rms, isSuccess: haveRMS, isError: gotRMSError } = useGetRMSQuery(trackId!, {
-        skip: !trackId,
+    const { data: rms, isSuccess: haveRMS } = useGetRMSQuery(trackId!, {
+        skip: !trackId || !waveformsEnabled,
     });
     const [isLoadingWaveform, setIsLoadingWaveform] = useState<boolean>(true);
 
@@ -166,21 +166,6 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
         setIsLoadingWaveform(true);
     }, [trackId]);
 
-    /**
-     * If a request for RMS fails, then assume that the backend doesn't support waveforms. This is
-     * a bit hacky. A better solution might involve having the backend announce what features it
-     * supports in its VibinStatus message.
-     *
-     * Reset waveformsSupported to true on success, in case a previous error set it to false.
-     */
-    useEffect(() => {
-        if (gotRMSError) {
-            dispatch(setWaveformsSupported(false));
-        } else if (haveRMS) {
-            dispatch(setWaveformsSupported(true));
-        }
-    }, [dispatch, gotRMSError, haveRMS]);
-
     if (!trackId) {
         return (
             <Text size={14} color={colors.dark[2]}>
@@ -189,10 +174,10 @@ const TrackWaveform: FC<TrackWaveformProps> = ({
         );
     }
 
-    if (!waveformsSupported) {
+    if (!waveformsEnabled) {
         return (
             <Text size={14} color={colors.dark[2]}>
-                Waveforms are not supported by the Vibin backend.
+                Waveforms are not enabled in the Vibin backend.
             </Text>
         );
     }
