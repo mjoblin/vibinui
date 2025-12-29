@@ -35,6 +35,17 @@ import VibinIconButton from "../../shared/buttons/VibinIconButton";
 // ================================================================================================
 // Modal for editing Presets - delete and reorder with drag-and-drop.
 // All changes are batched locally until Save is clicked.
+//
+// Supports two move modes:
+// - Insert: Standard reorder - dragged item is inserted, others shift to make room
+// - Swap: Dragged item swaps positions with the drop target
+//
+// Swap mode requires special handling because @hello-pangea/dnd is designed for insert
+// behavior. Key techniques used:
+// - onBeforeDragStart + flushSync: Set drag state before library removes the Draggable
+// - Static placeholder: Renders at source position (library returns null for dragged item)
+// - transform: "none": Prevents other items from shifting during drag
+// - Preview content: Shows swap result at both source and destination positions
 // ================================================================================================
 
 const MAX_SLOTS = 99;
@@ -45,7 +56,6 @@ type PendingSlot = {
     isDeleted: boolean;
     originalSlotNumber: number;
 };
-
 
 type PresetEditorModalProps = {
     presets: Preset[];
@@ -614,13 +624,12 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                 );
                             }}
                         >
-                            {(provided) => (
+                            {(provided) => {
+                                const isSwapMode = dropMode === "swap";
+
+                                return (
                                 <div ref={provided.innerRef} {...provided.droppableProps}>
                                     {pendingSlots.map((slot, index) => {
-                                        const isSwapMode = dropMode === "swap";
-                                        // Only use dragSourceIndex (not preparingDragIndex) to decide when to show placeholder
-                                        // preparingDragIndex would remove the Draggable before the library can start the drag
-
                                         // In swap mode, when this is the source position being dragged,
                                         // render a static placeholder instead of the Draggable (which returns null)
                                         if (
@@ -842,7 +851,8 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                     })}
                                     {provided.placeholder}
                                 </div>
-                            )}
+                                );
+                            }}
                         </Droppable>
                     </DragDropContext>
                 </ScrollArea>
