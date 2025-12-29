@@ -171,6 +171,7 @@ const MediaArt: FC<MediaArtProps> = ({
                     : []
                 : [],
             Playlist: ["all"],
+            Presets: ["all"],
         };
     }
 

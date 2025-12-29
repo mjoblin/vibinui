@@ -72,6 +72,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInAlbums"],
                             Playlist: ["all"],
+                            Presets: ["all"],
                             Details: ["all"],
                         }
                     }

@@ -1,12 +1,12 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-import { Preset, PresetId } from "../types";
+import { MediaId, Preset, PresetId } from "../types";
 import { API_REFRESH_INTERVAL } from "../constants";
 
 // ================================================================================================
 // Interact with the vibin backend's /presets endpoint.
 //
-// Features: Retrieve and play Presets.
+// Features: Retrieve, add, delete, and play Presets.
 // ================================================================================================
 
 export const vibinPresetsApi = createApi({
@@ -17,10 +17,28 @@ export const vibinPresetsApi = createApi({
         getPresets: builder.query<Preset[], void>({
             query: () => ({ url: "" }),
         }),
+        addPreset: builder.mutation<void, { presetId: PresetId; mediaId: MediaId }>({
+            query: ({ presetId, mediaId }) => ({
+                url: `${presetId}`,
+                method: "PUT",
+                params: { media_id: mediaId },
+            }),
+        }),
+        deletePreset: builder.mutation<void, { presetId: PresetId }>({
+            query: ({ presetId }) => ({
+                url: `${presetId}`,
+                method: "DELETE",
+            }),
+        }),
         playPresetId: builder.query<void, PresetId>({
             query: (presetId) => ({ url: `${presetId}/play`, method: "POST" }),
         }),
     }),
 });
 
-export const { useGetPresetsQuery, useLazyPlayPresetIdQuery } = vibinPresetsApi;
+export const {
+    useGetPresetsQuery,
+    useAddPresetMutation,
+    useDeletePresetMutation,
+    useLazyPlayPresetIdQuery,
+} = vibinPresetsApi;

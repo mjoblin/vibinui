@@ -94,6 +94,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInTracks"],
                             Playlist: ["all"],
+                            Presets: ["all"],
                             Details: ["all"],
                         }
                     }
@@ -167,6 +168,7 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInTracks"],
                             Playlist: ["all"],
+                            Presets: ["all"],
                             Details: ["all"],
                         }
                     }

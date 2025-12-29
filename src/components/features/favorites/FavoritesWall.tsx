@@ -261,6 +261,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                                                 Favorites: ["all"],
                                                 Navigation: ["all"],
                                                 Playlist: ["all"],
+                                                Presets: ["all"],
                                             }}
                                             size={cardSize}
                                             showDetails={showDetails}
@@ -317,6 +318,7 @@ const FavoritesWall: FC<FavoritesWallProps> = ({
                                                 Favorites: ["all"],
                                                 Navigation: ["all"],
                                                 Playlist: ["all"],
+                                                Presets: ["all"],
                                             }}
                                             size={cardSize}
                                             showDetails={showDetails}
