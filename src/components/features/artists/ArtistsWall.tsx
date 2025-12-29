@@ -476,7 +476,7 @@ const ArtistsWall: FC = () => {
                                                             "ViewInAlbums",
                                                             "ViewInTracks",
                                                         ],
-                                                        Playlist: ["all"],
+                                                        Queue: ["all"],
                                                         Presets: ["all"],
                                                     }}
                                                     selected={album.id === selectedAlbum?.id}
@@ -543,7 +543,7 @@ const ArtistsWall: FC = () => {
                                             Details: ["all"],
                                             Favorites: ["all"],
                                             Navigation: ["ViewInAlbums", "ViewInTracks"],
-                                            Playlist: ["all"],
+                                            Queue: ["all"],
                                             Presets: ["all"],
                                         }}
                                         selected={track.id === selectedTrack?.id}

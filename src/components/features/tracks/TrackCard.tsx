@@ -71,7 +71,7 @@ const TrackCardCompact: FC<TrackCardTypeProps> = ({
                         enabledActions || {
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInAlbums"],
-                            Playlist: ["all"],
+                            Queue: ["all"],
                             Presets: ["all"],
                             Details: ["all"],
                         }
