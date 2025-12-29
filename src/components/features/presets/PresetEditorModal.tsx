@@ -129,20 +129,6 @@ const useStyles = createStyles((theme) => ({
         opacity: 0.3,
         cursor: "default",
     },
-    // For swap mode: prevent library from shifting items around
-    swapModeRow: {
-        transform: "none !important",
-    },
-    // For swap mode: ensure placeholder maintains its space and position
-    swapModePlaceholder: {
-        opacity: "1 !important" as any,
-        visibility: "visible !important" as any,
-        position: "relative !important" as any,
-        top: "auto !important" as any,
-        left: "auto !important" as any,
-        height: "auto !important" as any,
-        transform: "none !important" as any,
-    },
 }));
 
 const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClose }) => {
@@ -603,21 +589,94 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                             {(provided) => (
                                 <div ref={provided.innerRef} {...provided.droppableProps}>
                                     {pendingSlots.map((slot, index) => {
-                                        // For swap mode preview: show what will end up at the source position
+                                        const isSwapMode = dropMode === "swap";
+
+                                        // In swap mode, when this is the source position being dragged,
+                                        // render a static placeholder instead of the Draggable (which returns null)
+                                        if (
+                                            isSwapMode &&
+                                            dragSourceIndex !== null &&
+                                            index === dragSourceIndex
+                                        ) {
+                                            // Determine what to show at the source position
+                                            let previewSlot = slot;
+                                            if (
+                                                preDragSlots &&
+                                                dragDestIndex !== null &&
+                                                dragSourceIndex !== dragDestIndex
+                                            ) {
+                                                // Show what's at destination (will be swapped in)
+                                                previewSlot = {
+                                                    ...slot,
+                                                    preset: preDragSlots[dragDestIndex].preset,
+                                                    isDeleted: preDragSlots[dragDestIndex].isDeleted,
+                                                };
+                                            }
+
+                                            const isEmpty = !previewSlot.preset;
+                                            const isDeleted = previewSlot.isDeleted;
+                                            const rowClasses = [
+                                                classes.row,
+                                                isDeleted ? classes.deletedRow : "",
+                                                isEmpty ? classes.emptyRow : "",
+                                            ]
+                                                .filter(Boolean)
+                                                .join(" ");
+
+                                            // Render static placeholder row at source position
+                                            return (
+                                                <div
+                                                    key={`slot-${slot.slotNumber}`}
+                                                    className={rowClasses}
+                                                >
+                                                    <div className={classes.colSlot}>
+                                                        <Text size="sm" c="dimmed">
+                                                            {slot.slotNumber}
+                                                        </Text>
+                                                    </div>
+                                                    <div className={classes.colArt}>
+                                                        {previewSlot.preset && (
+                                                            <MediaArt
+                                                                artUri={previewSlot.preset.art_url}
+                                                                size={35}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <div className={classes.colName}>
+                                                        <Text size="sm" truncate>
+                                                            {previewSlot.preset?.name || "(Empty)"}
+                                                        </Text>
+                                                    </div>
+                                                    <div className={classes.colType}>
+                                                        <Text size="xs" c="dimmed">
+                                                            {previewSlot.preset?.type || ""}
+                                                        </Text>
+                                                    </div>
+                                                    <div className={classes.colDelete} />
+                                                    <div className={classes.colDrag}>
+                                                        <Box className={`${classes.dragHandle} ${classes.disabledDragHandle}`}>
+                                                            <IconGripVertical size={18} stroke={1.5} />
+                                                        </Box>
+                                                    </div>
+                                                </div>
+                                            );
+                                        }
+
+                                        // For swap mode preview at destination position
                                         let displaySlot = slot;
                                         if (
-                                            dropMode === "swap" &&
+                                            isSwapMode &&
                                             preDragSlots &&
                                             dragSourceIndex !== null &&
                                             dragDestIndex !== null &&
                                             dragSourceIndex !== dragDestIndex &&
-                                            index === dragSourceIndex
+                                            index === dragDestIndex
                                         ) {
-                                            // Source position: show what's at destination (will be swapped in)
+                                            // Destination position: show what's being dragged (will swap in)
                                             displaySlot = {
                                                 ...slot,
-                                                preset: preDragSlots[dragDestIndex].preset,
-                                                isDeleted: preDragSlots[dragDestIndex].isDeleted,
+                                                preset: preDragSlots[dragSourceIndex].preset,
+                                                isDeleted: preDragSlots[dragSourceIndex].isDeleted,
                                             };
                                         }
 
@@ -627,14 +686,10 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                         // Use actual slot for drag capability
                                         const canDrag = canMove && !!slot.preset && !slot.isDeleted;
 
-                                        // For swap mode, always apply transform prevention (not dependent on drag state)
-                                        const isSwapMode = dropMode === "swap";
-
                                         const rowClasses = [
                                             classes.row,
                                             isDeleted ? classes.deletedRow : "",
                                             isEmpty ? classes.emptyRow : "",
-                                            isSwapMode ? classes.swapModeRow : "",
                                         ]
                                             .filter(Boolean)
                                             .join(" ");
@@ -659,11 +714,13 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                                     <div
                                                         ref={provided.innerRef}
                                                         {...draggableDataProps}
-                                                        {...(isSwapMode
-                                                            ? {}
-                                                            : { style: draggableStyle, onTransitionEnd }
-                                                        )}
-                                                        className={`${rowClasses} ${snapshot.isDragging ? classes.draggingRow : ""} ${isSwapMode && snapshot.isDragging ? classes.swapModePlaceholder : ""}`}
+                                                        style={
+                                                            isSwapMode
+                                                                ? { ...draggableStyle, transform: "none" }
+                                                                : draggableStyle
+                                                        }
+                                                        onTransitionEnd={isSwapMode ? undefined : onTransitionEnd}
+                                                        className={`${rowClasses} ${snapshot.isDragging ? classes.draggingRow : ""}`}
                                                     >
                                                         {/* Slot number */}
                                                         <div className={classes.colSlot}>
@@ -736,8 +793,7 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                             </Draggable>
                                         );
                                     })}
-                                    {/* Hide placeholder in swap mode to prevent gap animation */}
-                                    {dropMode !== "swap" && provided.placeholder}
+                                    {provided.placeholder}
                                 </div>
                             )}
                         </Droppable>
