@@ -82,22 +82,21 @@ export type NavigationAction =
     | "ViewInArtists"
     | "ViewInAlbums"
     | "ViewInTracks";
-export type PlaylistAction =
+export type MediaAction = DetailsAction | FavoritesAction | NavigationAction | QueueAction | PresetsAction;
+export type PresetsAction = "all" | "AddPreset";
+export type QueueAction =
     | "all"
     | "AppendToEnd"
     | "InsertAndPlayNext"
     | "InsertAndPlayNow"
     | "ReplaceAndPlayNow";
-export type PresetsAction = "all" | "AddPreset";
-
-export type MediaAction = DetailsAction | FavoritesAction | NavigationAction | PlaylistAction | PresetsAction;
 
 export type EnabledActions = {
     Details?: DetailsAction[];
     Favorites?: FavoritesAction[];
     Navigation?: NavigationAction[];
-    Playlist?: PlaylistAction[];
     Presets?: PresetsAction[];
+    Queue?: QueueAction[];
 };
 
 const sizeMd = 15;
@@ -163,8 +162,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
         Details: ["all"],
         Favorites: ["all"],
         Navigation: ["all"],
-        Playlist: ["all"],
         Presets: ["all"],
+        Queue: ["all"],
     },
     position = "top",
     size = "md",
@@ -215,8 +214,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const showDetailsActions = enabledActions.Details && enabledActions.Details.length > 0;
     const showFavoritesActions = enabledActions.Favorites && enabledActions.Favorites.length > 0;
     const showNavigationActions = enabledActions.Navigation && enabledActions.Navigation.length > 0;
-    const showPlaylistActions = enabledActions.Playlist && enabledActions.Playlist.length > 0;
     const showPresetsActions = enabledActions.Presets && enabledActions.Presets.length > 0;
+    const showQueueActions = enabledActions.Queue && enabledActions.Queue.length > 0;
 
     const displaySize = size === "sm" ? sizeSm : size === "md" ? sizeMd : size;
 
@@ -329,13 +328,13 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         </>
                     )}
 
-                    {/* Playlist actions ------------------------------------------------------ */}
+                    {/* Queue actions --------------------------------------------------------- */}
 
-                    {showPlaylistActions && (isAlbum(media) || isTrack(media)) && (
+                    {showQueueActions && (isAlbum(media) || isTrack(media)) && (
                         <>
                             <Menu.Label>Queue</Menu.Label>
 
-                            {wantAction(enabledActions.Playlist!!, "ReplaceAndPlayNow") && (
+                            {wantAction(enabledActions.Queue!!, "ReplaceAndPlayNow") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={
@@ -368,7 +367,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 </Menu.Item>
                             )}
 
-                            {wantAction(enabledActions.Playlist!!, "InsertAndPlayNow") && (
+                            {wantAction(enabledActions.Queue!!, "InsertAndPlayNow") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={<IconCornerDownRight size={14} />}
@@ -388,7 +387,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 </Menu.Item>
                             )}
 
-                            {wantAction(enabledActions.Playlist!!, "InsertAndPlayNext") && (
+                            {wantAction(enabledActions.Queue!!, "InsertAndPlayNext") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={<IconCornerDownRightDouble size={14} />}
@@ -408,7 +407,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 </Menu.Item>
                             )}
 
-                            {wantAction(enabledActions.Playlist!!, "AppendToEnd") && (
+                            {wantAction(enabledActions.Queue!!, "AppendToEnd") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={<IconPlaylistAdd size={12} />}
