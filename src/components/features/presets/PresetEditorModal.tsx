@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import {
     Box,
     Button,
@@ -84,6 +85,10 @@ const useStyles = createStyles((theme) => ({
     draggingRow: {
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1],
         boxShadow: theme.shadows.lg,
+        borderRadius: 4,
+    },
+    swapTargetRow: {
+        backgroundColor: `${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]} !important`,
         borderRadius: 4,
     },
     colSlot: {
@@ -251,11 +256,26 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
         return newSlots;
     };
 
-    // Handle drag start - save pre-drag state and track source
+    // Handle before drag start - fires before library's state changes
+    // Use flushSync to ensure state updates before library removes the Draggable
+    const handleBeforeDragStart = (start: DragStart) => {
+        if (dropMode === "swap") {
+            flushSync(() => {
+                setPreDragSlots([...pendingSlots]);
+                setDragSourceIndex(start.source.index);
+                setDragDestIndex(null);
+            });
+        }
+    };
+
+    // Handle drag start - for insert mode or if beforeDragStart didn't set state
     const handleDragStart = (start: DragStart) => {
-        setPreDragSlots([...pendingSlots]);
-        setDragSourceIndex(start.source.index);
-        setDragDestIndex(null);
+        if (dragSourceIndex === null) {
+            // Only set if not already set by handleBeforeDragStart
+            setPreDragSlots([...pendingSlots]);
+            setDragSourceIndex(start.source.index);
+            setDragDestIndex(null);
+        }
     };
 
     // Handle drag update - track current destination for swap preview
@@ -535,6 +555,7 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                 {/* Preset list with drag-and-drop */}
                 <ScrollArea className={classes.scrollArea} offsetScrollbars>
                     <DragDropContext
+                        onBeforeDragStart={handleBeforeDragStart}
                         onDragStart={handleDragStart}
                         onDragUpdate={handleDragUpdate}
                         onDragEnd={handleDragEnd}
@@ -590,6 +611,8 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                 <div ref={provided.innerRef} {...provided.droppableProps}>
                                     {pendingSlots.map((slot, index) => {
                                         const isSwapMode = dropMode === "swap";
+                                        // Only use dragSourceIndex (not preparingDragIndex) to decide when to show placeholder
+                                        // preparingDragIndex would remove the Draggable before the library can start the drag
 
                                         // In swap mode, when this is the source position being dragged,
                                         // render a static placeholder instead of the Draggable (which returns null)
@@ -615,10 +638,13 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
 
                                             const isEmpty = !previewSlot.preset;
                                             const isDeleted = previewSlot.isDeleted;
+                                            // Highlight source position when hovering over a swap target
+                                            const showSwapHighlight = dragDestIndex !== null && dragSourceIndex !== dragDestIndex;
                                             const rowClasses = [
                                                 classes.row,
                                                 isDeleted ? classes.deletedRow : "",
                                                 isEmpty ? classes.emptyRow : "",
+                                                showSwapHighlight ? classes.swapTargetRow : "",
                                             ]
                                                 .filter(Boolean)
                                                 .join(" ");
