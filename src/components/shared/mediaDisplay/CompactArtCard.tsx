@@ -2,6 +2,7 @@ import React, { FC, ReactNode } from "react";
 import { Box, createStyles, Flex, Paper, Stack } from "@mantine/core";
 
 import { useAppGlobals } from "../../../app/hooks/useAppGlobals";
+import { Media } from "../../../app/types";
 import MediaArt from "./MediaArt";
 
 // ================================================================================================
@@ -10,6 +11,7 @@ import MediaArt from "./MediaArt";
 // ================================================================================================
 
 type CompactArtCardProps = {
+    media?: Media;
     artUrl?: string;
     actions?: ReactNode;
     selected?: boolean;
@@ -20,6 +22,7 @@ type CompactArtCardProps = {
 };
 
 const CompactArtCard: FC<CompactArtCardProps> = ({
+    media,
     artUrl,
     actions = null,
     selected = false,
@@ -61,9 +64,14 @@ const CompactArtCard: FC<CompactArtCardProps> = ({
                 <Flex align="flex-start">
                     {artUrl && (
                         <MediaArt
+                            media={media}
                             artUri={artUrl}
                             radius={5}
                             size={artSize}
+                            showActions={false}
+                            showFavoriteIndicator={false}
+                            showPlayButton={true}
+                            centerPlayButton={true}
                             showLoading={showLoading}
                         />
                     )}
