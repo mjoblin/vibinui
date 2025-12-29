@@ -391,6 +391,7 @@ const CurrentTrackScreen: FC = () => {
                             Details: ["all"],
                             Favorites: ["all"],
                             Navigation: ["all"],
+                            Presets: ["all"],
                         }}
                     />
                 )}

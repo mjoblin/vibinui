@@ -477,6 +477,7 @@ const ArtistsWall: FC = () => {
                                                             "ViewInTracks",
                                                         ],
                                                         Playlist: ["all"],
+                                                        Presets: ["all"],
                                                     }}
                                                     selected={album.id === selectedAlbum?.id}
                                                     onClick={(album: Album) =>
@@ -543,6 +544,7 @@ const ArtistsWall: FC = () => {
                                             Favorites: ["all"],
                                             Navigation: ["ViewInAlbums", "ViewInTracks"],
                                             Playlist: ["all"],
+                                            Presets: ["all"],
                                         }}
                                         selected={track.id === selectedTrack?.id}
                                         onClick={(track: Track) =>
