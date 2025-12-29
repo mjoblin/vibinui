@@ -30,6 +30,12 @@ export const vibinPresetsApi = createApi({
                 method: "DELETE",
             }),
         }),
+        movePreset: builder.mutation<void, { fromId: PresetId; toId: PresetId }>({
+            query: ({ fromId, toId }) => ({
+                url: `${fromId}/move/${toId}`,
+                method: "POST",
+            }),
+        }),
         playPresetId: builder.query<void, PresetId>({
             query: (presetId) => ({ url: `${presetId}/play`, method: "POST" }),
         }),
@@ -41,4 +47,5 @@ export const {
     useAddPresetMutation,
     useDeletePresetMutation,
     useLazyPlayPresetIdQuery,
+    useMovePresetMutation,
 } = vibinPresetsApi;
