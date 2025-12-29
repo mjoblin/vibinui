@@ -91,6 +91,13 @@ const useStyles = createStyles((theme) => ({
         backgroundColor: `${theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[1]} !important`,
         borderRadius: 4,
     },
+    changedSlot: {
+        fontWeight: 700,
+        color: theme.colors.yellow[5],
+    },
+    changedRow: {
+        backgroundColor: theme.colorScheme === "dark" ? "rgba(60, 50, 0, 0.8)" : theme.colors.yellow[1],
+    },
     colSlot: {
         width: 50,
         textAlign: "right",
@@ -527,7 +534,7 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                 {/* Drop mode selector */}
                 <Flex justify="flex-end" align="center" gap="sm">
                     <Text size="sm" c="dimmed">
-                        Move mode
+                        Move mode:
                     </Text>
                     <Tooltip
                         label={
@@ -638,12 +645,15 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
 
                                             const isEmpty = !previewSlot.preset;
                                             const isDeleted = previewSlot.isDeleted;
+                                            // Check if this slot has been modified from original
+                                            const isSlotChanged = slot.preset && slot.slotNumber !== slot.originalSlotNumber;
                                             // Highlight source position when hovering over a swap target
                                             const showSwapHighlight = dragDestIndex !== null && dragSourceIndex !== dragDestIndex;
                                             const rowClasses = [
                                                 classes.row,
                                                 isDeleted ? classes.deletedRow : "",
                                                 isEmpty ? classes.emptyRow : "",
+                                                isSlotChanged ? classes.changedRow : "",
                                                 showSwapHighlight ? classes.swapTargetRow : "",
                                             ]
                                                 .filter(Boolean)
@@ -656,7 +666,11 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                                     className={rowClasses}
                                                 >
                                                     <div className={classes.colSlot}>
-                                                        <Text size="sm" c="dimmed">
+                                                        <Text
+                                                            size="sm"
+                                                            c={isSlotChanged ? undefined : "dimmed"}
+                                                            className={isSlotChanged ? classes.changedSlot : undefined}
+                                                        >
                                                             {slot.slotNumber}
                                                         </Text>
                                                     </div>
@@ -711,11 +725,14 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                         const isDeleted = displaySlot.isDeleted;
                                         // Use actual slot for drag capability
                                         const canDrag = canMove && !!slot.preset && !slot.isDeleted;
+                                        // Check if this slot has been modified from original
+                                        const isSlotChanged = slot.preset && slot.slotNumber !== slot.originalSlotNumber;
 
                                         const rowClasses = [
                                             classes.row,
                                             isDeleted ? classes.deletedRow : "",
                                             isEmpty ? classes.emptyRow : "",
+                                            isSlotChanged ? classes.changedRow : "",
                                         ]
                                             .filter(Boolean)
                                             .join(" ");
@@ -750,7 +767,11 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                                                     >
                                                         {/* Slot number */}
                                                         <div className={classes.colSlot}>
-                                                            <Text size="sm" c="dimmed">
+                                                            <Text
+                                                                size="sm"
+                                                                c={isSlotChanged ? undefined : "dimmed"}
+                                                                className={isSlotChanged ? classes.changedSlot : undefined}
+                                                            >
                                                                 {slot.slotNumber}
                                                             </Text>
                                                         </div>
