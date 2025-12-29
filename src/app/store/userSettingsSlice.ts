@@ -62,6 +62,7 @@ const DEFAULT_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = true;
 const DEFAULT_PLAYLIST_VIEWMODE = "detailed";
 const DEFAULT_PRESETS_CARD_GAP = DEFAULT_ALBUMS_CARD_GAP;
 const DEFAULT_PRESETS_CARD_SIZE = DEFAULT_ALBUMS_CARD_SIZE;
+const DEFAULT_PRESETS_EDITOR_MOVE_MODE = "swap";
 const DEFAULT_PRESETS_FILTER_TEXT = DEFAULT_ALBUMS_FILTER_TEXT;
 const DEFAULT_PRESETS_SHOW_DETAILS = true;
 const DEFAULT_PRESETS_WALL_SORT_FIELD = "id";
@@ -124,6 +125,7 @@ export const LSKEY_PLAYLIST_FOLLOW_CURRENTLY_PLAYING = "playlist.followCurrently
 export const LSKEY_PLAYLIST_VIEWMODE = "playlist.viewMode";
 export const LSKEY_PRESETS_CARD_GAP = "presets.cardGap";
 export const LSKEY_PRESETS_CARD_SIZE = "presets.cardSize";
+export const LSKEY_PRESETS_EDITOR_MOVE_MODE = "presets.editorMoveMode";
 export const LSKEY_PRESETS_FILTER_TEXT = "presets.filterText";
 export const LSKEY_PRESETS_SHOW_DETAILS = "presets.showDetails";
 export const LSKEY_PRESETS_WALL_SORT_DIRECTION = "presets.wallSortDirection";
@@ -145,6 +147,7 @@ export type MediaCardViewMode = "art_focused" | "compact";
 export type ApplicationTheme = "light" | "dark";
 export type PlaylistViewMode = "simple" | "detailed";
 export type PlaylistEditorSortField = "name" | "created" | "entry_count" | "updated";
+export type PresetEditorMoveMode = "swap" | "insert";
 export type AlbumCollection = "all" | "new";
 export type ArtistCollection = "all" | "with_albums";
 export type FavoriteCollection = "all" | "albums" | "tracks";
@@ -213,6 +216,7 @@ export interface UserSettingsState {
     presets: {
         cardGap: number;
         cardSize: number;
+        editorMoveMode: PresetEditorMoveMode;
         filterText: string;
         showDetails: boolean;
         wallSortDirection: MediaSortDirection;
@@ -390,6 +394,10 @@ const initialState: UserSettingsState = {
     presets: {
         cardGap: getLocalStorageValue(LSKEY_PRESETS_CARD_GAP, DEFAULT_PRESETS_CARD_GAP),
         cardSize: getLocalStorageValue(LSKEY_PRESETS_CARD_SIZE, DEFAULT_PRESETS_CARD_SIZE),
+        editorMoveMode: getLocalStorageValue(
+            LSKEY_PRESETS_EDITOR_MOVE_MODE,
+            DEFAULT_PRESETS_EDITOR_MOVE_MODE,
+        ),
         filterText: getLocalStorageValue(LSKEY_PRESETS_FILTER_TEXT, DEFAULT_PRESETS_FILTER_TEXT),
         showDetails: getLocalStorageValue(LSKEY_PRESETS_SHOW_DETAILS, DEFAULT_PRESETS_SHOW_DETAILS),
         wallSortDirection: getLocalStorageValue(
@@ -609,6 +617,9 @@ export const userSettingsSlice = createSlice({
         setPresetsCardSize: (state, action: PayloadAction<number>) => {
             state.presets.cardSize = action.payload;
         },
+        setPresetsEditorMoveMode: (state, action: PayloadAction<PresetEditorMoveMode>) => {
+            state.presets.editorMoveMode = action.payload;
+        },
         setPresetsFilterText: (state, action: PayloadAction<string>) => {
             state.presets.filterText = action.payload;
         },
@@ -707,6 +718,7 @@ export const {
     setPlaylistViewMode,
     setPresetsCardGap,
     setPresetsCardSize,
+    setPresetsEditorMoveMode,
     setPresetsFilterText,
     setPresetsShowDetails,
     setPresetsWallSortDirection,
