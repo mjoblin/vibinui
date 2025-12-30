@@ -224,13 +224,13 @@ The Presets screen shows all streamer Presets.
 
 Presets can be deleted and reordered.
 
-<img src="https://github.com/mjoblin/media/blob/main/vibin/images/presets_edit.jpg" width="500" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/presets_edit.png" width="500" />
 
 #### Add local media to Presets
 
 New Presets can be created from local media.
 
-<img src="https://github.com/mjoblin/media/blob/main/vibin/images/presets_add.jpg" width="400" />
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/presets_add.png" width="400" />
 
 ### Favorites
 
