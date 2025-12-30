@@ -1,7 +1,6 @@
 import React, { FC, useEffect, useRef, useState } from "react";
 import {
     Box,
-    Card,
     Center,
     createStyles,
     Flex,

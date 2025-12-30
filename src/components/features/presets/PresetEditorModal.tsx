@@ -438,7 +438,7 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                     // If no direct move was possible, we have a cycle - use temp slot
                     if (!madeProgress && pendingMoves.size > 0) {
                         // Pick any remaining move and use temp slot to break the cycle
-                        const [fromOriginal, toSlot] = pendingMoves.entries().next().value;
+                        const fromOriginal = pendingMoves.keys().next().value;
 
                         // Find where this preset currently is
                         let currentSlot = -1;
