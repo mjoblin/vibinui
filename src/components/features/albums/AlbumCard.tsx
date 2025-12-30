@@ -85,6 +85,7 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
 
     return (
         <CompactArtCard
+            media={album}
             artUrl={album.album_art_uri}
             actions={
                 <MediaActionsButton
@@ -93,7 +94,8 @@ const AlbumCardCompact: FC<AlbumCardTypeProps> = ({
                         enabledActions || {
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInTracks"],
-                            Playlist: ["all"],
+                            Queue: ["all"],
+                            Presets: ["all"],
                             Details: ["all"],
                         }
                     }
@@ -166,7 +168,8 @@ const AlbumCardArtFocused: FC<AlbumCardTypeProps> = ({
                         enabledActions || {
                             Favorites: ["all"],
                             Navigation: ["ViewInArtists", "ViewInTracks"],
-                            Playlist: ["all"],
+                            Queue: ["all"],
+                            Presets: ["all"],
                             Details: ["all"],
                         }
                     }

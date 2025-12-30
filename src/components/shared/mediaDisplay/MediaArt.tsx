@@ -170,7 +170,8 @@ const MediaArt: FC<MediaArtProps> = ({
                     ? ["ViewInArtists", "ViewInAlbums"]
                     : []
                 : [],
-            Playlist: ["all"],
+            Queue: ["all"],
+            Presets: ["all"],
         };
     }
 

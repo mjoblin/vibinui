@@ -391,6 +391,7 @@ const CurrentTrackScreen: FC = () => {
                             Details: ["all"],
                             Favorites: ["all"],
                             Navigation: ["all"],
+                            Presets: ["all"],
                         }}
                     />
                 )}
@@ -470,7 +471,9 @@ const CurrentTrackScreen: FC = () => {
                                     </Text>
                                 </Tooltip>
                             </Box>
-                            <FavoriteIndicator media={currentTrack} size="1.2rem" />
+                            {isLocalMediaActive && (
+                                <FavoriteIndicator media={currentTrack} size="1.2rem" />
+                            )}
                         </Flex>
 
                         {(isLocalMediaActive || currentTrack.artist || currentTrack.album) && (

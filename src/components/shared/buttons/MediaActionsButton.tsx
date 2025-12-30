@@ -17,6 +17,7 @@ import {
     IconPhoto,
     IconPlayerPlay,
     IconPlaylistAdd,
+    IconRadio,
     IconUser,
     IconWaveSine,
 } from "@tabler/icons-react";
@@ -27,8 +28,10 @@ import {
     useAddFavoriteMutation,
     useDeleteFavoriteMutation,
 } from "../../../app/services/vibinFavorites";
+import { useAddPresetMutation } from "../../../app/services/vibinPresets";
 import AlbumTracksModal from "../../features/albums/AlbumTracksModal";
 import ArtModal from "../mediaDisplay/ArtModal";
+import PresetSlotModal from "../mediaDisplay/PresetSlotModal";
 import TrackLinksModal from "../mediaDisplay/TrackLinksModal";
 import TrackLyricsModal from "../mediaDisplay/TrackLyricsModal";
 import TrackWaveformModal from "../mediaDisplay/TrackWaveformModal";
@@ -79,20 +82,21 @@ export type NavigationAction =
     | "ViewInArtists"
     | "ViewInAlbums"
     | "ViewInTracks";
-export type PlaylistAction =
+export type MediaAction = DetailsAction | FavoritesAction | NavigationAction | QueueAction | PresetsAction;
+export type PresetsAction = "all" | "AddPreset";
+export type QueueAction =
     | "all"
     | "AppendToEnd"
     | "InsertAndPlayNext"
     | "InsertAndPlayNow"
     | "ReplaceAndPlayNow";
 
-export type MediaAction = DetailsAction | FavoritesAction | NavigationAction | PlaylistAction;
-
 export type EnabledActions = {
     Details?: DetailsAction[];
     Favorites?: FavoritesAction[];
     Navigation?: NavigationAction[];
-    Playlist?: PlaylistAction[];
+    Presets?: PresetsAction[];
+    Queue?: QueueAction[];
 };
 
 const sizeMd = 15;
@@ -158,7 +162,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
         Details: ["all"],
         Favorites: ["all"],
         Navigation: ["all"],
-        Playlist: ["all"],
+        Presets: ["all"],
+        Queue: ["all"],
     },
     position = "top",
     size = "md",
@@ -171,12 +176,15 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const [addMediaToQueue, addStatus] = useAddMediaToQueueMutation();
     const [addFavorite] = useAddFavoriteMutation();
     const [deleteFavorite] = useDeleteFavoriteMutation();
+    const [addPreset] = useAddPresetMutation();
     const { favorites } = useAppSelector((state: RootState) => state.favorites);
+    const { presets } = useAppSelector((state: RootState) => state.presets);
     const { power: streamerPower } = useAppSelector((state: RootState) => state.system.streamer);
     const albumById = useAppSelector((state: RootState) => state.mediaGroups.albumById);
     const artistByName = useAppSelector((state: RootState) => state.mediaGroups.artistByName);
     const [showAlbumTracksModal, setShowAlbumTracksModal] = useState<boolean>(false);
     const [showArtModal, setShowArtModal] = useState<boolean>(false);
+    const [showPresetSlotModal, setShowPresetSlotModal] = useState<boolean>(false);
     const [showTrackLinksModal, setShowTrackLinksModal] = useState<boolean>(false);
     const [showTrackLyricsModal, setShowTrackLyricsModal] = useState<boolean>(false);
     const [showTrackWaveformModal, setShowTrackWaveformModal] = useState<boolean>(false);
@@ -206,7 +214,8 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
     const showDetailsActions = enabledActions.Details && enabledActions.Details.length > 0;
     const showFavoritesActions = enabledActions.Favorites && enabledActions.Favorites.length > 0;
     const showNavigationActions = enabledActions.Navigation && enabledActions.Navigation.length > 0;
-    const showPlaylistActions = enabledActions.Playlist && enabledActions.Playlist.length > 0;
+    const showPresetsActions = enabledActions.Presets && enabledActions.Presets.length > 0;
+    const showQueueActions = enabledActions.Queue && enabledActions.Queue.length > 0;
 
     const displaySize = size === "sm" ? sizeSm : size === "md" ? sizeMd : size;
 
@@ -319,13 +328,13 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         </>
                     )}
 
-                    {/* Playlist actions ------------------------------------------------------ */}
+                    {/* Queue actions --------------------------------------------------------- */}
 
-                    {showPlaylistActions && (isAlbum(media) || isTrack(media)) && (
+                    {showQueueActions && (isAlbum(media) || isTrack(media)) && (
                         <>
                             <Menu.Label>Queue</Menu.Label>
 
-                            {wantAction(enabledActions.Playlist!!, "ReplaceAndPlayNow") && (
+                            {wantAction(enabledActions.Queue!!, "ReplaceAndPlayNow") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={
@@ -358,7 +367,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 </Menu.Item>
                             )}
 
-                            {wantAction(enabledActions.Playlist!!, "InsertAndPlayNow") && (
+                            {wantAction(enabledActions.Queue!!, "InsertAndPlayNow") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={<IconCornerDownRight size={14} />}
@@ -378,7 +387,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 </Menu.Item>
                             )}
 
-                            {wantAction(enabledActions.Playlist!!, "InsertAndPlayNext") && (
+                            {wantAction(enabledActions.Queue!!, "InsertAndPlayNext") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={<IconCornerDownRightDouble size={14} />}
@@ -398,7 +407,7 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                 </Menu.Item>
                             )}
 
-                            {wantAction(enabledActions.Playlist!!, "AppendToEnd") && (
+                            {wantAction(enabledActions.Queue!!, "AppendToEnd") && (
                                 <Menu.Item
                                     disabled={isStreamerOff}
                                     icon={<IconPlaylistAdd size={12} />}
@@ -412,6 +421,23 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                                     }}
                                 >
                                     Append to end
+                                </Menu.Item>
+                            )}
+                        </>
+                    )}
+
+                    {/* Presets actions ------------------------------------------------------- */}
+
+                    {showPresetsActions && (isAlbum(media) || isTrack(media)) && (
+                        <>
+                            <Menu.Label>Presets</Menu.Label>
+
+                            {wantAction(enabledActions.Presets!!, "AddPreset") && (
+                                <Menu.Item
+                                    icon={<IconRadio size={14} />}
+                                    onClick={() => setShowPresetSlotModal(true)}
+                                >
+                                    Add to Presets...
                                 </Menu.Item>
                             )}
                         </>
@@ -595,6 +621,19 @@ const MediaActionsButton: FC<MediaActionsButtonProps> = ({
                         media={media}
                         opened={showArtModal}
                         onClose={() => setShowArtModal(false)}
+                    />
+                )}
+
+                {/* Albums and Tracks can be added to Presets */}
+                {(isAlbum(media) || isTrack(media)) && (
+                    <PresetSlotModal
+                        media={media}
+                        presets={presets}
+                        opened={showPresetSlotModal}
+                        onSave={async (presetId) => {
+                            await addPreset({ presetId, mediaId: media.id }).unwrap();
+                        }}
+                        onClose={() => setShowPresetSlotModal(false)}
                     />
                 )}
             </Menu>

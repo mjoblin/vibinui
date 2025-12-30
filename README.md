@@ -16,13 +16,13 @@ with the following:
 * AirPlay from a MacBook.
 * Running the UI in Chrome on a MacBook and iPad.
 
-> **Vibin is mostly an experiment**. It is not intended to be a complete replacement for the
-> official StreamMagic apps. Vibin lacks features like browsing internet radio (although it can play
-> internet radio presets configured in the StreamMagic app), and has no support for TIDAL or Qobuz.
-> Nor is Vibin intended to replace general-purpose solutions like Plexamp, Audirvana, Roon, etc.
+> Vibin is not intended to be a complete replacement for the official StreamMagic apps. Vibin lacks
+> features like browsing internet radio (although it can play internet radio presets configured in
+> the StreamMagic app), and has no support for TIDAL or Qobuz. Nor is Vibin intended to replace
+> general-purpose solutions like Plexamp, Audirvana, Roon, etc.
 
 Watch the [overview video] (4m:15s) to see Vibin's features in action. (Does not show some features,
-like Hegel amplifier controls and all-media searching).
+like Hegel amplifier controls, all-media searching, preset editing, etc).
 
 &ensp;<br />
 ![Vibin]
@@ -40,7 +40,8 @@ In summary:
    backend.
 
 The backend will then be able to serve the UI to a browser running on any other device on the same
-network (a laptop, iPad, etc) via a URL hosted on the backend, such as `http://192.168.1.100/ui`.
+network (a laptop, iPad, etc) via a URL hosted on the backend, such as
+`http://192.168.1.100:8080/ui`.
 
 The backend expects to be installed on an always-on machine on the network (such as a server or
 Raspberry Pi), to ensure it's always available to any browser running on any other device on the
@@ -78,11 +79,17 @@ Vibin's features include:
   * Searching by title, date, genre, etc.
   * Searching for lyrics.
   * Searching across all media at once (Albums, Tracks, Presets, Favorites).
-* **Playlists**.
-  * Viewing and interacting with the active streamer Playlist.
-  * Saving and switching between stored Playlists.
+* **Queue**.
+  * Viewing the streamer Queue.
+  * Editing the Queue (adding media, removing, reordering).
+  * Saving Queue state as a Stored Playlist.
+    * Multiple Stored Playlists can be created.
+    * Stored Playlists can be retrieved at any time.
 * **Presets** (like internet radio).
+  * Add local media to the streamer's Presets.
+  * Preset editing (reordering, removing).
 * **Favorites**.
+  * Local media can be favorited for easy access.
 
 ### Additional features
 
@@ -136,10 +143,12 @@ dragging the playhead over the waveform image.
 
 ![Current track waveform]
 
-### Playlists
+### Stored Playlists
 
-Vibin supports custom Playlist creation. Playlists can be saved for later use. The detailed
-Playlist view shows more information than the summary view.
+Vibin supports custom Playlist creation. Playlists are created from the streamer's Queue, and can
+be saved for later use. The detailed Playlist view shows more information than the summary view.
+
+> The "Playlist" screen shown in some screenshots has been renamed to "Queue".
 
 #### Detailed view
 
@@ -203,9 +212,25 @@ Tracks can be filtered by lyrics. The following shows tracks with lyrics contain
 
 ### Presets
 
-Vibin supports playing of StreamMagic Presets, like internet radio stations.
+Vibin can interact with streamer Presets.
+
+#### Preset viewing and playing
+
+The Presets screen shows all streamer Presets.
 
 ![Presets]
+
+#### Preset editing
+
+Presets can be deleted and reordered.
+
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/presets_edit.png" width="600" />
+
+#### Add local media to Presets
+
+New Presets can be created from local media.
+
+<img src="https://github.com/mjoblin/media/blob/main/vibin/images/presets_add.png" width="500" />
 
 ### Favorites
 

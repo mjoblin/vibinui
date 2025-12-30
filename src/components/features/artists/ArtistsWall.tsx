@@ -476,7 +476,8 @@ const ArtistsWall: FC = () => {
                                                             "ViewInAlbums",
                                                             "ViewInTracks",
                                                         ],
-                                                        Playlist: ["all"],
+                                                        Queue: ["all"],
+                                                        Presets: ["all"],
                                                     }}
                                                     selected={album.id === selectedAlbum?.id}
                                                     onClick={(album: Album) =>
@@ -537,12 +538,12 @@ const ArtistsWall: FC = () => {
                                     <TrackCard
                                         type="compact"
                                         track={track}
-                                        showArt={false}
                                         enabledActions={{
                                             Details: ["all"],
                                             Favorites: ["all"],
                                             Navigation: ["ViewInAlbums", "ViewInTracks"],
-                                            Playlist: ["all"],
+                                            Queue: ["all"],
+                                            Presets: ["all"],
                                         }}
                                         selected={track.id === selectedTrack?.id}
                                         onClick={(track: Track) =>
