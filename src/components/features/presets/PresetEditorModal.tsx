@@ -855,18 +855,26 @@ const PresetEditorModal: FC<PresetEditorModalProps> = ({ presets, opened, onClos
                     </DragDropContext>
                 </ScrollArea>
 
-                {/* Footer buttons */}
-                <Flex justify="flex-end" gap="sm" mt="md">
-                    <Button variant="subtle" onClick={handleClose} disabled={isSaving}>
-                        Cancel
-                    </Button>
-                    <Button
-                        disabled={!hasChanges}
-                        loading={isSaving}
-                        onClick={handleSave}
-                    >
-                        Save Changes
-                    </Button>
+                {/* Footer */}
+                <Flex align="center" mt="md">
+                    {hasChanges && (
+                        <Flex direction="column">
+                            <Text size="xs" c="yellow">
+                                Changes are applied one Preset at a time,
+                            </Text>
+                            <Text size="xs" c="yellow">
+                                which can take a few seconds to be saved.
+                            </Text>
+                        </Flex>
+                    )}
+                    <Flex gap="sm" ml="auto">
+                        <Button variant="subtle" onClick={handleClose} disabled={isSaving}>
+                            Cancel
+                        </Button>
+                        <Button disabled={!hasChanges} loading={isSaving} onClick={handleSave}>
+                            Save Changes
+                        </Button>
+                    </Flex>
                 </Flex>
             </Flex>
         </Modal>
